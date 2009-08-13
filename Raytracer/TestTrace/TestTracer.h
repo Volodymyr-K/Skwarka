@@ -42,14 +42,14 @@ class TestTracer
 
 inline void TestTracer::LoadMesh()
   {
-/*
+
   Sphere s;
   s.SetParameter("Center","0 0 0");
   s.SetParameter("Radius","0.4");
-  s.SetParameter("Subdivisions","7");
+  s.SetParameter("Subdivisions","9");
   mp_mesh = s.BuildMesh();
-*/
 
+/*
   std::vector<Point3Df> vertices;
   std::vector<MeshTriangle> triangles;
   std::vector<float> uv_parameterization;
@@ -78,7 +78,7 @@ inline void TestTracer::LoadMesh()
   fclose(fp);
 
   mp_mesh = shared_ptr<TriangleMesh>( new TriangleMesh(vertices, triangles, false) );
-
+*/
   mp_tree = new TriangleTree();
   mp_tree->AddTriangleMesh(mp_mesh);
   mp_tree->BuildTree();
@@ -87,8 +87,8 @@ inline void TestTracer::LoadMesh()
 // 73 291
 inline void TestTracer::RenderImage()
   {
-  //Point3Dd c(0.0,-1.10,0.0);
-  Point3Dd c(0.0,-0.0,-0.2);
+  Point3Dd c(0.0,-1.10,0.0);
+  //Point3Dd c(0.0,-0.0,-0.2);
 /*
   long tick1 = GetTickCount();
   double inv1 = 1.0/double(GetImageHeight());
@@ -117,7 +117,7 @@ inline void TestTracer::RenderImage()
   for(int y=0;y<GetImageHeight();++y)
     for(int x=0;x<GetImageWidth();++x)
       {
-      Vector3Dd dir = Vector3Dd(0,1,1)+
+      Vector3Dd dir = Vector3Dd(0,1,0)+
         double(y-GetImageHeight()/2.0)/double(GetImageHeight())*Vector3Dd(0,0,-1)+
         double(x-GetImageWidth()/2.0)/double(GetImageWidth())*Vector3Dd(1,0,0);        
       dir.Normalize();

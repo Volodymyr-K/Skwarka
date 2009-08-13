@@ -17,8 +17,7 @@ struct IntersectResult
 class TriangleTree
   {
   //////////////////////////////////////////////////// INTERNAL TYPES ///////////////////////////////////////////////////////
-  private:
-   
+  private:   
     struct BaseNode;
     struct Node;
     struct Leaf;
