@@ -90,7 +90,7 @@ inline void BaseShape::GetParameter(const std::string &i_parameter_name, Paramet
   }
 
 template<>
-inline void BaseShape::GetParameter(const std::string &i_parameter_name, Point3Df &o_parameter_value, bool i_required) const
+inline void BaseShape::GetParameter(const std::string &i_parameter_name, Point3D_f &o_parameter_value, bool i_required) const
   {
   std::string str;
   if (GetParameterString(i_parameter_name, str, i_required) == false)
@@ -102,11 +102,11 @@ inline void BaseShape::GetParameter(const std::string &i_parameter_name, Point3D
   float x,y,z;
   sstream >> x >> y >> z;
 
-  o_parameter_value = Point3Df(x,y,z);
+  o_parameter_value = Point3D_f(x,y,z);
   }
 
 template<>
-inline void BaseShape::GetParameter(const std::string &i_parameter_name, Vector3Df &o_parameter_value, bool i_required) const
+inline void BaseShape::GetParameter(const std::string &i_parameter_name, Vector3D_f &o_parameter_value, bool i_required) const
   {
   std::string str;
   if (GetParameterString(i_parameter_name, str, i_required) == false)
@@ -118,7 +118,7 @@ inline void BaseShape::GetParameter(const std::string &i_parameter_name, Vector3
   float x,y,z;
   sstream >> x >> y >> z;
 
-  o_parameter_value = Vector3Df(x,y,z);
+  o_parameter_value = Vector3D_f(x,y,z);
   }
 
 #endif // SHAPE_H

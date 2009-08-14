@@ -57,7 +57,7 @@ void TriangleTree::BuildTree()
     for(size_t j=0;j<m_meshes[i]->GetNumberOfTriangles();++j)
       {
       MeshTriangle triangle = m_meshes[i]->GetTriangle(j);
-      m_triangles[index]=Triangle3Df(
+      m_triangles[index]=Triangle3D_f(
         m_meshes[i]->GetVertex(triangle.m_vertices[0]),
         m_meshes[i]->GetVertex(triangle.m_vertices[1]),
         m_meshes[i]->GetVertex(triangle.m_vertices[2]));
@@ -93,17 +93,17 @@ void TriangleTree::_DestroyTree()
   m_LeafPool.purge_memory();
   }
 
-BBox3Df TriangleTree::_ConstructBBox(size_t i_begin, size_t i_end) const
+BBox3D_f TriangleTree::_ConstructBBox(size_t i_begin, size_t i_end) const
   {
-  BBox3Df bbox;
+  BBox3D_f bbox;
 
-  bbox.m_min=Point3Df(FLT_INF,FLT_INF,FLT_INF);
-  bbox.m_max=Point3Df(-FLT_INF,-FLT_INF,-FLT_INF);
+  bbox.m_min=Point3D_f(FLT_INF,FLT_INF,FLT_INF);
+  bbox.m_max=Point3D_f(-FLT_INF,-FLT_INF,-FLT_INF);
 
   for(size_t i=i_begin;i!=i_end;++i)
     for(char j=0;j<3;++j)
       {
-      Point3Df pnt=m_triangles[i][j];
+      Point3D_f pnt=m_triangles[i][j];
 
       if (pnt[0]<bbox.m_min[0]) bbox.m_min[0]=pnt[0];
       if (pnt[0]>bbox.m_max[0]) bbox.m_max[0]=pnt[0];
@@ -222,13 +222,13 @@ BaseNode(i_begin,i_end)
 
   while(i<r1)
     {
-    Triangle3Df triangle = i_tree.m_triangles[i];
+    Triangle3D_f triangle = i_tree.m_triangles[i];
     
     // compute the bounding box of the triangle from the triangle coordinates
     float mn=FLT_INF,mx=-FLT_INF;
     for(char j=0;j<3;++j)
       {
-      Point3Df pnt=triangle[j];
+      Point3D_f pnt=triangle[j];
       if (pnt[i_split_index] < mn) mn = pnt[i_split_index];
       if (pnt[i_split_index] > mx) mx = pnt[i_split_index];
       }
@@ -361,28 +361,28 @@ void TriangleTree::Leaf::Intersect(Ray &i_ray, size_t &o_triangle_index) const
   {
   for(size_t i=m_begin;i!=m_end;++i)
     {
-    const Triangle3Df &triangle = m_tree.m_triangles[i];
+    const Triangle3D_f &triangle = m_tree.m_triangles[i];
 
-    Point3Dd v0 = Convert<double>(triangle[0]);
-    Point3Dd v1 = Convert<double>(triangle[1]);
-    Point3Dd v2 = Convert<double>(triangle[2]);
+    Point3D_d v0 = Convert<double>(triangle[0]);
+    Point3D_d v1 = Convert<double>(triangle[1]);
+    Point3D_d v2 = Convert<double>(triangle[2]);
 
-    Vector3Dd e1 = Vector3Dd(v1-v0);
-    Vector3Dd e2 = Vector3Dd(v2-v0);
-    Vector3Dd s1 = i_ray.m_direction^e2;
+    Vector3D_d e1 = Vector3D_d(v1-v0);
+    Vector3D_d e2 = Vector3D_d(v2-v0);
+    Vector3D_d s1 = i_ray.m_direction^e2;
     double divisor = s1*e1;
     if (divisor == 0.0)
       continue;
     double invDivisor = 1.0 / divisor;
 
     // Compute first barycentric coordinate
-    Vector3Dd d = Vector3Dd(i_ray.m_origin - v0);
+    Vector3D_d d = Vector3D_d(i_ray.m_origin - v0);
     double b1 = (d*s1) * invDivisor;
     if(b1 < -DBL_EPS || b1 > 1.0+DBL_EPS)
       continue;
 
     // Compute second barycentric coordinate
-    Vector3Dd s2 = d^e1;
+    Vector3D_d s2 = d^e1;
     double b2 = (i_ray.m_direction*s2) * invDivisor;
     if(b2 < -DBL_EPS || b1 + b2 > 1.0+DBL_EPS)
       continue;
@@ -401,28 +401,28 @@ bool TriangleTree::Leaf::IntersectTest(const Ray &i_ray) const
   {
   for(size_t i=m_begin;i!=m_end;++i)
     {
-    const Triangle3Df &triangle = m_tree.m_triangles[i];
+    const Triangle3D_f &triangle = m_tree.m_triangles[i];
 
-    Point3Dd v0 = Convert<double>(triangle[0]);
-    Point3Dd v1 = Convert<double>(triangle[1]);
-    Point3Dd v2 = Convert<double>(triangle[2]);
+    Point3D_d v0 = Convert<double>(triangle[0]);
+    Point3D_d v1 = Convert<double>(triangle[1]);
+    Point3D_d v2 = Convert<double>(triangle[2]);
 
-    Vector3Dd e1 = Vector3Dd(v1-v0);
-    Vector3Dd e2 = Vector3Dd(v2-v0);
-    Vector3Dd s1 = i_ray.m_direction^e2;
+    Vector3D_d e1 = Vector3D_d(v1-v0);
+    Vector3D_d e2 = Vector3D_d(v2-v0);
+    Vector3D_d s1 = i_ray.m_direction^e2;
     double divisor = s1*e1;
     if (divisor == 0.0)
       continue;
     double invDivisor = 1.0 / divisor;
 
     // Compute first barycentric coordinate
-    Vector3Dd d = Vector3Dd(i_ray.m_origin - v0);
+    Vector3D_d d = Vector3D_d(i_ray.m_origin - v0);
     double b1 = (d*s1) * invDivisor;
     if(b1 < -DBL_EPS || b1 > 1.0+DBL_EPS)
       continue;
 
     // Compute second barycentric coordinate
-    Vector3Dd s2 = d^e1;
+    Vector3D_d s2 = d^e1;
     double b2 = (i_ray.m_direction*s2) * invDivisor;
     if(b2 < -DBL_EPS || b1 + b2 > 1.0+DBL_EPS)
       continue;

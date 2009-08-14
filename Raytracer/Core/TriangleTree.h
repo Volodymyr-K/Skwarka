@@ -51,13 +51,13 @@ class TriangleTree
     // Destroy the tree (if it is built).
     void _DestroyTree();
 
-    BBox3Df _ConstructBBox(size_t i_begin, size_t i_end) const;
+    BBox3D_f _ConstructBBox(size_t i_begin, size_t i_end) const;
     void _SwapTriangles(size_t i_index1, size_t i_index2);
 
     //////////// DATA MEMBERS ////////////
   private:
     // Internal list of triangles.
-    std::vector<Triangle3Df> m_triangles;
+    std::vector<Triangle3D_f> m_triangles;
     std::vector<size_t> m_mesh_indices;
     std::vector<size_t> m_triangle_indices;
 
@@ -83,7 +83,7 @@ class TriangleTree
 struct TriangleTree::BaseNode
   {
   // Bounding box of all the triangles in the sub-tree rooted at this node.
-  BBox3Df m_bbox;
+  BBox3D_f m_bbox;
 
   // Indicates the interval (begin and end iterators) of the internal triangles list (see m_triangles field) that contains
   // the triangles in the sub-tree rooted at this node.

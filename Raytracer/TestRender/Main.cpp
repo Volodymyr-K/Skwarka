@@ -17,7 +17,7 @@ shared_ptr<TriangleMesh> p_mesh;
 
 void LoadMesh()
   {
-  std::vector<Point3Dd> vertices;
+  std::vector<Point3D_d> vertices;
   std::vector<MeshTriangle> triangles;
   std::vector<float> uv_parameterization;
 
@@ -32,10 +32,10 @@ void LoadMesh()
   TopologyInfo ti = p_mesh->GetTopologyInfo();
 
   RayDifferential r;
-  r.m_base_ray.m_origin=Point3Dd();
+  r.m_base_ray.m_origin=Point3D_d();
   r.m_base_ray.m_direction = 
     Convert<double>( 
-    Vector3Df(p_mesh->GetVertex(p_mesh->GetTriangle(10).m_vertices[0])+p_mesh->GetVertex(p_mesh->GetTriangle(10).m_vertices[1]))
+    Vector3D_f(p_mesh->GetVertex(p_mesh->GetTriangle(10).m_vertices[0])+p_mesh->GetVertex(p_mesh->GetTriangle(10).m_vertices[1]))
     ).Normalized();
   DifferentialGeometry dg;
   //p_mesh->ComputeDifferentialGeometry(10,r,dg); 
@@ -46,7 +46,7 @@ void LoadMesh()
     float x,y,z;
     int read = fscanf(fp,"%f %f %f",&x,&y,&z);
     if (read<=0) break;
-    vertices.push_back(Point3Df(x,y,z));
+    vertices.push_back(Point3D_f(x,y,z));
     }
     fclose(fp);
 
@@ -101,11 +101,11 @@ void glut_display() {
     {
     MeshTriangle triangle = p_mesh->GetTriangle(i);
 
-    Point3Dd v1 = Convert<double>(p_mesh->GetVertex(triangle.m_vertices[0]));
-    Point3Dd v2 = Convert<double>(p_mesh->GetVertex(triangle.m_vertices[1]));
-    Point3Dd v3 = Convert<double>(p_mesh->GetVertex(triangle.m_vertices[2]));
+    Point3D_d v1 = Convert<double>(p_mesh->GetVertex(triangle.m_vertices[0]));
+    Point3D_d v2 = Convert<double>(p_mesh->GetVertex(triangle.m_vertices[1]));
+    Point3D_d v3 = Convert<double>(p_mesh->GetVertex(triangle.m_vertices[2]));
 
-    Vector3Dd n = Convert<double>(p_mesh->GetTriangleNormal(i));
+    Vector3D_d n = Convert<double>(p_mesh->GetTriangleNormal(i));
 
     glNormal3f(n[0],n[1],n[2]);
     glVertex3f(v1[0], v1[1], v1[2]);

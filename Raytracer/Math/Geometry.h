@@ -1,6 +1,7 @@
 #ifndef GEOMETRY_H
 #define GEOMETRY_H
 
+#include "Point2D.h"
 #include "Point3D.h"
 #include "Vector3D.h"
 #include "Ray.h"

@@ -12,7 +12,7 @@ class Triangle3D
     Triangle3D();
     Triangle3D(const Point3D<T> &i_vertex1, const Point3D<T> &i_vertex2, const Point3D<T> &i_vertex3);
 
-    Vector3Dd GetNormal() const;
+    Vector3D_d GetNormal() const;
     double GetArea() const;
 
     const Point3D<T> &operator[](unsigned char i_index) const;
@@ -22,8 +22,8 @@ class Triangle3D
     Point3D<T> m_vertices[3];
   };
 
-typedef Triangle3D<float> Triangle3Df;
-typedef Triangle3D<double> Triangle3Dd;
+typedef Triangle3D<float> Triangle3D_f;
+typedef Triangle3D<double> Triangle3D_d;
 
 /////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -42,9 +42,9 @@ Triangle3D<T>::Triangle3D(const Point3D<T> &i_vertex1, const Point3D<T> &i_verte
   }
 
 template<typename T>
-Vector3Dd Triangle3D<T>::GetNormal() const
+Vector3D_d Triangle3D<T>::GetNormal() const
   {
-  Vector3Dd normal = Vector3Dd(m_vertices[1]-m_vertices[0])^Vector3Dd(m_vertices[2]-m_vertices[0]);
+  Vector3D_d normal = Vector3D_d(m_vertices[1]-m_vertices[0])^Vector3D_d(m_vertices[2]-m_vertices[0]);
   normal.Normalize();
   return normal;
   }
@@ -52,7 +52,7 @@ Vector3Dd Triangle3D<T>::GetNormal() const
 template<typename T>
 double Triangle3D<T>::GetArea() const
   {
-  Vector3Dd cross = Vector3Dd(m_vertices[1]-m_vertices[0]) ^ Vector3Dd(m_vertices[2]-m_vertices[0]);
+  Vector3D_d cross = Vector3D_d(m_vertices[1]-m_vertices[0]) ^ Vector3D_d(m_vertices[2]-m_vertices[0]);
   return 0.5*cross.Length();
   }
 

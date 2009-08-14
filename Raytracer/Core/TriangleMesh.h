@@ -23,7 +23,7 @@ struct MeshTriangle
 class TriangleMesh
   {
   public:
-    TriangleMesh(const std::vector<Point3Df> &i_vertices, const std::vector<MeshTriangle> &i_triangles, bool i_use_shading_normals=true);
+    TriangleMesh(const std::vector<Point3D_f> &i_vertices, const std::vector<MeshTriangle> &i_triangles, bool i_use_shading_normals=true);
 
     void SetUVParameterization(const std::vector<float> &i_uv_parameterization);
     void SetUseShadingNormals(bool i_use_shading_normals);
@@ -31,9 +31,9 @@ class TriangleMesh
     size_t GetNumberOfVertices() const;
     size_t GetNumberOfTriangles() const;
 
-    const Point3Df &GetVertex(size_t i_vertex_index) const;
+    const Point3D_f &GetVertex(size_t i_vertex_index) const;
     const MeshTriangle &GetTriangle(size_t i_triangle_index) const;
-    const Vector3Df &GetTriangleNormal(size_t i_triangle_index) const;
+    const Vector3D_f &GetTriangleNormal(size_t i_triangle_index) const;
 
     void ComputeDifferentialGeometry(size_t i_triangle_index, const RayDifferential &i_ray, DifferentialGeometry &o_dg) const;
 
@@ -54,15 +54,15 @@ class TriangleMesh
     bool _ConsistentlyOriented(size_t i_triangle_index1, size_t i_triangle_index2) const;
 
     void _GetUVs(const MeshTriangle &i_triangle, float o_uv[3][2]) const;
-    bool _ComputeIntersectionPoint(const MeshTriangle &i_triangle, const Point3Dd &i_origin, const Vector3Dd &i_direction, double &o_b1, double &o_b2, double &o_t) const;
+    bool _ComputeIntersectionPoint(const MeshTriangle &i_triangle, const Point3D_d &i_origin, const Vector3D_d &i_direction, double &o_b1, double &o_b2, double &o_t) const;
 
     void _BuildConnectivityData(ConnectivityData &o_connectivity);
 
   private:
-    std::vector<Point3Df> m_vertices;
+    std::vector<Point3D_f> m_vertices;
     std::vector<MeshTriangle> m_triangles;
-    std::vector<Vector3Df> m_triangle_normals;
-    std::vector<Vector3Df> m_shading_normals;
+    std::vector<Vector3D_f> m_triangle_normals;
+    std::vector<Vector3D_f> m_shading_normals;
     std::vector<float> m_uv_parameterization;
 
     bool m_use_shading_normals;
@@ -83,7 +83,7 @@ inline size_t TriangleMesh::GetNumberOfTriangles() const
   return m_triangles.size();
   }
 
-inline const Point3Df &TriangleMesh::GetVertex(size_t i_vertex_index) const
+inline const Point3D_f &TriangleMesh::GetVertex(size_t i_vertex_index) const
   {
   ASSERT(i_vertex_index < m_vertices.size());
   return m_vertices[i_vertex_index];
@@ -95,7 +95,7 @@ inline const MeshTriangle &TriangleMesh::GetTriangle(size_t i_triangle_index) co
   return m_triangles[i_triangle_index];
   }
 
-inline const Vector3Df &TriangleMesh::GetTriangleNormal(size_t i_triangle_index) const
+inline const Vector3D_f &TriangleMesh::GetTriangleNormal(size_t i_triangle_index) const
   {
   ASSERT(i_triangle_index < m_triangles.size());
   return m_triangle_normals[i_triangle_index];

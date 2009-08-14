@@ -41,8 +41,8 @@ Spectrum<T> operator*(T i_value, const Spectrum<T> &i_spectrum);
 template<typename T2, typename T>
 Spectrum<T2> Convert(const Spectrum<T> &i_spectrum);
 
-typedef Spectrum<float> Spectrumf;
-typedef Spectrum<double> Spectrumd;
+typedef Spectrum<float> Spectrum_f;
+typedef Spectrum<double> Spectrum_d;
 
 /////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////

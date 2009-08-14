@@ -26,8 +26,8 @@ bool Inside(const BBox3D<T> &i_bbox, const Point3D<T> &i_point);
 template<typename T>
 bool Inside(const BBox3D<T> &i_bbox, const Triangle3D<T> &i_triangle);
 
-typedef BBox3D<float> BBox3Df;
-typedef BBox3D<double> BBox3Dd;
+typedef BBox3D<float> BBox3D_f;
+typedef BBox3D<double> BBox3D_d;
 
 /////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////

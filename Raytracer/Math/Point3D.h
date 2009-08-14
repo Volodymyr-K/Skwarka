@@ -37,8 +37,8 @@ Point3D<T> operator*(T i_value, const Point3D<T> &i_point);
 template<typename T2, typename T>
 Point3D<T2> Convert(const Point3D<T> &i_point);
 
-typedef Point3D<float> Point3Df;
-typedef Point3D<double> Point3Dd;
+typedef Point3D<float> Point3D_f;
+typedef Point3D<double> Point3D_d;
 
 /////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////

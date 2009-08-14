@@ -10,7 +10,7 @@ Sphere::Sphere()
 
 shared_ptr<TriangleMesh> Sphere::BuildMesh()
   {
-  Point3Df center;
+  Point3D_f center;
   float radius;
   unsigned int subdivisions = DEFAULT_SUBDIVISIONS;
 
@@ -18,15 +18,15 @@ shared_ptr<TriangleMesh> Sphere::BuildMesh()
   GetParameter("Radius", radius, true);
   GetParameter("Subdivisions", subdivisions, false);
 
-  std::vector<Point3Df> vertices(4);
+  std::vector<Point3D_f> vertices(4);
   std::vector<MeshTriangle> triangles(4);
   std::vector<bool> deleted(4, false);
 
   float base_radius = sqrtf(8.f)/3.f;
-  vertices[0]=Point3Df(0.f, 0.f, 1.f);
-  vertices[1]=Point3Df(base_radius,  0.f, -1.f/3.f);
-  vertices[2]=Point3Df(base_radius*cos(2.f*M_PI_3), base_radius*sin(2.f*M_PI_3), -1.f/3.f);
-  vertices[3]=Point3Df(base_radius*cos(2.f*M_PI_3), -base_radius*sin(2.f*M_PI_3), -1.f/3.f);
+  vertices[0]=Point3D_f(0.f, 0.f, 1.f);
+  vertices[1]=Point3D_f(base_radius,  0.f, -1.f/3.f);
+  vertices[2]=Point3D_f(base_radius*cos(2.f*M_PI_3), base_radius*sin(2.f*M_PI_3), -1.f/3.f);
+  vertices[3]=Point3D_f(base_radius*cos(2.f*M_PI_3), -base_radius*sin(2.f*M_PI_3), -1.f/3.f);
 
   triangles[0]=MeshTriangle(1,3,2);
   triangles[1]=MeshTriangle(1,0,3);
@@ -46,13 +46,13 @@ shared_ptr<TriangleMesh> Sphere::BuildMesh()
           triangles[j].m_vertices[2]};
 
         deleted[j]=true;
-        Point3Df v01 = (vertices[indices[0]]+vertices[indices[1]])*0.5f;
-        Point3Df v12 = (vertices[indices[1]]+vertices[indices[2]])*0.5f;
-        Point3Df v20 = (vertices[indices[2]]+vertices[indices[0]])*0.5f;
+        Point3D_f v01 = (vertices[indices[0]]+vertices[indices[1]])*0.5f;
+        Point3D_f v12 = (vertices[indices[1]]+vertices[indices[2]])*0.5f;
+        Point3D_f v20 = (vertices[indices[2]]+vertices[indices[0]])*0.5f;
 
-        v01 /= Vector3Df(v01).Length();
-        v12 /= Vector3Df(v12).Length();
-        v20 /= Vector3Df(v20).Length();
+        v01 /= Vector3D_f(v01).Length();
+        v12 /= Vector3D_f(v12).Length();
+        v20 /= Vector3D_f(v20).Length();
 
         size_t new_vertices[3];
         if (edges_to_vertices.find(std::make_pair(indices[0],indices[1]))==edges_to_vertices.end())

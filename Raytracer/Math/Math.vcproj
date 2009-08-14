@@ -169,6 +169,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Point2D.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Point3D.h"
 				>
 			</File>

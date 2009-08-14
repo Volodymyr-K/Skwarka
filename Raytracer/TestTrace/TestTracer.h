@@ -10,6 +10,7 @@
 #include <WinBase.h>
 #include <cstdio>
 #include <Core\Spectrum.h>
+#include <Math\Util.h>
 
 class TestTracer
   {
@@ -30,7 +31,7 @@ class TestTracer
     int GetImageHeight() const { return m_imageHeight; }
 
   void RenderImage();
-  bool ComputeDG(Point3Dd c, Vector3Dd dir, DifferentialGeometry &dg);
+  bool ComputeDG(Point3D_d c, Vector3D_d dir, DifferentialGeometry &dg);
 
   public:
   Byte*   m_image;
@@ -43,7 +44,6 @@ class TestTracer
 
 inline void TestTracer::LoadMesh()
   {
-
   Sphere s;
   s.SetParameter("Center","0 0 0");
   s.SetParameter("Radius","0.4");
@@ -51,7 +51,7 @@ inline void TestTracer::LoadMesh()
   mp_mesh = s.BuildMesh();
 
 /*
-  std::vector<Point3Df> vertices;
+  std::vector<Point3D_f> vertices;
   std::vector<MeshTriangle> triangles;
   std::vector<float> uv_parameterization;
 
@@ -64,7 +64,7 @@ inline void TestTracer::LoadMesh()
     float x,y,z;
     int read = fscanf(fp,"%f %f %f",&x,&y,&z);
     if (read<=0) break;
-    vertices.push_back(Point3Df(x,y,z));
+    vertices.push_back(Point3D_f(x,y,z));
 
     if (uniq.find(std::make_pair(std::make_pair(x,y),z))==uniq.end())
       {
@@ -106,8 +106,8 @@ inline void TestTracer::LoadMesh()
 // 73 291
 inline void TestTracer::RenderImage()
   {
-  Point3Dd c(0.0,-1.1,0.0);
-  //Point3Dd c(0.0,-0.0,-0.2);
+  Point3D_d c(0.0,-1.1,0.0);
+  //Point3D_d c(0.0,-0.0,-0.2);
 /*
   long tick1 = GetTickCount();
   double inv1 = 1.0/double(GetImageHeight());
@@ -117,9 +117,9 @@ inline void TestTracer::RenderImage()
   for(int y=0;y<GetImageHeight();++y)
     for(int x=0;x<GetImageWidth();++x)
       {
-      Vector3Dd dir = Vector3Dd(0,1,0)+
-        double(y-GetImageHeight()*0.5)*inv1*Vector3Dd(0,0,-1)+
-        double(x-GetImageWidth()*0.5)*inv2*Vector3Dd(1,0,0);
+      Vector3D_d dir = Vector3D_d(0,1,0)+
+        double(y-GetImageHeight()*0.5)*inv1*Vector3D_d(0,0,-1)+
+        double(x-GetImageWidth()*0.5)*inv2*Vector3D_d(1,0,0);
 
       Ray ray(c,dir);
       mp_tree->Intersect(ray);
@@ -133,16 +133,13 @@ inline void TestTracer::RenderImage()
 
   Log::Info("%d",k);*/
 
-  Spectrumf s;
-  s.Luminance();
-
   bool f = false;
   for(int y=0;y<GetImageHeight();++y)
     for(int x=0;x<GetImageWidth();++x)
       {
-      Vector3Dd dir = Vector3Dd(0,1,0)+
-        double(y-GetImageHeight()/2.0)/double(GetImageHeight())*Vector3Dd(0,0,-1)+
-        double(x-GetImageWidth()/2.0)/double(GetImageWidth())*Vector3Dd(1,0,0);        
+      Vector3D_d dir = Vector3D_d(0,1,0)+
+        double(y-GetImageHeight()/2.0)/double(GetImageHeight())*Vector3D_d(0,0,-1)+
+        double(x-GetImageWidth()/2.0)/double(GetImageWidth())*Vector3D_d(1,0,0);        
       dir.Normalize();
 
       DifferentialGeometry dg;
@@ -159,7 +156,7 @@ inline void TestTracer::RenderImage()
       else
         {
         f = true;
-        double color = dg.m_shading_normal*Vector3Dd(0,-1,0);
+        double color = dg.m_shading_normal*Vector3D_d(0,-1,0);
         pixel[pixel_index+0] = Byte(color*255.0);
         pixel[pixel_index+1] = Byte(color*255.0);
         pixel[pixel_index+2] = Byte(color*255.0);
@@ -169,7 +166,7 @@ inline void TestTracer::RenderImage()
 
   }
 
-inline bool TestTracer::ComputeDG(Point3Dd c, Vector3Dd dir, DifferentialGeometry &dg)
+inline bool TestTracer::ComputeDG(Point3D_d c, Vector3D_d dir, DifferentialGeometry &dg)
   {
   IntersectResult result = mp_tree->Intersect(Ray(c,dir));
 
@@ -189,26 +186,26 @@ inline bool TestTracer::ComputeDG(Point3Dd c, Vector3Dd dir, DifferentialGeometr
   for(int i=0;i<int(mp_mesh->GetNumberOfTriangles());++i)
     {
     MeshTriangle triangle = mp_mesh->GetTriangle(i);
-    const Point3Dd &v0 = mp_mesh->GetVertex(triangle.m_vertices[0]);
-    const Point3Dd &v1 = mp_mesh->GetVertex(triangle.m_vertices[1]);
-    const Point3Dd &v2 = mp_mesh->GetVertex(triangle.m_vertices[2]);
+    const Point3D_d &v0 = mp_mesh->GetVertex(triangle.m_vertices[0]);
+    const Point3D_d &v1 = mp_mesh->GetVertex(triangle.m_vertices[1]);
+    const Point3D_d &v2 = mp_mesh->GetVertex(triangle.m_vertices[2]);
 
-    Vector3Dd e1 = Vector3Dd(v1 - v0);
-    Vector3Dd e2 = Vector3Dd(v2 - v0);
-    Vector3Dd s1 = dir^e2;
+    Vector3D_d e1 = Vector3D_d(v1 - v0);
+    Vector3D_d e2 = Vector3D_d(v2 - v0);
+    Vector3D_d s1 = dir^e2;
     double divisor = s1*e1;
     if (divisor == 0.0)
       continue;
     double invDivisor = 1.0 / divisor;
 
     // Compute first barycentric coordinate
-    Vector3Dd d = Vector3Dd(c - v0);
+    Vector3D_d d = Vector3D_d(c - v0);
     double b1 = (d*s1) * invDivisor;
     if(b1 < 0.0 || b1 > 1.0)
       continue;
 
     // Compute second barycentric coordinate
-    Vector3Dd s2 = d^e1;
+    Vector3D_d s2 = d^e1;
     double b2 = (dir*s2) * invDivisor;
     if(b2 < 0.0 || b1 + b2 > 1.0)
       continue;

@@ -7,12 +7,12 @@
 class DifferentialGeometry
   {
   public:
-    Point3Dd m_point;
-    Vector3Dd m_geometric_normal, m_shading_normal;
+    Point3D_d m_point;
+    Vector3D_d m_geometric_normal, m_shading_normal;
     double m_u, m_v;
 
-    Vector3Dd m_dn_du, m_dn_dv;
-    Vector3Dd m_dp_dx, m_dp_dy;
+    Vector3D_d m_dn_du, m_dn_dv;
+    Vector3D_d m_dp_dx, m_dp_dy;
 
     double m_du_dx, m_dv_dx;
     double m_du_dy, m_dv_dy;

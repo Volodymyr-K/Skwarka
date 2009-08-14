@@ -152,6 +152,14 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath=".\Film.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\FilmFilter.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\TriangleMesh.cpp"
 				>
 			</File>
@@ -167,6 +175,14 @@
 			>
 			<File
 				RelativePath=".\DifferentialGeometry.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Film.h"
+				>
+			</File>
+			<File
+				RelativePath=".\FilmFilter.h"
 				>
 			</File>
 			<File

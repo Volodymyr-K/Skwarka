@@ -53,8 +53,8 @@ Vector3D<T> operator*(T i_value, const Vector3D<T> &i_vector);
 template<typename T2, typename T>
 Vector3D<T2> Convert(const Vector3D<T> &i_vector);
 
-typedef Vector3D<float> Vector3Df;
-typedef Vector3D<double> Vector3Dd;
+typedef Vector3D<float> Vector3D_f;
+typedef Vector3D<double> Vector3D_d;
 
 /////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////

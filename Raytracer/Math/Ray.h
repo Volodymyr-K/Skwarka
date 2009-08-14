@@ -12,14 +12,14 @@ class Ray
   {
   public:
     Ray();
-    Ray(const Point3Dd i_origin, const Vector3Dd &i_direction, double i_mint=0.0, double i_maxt=DBL_INF);
+    Ray(const Point3D_d i_origin, const Vector3D_d &i_direction, double i_mint=0.0, double i_maxt=DBL_INF);
     Ray(const RayDifferential &i_ray_differential);
 
-    Point3Dd operator()(double i_t) const;
+    Point3D_d operator()(double i_t) const;
 
   public:
-    Point3Dd m_origin;
-    Vector3Dd m_direction;
+    Point3D_d m_origin;
+    Vector3D_d m_direction;
     double m_mint, m_maxt;
   };
 
@@ -31,8 +31,8 @@ class RayDifferential
 
   public:
     Ray m_base_ray;
-    Point3Dd m_origin_dx, m_origin_dy;
-    Vector3Dd m_direction_dx, m_direction_dy;
+    Point3D_d m_origin_dx, m_origin_dy;
+    Vector3D_d m_direction_dx, m_direction_dy;
 
     bool m_has_differentials;
   };
@@ -45,7 +45,7 @@ m_mint(0.), m_maxt(DBL_INF)
   {
   }
 
-inline Ray::Ray(const Point3Dd i_origin, const Vector3Dd &i_direction, double i_mint, double i_maxt):
+inline Ray::Ray(const Point3D_d i_origin, const Vector3D_d &i_direction, double i_mint, double i_maxt):
 m_origin(i_origin), m_direction(i_direction), m_mint(i_mint), m_maxt(i_maxt)
   {
   }
@@ -56,7 +56,7 @@ m_mint(i_ray_differential.m_base_ray.m_mint), m_maxt(i_ray_differential.m_base_r
   {
   }
 
-inline Point3Dd Ray::operator()(double i_t) const
+inline Point3D_d Ray::operator()(double i_t) const
   {
   return m_origin+m_direction*i_t;
   }

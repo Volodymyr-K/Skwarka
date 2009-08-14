@@ -12,4 +12,15 @@ bool SolveLinearSystem2x2(const double A[2][2], const double B[2], double x[2])
   return true;
   }
 
+template<typename T>
+T Clamp(T i_value, T i_low, T i_high)
+  {
+  if (i_value < i_low)
+    return i_low;
+  else if (i_value > i_high)
+    return i_high;
+  else
+    return i_value;
+  }
+
 #endif // UTIL_H
