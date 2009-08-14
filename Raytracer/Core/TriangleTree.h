@@ -40,9 +40,9 @@ class TriangleTree
     ////////////////////////////////////////////////////// QUERIES  /////////////////////////////////////////////////////////
 
     // Search for the triangle nearest to the i_point along the i_direction.
-    virtual IntersectResult Intersect(const Ray &i_ray) const;
+    IntersectResult Intersect(const Ray &i_ray) const;
 
-    virtual bool IntersectTest(const Ray &i_ray) const {return true;}
+    bool IntersectTest(const Ray &i_ray) const;
 
   private:
     TriangleTree(TriangleTree &);
@@ -124,7 +124,7 @@ struct TriangleTree::Node : public TriangleTree::BaseNode
   // The method below is implementation of pure virtual method defined in the base class. Please refer there for the details.
   virtual void Intersect(Ray &i_ray, size_t &o_triangle_index) const;
 
-  virtual bool IntersectTest(const Ray &i_ray) const {return true;}
+  virtual bool IntersectTest(const Ray &i_ray) const;
   };
 
 /*
@@ -140,7 +140,7 @@ struct TriangleTree::Leaf : public TriangleTree::BaseNode
   // The method below is implementation of pure virtual method defined in the base class. Please refer there for the details.
   virtual void Intersect(Ray &i_ray, size_t &o_triangle_index) const;
 
-  virtual bool IntersectTest(const Ray &i_ray) const {return true;}
+  virtual bool IntersectTest(const Ray &i_ray) const;
   };
 
 #endif // TRIANGLE_TREE_H

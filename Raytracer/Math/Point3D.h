@@ -12,11 +12,11 @@ class Point3D
     Point3D();
     Point3D(T i_x, T i_y, T i_z);
 
-    Point3D<T> operator+(const Point3D<T> &i_vector) const;
-    Point3D<T> &operator+=(const Point3D<T> &i_vector);
+    Point3D<T> operator+(const Point3D<T> &i_point) const;
+    Point3D<T> &operator+=(const Point3D<T> &i_point);
 
-    Point3D<T> operator-(const Point3D<T> &i_vector) const;
-    Point3D<T> &operator-=(const Point3D<T> &i_vector);
+    Point3D<T> operator-(const Point3D<T> &i_point) const;
+    Point3D<T> &operator-=(const Point3D<T> &i_point);
 
     Point3D<T> operator*(T i_value) const;
     Point3D<T> &operator*=(T i_value);

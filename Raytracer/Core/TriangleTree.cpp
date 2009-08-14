@@ -134,14 +134,10 @@ Search for the triangle nearest to the i_point along the i_direction.
 
 IntersectResult TriangleTree::Intersect(const Ray &i_ray) const
   {
+  ASSERT(mp_root && "Intersect operation is called for not built tree.");
+
   IntersectResult ret;
   ret.m_intersection_found=false;
-
-  if (mp_root==NULL)
-    {
-    Log::Error("Intersect operation is called for not built tree.");
-    return ret;
-    }
 
   Ray ray(i_ray);
   size_t triangle_index = mp_root->m_end;
@@ -153,6 +149,13 @@ IntersectResult TriangleTree::Intersect(const Ray &i_ray) const
     ret.m_triangle_index = m_triangle_indices[triangle_index];
     }
   return ret;
+  }
+
+bool TriangleTree::IntersectTest(const Ray &i_ray) const
+  {
+  ASSERT(mp_root && "IntersectTest operation is called for not built tree.");
+
+  return mp_root->IntersectTest(i_ray);
   }
 
 ///////////////////////////////////////////////////////// BASE NODE ////////////////////////////////////////////////////
@@ -322,6 +325,20 @@ void TriangleTree::Node::Intersect(Ray &i_ray, size_t &o_triangle_index) const
       m_children[i]->Intersect(i_ray, o_triangle_index);
   }
 
+bool TriangleTree::Node::IntersectTest(const Ray &i_ray) const
+  {
+  if (m_bbox.Intersect(i_ray)==false)
+    return false;
+
+  for(unsigned char i=0;i<3;++i)
+    if (m_children[i])
+      if (m_children[i]->IntersectTest(i_ray))
+        return true;
+
+  return false;
+  }
+
+
 /////////////////////////////////////////////////////////// LEAF /////////////////////////////////////////////////////
 
 TriangleTree::Leaf::Leaf(const TriangleTree &i_tree, size_t i_begin,  size_t i_end): 
@@ -378,4 +395,42 @@ void TriangleTree::Leaf::Intersect(Ray &i_ray, size_t &o_triangle_index) const
       o_triangle_index=i;
       }
     } // for(size_t i=m_begin;i!=m_end;++i)
+  }
+
+bool TriangleTree::Leaf::IntersectTest(const Ray &i_ray) const
+  {
+  for(size_t i=m_begin;i!=m_end;++i)
+    {
+    const Triangle3Df &triangle = m_tree.m_triangles[i];
+
+    Point3Dd v0 = Convert<double>(triangle[0]);
+    Point3Dd v1 = Convert<double>(triangle[1]);
+    Point3Dd v2 = Convert<double>(triangle[2]);
+
+    Vector3Dd e1 = Vector3Dd(v1-v0);
+    Vector3Dd e2 = Vector3Dd(v2-v0);
+    Vector3Dd s1 = i_ray.m_direction^e2;
+    double divisor = s1*e1;
+    if (divisor == 0.0)
+      continue;
+    double invDivisor = 1.0 / divisor;
+
+    // Compute first barycentric coordinate
+    Vector3Dd d = Vector3Dd(i_ray.m_origin - v0);
+    double b1 = (d*s1) * invDivisor;
+    if(b1 < -DBL_EPS || b1 > 1.0+DBL_EPS)
+      continue;
+
+    // Compute second barycentric coordinate
+    Vector3Dd s2 = d^e1;
+    double b2 = (i_ray.m_direction*s2) * invDivisor;
+    if(b2 < -DBL_EPS || b1 + b2 > 1.0+DBL_EPS)
+      continue;
+
+    // Compute t to intersection point
+    double t = (e2*s2) * invDivisor;
+    if (t >= i_ray.m_mint && t <= i_ray.m_maxt)
+      return true;
+    } // for(size_t i=m_begin;i!=m_end;++i)
+  return false;
   }

@@ -9,6 +9,7 @@
 #include "stdafx.h"
 #include <WinBase.h>
 #include <cstdio>
+#include <Core\Spectrum.h>
 
 class TestTracer
   {
@@ -46,7 +47,7 @@ inline void TestTracer::LoadMesh()
   Sphere s;
   s.SetParameter("Center","0 0 0");
   s.SetParameter("Radius","0.4");
-  s.SetParameter("Subdivisions","9");
+  s.SetParameter("Subdivisions","7");
   mp_mesh = s.BuildMesh();
 
 /*
@@ -54,6 +55,8 @@ inline void TestTracer::LoadMesh()
   std::vector<MeshTriangle> triangles;
   std::vector<float> uv_parameterization;
 
+  std::map<std::pair<std::pair<float,float>,float>,size_t> uniq;
+  std::vector<size_t> repl;
   #pragma warning(disable : 4996)
   FILE *fp=fopen("vertices.txt","r");
   while(true)
@@ -62,6 +65,16 @@ inline void TestTracer::LoadMesh()
     int read = fscanf(fp,"%f %f %f",&x,&y,&z);
     if (read<=0) break;
     vertices.push_back(Point3Df(x,y,z));
+
+    if (uniq.find(std::make_pair(std::make_pair(x,y),z))==uniq.end())
+      {
+      uniq[std::make_pair(std::make_pair(x,y),z)]=vertices.size()-1;
+      repl.push_back(vertices.size()-1);
+      }
+    else
+      {
+      repl.push_back(uniq[std::make_pair(std::make_pair(x,y),z)]);
+      }
     }
   fclose(fp);
 
@@ -71,6 +84,12 @@ inline void TestTracer::LoadMesh()
     int v1,v2,v3;
     int read = fscanf(fp,"%d %d %d",&v1,&v2,&v3);
     if (read<=0) break;
+
+    v1=repl[v1];
+    v2=repl[v2];
+    v3=repl[v3];
+    if (v1==v2 || v1==v3 || v2==v3)
+      continue;
 
     MeshTriangle tr(v1,v2,v3);
     triangles.push_back(tr);
@@ -87,14 +106,14 @@ inline void TestTracer::LoadMesh()
 // 73 291
 inline void TestTracer::RenderImage()
   {
-  Point3Dd c(0.0,-1.10,0.0);
+  Point3Dd c(0.0,-1.1,0.0);
   //Point3Dd c(0.0,-0.0,-0.2);
 /*
   long tick1 = GetTickCount();
   double inv1 = 1.0/double(GetImageHeight());
   double inv2 = 1.0/double(GetImageWidth());
   int k=0;
-  for(int j=0;j<5;++j)
+  for(int j=0;j<1;++j)
   for(int y=0;y<GetImageHeight();++y)
     for(int x=0;x<GetImageWidth();++x)
       {
@@ -102,17 +121,21 @@ inline void TestTracer::RenderImage()
         double(y-GetImageHeight()*0.5)*inv1*Vector3Dd(0,0,-1)+
         double(x-GetImageWidth()*0.5)*inv2*Vector3Dd(1,0,0);
 
-      Vector3Df fff = Convert<float>(dir);
-      IntersectResult result = mp_tree->Intersect(Ray(c,dir));
-      if (result.m_intersection_found)
-        ++k;
+      Ray ray(c,dir);
+      mp_tree->Intersect(ray);
+      //IntersectResult result = mp_tree->Intersect(ray);
+      //if (result.m_intersection_found)
+      //  ++k;
       }
 
   long tick2 = GetTickCount();
   printf("%d\n", (tick2-tick1));
 
-  Log::Info("%d",k);
-*/
+  Log::Info("%d",k);*/
+
+  Spectrumf s;
+  s.Luminance();
+
   bool f = false;
   for(int y=0;y<GetImageHeight();++y)
     for(int x=0;x<GetImageWidth();++x)

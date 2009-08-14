@@ -105,6 +105,7 @@
 				Optimization="2"
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
+				FavorSizeOrSpeed="1"
 				AdditionalIncludeDirectories="..\;..\..\..\ThirdParty\;..\..\..\ThirdParty\boost\;"
 				PreprocessorDefinitions="NDEBUG"
 				RuntimeLibrary="0"
@@ -174,6 +175,10 @@
 			</File>
 			<File
 				RelativePath=".\Primitive.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Spectrum.h"
 				>
 			</File>
 			<File
