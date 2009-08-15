@@ -77,7 +77,7 @@ Transform MakeRotation(const double &i_angle, Vector3D_d i_axis)
   m[3][0] = 0.0;
   m[3][1] = 0.0;
   m[3][2] = 0.0;
-  m[3][3] = 10;
+  m[3][3] = 1.0;
 
   return Transform(Matrix4x4_d(m));
   }
