@@ -8,5 +8,6 @@
 #include "Ray.h"
 #include "BBox3D.h"
 #include "Triangle3D.h"
+#include "Transform.h"
 
 #endif // GEOMETRY_H

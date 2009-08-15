@@ -17,8 +17,8 @@ static const TCHAR* szWindowClass = _T("RayTracerWindowClass");
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK About(HWND, UINT, WPARAM, LPARAM);
 
-#define IMAGE_WIDTH 600
-#define IMAGE_HEIGHT 600
+#define IMAGE_WIDTH 800
+#define IMAGE_HEIGHT 800
 
 TestTracer *tracer;
 Console* g_console;

@@ -44,6 +44,14 @@ class TestTracer
 
 inline void TestTracer::LoadMesh()
   {
+  Matrix4x4_d m(1.100,2.000,6.000,4.000,
+    0.000,0.000,1.000,2.400,
+    1.000,1.000,5.000,6.000,
+    0.300,1.000,-1.200,1.000);
+  Matrix4x4_d inv = m.Inverted();
+
+  inv.PreMultiply(m);
+
   Sphere s;
   s.SetParameter("Center","0 0 0");
   s.SetParameter("Radius","0.4");
