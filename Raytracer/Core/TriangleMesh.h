@@ -25,7 +25,7 @@ class TriangleMesh
   public:
     TriangleMesh(const std::vector<Point3D_f> &i_vertices, const std::vector<MeshTriangle> &i_triangles, bool i_use_shading_normals=true);
 
-    void SetUVParameterization(const std::vector<float> &i_uv_parameterization);
+    void SetUVParameterization(const std::vector<Point2D_f> &i_uv_parameterization);
     void SetUseShadingNormals(bool i_use_shading_normals);
 
     size_t GetNumberOfVertices() const;
@@ -53,7 +53,7 @@ class TriangleMesh
     void _ComputeTopologyInfo(const ConnectivityData &i_connectivity);
     bool _ConsistentlyOriented(size_t i_triangle_index1, size_t i_triangle_index2) const;
 
-    void _GetUVs(const MeshTriangle &i_triangle, float o_uv[3][2]) const;
+    void _GetUVs(const MeshTriangle &i_triangle, Point2D_d o_uv[3]) const;
     bool _ComputeIntersectionPoint(const MeshTriangle &i_triangle, const Point3D_d &i_origin, const Vector3D_d &i_direction, double &o_b1, double &o_b2, double &o_t) const;
 
     void _BuildConnectivityData(ConnectivityData &o_connectivity);
@@ -63,7 +63,7 @@ class TriangleMesh
     std::vector<MeshTriangle> m_triangles;
     std::vector<Vector3D_f> m_triangle_normals;
     std::vector<Vector3D_f> m_shading_normals;
-    std::vector<float> m_uv_parameterization;
+    std::vector<Point2D_f> m_uv_parameterization;
 
     bool m_use_shading_normals;
 

@@ -281,13 +281,12 @@ void TriangleMesh::ComputeDifferentialGeometry(size_t i_triangle_index, const Ra
   ASSERT(t >= i_ray.m_base_ray.m_mint && t <= i_ray.m_base_ray.m_maxt);
   o_dg.m_point=i_ray.m_base_ray(t);
 
-  float uvs[3][2];
-  _GetUVs(triangle,uvs);
+  Point2D_d uv[3];
+  _GetUVs(triangle,uv);
 
   // Interpolate triangle uv coordinates
   b0 = 1.0 - b1 - b2;
-  o_dg.m_u=b0*uvs[0][0] + b1*uvs[1][0] + b2*uvs[2][0];
-  o_dg.m_v=b0*uvs[0][1] + b1*uvs[1][1] + b2*uvs[2][1];
+  o_dg.m_uv=b0*uv[0] + b1*uv[1] + b2*uv[2];
 
   o_dg.m_geometric_normal=Convert<double>(m_triangle_normals[i_triangle_index]);
   // Compute shading normal and derivatives
@@ -302,10 +301,10 @@ void TriangleMesh::ComputeDifferentialGeometry(size_t i_triangle_index, const Ra
       o_dg.m_shading_normal.Normalize();
 
       // Compute deltas for triangle partial derivatives
-      double du1 = uvs[1][0] - uvs[0][0];
-      double du2 = uvs[2][0] - uvs[0][0];
-      double dv1 = uvs[1][1] - uvs[0][1];
-      double dv2 = uvs[2][1] - uvs[0][1];
+      double du1 = uv[1][0] - uv[0][0];
+      double du2 = uv[2][0] - uv[0][0];
+      double dv1 = uv[1][1] - uv[0][1];
+      double dv2 = uv[2][1] - uv[0][1];
       double determinant = du1 * dv2 - dv1 * du2;
       if (determinant == 0.0)
         {
@@ -334,44 +333,39 @@ void TriangleMesh::ComputeDifferentialGeometry(size_t i_triangle_index, const Ra
     {
     b0_x = 1.0 - b1_x - b2_x;
     o_dg.m_dp_dx=Vector3D_d(i_ray.m_origin_dx+i_ray.m_direction_dx*t_x-o_dg.m_point);
-    o_dg.m_du_dx=b0_x*uvs[0][0] + b1_x*uvs[1][0] + b2_x*uvs[2][0] - o_dg.m_u;
-    o_dg.m_dv_dx=b0_x*uvs[0][1] + b1_x*uvs[1][1] + b2_x*uvs[2][1] - o_dg.m_v;
+    o_dg.m_duv_dx=Vector2D_d(b0_x*uv[0] + b1_x*uv[1] + b2_x*uv[2] - o_dg.m_uv);
 
     b0_y = 1.0 - b1_y - b2_y;
     o_dg.m_dp_dy=Vector3D_d(i_ray.m_origin_dy+i_ray.m_direction_dy*t_y-o_dg.m_point);
-    o_dg.m_du_dy=b0_y*uvs[0][0] + b1_y*uvs[1][0] + b2_y*uvs[2][0] - o_dg.m_u;
-    o_dg.m_dv_dy=b0_y*uvs[0][1] + b1_y*uvs[1][1] + b2_y*uvs[2][1] - o_dg.m_v;
+    o_dg.m_duv_dy=Vector2D_d(b0_y*uv[0] + b1_y*uv[1] + b2_y*uv[2] - o_dg.m_uv);
     }
   else
     {
-    o_dg.m_du_dx = o_dg.m_dv_dx = 0.;
-    o_dg.m_du_dy = o_dg.m_dv_dy = 0.;
+    o_dg.m_duv_dx = Vector2D_d();
+    o_dg.m_duv_dy = Vector2D_d();
     o_dg.m_dp_dx = o_dg.m_dp_dy = Vector3D_d();
     }
   }
 
-void TriangleMesh::_GetUVs(const MeshTriangle &i_triangle, float o_uv[3][2]) const
+void TriangleMesh::_GetUVs(const MeshTriangle &i_triangle, Point2D_d o_uv[3]) const
   {
   if (m_uv_parameterization.empty()) 
     {
-    o_uv[0][0] = 0.0; o_uv[0][1] = 0.0;
-    o_uv[1][0] = 1.0; o_uv[1][1] = 0.0;
-    o_uv[2][0] = 1.0; o_uv[2][1] = 1.0;
+    o_uv[0] = Point2D_d(0.f, 0.f);
+    o_uv[1] = Point2D_d(1.f, 0.f);
+    o_uv[2] = Point2D_d(0.f, 1.f);
     }
   else
     {
-    o_uv[0][0] = m_uv_parameterization[2*i_triangle.m_vertices[0]];
-    o_uv[0][1] = m_uv_parameterization[2*i_triangle.m_vertices[0]+1];
-    o_uv[1][0] = m_uv_parameterization[2*i_triangle.m_vertices[1]];
-    o_uv[1][1] = m_uv_parameterization[2*i_triangle.m_vertices[1]+1];
-    o_uv[2][0] = m_uv_parameterization[2*i_triangle.m_vertices[2]];
-    o_uv[2][1] = m_uv_parameterization[2*i_triangle.m_vertices[2]+1];
+    o_uv[0] = Convert<double>(m_uv_parameterization[i_triangle.m_vertices[0]]);
+    o_uv[1] = Convert<double>(m_uv_parameterization[i_triangle.m_vertices[1]]);
+    o_uv[2] = Convert<double>(m_uv_parameterization[i_triangle.m_vertices[2]]);
     }
   }
 
-void TriangleMesh::SetUVParameterization(const std::vector<float> &i_uv_parameterization)
+void TriangleMesh::SetUVParameterization(const std::vector<Point2D_f> &i_uv_parameterization)
   {
-  if (i_uv_parameterization.size() != 2*m_vertices.size())
+  if (i_uv_parameterization.size() != m_vertices.size())
     Log::Error("UV parameterization has wrong number of elements.");
   m_uv_parameterization.assign(i_uv_parameterization.begin(), i_uv_parameterization.end());
   }

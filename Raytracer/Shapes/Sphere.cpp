@@ -102,7 +102,7 @@ shared_ptr<TriangleMesh> Sphere::BuildMesh()
     if (deleted[i]==false)
       triangles_cleaned.push_back(triangles[i]);
 
-  std::vector<float> uv_parameterization(2*vertices.size());
+  std::vector<Point2D_f> uv_parameterization(vertices.size());
 
   for (size_t i=0;i<vertices.size();++i)
     {
@@ -110,8 +110,7 @@ shared_ptr<TriangleMesh> Sphere::BuildMesh()
     if (phi < 0.0) phi+=2.0*M_PI;
     float theta = acos(vertices[i][2]);
 
-    uv_parameterization[2*i]=phi * INV_2PI;
-    uv_parameterization[2*i+1]=theta * INV_PI;
+    uv_parameterization[i]=Point2D_f(phi*INV_2PI, theta*INV_PI);
 
     vertices[i]=vertices[i]*radius+center;
     }

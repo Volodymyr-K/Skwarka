@@ -189,6 +189,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Vector2D.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Vector3D.h"
 				>
 			</File>

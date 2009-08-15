@@ -8,7 +8,6 @@ class Spectrum
   {
   public:
     Spectrum();
-    Spectrum(T i_value);
     Spectrum(T i_r, T i_g, T i_b);
 
     Spectrum<T> operator+(const Spectrum<T> &i_spectrum) const;
@@ -26,7 +25,7 @@ class Spectrum
     T operator[](unsigned char i_index) const;
     T &operator[](unsigned char i_index);
 
-    void AddWeighted(T i_weight, const Spectrum &i_spectrum);
+    void AddWeighted(const Spectrum &i_spectrum, T i_weight);
     bool IsZero() const;
     void XYZ(T o_xyz[3]) const;
     T Luminance() const;
@@ -53,14 +52,6 @@ Spectrum<T>::Spectrum()
   m_rgb[0]=0;
   m_rgb[1]=0;
   m_rgb[2]=0;
-  }
-
-template<typename T>
-Spectrum<T>::Spectrum(T i_value)
-  {
-  m_rgb[0]=i_value;
-  m_rgb[1]=i_value;
-  m_rgb[2]=i_value;
   }
 
 template<typename T>
@@ -153,7 +144,7 @@ T &Spectrum<T>::operator[](unsigned char i_index)
   }
 
 template<typename T>
-void Spectrum<T>::AddWeighted(T i_weight, const Spectrum &i_spectrum)
+void Spectrum<T>::AddWeighted(const Spectrum &i_spectrum, T i_weight)
   {
   m_rgb[0] += i_weight * i_spectrum.m_rgb[0];
   m_rgb[1] += i_weight * i_spectrum.m_rgb[1];

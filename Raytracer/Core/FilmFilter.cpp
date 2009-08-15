@@ -15,8 +15,7 @@ double FilmFilter::GetYWidth() const
   return m_y_width;
   }
 
-BoxFilter::BoxFilter(const double &i_x_width, const double &i_y_width):
-    FilmFilter(i_x_width, i_y_width)
+BoxFilter::BoxFilter(const double &i_x_width, const double &i_y_width): FilmFilter(i_x_width, i_y_width)
   {
   }
 

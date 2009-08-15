@@ -18,7 +18,7 @@ class Film
   public:
     Film(size_t i_x_resolution, size_t i_y_resolution, shared_ptr<FilmFilter> ip_filter);
 
-    //void AddSample(const Sample &sample, const Ray &ray, const Spectrum &i_spectrum, float alpha);
+    void AddSample(const Point2D_d &i_film_point, const Spectrum_f &i_spectrum, float i_alpha);
 
     void SetCropWindow(const Point2D_d &i_start, const Point2D_d &i_end);
 
@@ -35,6 +35,7 @@ class Film
   private:
     const size_t m_x_resolution, m_y_resolution;
     shared_ptr<FilmFilter> mp_filter; // TBD: Cache filter values
+    double m_filter_x_width, m_filter_y_width;
 
     Point2D_i m_film_window[2];
 
@@ -59,7 +60,7 @@ struct Film::FilmPixel
 void Film::GetPixel(size_t i_x, size_t i_y, Spectrum_f o_spectrum, float &o_alfa, bool i_normalize_values) const
   {
   ASSERT(i_x<m_x_resolution && i_y<m_y_resolution);
-  const FilmPixel &pixel = m_pixels[i_y][i_x];  
+  const FilmPixel &pixel = m_pixels[i_y][i_x];
 
   if (pixel.m_weight_sum != 0.f)
     {
