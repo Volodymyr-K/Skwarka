@@ -15,10 +15,10 @@ m_x_resolution(i_x_resolution), m_y_resolution(i_y_resolution), mp_filter(ip_fil
   m_pixels.assign(i_y_resolution, std::vector<FilmPixel>(i_x_resolution, FilmPixel()));
   }
 
-void Film::AddSample(const Point2D_d &i_film_point, const Spectrum_f &i_spectrum, float i_alpha)
+void Film::AddSample(const Point2D_d &i_image_point, const Spectrum_f &i_spectrum, float i_alpha)
   {
-  double image_x = i_film_point[0] - 0.5;
-  double image_y = i_film_point[1] - 0.5;
+  double image_x = i_image_point[0] - 0.5;
+  double image_y = i_image_point[1] - 0.5;
   int x0 = (int)ceil (image_x - m_filter_x_width);
   int x1 = (int)floor(image_x + m_filter_x_width);
   int y0 = (int)ceil (image_y - m_filter_y_width);

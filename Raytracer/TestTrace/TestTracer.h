@@ -11,6 +11,7 @@
 #include <cstdio>
 #include <Core\Spectrum.h>
 #include <Math\Util.h>
+#include <Core\Camera.h>
 
 class TestTracer
   {
@@ -44,18 +45,10 @@ class TestTracer
 
 inline void TestTracer::LoadMesh()
   {
-  Matrix4x4_d m(1.100,2.000,6.000,4.000,
-    0.000,0.000,1.000,2.400,
-    1.000,1.000,5.000,6.000,
-    0.300,1.000,-1.200,1.000);
-  Matrix4x4_d inv = m.Inverted();
-
-  inv.PreMultiply(m);
-
   Sphere s;
   s.SetParameter("Center","0 0 0");
   s.SetParameter("Radius","0.4");
-  s.SetParameter("Subdivisions","7");
+  s.SetParameter("Subdivisions","5");
   mp_mesh = s.BuildMesh();
 
 /*
@@ -115,6 +108,7 @@ inline void TestTracer::LoadMesh()
 inline void TestTracer::RenderImage()
   {
   Point3D_d c(0.0,-1.1,0.0);
+
   //Point3D_d c(0.0,-0.0,-0.2);
 /*
   long tick1 = GetTickCount();
@@ -141,10 +135,15 @@ inline void TestTracer::RenderImage()
 
   Log::Info("%d",k);*/
 
+  FilmFilter *filter = new BoxFilter(1.0,1.0);
+  Film *film = new Film(GetImageWidth(), GetImageHeight(), shared_ptr<FilmFilter>(filter));
+  Camera *cam =  new PerspectiveCamera( MakeLookAt(c,Vector3D_d(0,1,0),Vector3D_d(0,0,1)), shared_ptr<Film>(film), 0.0, 10.0, 2.0);
+
   bool f = false;
   for(int y=0;y<GetImageHeight();++y)
     for(int x=0;x<GetImageWidth();++x)
       {
+/*
       Vector3D_d dir = Vector3D_d(0,1,0)+
         double(y-GetImageHeight()/2.0)/double(GetImageHeight())*Vector3D_d(0,0,-1)+
         double(x-GetImageWidth()/2.0)/double(GetImageWidth())*Vector3D_d(1,0,0);        
@@ -152,6 +151,13 @@ inline void TestTracer::RenderImage()
 
       DifferentialGeometry dg;
       bool hit = ComputeDG(c,dir,dg);
+*/
+
+      Ray ray;
+      cam->GenerateRay(Point2D_d(x,y),Point2D_d(0,0),ray);
+
+      DifferentialGeometry dg;
+      bool hit = ComputeDG(ray.m_origin,ray.m_direction,dg);
 
       unsigned int pixel_index = (y*GetImageWidth()+x)*4;
       Byte* pixel = m_image;
