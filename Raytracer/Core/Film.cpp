@@ -1,5 +1,6 @@
 #include "Film.h"
 #include <utility>
+#include <cmath>
 
 Film::Film(size_t i_x_resolution, size_t i_y_resolution, shared_ptr<FilmFilter> ip_filter):
 m_x_resolution(i_x_resolution), m_y_resolution(i_y_resolution), mp_filter(ip_filter)
@@ -65,6 +66,9 @@ void Film::SetCropWindow(const Point2D_d &i_start, const Point2D_d &i_end)
 
 void Film::GetSampleExtent(Point2D_i &o_start, Point2D_i &o_end) const
   {
-  o_start = Convert<int>(Convert<double>(m_film_window[0]) + Point2D_d(0.5-m_filter_x_width, 0.5-m_filter_y_width));
-  o_end = Convert<int>(Convert<double>(m_film_window[1]) + Point2D_d(0.5+m_filter_x_width, 0.5+m_filter_y_width));
+  Point2D_d start = Convert<double>(m_film_window[0]) + Point2D_d(0.5-m_filter_x_width, 0.5-m_filter_y_width);
+  Point2D_d end = Convert<double>(m_film_window[1]) + Point2D_d(0.5+m_filter_x_width, 0.5+m_filter_y_width);
+
+  o_start = Point2D_i( (int)floor(start[0]), (int)floor(start[1]) );
+  o_end = Point2D_i( (int)floor(end[0]), (int)floor(end[1]) );
   }

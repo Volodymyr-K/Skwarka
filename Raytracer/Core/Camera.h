@@ -17,7 +17,7 @@ class Camera
     virtual ~Camera() {}
 
   protected:
-    void TransformRay(Ray &io_ray) const;
+    void _TransformRay(Ray &io_ray) const;
 
   private:
     Transform m_camera2world;

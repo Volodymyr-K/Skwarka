@@ -26,6 +26,9 @@ class Vector2D
     Vector2D<T> operator/(T i_value) const;
     Vector2D<T> &operator/=(T i_value);
 
+    bool operator==(const Vector2D<T> &i_vector) const;
+    bool operator!=(const Vector2D<T> &i_vector) const;
+
     T operator*(const Vector2D<T> &i_vector) const;
     Vector2D<T> operator^(const Vector2D<T> &i_vector) const;
 
@@ -142,6 +145,20 @@ Vector2D<T> &Vector2D<T>::operator/=(T i_value)
   T inv = (T)1.0 / i_value;
   (*this)*=inv;
   return *this;
+  }
+
+template<typename T>
+bool Vector2D<T>::operator==(const Vector2D<T> &i_vector) const
+  {
+  if (m_coordinates[0] != i_vector.m_coordinates[0]) return false;
+  if (m_coordinates[1] != i_vector.m_coordinates[1]) return false;
+  return true;
+  }
+
+template<typename T>
+bool Vector2D<T>::operator!=(const Vector2D<T> &i_vector) const
+  {
+  return !operator==(i_vector);
   }
 
 template<typename T>

@@ -191,6 +191,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Sampling.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Transform.h"
 				>
 			</File>

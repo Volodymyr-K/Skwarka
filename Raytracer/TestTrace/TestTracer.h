@@ -44,14 +44,14 @@ class TestTracer
   };
 
 inline void TestTracer::LoadMesh()
-  {
+  {/*
   Sphere s;
   s.SetParameter("Center","0 0 0");
   s.SetParameter("Radius","0.4");
   s.SetParameter("Subdivisions","5");
   mp_mesh = s.BuildMesh();
 
-/*
+*/
   std::vector<Point3D_f> vertices;
   std::vector<MeshTriangle> triangles;
   std::vector<float> uv_parameterization;
@@ -82,7 +82,7 @@ inline void TestTracer::LoadMesh()
   fp=fopen("triangles.txt","r");
   while(true)
     {
-    int v1,v2,v3;
+    size_t v1,v2,v3;
     int read = fscanf(fp,"%d %d %d",&v1,&v2,&v3);
     if (read<=0) break;
 
@@ -98,7 +98,7 @@ inline void TestTracer::LoadMesh()
   fclose(fp);
 
   mp_mesh = shared_ptr<TriangleMesh>( new TriangleMesh(vertices, triangles, false) );
-*/
+
   mp_tree = new TriangleTree();
   mp_tree->AddTriangleMesh(mp_mesh);
   mp_tree->BuildTree();
@@ -107,8 +107,6 @@ inline void TestTracer::LoadMesh()
 // 73 291
 inline void TestTracer::RenderImage()
   {
-  Point3D_d c(0.0,-1.1,0.0);
-
   //Point3D_d c(0.0,-0.0,-0.2);
 /*
   long tick1 = GetTickCount();
@@ -137,45 +135,45 @@ inline void TestTracer::RenderImage()
 
   FilmFilter *filter = new BoxFilter(1.0,1.0);
   Film *film = new Film(GetImageWidth(), GetImageHeight(), shared_ptr<FilmFilter>(filter));
-  Camera *cam =  new PerspectiveCamera( MakeLookAt(c,Vector3D_d(0,1,0),Vector3D_d(0,0,1)), shared_ptr<Film>(film), 0.0, 10.0, 2.0);
+//  Camera *cam =  new PerspectiveCamera( MakeLookAt(Point3D_d(0.0,-1.1,0.0),Vector3D_d(0,1,0),Vector3D_d(0,0,1)), shared_ptr<Film>(film), 0.0, 2.0, 2.0);
+  Vector3D_d direction = Vector3D_d(0,-0.5,-1).Normalized();
+  Camera *cam =  new PerspectiveCamera( MakeLookAt(Point3D_d(0.0,0.25,0.17),direction,Vector3D_d(0,1,0)), shared_ptr<Film>(film), 0.03, 0.165, 2.0);
 
-  bool f = false;
+
   for(int y=0;y<GetImageHeight();++y)
     for(int x=0;x<GetImageWidth();++x)
       {
-/*
-      Vector3D_d dir = Vector3D_d(0,1,0)+
-        double(y-GetImageHeight()/2.0)/double(GetImageHeight())*Vector3D_d(0,0,-1)+
-        double(x-GetImageWidth()/2.0)/double(GetImageWidth())*Vector3D_d(1,0,0);        
-      dir.Normalize();
+      double r=0,g=0,b=0;
+      int rays_num=1;
 
-      DifferentialGeometry dg;
-      bool hit = ComputeDG(c,dir,dg);
-*/
+      for(int ray_index=0;ray_index<rays_num;++ray_index)
+        {
+        Point2D_d lens_point(rand()/(double)RAND_MAX,rand()/(double)RAND_MAX);
 
-      Ray ray;
-      cam->GenerateRay(Point2D_d(x,y),Point2D_d(0,0),ray);
+        Ray ray;
+        cam->GenerateRay(Point2D_d(x,y),lens_point,ray);
 
-      DifferentialGeometry dg;
-      bool hit = ComputeDG(ray.m_origin,ray.m_direction,dg);
+        DifferentialGeometry dg;
+        bool hit = ComputeDG(ray.m_origin,ray.m_direction,dg);
+
+        unsigned int pixel_index = (y*GetImageWidth()+x)*4;
+        Byte* pixel = m_image;
+        if (hit==false)
+          r+=255.0;
+        else
+          {
+          double color = fabs(-(dg.m_shading_normal*direction));
+          r+=color*255.0;
+          g+=color*255.0;
+          b+=color*255.0;
+          }
+        }
 
       unsigned int pixel_index = (y*GetImageWidth()+x)*4;
       Byte* pixel = m_image;
-      if (hit==false)
-        {
-        pixel[pixel_index+0] = 255;
-        pixel[pixel_index+1] = 0;
-        pixel[pixel_index+2] = 0;
-        }
-      else
-        {
-        f = true;
-        double color = dg.m_shading_normal*Vector3D_d(0,-1,0);
-        pixel[pixel_index+0] = Byte(color*255.0);
-        pixel[pixel_index+1] = Byte(color*255.0);
-        pixel[pixel_index+2] = Byte(color*255.0);
-        }
-
+      pixel[pixel_index+0] = Byte(r/double(rays_num));
+      pixel[pixel_index+1] = Byte(g/double(rays_num));
+      pixel[pixel_index+2] = Byte(b/double(rays_num));
       }
 
   }

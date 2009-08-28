@@ -24,6 +24,9 @@ class Point2D
     Point2D<T> operator/(T i_value) const;
     Point2D<T> &operator/=(T i_value);
 
+    bool operator==(const Point2D<T> &i_point) const;
+    bool operator!=(const Point2D<T> &i_point) const;
+
     T operator[](unsigned char i_index) const;
     T &operator[](unsigned char i_index);
 
@@ -120,6 +123,20 @@ Point2D<T> &Point2D<T>::operator/=(T i_value)
   T inv = (T)1.0 / i_value;
   (*this)*=inv;
   return *this;
+  }
+
+template<typename T>
+bool Point2D<T>::operator==(const Point2D<T> &i_point) const
+  {
+  if (m_coordinates[0] != i_point.m_coordinates[0]) return false;
+  if (m_coordinates[1] != i_point.m_coordinates[1]) return false;
+  return true;
+  }
+
+template<typename T>
+bool Point2D<T>::operator!=(const Point2D<T> &i_point) const
+  {
+  return !operator==(i_point);
   }
 
 template<typename T>

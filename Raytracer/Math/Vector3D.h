@@ -26,6 +26,9 @@ class Vector3D
     Vector3D<T> operator/(T i_value) const;
     Vector3D<T> &operator/=(T i_value);
 
+    bool operator==(const Vector3D<T> &i_vector) const;
+    bool operator!=(const Vector3D<T> &i_vector) const;
+
     T operator*(const Vector3D<T> &i_vector) const;
     Vector3D<T> operator^(const Vector3D<T> &i_vector) const;
 
@@ -148,6 +151,21 @@ Vector3D<T> &Vector3D<T>::operator/=(T i_value)
   T inv = (T)1.0 / i_value;
   (*this)*=inv;
   return *this;
+  }
+
+template<typename T>
+bool Vector3D<T>::operator==(const Vector3D<T> &i_vector) const
+  {
+  if (m_coordinates[0] != i_vector.m_coordinates[0]) return false;
+  if (m_coordinates[1] != i_vector.m_coordinates[1]) return false;
+  if (m_coordinates[2] != i_vector.m_coordinates[2]) return false;
+  return true;
+  }
+
+template<typename T>
+bool Vector3D<T>::operator!=(const Vector3D<T> &i_vector) const
+  {
+  return !operator==(i_vector);
   }
 
 template<typename T>
