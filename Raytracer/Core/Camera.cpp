@@ -35,7 +35,7 @@ PerspectiveCamera::PerspectiveCamera(const Transform &i_camera2world, shared_ptr
   m_y_tan=m_x_tan*((double)GetFilm()->GetYResolution())/GetFilm()->GetXResolution();
   }
 
-double PerspectiveCamera::GenerateRay(const Point2D_d &i_image_point, const Point2D_d &i_lens_point, Ray &o_ray) const
+double PerspectiveCamera::GenerateRay(const Point2D_d &i_image_point, const Point2D_d &i_lens_uv, Ray &o_ray) const
   {
   o_ray.m_origin=Point3D_d();
   
@@ -46,13 +46,13 @@ double PerspectiveCamera::GenerateRay(const Point2D_d &i_image_point, const Poin
   if (m_lens_radius > 0.0)
     {
     // Sample point on lens
-    Point2D_d lens_uv;
-    Sampling::ConcentricSampleDisk(i_lens_point, lens_uv);
-    lens_uv *= m_lens_radius;
+    Point2D_d lens_point;
+    Sampling::ConcentricSampleDisk(i_lens_uv, lens_point);
+    lens_point *= m_lens_radius;
     // Compute point on plane of focus
     Point3D_d focus_point = o_ray(m_focal_distance);
     // Update ray for effect of lens
-    o_ray.m_origin=Point3D_d(lens_uv[0], lens_uv[1], 0.0);
+    o_ray.m_origin=Point3D_d(lens_point[0], lens_point[1], 0.0);
     o_ray.m_direction = Vector3D_d(focus_point - o_ray.m_origin);
     }
 

@@ -4,6 +4,7 @@
 #include <crtdbg.h>
 #include <boost\shared_ptr.hpp>
 #include "Log.h"
+#include "RandomGenerator.h"
 
 using boost::shared_ptr;
 

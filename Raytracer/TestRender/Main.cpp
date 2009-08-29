@@ -2,7 +2,9 @@
 #include "gl/gl.h"
 #include "gl/glut.h"
 
+#pragma warning(disable : 4003)
 #include <Common\Common.h>
+
 #include <iostream>
 #include <Math\Geometry.h>
 #include <Core\TriangleMesh.h>

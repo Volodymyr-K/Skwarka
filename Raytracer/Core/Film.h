@@ -24,11 +24,11 @@ class Film
 
     void AddSample(const Point2D_d &i_image_point, const Spectrum_f &i_spectrum, float i_alpha);
 
-    void SetCropWindow(const Point2D_d &i_start, const Point2D_d &i_end);
+    void SetCropWindow(const Point2D_d &i_begin, const Point2D_d &i_end);
 
-    void GetSampleExtent(Point2D_i &o_start, Point2D_i &o_end) const;
+    void GetSampleExtent(Point2D_i &o_begin, Point2D_i &o_end) const;
 
-    void GetPixel(size_t i_x, size_t i_y, Spectrum_f o_spectrum, float &o_alfa, bool i_normalize_values = true) const;
+    void GetPixel(size_t i_x, size_t i_y, Spectrum_f &o_spectrum, float &o_alfa, bool i_clamp_values = true) const;
 
   private:
     // not implemented
@@ -71,7 +71,7 @@ inline size_t Film::GetYResolution() const
   return m_y_resolution;
   }
 
-inline void Film::GetPixel(size_t i_x, size_t i_y, Spectrum_f o_spectrum, float &o_alfa, bool i_normalize_values) const
+inline void Film::GetPixel(size_t i_x, size_t i_y, Spectrum_f &o_spectrum, float &o_alfa, bool i_clamp_values) const
   {
   ASSERT(i_x<m_x_resolution && i_y<m_y_resolution);
   const FilmPixel &pixel = m_pixels[i_y][i_x];
@@ -81,7 +81,7 @@ inline void Film::GetPixel(size_t i_x, size_t i_y, Spectrum_f o_spectrum, float 
     float invWt = 1.f / pixel.m_weight_sum;
     o_spectrum=pixel.m_spectrum*invWt;
     o_alfa=pixel.m_alpha*invWt;
-    if (i_normalize_values)
+    if (i_clamp_values)
       {
       o_spectrum[0]=Clamp(o_spectrum[0], 0.f, FLT_INF);
       o_spectrum[1]=Clamp(o_spectrum[1], 0.f, FLT_INF);

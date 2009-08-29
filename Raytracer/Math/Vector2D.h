@@ -191,8 +191,8 @@ template<typename T>
 void Vector2D<T>::Normalize()
   {
   T length = Length();
-  ASSERT(length > 0.0);
-  (*this)/=length;
+  if(length > 0.0)
+    (*this)/=length;
   }
 
 template<typename T>

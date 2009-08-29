@@ -10,7 +10,7 @@ class Camera
   public:
     Camera(const Transform &i_camera2world, shared_ptr<Film> ip_film);
 
-    virtual double GenerateRay(const Point2D_d &i_image_point, const Point2D_d &i_lens_point, Ray &o_ray) const = 0;
+    virtual double GenerateRay(const Point2D_d &i_image_point, const Point2D_d &i_lens_uv, Ray &o_ray) const = 0;
 
     shared_ptr<Film> GetFilm() const;
 
@@ -29,7 +29,8 @@ class PerspectiveCamera: public Camera
   public:
     PerspectiveCamera(const Transform &i_camera2world, shared_ptr<Film> ip_film, const double &i_lens_radius, const double &i_focal_distance, const double &i_x_view_angle);
 
-    double GenerateRay(const Point2D_d &i_image_point, const Point2D_d &i_lens_point, Ray &o_ray) const;
+    double GenerateRay(const Point2D_d &i_image_point, const Point2D_d &i_lens_uv, Ray &o_ray) const;
+
   private:
     double m_lens_radius;
     double m_focal_distance;

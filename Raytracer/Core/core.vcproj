@@ -164,6 +164,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Sampler.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\TriangleMesh.cpp"
 				>
 			</File>
@@ -199,6 +203,14 @@
 			</File>
 			<File
 				RelativePath=".\Primitive.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Sample.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Sampler.h"
 				>
 			</File>
 			<File
