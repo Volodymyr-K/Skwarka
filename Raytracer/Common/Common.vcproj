@@ -158,10 +158,6 @@
 				RelativePath=".\Log.h"
 				>
 			</File>
-			<File
-				RelativePath=".\RandomGenerator.h"
-				>
-			</File>
 		</Filter>
 	</Files>
 	<Globals>

@@ -5,17 +5,19 @@
 #include <Common\Common.h>
 
 #include <Math\Geometry.h>
-#include <Raytracer\TriangleMesh.h>
+#include <Raytracer\Core\TriangleMesh.h>
 #include <Shapes\Sphere.h>
-#include <Raytracer\TriangleTree.h>
+#include <Raytracer\Core\TriangleTree.h>
 #include "stdafx.h"
 #include <WinBase.h>
 #include <cstdio>
-#include <Raytracer\Spectrum.h>
+#include <Raytracer\Core\Spectrum.h>
 #include <Math\Util.h>
-#include <Raytracer\Camera.h>
-#include <Raytracer\Sample.h>
-#include <Raytracer\Sampler.h>
+#include <Raytracer\Core\Camera.h>
+#include <Raytracer\FilmFilters\BoxFilter.h>
+#include <Raytracer\Core\Sample.h>
+#include <Raytracer\Samplers\RandomSampler.h>
+#include <Raytracer\Cameras\PerspectiveCamera.h>
 
 class TestTracer
   {

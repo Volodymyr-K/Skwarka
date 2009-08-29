@@ -1,5 +1,5 @@
-#ifndef FILMFILTER_H
-#define FILMFILTER_H
+#ifndef FILM_FILTER_H
+#define FILM_FILTER_H
 
 class FilmFilter
   {
@@ -23,12 +23,4 @@ class FilmFilter
     double m_x_width, m_y_width;
   };
 
-class BoxFilter: public FilmFilter
-  {
-  public:
-    BoxFilter(const double &i_x_width, const double &i_y_width);
-
-    double Evaluate(const double &i_x, const double &i_y) const;
-  };
-
-#endif // FILMFILTER_H
+#endif // FILM_FILTER_H

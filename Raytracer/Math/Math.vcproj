@@ -187,6 +187,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\RandomGenerator.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Ray.h"
 				>
 			</File>

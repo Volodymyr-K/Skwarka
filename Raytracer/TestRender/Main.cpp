@@ -7,7 +7,7 @@
 
 #include <iostream>
 #include <Math\Geometry.h>
-#include <Raytracer\TriangleMesh.h>
+#include <Raytracer\Core\TriangleMesh.h>
 #include <Shapes\Sphere.h>
 #include <vector>
 #include <cstdio>
