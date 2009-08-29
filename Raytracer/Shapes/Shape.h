@@ -7,7 +7,7 @@
 #include <sstream>
 #include <algorithm>
 #include <Math\Geometry.h>
-#include <Core\TriangleMesh.h>
+#include <Raytracer\TriangleMesh.h>
 
 class Shape
   {

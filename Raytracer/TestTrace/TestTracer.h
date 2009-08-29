@@ -5,17 +5,17 @@
 #include <Common\Common.h>
 
 #include <Math\Geometry.h>
-#include <Core\TriangleMesh.h>
+#include <Raytracer\TriangleMesh.h>
 #include <Shapes\Sphere.h>
-#include <Core\TriangleTree.h>
+#include <Raytracer\TriangleTree.h>
 #include "stdafx.h"
 #include <WinBase.h>
 #include <cstdio>
-#include <Core\Spectrum.h>
+#include <Raytracer\Spectrum.h>
 #include <Math\Util.h>
-#include <Core\Camera.h>
-#include <Core\Sample.h>
-#include <Core\Sampler.h>
+#include <Raytracer\Camera.h>
+#include <Raytracer\Sample.h>
+#include <Raytracer\Sampler.h>
 
 class TestTracer
   {
@@ -144,7 +144,7 @@ inline void TestTracer::RenderImage()
   Vector3D_d direction = Vector3D_d(0,-0.5,-1).Normalized();
   Camera *cam =  new PerspectiveCamera( MakeLookAt(Point3D_d(0.0,0.25,0.17),direction,Vector3D_d(0,1,0)), shared_ptr<Film>(film), 0.03, 0.165, 2.0);
 
-  Sampler *sampler = new RandomSampler(Point2D_i(0,0),Point2D_i(GetImageWidth(), GetImageHeight()),30);
+  Sampler *sampler = new RandomSampler(Point2D_i(0,0),Point2D_i(GetImageWidth(), GetImageHeight()),5);
   shared_ptr<Sample> p_sample = sampler->CreateSample();
 
   while (sampler->GetNextSample(p_sample))

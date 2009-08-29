@@ -7,7 +7,7 @@
 
 #include <iostream>
 #include <Math\Geometry.h>
-#include <Core\TriangleMesh.h>
+#include <Raytracer\TriangleMesh.h>
 #include <Shapes\Sphere.h>
 #include <vector>
 #include <cstdio>
@@ -74,8 +74,8 @@ void LoadMesh()
 // InitAll
 //---------------------------
 void InitAll() {
-	glClearColor(0.50, 0.50, 0.50, 1.0);
-	glEnable(GL_DEPTH_TEST);
+    glClearColor(0.50, 0.50, 0.50, 1.0);
+    glEnable(GL_DEPTH_TEST);
   glEnable(GL_LIGHTING);
   glEnable(GL_LIGHT0);
   glLightModelf(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
@@ -119,21 +119,21 @@ void glut_display() {
     glVertex3f(v3[0], v3[1], v3[2]);
    }
   glEnd();
-	
- 	glutSwapBuffers();
+    
+    glutSwapBuffers();
 }
 
 void glut_reshape(int w, int h) {
-	glViewport(0, 0, w, h);
+    glViewport(0, 0, w, h);
 
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	gluPerspective(65.0, (float)w / (float)h, 0.1, 500.0);
-	glMatrixMode(GL_MODELVIEW);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluPerspective(65.0, (float)w / (float)h, 0.1, 500.0);
+    glMatrixMode(GL_MODELVIEW);
 }
 
 void glut_idle() {
-	glutPostRedisplay();
+    glutPostRedisplay();
 }
 
 void glut_keyboard(unsigned char key, int x, int y) {
@@ -158,25 +158,25 @@ void glut_keyboard(unsigned char key, int x, int y) {
   cx=r*sin(an);
   cz=r*cos(an);
 
-	if (key == 27) {
-		exit(0);
-	}
+    if (key == 27) {
+        exit(0);
+    }
 }
 
 int main (int argc, char **argv) {
-	glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_RGB | GLUT_DEPTH | GLUT_DOUBLE);
-	glutInitWindowSize(500, 500);
-	glutCreateWindow(window_caption);
+    glutInit(&argc, argv);
+    glutInitDisplayMode(GLUT_RGB | GLUT_DEPTH | GLUT_DOUBLE);
+    glutInitWindowSize(500, 500);
+    glutCreateWindow(window_caption);
 
-	glutDisplayFunc(glut_display);
-	glutReshapeFunc(glut_reshape);
-	glutIdleFunc(glut_idle);
-	glutKeyboardFunc(glut_keyboard);
+    glutDisplayFunc(glut_display);
+    glutReshapeFunc(glut_reshape);
+    glutIdleFunc(glut_idle);
+    glutKeyboardFunc(glut_keyboard);
 
-	InitAll();
+    InitAll();
 
   LoadMesh();
 
-	glutMainLoop();
+    glutMainLoop();
 }
