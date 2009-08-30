@@ -1,5 +1,5 @@
-#ifndef RANDOMGENERATOR_H
-#define RANDOMGENERATOR_H
+#ifndef RANDOM_GENERATOR_H
+#define RANDOM_GENERATOR_H
 
 #include <limits>
 #include <boost\random\mersenne_twister.hpp>
@@ -39,13 +39,13 @@ m_generator(i_seed), m_inv_max(1.0/std::numeric_limits<typename UnderlyingRandom
 template<typename ResultType, typename UnderlyingRandomGenerator>
 ResultType RandomGenerator<ResultType,UnderlyingRandomGenerator>::operator()(ResultType i_max_value)
   {
-  return m_generator()*(i_max_value*m_inv_max);
+  return (ResultType) ( m_generator()*(i_max_value*m_inv_max) );
   }
 
 template<typename ResultType, typename UnderlyingRandomGenerator>
 ResultType RandomGenerator<ResultType,UnderlyingRandomGenerator>::operator()(ResultType i_min_value, ResultType i_max_value)
   {
-  return i_min_value + m_generator()*((i_max_value-i_min_value)*m_inv_max);
+  return i_min_value + this->operator()(i_max_value-i_min_value);
   }
 
 template<typename ResultType, typename UnderlyingRandomGenerator>
@@ -54,4 +54,4 @@ void RandomGenerator<ResultType,UnderlyingRandomGenerator>::SetSeed(typename Und
   m_generator.seed(i_seed);
   }
 
-#endif // RANDOMGENERATOR_H
+#endif // RANDOM_GENERATOR_H

@@ -1,18 +1,22 @@
-#ifndef SAMPLING_H
-#define SAMPLING_H
+#ifndef SAMPLING_ROUTINES_H
+#define SAMPLING_ROUTINES_H
 
+#include <vector>
 #include <Math\Geometry.h>
 
-namespace Sampling
+namespace SamplingRoutines
   {
   template<typename T>
   void ConcentricSampleDisk(const Point2D<T> i_sample, Point2D<T> &o_point);
+
+  //template<typename T, typename RandomGeneratorType = void>
+  //void StratifiedSample2D(std::vector<Point2D<T> > o_samples, size_t m_x_samples, size_t m_y_samples, bool i_jitter_samples, RandomGeneratorType *ip_random_generator = NULL);
   };
 
 /////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-namespace Sampling
+namespace SamplingRoutines
   {
   template<typename T>
   void ConcentricSampleDisk(const Point2D<T> i_sample, Point2D<T> &o_point)
@@ -66,6 +70,26 @@ namespace Sampling
     theta *= M_PI / 4.0;
     o_point = Point2D<T>(r*cos(theta), r*sin(theta));
     }
+/*
+  template<typename T, typename RandomGeneratorType = void>
+  void StratifiedSample2D(std::vector<Point2D<T> > o_samples, size_t m_x_samples, size_t m_y_samples, bool i_jitter_samples, RandomGeneratorType *ip_random_generator)
+    {
+    ASSERT(m_x_samples>0 && m_y_samples>0);
+    ASSERT(i_jitter_samples==false || ip_random_generator!=NULL);
+
+    o_samples.clear();
+
+    T inv_x_samples = 1.0/m_x_samples;
+    T inv_y_samples = 1.0/m_y_samples;
+    for (int y = 0; y < m_y_samples; ++y)
+      for (int x = 0; x < m_x_samples; ++x)
+        {
+        T jx = i_jitter_samples ? (*ip_random_generator)(1.0) : 0.5f;
+        T jy = i_jitter_samples ? (*ip_random_generator)(1.0) : 0.5f;
+        o_samples.push_back( (x + jx) * inv_x_samples, (y + jy) * inv_y_samples );
+        }
+    }
+*/
   };
 
-#endif // SAMPLING_H
+#endif // SAMPLING_ROUTINES_H

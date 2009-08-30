@@ -23,8 +23,9 @@ class Sampler
     virtual ~Sampler();
 
   protected:
-    virtual size_t _RoundSamplesNumber(size_t i_samples_number) = 0;
+    virtual size_t _RoundSamplesNumber(size_t i_samples_number) const = 0;
     virtual void _GetSample(const Point2D_i &i_current_pixel, size_t i_pixel_sample_index, shared_ptr<Sample> op_sample) = 0;
+    virtual void _PrecomputeSamplesForPixel(const Point2D_i &i_current_pixel);
 
   private:
     // not implemented

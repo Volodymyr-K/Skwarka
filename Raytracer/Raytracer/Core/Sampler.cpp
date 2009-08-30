@@ -43,6 +43,7 @@ bool Sampler::GetNextSample(shared_ptr<Sample> op_sample)
       }
 
     m_pixel_sample_index=0;
+    _PrecomputeSamplesForPixel(m_current_pixel);
     }
 
   _GetSample(m_current_pixel, m_pixel_sample_index, op_sample);
@@ -54,6 +55,11 @@ bool Sampler::GetNextSample(shared_ptr<Sample> op_sample)
 size_t Sampler::GetTotalSamplesNum() const
   {
   return (m_image_end[0]-m_image_begin[0])*(m_image_end[1]-m_image_begin[1])*m_samples_per_pixel;
+  }
+
+void Sampler::_PrecomputeSamplesForPixel(const Point2D_i &i_current_pixel)
+  {
+  // Nothing to precompute by-default
   }
 
 Sampler::~Sampler()

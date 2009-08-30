@@ -1,5 +1,5 @@
 #include "PerspectiveCamera.h"
-#include <Math\Sampling.h>
+#include <Math\SamplingRoutines.h>
 
 PerspectiveCamera::PerspectiveCamera(const Transform &i_camera2world, shared_ptr<Film> ip_film, const double &i_lens_radius, const double &i_focal_distance, const double &i_x_view_angle):
 Camera(i_camera2world, ip_film), m_lens_radius(i_lens_radius), m_focal_distance(i_focal_distance), m_x_view_angle(i_x_view_angle)
@@ -32,7 +32,7 @@ double PerspectiveCamera::GenerateRay(const Point2D_d &i_image_point, const Poin
     {
     // Sample point on lens
     Point2D_d lens_point;
-    Sampling::ConcentricSampleDisk(i_lens_uv, lens_point);
+    SamplingRoutines::ConcentricSampleDisk(i_lens_uv, lens_point);
     lens_point *= m_lens_radius;
     // Compute point on plane of focus
     Point3D_d focus_point = o_ray(m_focal_distance);

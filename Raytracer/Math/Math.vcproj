@@ -40,11 +40,11 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\;..\..\..\ThirdParty\;..\..\..\ThirdParty\boost\;"
-				PreprocessorDefinitions="_DEBUG"
+				AdditionalIncludeDirectories="..\;..\..\..\ThirdParty\;..\..\..\ThirdParty\boost\;..\..\..\ThirdParty\TBB\2.2\include"
+				PreprocessorDefinitions="TBB_USE_DEBUG;_DEBUG;NOMINMAX"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="1"
+				RuntimeLibrary="3"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				DebugInformationFormat="4"
@@ -107,9 +107,9 @@
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
-				AdditionalIncludeDirectories="..\;..\..\..\ThirdParty\;..\..\..\ThirdParty\boost\;"
-				PreprocessorDefinitions="NDEBUG"
-				RuntimeLibrary="0"
+				AdditionalIncludeDirectories="..\;..\..\..\ThirdParty\;..\..\..\ThirdParty\boost\;..\..\..\ThirdParty\TBB\2.2\include"
+				PreprocessorDefinitions="NDEBUG;NOMINMAX"
+				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -153,6 +153,10 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath=".\MultiThreadedRandom.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Transform.cpp"
 				>
 			</File>
@@ -179,6 +183,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\MultiThreadedRandom.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Point2D.h"
 				>
 			</File>
@@ -195,7 +203,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Sampling.h"
+				RelativePath=".\SamplingRoutines.h"
 				>
 			</File>
 			<File

@@ -4,6 +4,12 @@
 #pragma warning(disable : 4003)
 #include <Common\Common.h>
 
+#include "tbb/pipeline.h"
+#include "tbb/tick_count.h"
+#include "tbb/task_scheduler_init.h"
+
+#include "tbb_pipeline_stuff.h"
+
 #include <Math\Geometry.h>
 #include <Raytracer\Core\TriangleMesh.h>
 #include <Shapes\Sphere.h>
@@ -18,6 +24,7 @@
 #include <Raytracer\Core\Sample.h>
 #include <Raytracer\Samplers\RandomSampler.h>
 #include <Raytracer\Cameras\PerspectiveCamera.h>
+#include <Math\MultiThreadedRandom.h>
 
 class TestTracer
   {
@@ -58,6 +65,7 @@ inline void TestTracer::LoadMesh()
   mp_mesh = s.BuildMesh();
 
 */
+
   std::vector<Point3D_f> vertices;
   std::vector<MeshTriangle> triangles;
   std::vector<float> uv_parameterization;
@@ -147,7 +155,7 @@ inline void TestTracer::RenderImage()
   Camera *cam =  new PerspectiveCamera( MakeLookAt(Point3D_d(0.0,0.25,0.17),direction,Vector3D_d(0,1,0)), shared_ptr<Film>(film), 0.03, 0.165, 2.0);
 
   Sampler *sampler = new RandomSampler(Point2D_i(0,0),Point2D_i(GetImageWidth(), GetImageHeight()),5);
-  shared_ptr<Sample> p_sample = sampler->CreateSample();
+/*  shared_ptr<Sample> p_sample = sampler->CreateSample();
 
   while (sampler->GetNextSample(p_sample))
     {
@@ -165,7 +173,34 @@ inline void TestTracer::RenderImage()
       cam->GetFilm()->AddSample(p_sample->GetImagePoint(), Spectrum_f(color*255.f, color*255.f, color*255.f), 1.f);
       }
     }
+*/
 
+  tbb::task_scheduler_init init( 2 );
+
+  tbb::pipeline pipeline;
+
+  MyInputFilter input_filter(sampler);
+  pipeline.add_filter( input_filter );
+
+  // Create capitalization stage and add it to the pipeline
+  MyTransformFilter transform_filter(cam, mp_tree); 
+  pipeline.add_filter(transform_filter);
+
+  // Create file-writing stage and add it to the pipeline
+  MyOutputFilter output_filter(cam->GetFilm());
+  pipeline.add_filter( output_filter );
+
+  // Run the pipeline
+  tbb::tick_count t0 = tbb::tick_count::now();
+  pipeline.run( MyInputFilter::n_chunks );
+  tbb::tick_count t1 = tbb::tick_count::now();
+
+  printf("time = %g\n", (t1-t0).seconds());
+
+  // Remove filters from pipeline before they are implicitly destroyed.
+  pipeline.clear(); 
+
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
   for(int y=0;y<GetImageHeight();++y)
     for(int x=0;x<GetImageWidth();++x)
       {
@@ -193,56 +228,6 @@ inline bool TestTracer::ComputeDG(Point3D_d c, Vector3D_d dir, DifferentialGeome
   rd.m_base_ray.m_direction=dir;
   result.mp_mesh->ComputeDifferentialGeometry(result.m_triangle_index,rd,dg);
   return true;
-
-  /*
-  double min_t=DBL_INF;
-  int index=-1;
-
-  for(int i=0;i<int(mp_mesh->GetNumberOfTriangles());++i)
-    {
-    MeshTriangle triangle = mp_mesh->GetTriangle(i);
-    const Point3D_d &v0 = mp_mesh->GetVertex(triangle.m_vertices[0]);
-    const Point3D_d &v1 = mp_mesh->GetVertex(triangle.m_vertices[1]);
-    const Point3D_d &v2 = mp_mesh->GetVertex(triangle.m_vertices[2]);
-
-    Vector3D_d e1 = Vector3D_d(v1 - v0);
-    Vector3D_d e2 = Vector3D_d(v2 - v0);
-    Vector3D_d s1 = dir^e2;
-    double divisor = s1*e1;
-    if (divisor == 0.0)
-      continue;
-    double invDivisor = 1.0 / divisor;
-
-    // Compute first barycentric coordinate
-    Vector3D_d d = Vector3D_d(c - v0);
-    double b1 = (d*s1) * invDivisor;
-    if(b1 < 0.0 || b1 > 1.0)
-      continue;
-
-    // Compute second barycentric coordinate
-    Vector3D_d s2 = d^e1;
-    double b2 = (dir*s2) * invDivisor;
-    if(b2 < 0.0 || b1 + b2 > 1.0)
-      continue;
-
-    // Compute t to intersection point
-    double t = (e2*s2) * invDivisor;
-    if (t>=0.0 && t<min_t)
-      {
-      min_t=t;
-      index=i;
-      }
-    }
-
-  if (index==-1)
-    return false;
-
-  RayDifferential rd;
-  rd.m_base_ray.m_origin=c;
-  rd.m_base_ray.m_direction=dir;
-  mp_mesh->ComputeDifferentialGeometry(index,rd,dg);
-  return true;
-  */
   }
 
 #endif // TESTTRACER_H
