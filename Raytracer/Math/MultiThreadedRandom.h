@@ -10,15 +10,16 @@ template<typename UnderlyingRandomGenerator>
 class MultiThreadedRandomGenerator
   {
   private:
-    typedef tbb::enumerable_thread_specific< UnderlyingRandomGenerator, tbb::cache_aligned_allocator<UnderlyingRandomGenerator>, tbb::ets_key_per_instance> ThreadedRandomGenerator;
+    typedef tbb::enumerable_thread_specific<UnderlyingRandomGenerator, tbb::cache_aligned_allocator<UnderlyingRandomGenerator>, tbb::ets_key_per_instance> ThreadRandomGenerators;
 
   public:
     MultiThreadedRandomGenerator(bool i_decorrelate_thread_generators = true);
 
+    unsigned int GenerateUIntRandom();
     double GenerateNormalizedRandom();
 
   private:
-    ThreadedRandomGenerator m_thread_generators;
+    ThreadRandomGenerators m_thread_generators;
 
     bool m_decorrelate_thread_generators;
     const double m_inv_max;
@@ -41,8 +42,14 @@ m_inv_max(1.0/std::numeric_limits<typename UnderlyingRandomGenerator::result_typ
   }
 
 template<typename UnderlyingRandomGenerator>
-typename double MultiThreadedRandomGenerator<UnderlyingRandomGenerator>::GenerateNormalizedRandom()
+double MultiThreadedRandomGenerator<UnderlyingRandomGenerator>::GenerateNormalizedRandom()
   {  
+  return GenerateUIntRandom()*m_inv_max;
+  }
+
+template<typename UnderlyingRandomGenerator>
+unsigned int MultiThreadedRandomGenerator<UnderlyingRandomGenerator>::GenerateUIntRandom()
+  {
   bool exists;
   UnderlyingRandomGenerator &thread_local_generator = m_thread_generators.local(exists);
 
@@ -50,7 +57,7 @@ typename double MultiThreadedRandomGenerator<UnderlyingRandomGenerator>::Generat
   if (exists==false && m_decorrelate_thread_generators)
     thread_local_generator.seed(GetCurrentThreadId());
 
-  return thread_local_generator()*m_inv_max;
+  return thread_local_generator();
   }
 
 // Global functions
@@ -67,11 +74,13 @@ inline double RandomDouble(double i_min_value, double i_max_value)
   return i_min_value + RandomDouble(i_max_value-i_min_value);
   }
 
+// excluding i_max_value
 inline unsigned int RandomUInt(unsigned int i_max_value)
   {
-  return (unsigned int) (global_multi_threaded_random_generator.GenerateNormalizedRandom() * i_max_value);
+  return global_multi_threaded_random_generator.GenerateUIntRandom() % i_max_value;
   }
 
+// excluding i_max_value
 inline unsigned int RandomUInt(unsigned int i_min_value, unsigned int i_max_value)
   {
   return i_min_value + RandomUInt(i_max_value - i_min_value);

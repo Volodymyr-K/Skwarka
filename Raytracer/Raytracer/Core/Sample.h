@@ -4,7 +4,6 @@
 #include <Common\Common.h>
 #include <Math\Geometry.h>
 #include <vector>
-#include <utility>
 
 struct SamplesSequence1D 
   {
@@ -17,7 +16,7 @@ struct SamplesSequence1D
 
 struct SamplesSequence2D 
   {
-  typedef std::vector<std::pair<double,double> >::iterator IteratorType;
+  typedef std::vector<Point2D_d>::iterator IteratorType;
 
   SamplesSequence2D(IteratorType i_begin, IteratorType i_end);
 
@@ -52,7 +51,7 @@ class Sample
     Point2D_d m_lens_uv;
 
     std::vector<double> m_1D_samples;
-    std::vector<std::pair<double,double> > m_2D_samples;
+    std::vector<Point2D_d> m_2D_samples;
 
     std::vector<SamplesSequence1D> m_sample_sequences_1D;
     std::vector<SamplesSequence2D> m_sample_sequences_2D;
@@ -89,7 +88,7 @@ inline Sample::Sample(const std::vector<size_t> &i_sequences_1D_size, const std:
   for(size_t i=0;i<i_sequences_2D_size.size();++i)
     total_2D_samples+=i_sequences_2D_size[i];
 
-  m_2D_samples.assign(total_2D_samples, std::make_pair(0.0,0.0));
+  m_2D_samples.assign(total_2D_samples, Point2D_d());
 
   total_2D_samples=0;
   for(size_t i=0;i<i_sequences_2D_size.size();++i)

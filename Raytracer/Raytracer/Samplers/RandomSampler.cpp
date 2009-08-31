@@ -26,6 +26,6 @@ void RandomSampler::_GetSample(const Point2D_i &i_current_pixel, size_t i_pixel_
     {
     SamplesSequence2D sequence = op_sample->GetSamplesSequence2D(i);
     for(SamplesSequence2D::IteratorType it = sequence.m_begin; it != sequence.m_end; ++it)
-      *it=std::make_pair(RandomDouble(1.0), RandomDouble(1.0));
+      *it=Point2D_d(RandomDouble(1.0), RandomDouble(1.0));
     }
   }

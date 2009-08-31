@@ -43,8 +43,10 @@ bool Sampler::GetNextSample(shared_ptr<Sample> op_sample)
       }
 
     m_pixel_sample_index=0;
-    _PrecomputeSamplesForPixel(m_current_pixel);
     }
+
+  if (m_pixel_sample_index==0)
+    _PrecomputeSamplesForPixel(m_current_pixel);
 
   _GetSample(m_current_pixel, m_pixel_sample_index, op_sample);
 

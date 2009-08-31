@@ -32,7 +32,7 @@ double PerspectiveCamera::GenerateRay(const Point2D_d &i_image_point, const Poin
     {
     // Sample point on lens
     Point2D_d lens_point;
-    SamplingRoutines::ConcentricSampleDisk(i_lens_uv, lens_point);
+    SamplingRoutines::ConcentricDiskSampling(i_lens_uv, lens_point);
     lens_point *= m_lens_radius;
     // Compute point on plane of focus
     Point3D_d focus_point = o_ray(m_focal_distance);

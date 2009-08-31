@@ -23,6 +23,7 @@
 #include <Raytracer\FilmFilters\BoxFilter.h>
 #include <Raytracer\Core\Sample.h>
 #include <Raytracer\Samplers\RandomSampler.h>
+#include <Raytracer\Samplers\StratifiedSampler.h>
 #include <Raytracer\Cameras\PerspectiveCamera.h>
 #include <Math\MultiThreadedRandom.h>
 
@@ -74,8 +75,10 @@ inline void TestTracer::LoadMesh()
   std::vector<size_t> repl;
   #pragma warning(disable : 4996)
   FILE *fp=fopen("vertices.txt","r");
+  int ver=0;
   while(true)
     {
+    //if(++ver>10000) break;
     float x,y,z;
     int read = fscanf(fp,"%f %f %f",&x,&y,&z);
     if (read<=0) break;
@@ -95,9 +98,11 @@ inline void TestTracer::LoadMesh()
 
   int num_tr=0;
   fp=fopen("triangles.txt","r");
+  int tr=0;
   while(true)
     {
     size_t v1,v2,v3;
+   // if(++tr>1000) break;
     int read = fscanf(fp,"%d %d %d",&v1,&v2,&v3);
     if (read<=0) break;
 
@@ -150,30 +155,17 @@ inline void TestTracer::RenderImage()
 
   FilmFilter *filter = new BoxFilter(1.0,1.0);
   Film *film = new Film(GetImageWidth(), GetImageHeight(), shared_ptr<FilmFilter>(filter));
+  //film->SetCropWindow(Point2D_d(0.3,0.0),Point2D_d(0.7,1.0));
+
+  Point2D_i window_begin,window_end;
+  film->GetSampleExtent(window_begin, window_end);
 
   Vector3D_d direction = Vector3D_d(0,-0.5,-1).Normalized();
-  Camera *cam =  new PerspectiveCamera( MakeLookAt(Point3D_d(0.0,0.25,0.17),direction,Vector3D_d(0,1,0)), shared_ptr<Film>(film), 0.03, 0.165, 2.0);
+  Camera *cam =  new PerspectiveCamera( MakeLookAt(Point3D_d(0.0,0.25,0.17),direction,Vector3D_d(0,1,0)), shared_ptr<Film>(film), 0.02, 0.165, 2.0);
 
-  Sampler *sampler = new RandomSampler(Point2D_i(0,0),Point2D_i(GetImageWidth(), GetImageHeight()),5);
-/*  shared_ptr<Sample> p_sample = sampler->CreateSample();
-
-  while (sampler->GetNextSample(p_sample))
-    {
-    Ray ray;
-    cam->GenerateRay(p_sample->GetImagePoint(), p_sample->GetLensUV(), ray);
-
-    DifferentialGeometry dg;
-    bool hit = ComputeDG(ray.m_origin,ray.m_direction,dg);
-
-    if (hit==false)
-      cam->GetFilm()->AddSample(p_sample->GetImagePoint(), Spectrum_f(255.f, 0.f, 0.f), 0.f);
-    else
-      {
-      float color = fabsf(-(dg.m_shading_normal*direction));
-      cam->GetFilm()->AddSample(p_sample->GetImagePoint(), Spectrum_f(color*255.f, color*255.f, color*255.f), 1.f);
-      }
-    }
-*/
+  //Sampler *sampler = new RandomSampler(Point2D_i(0,0),Point2D_i(GetImageWidth(), GetImageHeight()),10);
+  Sampler *sampler = new StratifiedSampler(window_begin, window_end, 4, 4, true);
+  sampler->AddSamplesSequence2D(100);
 
   tbb::task_scheduler_init init( 2 );
 
@@ -210,24 +202,10 @@ inline void TestTracer::RenderImage()
 
       unsigned int pixel_index = (y*GetImageWidth()+x)*4;
       Byte* pixel = m_image;
-      pixel[pixel_index+0] = Byte(sp[0]);
-      pixel[pixel_index+1] = Byte(sp[1]);
-      pixel[pixel_index+2] = Byte(sp[2]);
+      pixel[pixel_index+0] = Byte(std::min(sp[0],255.f));
+      pixel[pixel_index+1] = Byte(std::min(sp[1],255.f));
+      pixel[pixel_index+2] = Byte(std::min(sp[2],255.f));
       }
-  }
-
-inline bool TestTracer::ComputeDG(Point3D_d c, Vector3D_d dir, DifferentialGeometry &dg)
-  {
-  IntersectResult result = mp_tree->Intersect(Ray(c,dir));
-
-  if (result.m_intersection_found==false)
-    return false;
-
-  RayDifferential rd;
-  rd.m_base_ray.m_origin=c;
-  rd.m_base_ray.m_direction=dir;
-  result.mp_mesh->ComputeDifferentialGeometry(result.m_triangle_index,rd,dg);
-  return true;
   }
 
 #endif // TESTTRACER_H

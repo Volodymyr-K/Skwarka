@@ -3,14 +3,23 @@
 
 #include <vector>
 #include <Math\Geometry.h>
+#include <Math\MultiThreadedRandom.h>
 
 namespace SamplingRoutines
   {
-  template<typename T>
-  void ConcentricSampleDisk(const Point2D<T> i_sample, Point2D<T> &o_point);
+  void ConcentricDiskSampling(const Point2D_d i_sample, Point2D_d &o_point);
 
-  //template<typename T, typename RandomGeneratorType = void>
-  //void StratifiedSample2D(std::vector<Point2D<T> > o_samples, size_t m_x_samples, size_t m_y_samples, bool i_jitter_samples, RandomGeneratorType *ip_random_generator = NULL);
+  template<typename ValueIterator>
+  void StratifiedSampling1D(ValueIterator i_begin, size_t i_samples_num, bool i_jitter_samples);
+
+  template<typename Point2DIterator>
+  void StratifiedSampling2D(Point2DIterator i_begin, size_t i_x_samples_num, size_t i_y_samples_num, bool i_jitter_samples);
+
+  template<typename Point2DIterator>
+  void LatinHypercubeSampling2D(Point2DIterator i_begin, size_t i_samples_num, bool i_jitter_samples);
+
+  template<typename T>
+  void Shuffle(std::vector<T> &io_values);
   };
 
 /////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
@@ -18,19 +27,18 @@ namespace SamplingRoutines
 
 namespace SamplingRoutines
   {
-  template<typename T>
-  void ConcentricSampleDisk(const Point2D<T> i_sample, Point2D<T> &o_point)
+  inline void ConcentricDiskSampling(const Point2D_d i_sample, Point2D_d &o_point)
     {
     double r, theta;
 
     // Map uniform random numbers to [-1,1]^2
-    Point2D<T> s = 2.0*i_sample - Point2D<T>(1,1);
+    Point2D_d s = 2.0*i_sample - Point2D_d(1,1);
 
     // Map square to (r,theta)
     // Handle degeneracy at the origin
-    if (s == Point2D<T>(0,0))
+    if (s == Point2D_d(0,0))
       {
-      o_point = Point2D<T>(0,0);
+      o_point = Point2D_d(0,0);
       return;
       }
     if (s[0] >= -s[1])
@@ -68,28 +76,75 @@ namespace SamplingRoutines
       }
 
     theta *= M_PI / 4.0;
-    o_point = Point2D<T>(r*cos(theta), r*sin(theta));
+    o_point = Point2D_d(r*cos(theta), r*sin(theta));
     }
-/*
-  template<typename T, typename RandomGeneratorType = void>
-  void StratifiedSample2D(std::vector<Point2D<T> > o_samples, size_t m_x_samples, size_t m_y_samples, bool i_jitter_samples, RandomGeneratorType *ip_random_generator)
+
+  template<typename ValueIterator>
+  void StratifiedSampling1D(ValueIterator i_begin, size_t i_samples_num, bool i_jitter_samples)
     {
-    ASSERT(m_x_samples>0 && m_y_samples>0);
-    ASSERT(i_jitter_samples==false || ip_random_generator!=NULL);
+    ASSERT(i_samples_num>0);
 
-    o_samples.clear();
+    ValueIterator it = i_begin;
+    double inv_samples_num = 1.0/i_samples_num;
+    for (size_t i = 0; i < i_samples_num; ++i)
+      {
+      double jitter = i_jitter_samples ? RandomDouble(1.0) : 0.5;
+      *(it++) = (i + jitter) * inv_samples_num;
+      }
+    }
 
-    T inv_x_samples = 1.0/m_x_samples;
-    T inv_y_samples = 1.0/m_y_samples;
-    for (int y = 0; y < m_y_samples; ++y)
-      for (int x = 0; x < m_x_samples; ++x)
+  template<typename Point2DIterator>
+  void StratifiedSampling2D(Point2DIterator i_begin, size_t i_x_samples_num, size_t i_y_samples_num, bool i_jitter_samples)
+    {
+    ASSERT(i_x_samples_num>0 && i_y_samples_num>0);
+
+    Point2DIterator it = i_begin;
+    double inv_x_samples_num = 1.0/i_x_samples_num;
+    double inv_y_samples_num = 1.0/i_y_samples_num;
+    for (size_t y = 0; y < i_y_samples_num; ++y)
+      for (size_t x = 0; x < i_x_samples_num; ++x)
         {
-        T jx = i_jitter_samples ? (*ip_random_generator)(1.0) : 0.5f;
-        T jy = i_jitter_samples ? (*ip_random_generator)(1.0) : 0.5f;
-        o_samples.push_back( (x + jx) * inv_x_samples, (y + jy) * inv_y_samples );
+        double jx = i_jitter_samples ? RandomDouble(1.0) : 0.5;
+        double jy = i_jitter_samples ? RandomDouble(1.0) : 0.5;
+        *(it++) = Point2D_d((x + jx) * inv_x_samples_num, (y + jy) * inv_y_samples_num);
         }
     }
-*/
+
+  template<typename Point2DIterator>
+  void LatinHypercubeSampling2D(Point2DIterator i_begin, size_t i_samples_num, bool i_jitter_samples)
+    {
+    if (i_samples_num==0)
+      return;
+
+    // Generate LHS samples along diagonal
+    double delta = 1.0 / i_samples_num;
+    for (size_t i = 0; i < i_samples_num; ++i)
+      {
+      double jx = i_jitter_samples ? RandomDouble(1.0) : 0.5;
+      double jy = i_jitter_samples ? RandomDouble(1.0) : 0.5;
+      *(i_begin+i) = Point2D_d( (i + jx) * delta, (i + jy) * delta );
+      }
+
+    // Permute LHS samples in each dimension
+    for (size_t i = 0; i < 2; ++i)
+      for (size_t j = 0; j < i_samples_num; ++j)
+        {
+        size_t other = RandomUInt(i_samples_num);
+        std::swap( (*(i_begin+j)) [i], (*(i_begin+other)) [i] );
+        }
+    }
+
+  template<typename T>
+  void Shuffle(std::vector<T> &io_values)
+    {
+    for (size_t i = 0; i < io_values.size(); ++i)
+      {
+      unsigned int other = RandomUInt(io_values.size());
+      std::swap(io_values[i], io_values[other]);
+      }
+    }
+
   };
+
 
 #endif // SAMPLING_ROUTINES_H

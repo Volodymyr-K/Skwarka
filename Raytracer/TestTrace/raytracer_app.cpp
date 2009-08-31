@@ -18,7 +18,7 @@ LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK About(HWND, UINT, WPARAM, LPARAM);
 
 #define IMAGE_WIDTH 800
-#define IMAGE_HEIGHT 800
+#define IMAGE_HEIGHT 600
 
 TestTracer *tracer;
 Console* g_console;
