@@ -2,7 +2,7 @@
 #define TESTTRACER_H
 
 #pragma warning(disable : 4003)
-#include <Common\Common.h>
+#include <Common/Common.h>
 
 #include "tbb/pipeline.h"
 #include "tbb/tick_count.h"
@@ -10,22 +10,22 @@
 
 #include "tbb_pipeline_stuff.h"
 
-#include <Math\Geometry.h>
-#include <Raytracer\Core\TriangleMesh.h>
-#include <Shapes\Sphere.h>
-#include <Raytracer\Core\TriangleTree.h>
+#include <Math/Geometry.h>
+#include <Raytracer/Core/TriangleMesh.h>
+#include <Shapes/Sphere.h>
+#include <Raytracer/Core/TriangleTree.h>
 #include "stdafx.h"
 #include <WinBase.h>
 #include <cstdio>
-#include <Raytracer\Core\Spectrum.h>
-#include <Math\Util.h>
-#include <Raytracer\Core\Camera.h>
-#include <Raytracer\FilmFilters\BoxFilter.h>
-#include <Raytracer\Core\Sample.h>
-#include <Raytracer\Samplers\RandomSampler.h>
-#include <Raytracer\Samplers\StratifiedSampler.h>
-#include <Raytracer\Cameras\PerspectiveCamera.h>
-#include <Math\MultiThreadedRandom.h>
+#include <Raytracer/Core/Spectrum.h>
+#include <Math/Util.h>
+#include <Raytracer/Core/Camera.h>
+#include <Raytracer/FilmFilters/BoxFilter.h>
+#include <Raytracer/Core/Sample.h>
+#include <Raytracer/Samplers/RandomSampler.h>
+#include <Raytracer/Samplers/StratifiedSampler.h>
+#include <Raytracer/Cameras/PerspectiveCamera.h>
+#include <Math/MultiThreadedRandom.h>
 
 class TestTracer
   {
@@ -62,9 +62,8 @@ inline void TestTracer::LoadMesh()
   Sphere s;
   s.SetParameter("Center","0 0 0");
   s.SetParameter("Radius","0.4");
-  s.SetParameter("Subdivisions","5");
+  s.SetParameter("Subdivisions","-3");
   mp_mesh = s.BuildMesh();
-
 */
 
   std::vector<Point3D_f> vertices;
@@ -165,7 +164,7 @@ inline void TestTracer::RenderImage()
 
   //Sampler *sampler = new RandomSampler(Point2D_i(0,0),Point2D_i(GetImageWidth(), GetImageHeight()),10);
   Sampler *sampler = new StratifiedSampler(window_begin, window_end, 4, 4, true);
-  sampler->AddSamplesSequence2D(100);
+  //sampler->AddSamplesSequence2D(100);
 
   tbb::task_scheduler_init init( 2 );
 

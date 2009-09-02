@@ -1,10 +1,16 @@
 #ifndef POINT2D_H
 #define POINT2D_H
 
-#include <Common\Common.h>
+#include <Common/Common.h>
 #include "Constants.h"
 #include <cmath>
+#include <istream>
 
+/**
+* Class template for 2D point entity.
+* The template parameter corresponds to the type of the point coordinates.
+* @sa Point3D, Vector3D, Vector2D
+*/
 template<typename T>
 class Point2D
   {
@@ -37,6 +43,15 @@ class Point2D
 template<typename T>
 Point2D<T> operator*(T i_value, const Point2D<T> &i_point);
 
+/**
+* Reads Point2D from the input stream.
+*/
+template <class charT, class traits, typename T>
+std::basic_istream<charT,traits>& operator >> (std::basic_istream<charT,traits>& i_stream, Point2D<T> &o_point);
+
+/**
+* Converts Point2D instance to a Point2D parameterized by a specified type.
+*/
 template<typename T2, typename T>
 Point2D<T2> Convert(const Point2D<T> &i_point);
 
@@ -158,6 +173,14 @@ Point2D<T> operator*(T i_value, const Point2D<T> &i_point)
   {
   return i_point*i_value;
   }
+
+template <class charT, class traits, typename T>
+inline std::basic_istream<charT,traits>& operator >> (std::basic_istream<charT,traits>& i_stream, Point2D<T> &o_point)
+  {
+  i_stream >> o_point[0] >> o_point[1];
+  return i_stream;
+  }
+
 
 template<typename T2, typename T>
 Point2D<T2> Convert(const Point2D<T> &i_point)

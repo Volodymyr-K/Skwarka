@@ -1,124 +1,136 @@
 #ifndef SHAPE_H
 #define SHAPE_H
 
-#include <Common\Common.h>
+#include <Common/Common.h>
 #include <string>
 #include <map>
 #include <sstream>
 #include <algorithm>
-#include <Math\Geometry.h>
-#include <Raytracer\Core\TriangleMesh.h>
+#include <Math/Geometry.h>
+#include <Raytracer/Core/TriangleMesh.h>
 
+/**
+* Interface class for all shapes that can be triangulated into a TriangleMesh.
+* This is a base class with only pure virtual methods. The interface defines a contract for all shapes that being configured from text parameters
+* can produce TriangleMesh. The produced mesh is an approximated triangulation of the original shape defined by the Shape implementation.
+* @sa BaseShape, TriangleMesh
+*/
 class Shape
   {
   public:
-    Shape() {}
+    Shape();
 
+    /**
+    * Sets (name, value) pair for a configuration parameter for the shape.
+    * The parameter name is case-insensitive. If a parameter with the same name has already been set the old value is overwritten.
+    */
     virtual void SetParameter(const std::string &i_parameter_name, const std::string &i_parameter_value) = 0;
+
+    /**
+    * Build mesh after all the parameters are set.
+    * @return Smart pointer to the built mesh or a point to NULL if the mesh was not built yet.
+    */
     virtual shared_ptr<TriangleMesh> BuildMesh() = 0;
 
-    virtual ~Shape() {}
+    /**
+    * Returns descriptions of the errors meet when building the mesh.
+    * This method should be called after BuildMesh() method returned NULL pointer.
+    * @return Vector of strings explaining the problems (e.g. missing or invalid parameters etc.).
+    */
+    virtual std::vector<std::string> GetErrors() const = 0;
+
+    virtual ~Shape();
 
   private:
+    // Not implemented, Shape is not a value type.
     Shape(const Shape&);
     Shape &operator=(const Shape&);
   };
 
+/**
+* A convenient base class for Shape implementations.
+* It implements parameters setting and retrieving and error handling.
+* @sa Shape, TriangleMesh
+*/
 class BaseShape: public Shape
   {
   public:
+    /**
+    * Sets (name, value) pair for a configuration parameter for the shape.
+    * The parameter name is case-insensitive. If a parameter with the same name has already been set the old value is overwritten.
+    */
     void SetParameter(const std::string &i_parameter_name, const std::string &i_parameter_value);
 
-    virtual ~BaseShape() {}
+    /**
+    * Returns descriptions of the errors meet when building the mesh.
+    * This method should be called after BuildMesh() method returned NULL pointer.
+    * @return Vector of strings explaining the problems (e.g. missing or invalid parameters etc.).
+    */
+    std::vector<std::string> GetErrors() const;
+
+    virtual ~BaseShape();
 
   protected:
-    BaseShape() {}
+    BaseShape();
+    
+    /**
+    * Adds new error description.
+    */
+    void _AddError(const std::string &i_error);
 
+    /**
+    * Returns true if the internal list of errors is not empty.
+    */
+    bool _ErrorsExist() const;
+
+    /**
+    * Clears internal list of errors.
+    */
+    void _ClearErrors();
+
+    /**
+    * A convenient method the derived classes should call to get the parameter value.
+    * The method automatically adds an error description if a required parameter is missing or if a parameter value is malformed.
+    * @param i_parameter_name Case-insensitive parameter name.
+    * @param[out] o_parameter_value The output parameter value.
+    * @param i_required true if the parameter is required. The method will add an error description if a required parameter is missing.
+    * @return true if the parameter has been read successfully and false otherwise.
+    */
     template<typename ParameterType>
-    void GetParameter(const std::string &i_parameter_name, ParameterType &o_parameter_value, bool i_required) const;
+    bool _GetParameter(const std::string &i_parameter_name, ParameterType &o_parameter_value, bool i_required);
 
   private:
     std::map<std::string, std::string> m_parameters;
 
-    bool GetParameterString(const std::string &i_parameter_name, std::string &o_parameter_value, bool i_required) const;
+    std::vector<std::string> m_errors;
+
+    bool _GetParameterString(const std::string &i_parameter_name, std::string &o_parameter_value) const;
   };
 
 /////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-inline void BaseShape::SetParameter(const std::string &i_parameter_name, const std::string &i_parameter_value)
-  {
-  std::string parameter_name_lowercase = i_parameter_name;
-  std::transform(parameter_name_lowercase.begin(), parameter_name_lowercase.end(), parameter_name_lowercase.begin(), ::tolower);
-
-  if (m_parameters.find(parameter_name_lowercase) != m_parameters.end())
-    Log::Warning("Duplicate parameter, overriding the value: \"%s\"", i_parameter_name.c_str());
-
-  m_parameters[parameter_name_lowercase]=i_parameter_value;
-  }
-
-inline bool BaseShape::GetParameterString(const std::string &i_parameter_name, std::string &o_parameter_value, bool i_required) const
-  {
-  std::string parameter_name_lowercase = i_parameter_name;
-  std::transform(parameter_name_lowercase.begin(), parameter_name_lowercase.end(), parameter_name_lowercase.begin(), ::tolower);
-
-  std::map<std::string, std::string>::const_iterator it = m_parameters.find(parameter_name_lowercase);
-  if (it == m_parameters.end())
-    {
-    if (i_required)
-      Log::Error("Missing required parameter: \"%s\"", i_parameter_name.c_str());
-    else
-      Log::Info("Optional parameter missing, using default value: \"%s\"", i_parameter_name.c_str());
-
-    return false;
-    }
-  
-  o_parameter_value = it->second;
-  return true;
-  }
-
 template<typename ParameterType>
-inline void BaseShape::GetParameter(const std::string &i_parameter_name, ParameterType &o_parameter_value, bool i_required) const
+inline bool BaseShape::_GetParameter(const std::string &i_parameter_name, ParameterType &o_parameter_value, bool i_required)
   {
   std::string str;
-  if (GetParameterString(i_parameter_name, str, i_required) == false)
-    return;
+  if (_GetParameterString(i_parameter_name, str) == false)
+    {
+    if (i_required)
+      _AddError(std::string("Required parameter is missing: ").append(i_parameter_name.c_str()));
+    return false;
+    }
 
   std::stringstream sstream;
   sstream << str;
   sstream >> o_parameter_value;
-  }
+  if (sstream.fail())
+    {
+    _AddError(std::string("Parameter is malformed: ").append(i_parameter_name.c_str()));
+    return false;
+    }
 
-template<>
-inline void BaseShape::GetParameter(const std::string &i_parameter_name, Point3D_f &o_parameter_value, bool i_required) const
-  {
-  std::string str;
-  if (GetParameterString(i_parameter_name, str, i_required) == false)
-    return;
-
-  std::stringstream sstream;
-  sstream << str;
-
-  float x,y,z;
-  sstream >> x >> y >> z;
-
-  o_parameter_value = Point3D_f(x,y,z);
-  }
-
-template<>
-inline void BaseShape::GetParameter(const std::string &i_parameter_name, Vector3D_f &o_parameter_value, bool i_required) const
-  {
-  std::string str;
-  if (GetParameterString(i_parameter_name, str, i_required) == false)
-    return;
-
-  std::stringstream sstream;
-  sstream << str;
-
-  float x,y,z;
-  sstream >> x >> y >> z;
-
-  o_parameter_value = Vector3D_f(x,y,z);
+  return true;
   }
 
 #endif // SHAPE_H

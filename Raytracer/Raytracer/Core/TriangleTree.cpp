@@ -14,6 +14,8 @@ TriangleTree::~TriangleTree()
 
 void TriangleTree::AddTriangleMesh(shared_ptr<TriangleMesh> ip_triangle_mesh)
   {
+  ASSERT(ip_triangle_mesh!=NULL);
+
   for(size_t i=0;i<m_meshes.size();++i)
     if (m_meshes[i]==ip_triangle_mesh)
       {
@@ -389,9 +391,9 @@ void TriangleTree::Leaf::Intersect(Ray &i_ray, size_t &o_triangle_index) const
 
     // Compute t to intersection point
     double t = (e2*s2) * invDivisor;
-    if (t >= i_ray.m_mint && t <= i_ray.m_maxt)
+    if (t >= i_ray.m_min_t && t <= i_ray.m_max_t)
       {
-      i_ray.m_maxt = t;
+      i_ray.m_max_t = t;
       o_triangle_index=i;
       }
     } // for(size_t i=m_begin;i!=m_end;++i)
@@ -429,7 +431,7 @@ bool TriangleTree::Leaf::IntersectTest(const Ray &i_ray) const
 
     // Compute t to intersection point
     double t = (e2*s2) * invDivisor;
-    if (t >= i_ray.m_mint && t <= i_ray.m_maxt)
+    if (t >= i_ray.m_min_t && t <= i_ray.m_max_t)
       return true;
     } // for(size_t i=m_begin;i!=m_end;++i)
   return false;

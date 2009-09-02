@@ -3,35 +3,71 @@
 
 #include <vector>
 #include "Common\Common.h"
-#include <Math\Geometry.h>
-#include <Math\Util.h>
-#include <Math\Constants.h>
+#include <Math/Geometry.h>
+#include <Math/Util.h>
+#include <Math/Constants.h>
 #include "FilmFilter.h"
 #include "Spectrum.h"
 
+/**
+* Film holding the generated image.
+* The contribution of each camera ray to the image is represented as a sample on the film.
+* The final value of a film pixel is evaluated by filtering the nearby samples.
+* @sa Camera, FilmFilter
+*/
 class Film
   {
   private:
-    // Internal type
+    // Internal types.
     struct FilmPixel;
 
   public:
+    /**
+    * Creates an instance of Film with the specified resolution and FilmFilter implementation.
+    */
     Film(size_t i_x_resolution, size_t i_y_resolution, shared_ptr<FilmFilter> ip_filter);
 
+    /**
+    * Returns number of pixels in X direction.
+    */
     size_t GetXResolution() const;
 
+    /**
+    * Returns number of pixels in Y direction.
+    */
     size_t GetYResolution() const;
 
+    /**
+    * Adds sample value to the film.
+    */
     void AddSample(const Point2D_d &i_image_point, const Spectrum_f &i_spectrum, float i_alpha);
 
+    /**
+    * Sets cropping window for the film. The image will be generated only inside that window.
+    * @param i_begin Left lower corner of the crop window. Should be in [0;2]^2 region. Should be lesser than i_end in each dimension.
+    * @param i_end Right upper corner of the crop window. Should be in [0;2]^2 region. Should be higher than i_begin in each dimension.
+    */
     void SetCropWindow(const Point2D_d &i_begin, const Point2D_d &i_end);
 
+    /**
+    * Returns the window in the image plane where samples need to be generated. The window may be larger than the actual film resolution due to filter's width.
+    * @param[out] o_begin Left lower corner of the sampling window.
+    * @param[out] o_end Right upper corner of the sampling window (exclusive).
+    */
     void GetSampleExtent(Point2D_i &o_begin, Point2D_i &o_end) const;
 
-    void GetPixel(size_t i_x, size_t i_y, Spectrum_f &o_spectrum, float &o_alfa, bool i_clamp_values = true) const;
+    /**
+    * Returns the Spectrum and alpha values for the specified pixel.
+    * @param i_x X coordinate of the pixel.
+    * @param i_y Y coordinate of the pixel.
+    * @param[out] o_spectrum Spectrum value of the pixel.
+    * @param[out] o_alpha Alpha value of the pixel.
+    * @param i_clamp_values If true, the Spectrum and alpha values will be clamped before returning.
+    */
+    void GetPixel(size_t i_x, size_t i_y, Spectrum_f &o_spectrum, float &o_alpha, bool i_clamp_values = true) const;
 
   private:
-    // not implemented
+    // Not implemented, Film is not a value type.
     Film();
     Film(const Film&);
     Film &operator=(const Film&);
@@ -71,7 +107,7 @@ inline size_t Film::GetYResolution() const
   return m_y_resolution;
   }
 
-inline void Film::GetPixel(size_t i_x, size_t i_y, Spectrum_f &o_spectrum, float &o_alfa, bool i_clamp_values) const
+inline void Film::GetPixel(size_t i_x, size_t i_y, Spectrum_f &o_spectrum, float &o_alpha, bool i_clamp_values) const
   {
   ASSERT(i_x<m_x_resolution && i_y<m_y_resolution);
   const FilmPixel &pixel = m_pixels[i_y][i_x];
@@ -80,13 +116,13 @@ inline void Film::GetPixel(size_t i_x, size_t i_y, Spectrum_f &o_spectrum, float
     {
     float invWt = 1.f / pixel.m_weight_sum;
     o_spectrum=pixel.m_spectrum*invWt;
-    o_alfa=pixel.m_alpha*invWt;
+    o_alpha=pixel.m_alpha*invWt;
     if (i_clamp_values)
       {
       o_spectrum[0]=Clamp(o_spectrum[0], 0.f, FLT_INF);
       o_spectrum[1]=Clamp(o_spectrum[1], 0.f, FLT_INF);
       o_spectrum[2]=Clamp(o_spectrum[2], 0.f, FLT_INF);
-      o_alfa=Clamp(o_alfa, 0.f, 1.f);
+      o_alpha=Clamp(o_alpha, 0.f, 1.f);
       }
     }
   }

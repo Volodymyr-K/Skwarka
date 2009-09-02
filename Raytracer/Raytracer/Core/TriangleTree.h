@@ -1,8 +1,8 @@
 #ifndef TRIANGLE_TREE_H
 #define TRIANGLE_TREE_H
 
-#include <Common\Common.h>
-#include <Math\Geometry.h>
+#include <Common/Common.h>
+#include <Math/Geometry.h>
 #include "TriangleMesh.h"
 #include <boost\pool\object_pool.hpp>
 #include <vector>

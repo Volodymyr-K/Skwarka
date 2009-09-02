@@ -30,6 +30,7 @@ shared_ptr<Sample> Sampler::CreateSample() const
 
 bool Sampler::GetNextSample(shared_ptr<Sample> op_sample)
   {
+  ASSERT(op_sample);
   ASSERT(m_sequences_1D_size.size() == op_sample->GetNumberOfSamplesSequences1D() && "Sample has wrong number of 1D samples sequences.");
   ASSERT(m_sequences_2D_size.size() == op_sample->GetNumberOfSamplesSequences2D() && "Sample has wrong number of 2D samples sequences.");
 
@@ -61,7 +62,7 @@ size_t Sampler::GetTotalSamplesNum() const
 
 void Sampler::_PrecomputeSamplesForPixel(const Point2D_i &i_current_pixel)
   {
-  // Nothing to precompute by-default
+  // This is the default implementation that does nothing.
   }
 
 Sampler::~Sampler()

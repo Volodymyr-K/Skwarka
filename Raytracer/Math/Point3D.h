@@ -1,10 +1,16 @@
 #ifndef POINT3D_H
 #define POINT3D_H
 
-#include <Common\Common.h>
+#include <Common/Common.h>
 #include "Constants.h"
 #include <cmath>
+#include <istream>
 
+/**
+* Class template for 3D point entity.
+* The template parameter corresponds to the type of the point coordinates.
+* @sa Point2D, Vector3D, Vector2D
+*/
 template<typename T>
 class Point3D
   {
@@ -37,6 +43,15 @@ class Point3D
 template<typename T>
 Point3D<T> operator*(T i_value, const Point3D<T> &i_point);
 
+/**
+* Reads Point3D from the input stream.
+*/
+template <class charT, class traits, typename T>
+std::basic_istream<charT,traits>& operator >> (std::basic_istream<charT,traits>& i_stream, Point3D<T> &o_point);
+
+/**
+* Converts Point3D instance to a Point3D parameterized by a specified type.
+*/
 template<typename T2, typename T>
 Point3D<T2> Convert(const Point3D<T> &i_point);
 
@@ -162,6 +177,13 @@ template<typename T>
 Point3D<T> operator*(T i_value, const Point3D<T> &i_point)
   {
   return i_point*i_value;
+  }
+
+template <class charT, class traits, typename T>
+inline std::basic_istream<charT,traits>& operator >> (std::basic_istream<charT,traits>& i_stream, Point3D<T> &o_point)
+  {
+  i_stream >> o_point[0] >> o_point[1] >> o_point[2];
+  return i_stream;
   }
 
 template<typename T2, typename T>

@@ -3,12 +3,12 @@
 #include "gl/glut.h"
 
 #pragma warning(disable : 4003)
-#include <Common\Common.h>
+#include <Common/Common.h>
 
 #include <iostream>
-#include <Math\Geometry.h>
-#include <Raytracer\Core\TriangleMesh.h>
-#include <Shapes\Sphere.h>
+#include <Math/Geometry.h>
+#include <Raytracer/Core/TriangleMesh.h>
+#include <Shapes/Sphere.h>
 #include <vector>
 #include <cstdio>
 
@@ -29,7 +29,7 @@ void LoadMesh()
   s.SetParameter("Center","0 0 0");
   s.SetParameter("Radius","0.4");
   s.SetParameter("Subdivisions","5");
-  p_mesh = s.BuildMesh();
+  p_mesh=s.BuildMesh();
 
   TopologyInfo ti = p_mesh->GetTopologyInfo();
 

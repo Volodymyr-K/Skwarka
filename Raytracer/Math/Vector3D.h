@@ -1,11 +1,17 @@
 #ifndef VECTOR3D_H
 #define VECTOR3D_H
 
-#include <Common\Common.h>
+#include <Common/Common.h>
 #include "Point3D.h"
 #include "Constants.h"
 #include <cmath>
+#include <istream>
 
+/**
+* Class template for 3D vector entity.
+* The template parameter corresponds to the type of the vector coordinates.
+* @sa Vector2D, Point3D, Point2D
+*/
 template<typename T>
 class Vector3D
   {
@@ -53,6 +59,15 @@ Point3D<T> operator-(const Point3D<T> &i_point, const Vector3D<T> &i_vector);
 template<typename T>
 Vector3D<T> operator*(T i_value, const Vector3D<T> &i_vector);
 
+/**
+* Reads Vector3D from the input stream.
+*/
+template <class charT, class traits, typename T>
+std::basic_istream<charT,traits>& operator >> (std::basic_istream<charT,traits>& i_stream, Vector3D<T> &o_vector);
+
+/**
+* Converts Vector3D instance to a Vector3D parameterized by a specified type.
+*/
 template<typename T2, typename T>
 Vector3D<T2> Convert(const Vector3D<T> &i_vector);
 
@@ -241,6 +256,13 @@ template<typename T>
 Vector3D<T> operator*(T i_value, const Vector3D<T> &i_vector)
   {
   return i_vector*i_value;
+  }
+
+template <class charT, class traits, typename T>
+std::basic_istream<charT,traits>& operator >> (std::basic_istream<charT,traits>& i_stream, Vector3D<T> &o_vector)
+  {
+  i_stream >> o_vector[0] >> o_vector[1] >> o_vector[2];
+  return i_stream;
   }
 
 template<typename T2, typename T>

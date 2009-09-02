@@ -4,11 +4,28 @@
 #include <cstdio>
 #include <stdarg.h>
 
+/**
+* Logger class that prints the messages to stderr.
+*/
 class Log
   {
   public:
+    /**
+    * Prints information message.
+    * The method has a printf-like signature.
+    */
     static void Info(const char *format, ...);
+
+    /**
+    * Prints warning message.
+    * The method has a printf-like signature.
+    */
     static void Warning(const char *format, ...);
+
+    /**
+    * Prints error message and terminates the program. Call it for fatal errors only.
+    * The method has a printf-like signature.
+    */
     static void Error(const char *format, ...);
 
   private:
@@ -16,6 +33,9 @@ class Log
 
     static void processError(const char *format, va_list args, const char *message, bool terminate);
   };
+
+/////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 inline void Log::processError(const char *format, va_list args, const char *message, bool terminate)
   {

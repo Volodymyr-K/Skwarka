@@ -1,6 +1,11 @@
 #ifndef MATRIX_H
 #define MATRIX_H
 
+/**
+* Class template for 4x4 matrix.
+* The template parameter corresponds to the type of the matrix elements.
+* @sa Transform
+*/
 template<typename T>
 class Matrix4x4
   {
@@ -24,13 +29,29 @@ class Matrix4x4
     Matrix4x4<T> operator*(T i_value) const;
     Matrix4x4<T> &operator*=(T i_value);
 
+    /**
+    * Pre-multiplies the matrix by the input matrix. The input matrix is the left operand and this matrix is the right operand of multiplication.
+    */
     void PreMultiply(const Matrix4x4<T> &i_matrix);
+
+    /**
+    * Post-multiplies the matrix by the input matrix. The input matrix is the right operand and this matrix is the left operand of multiplication.
+    */
     void PostMultiply(const Matrix4x4<T> &i_matrix);
 
-    Matrix4x4 Inverted() const;
+    /**
+    * Computes the inverted matrix.
+    * @return true on success and false if the matrix is singular.
+    */
+    bool Inverted(Matrix4x4<T> &o_inverted_matrix) const;
+
+    /**
+    * Returns transposed matrix.
+    */
     Matrix4x4 Transposed() const;
 
   public:
+    // Public data members.
     T m_values[4][4];
   };
 
@@ -184,14 +205,18 @@ Matrix4x4<T> Matrix4x4<T>::Transposed() const
     m_values[0][3], m_values[1][3], m_values[2][3], m_values[3][3]);
   }
 
+/**
+* The method uses numerically stable Gauss-Jordan elimination method.
+*/
 template<typename T>
-Matrix4x4<T> Matrix4x4<T>::Inverted() const
+bool Matrix4x4<T>::Inverted(Matrix4x4<T> &o_inverted_matrix) const
   {
   int indxc[4], indxr[4];
   int ipiv[4] = {0, 0, 0, 0};
   T minv[4][4];
   memcpy(minv, m_values, 4*4*sizeof(T));
 
+  bool singular = false;
   for (char i=0;i<4;++i)
     {
     char irow = -1, icol = -1;
@@ -212,13 +237,13 @@ Matrix4x4<T> Matrix4x4<T>::Inverted() const
               }
             }
           else if (ipiv[k] > 1)
-            Log::Warning("Singular matrix in Matrix4x4::Inverse().");
+            singular=true;
           }
         }
       }
 
     ++ipiv[icol];
-    // Swap rows _irow_ and _icol_ for pivot
+    // Swap rows _irow_ and icol for pivot
     if (irow != icol)
       {
       for (char k=0;k<4;++k)
@@ -228,7 +253,7 @@ Matrix4x4<T> Matrix4x4<T>::Inverted() const
     indxr[i] = irow;
     indxc[i] = icol;
     if (minv[icol][icol] == (T)0.0)
-      Log::Warning("Singular matrix in Matrix4x4::Inverse().");
+      singular=true;
 
     // Set m_values[icol][icol] to one by scaling row icol appropriately
     T pivinv = (T)1.0 / minv[icol][icol];
@@ -259,7 +284,8 @@ Matrix4x4<T> Matrix4x4<T>::Inverted() const
       }
     }
 
-  return Matrix4x4<T>(minv);
+  o_inverted_matrix=Matrix4x4<T>(minv);
+  return singular==false;
   }
 
 template<typename T>

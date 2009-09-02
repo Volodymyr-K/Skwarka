@@ -1,12 +1,12 @@
 #ifndef TBB_PIPELINE_STUFF_H
 #define TBB_PIPELINE_STUFF_H
 
-#include <Common\Common.h>
-#include <Math\Geometry.h>
-#include <Raytracer\Core\Camera.h>
-#include <Raytracer\Core\TriangleTree.h>
-#include <Raytracer\Core\Sample.h>
-#include <Raytracer\Core\Sampler.h>
+#include <Common/Common.h>
+#include <Math/Geometry.h>
+#include <Raytracer/Core/Camera.h>
+#include <Raytracer/Core/TriangleTree.h>
+#include <Raytracer/Core/Sample.h>
+#include <Raytracer/Core/Sampler.h>
 #include "tbb/pipeline.h"
 
 struct SampleChunk
@@ -91,33 +91,9 @@ MyTransformFilter::MyTransformFilter(Camera *ip_camera, TriangleTree *ip_tree): 
     }
   else
     { 
-    Vector3D_d light_corner(0.0,0.25,0.17);
-    light_corner+=Vector3D_d(0,-0.5,-1).Normalized()*0.0+Vector3D_d(0,1,0)*0.25;
-
-    Vector3D_d light_v1=0.2*Vector3D_d(0,-0.5,-1).Normalized();
-    Vector3D_d light_v2=0.2*(Vector3D_d(0,-1,0)^light_v1).Normalized();
-    Vector3D_d light_normal = (light_v1^light_v2).Normalized();
-
-    double lighting=0;
-
-    SamplesSequence2D seq = chunk.mp_sample->GetSamplesSequence2D(0);
-    for(SamplesSequence2D::IteratorType it = seq.m_begin; it!=seq.m_end; ++it)
-      {
-      Point2D_d sample2D = *it;
-      Vector3D_d light_point = light_corner + light_v1*sample2D[0] + light_v2*sample2D[1];
-
-      Ray shadow_ray = Ray(dg.m_point, (light_point-Vector3D_d(dg.m_point)).Normalized(), 0.0001);
-      IntersectResult shadow_result = mp_tree->Intersect(shadow_ray);
-      if (shadow_result.m_intersection_found==false)
-        {
-        lighting+=0.003*(20.0/std::distance(seq.m_begin,seq.m_end))/(light_point-Vector3D_d(dg.m_point)).LengthSqr();
-        }
-      }
-
-    //Vector3D_d direction = Vector3D_d(0,-0.5,-1).Normalized();
-    //float color = fabsf(-(dg.m_shading_normal*direction));
-    //chunk.m_spectrum=Spectrum_f(color*255.f, color*255.f, color*255.f);
-    chunk.m_spectrum=Spectrum_f(lighting*255.f, lighting*255.f, lighting*255.f);
+    Vector3D_d direction = Vector3D_d(0,-0.5,-1).Normalized();
+    float color = fabsf(-(dg.m_shading_normal*direction));
+    chunk.m_spectrum=Spectrum_f(color*255.f, color*255.f, color*255.f);
     chunk.m_alfa=1.f;
     }
 

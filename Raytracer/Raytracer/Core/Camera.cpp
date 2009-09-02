@@ -3,6 +3,7 @@
 Camera::Camera(const Transform &i_camera2world, shared_ptr<Film> ip_film):
 m_camera2world(i_camera2world), mp_film(ip_film)
   {
+  ASSERT(ip_film!=NULL);
   }
 
 shared_ptr<Film> Camera::GetFilm() const
@@ -10,7 +11,7 @@ shared_ptr<Film> Camera::GetFilm() const
   return mp_film;
   }
 
-void Camera::_TransformRay(Ray &io_ray) const
+void Camera::_TransformRay(const Ray &i_ray, Ray &o_ray) const
   {
-  m_camera2world(io_ray,io_ray);
+  m_camera2world(i_ray,o_ray);
   }

@@ -1,31 +1,76 @@
-#ifndef TRIANGLEMESH_H
-#define TRIANGLEMESH_H
+#ifndef TRIANGLE_MESH_H
+#define TRIANGLE_MESH_H
 
-#include <Common\Common.h>
-#include <Math\Geometry.h>
+#include <Common/Common.h>
+#include <Math/Geometry.h>
 #include <vector>
 #include "DifferentialGeometry.h"
 
+/**
+* The structure holds basic information about the mesh topology.
+* @sa TriangleMesh
+*/
 struct TopologyInfo
   {
+  /**
+  * Number of connected patches.
+  * A patch is a set of triangles so that for each pair of triangles in the set there is a chain of triangles from that set connecting them.
+  */
   size_t m_number_of_patches;
+
+  /**
+  * If the value is true the mesh has manifold surface.
+  * A surface is manifold if each edge has no more than two incident triangles and the triangles are consistently oriented with respect to each other.
+  */
   bool m_manifold;
+
+  /**
+  * If the value is true the mesh is solid.
+  * The mesh is sold if it is manifold, has no more than one patch and has no bad edges (i.e. edges with only one incident triangle).
+  */
   bool m_solid;
   };
 
+/**
+* Represents triangle of the mesh.
+* @sa TriangleMesh
+*/
 struct MeshTriangle
   {
   MeshTriangle();
   MeshTriangle(size_t i_v1, size_t i_v2, size_t i_v3);
+
   size_t m_vertices[3];
   };
 
+/**
+* Triangle mesh represented by a set of vertices and triangles.
+* The mesh can also have UV parameterization of the surface. UV parameterization is defined by the UV coordinates of the mesh vertices.
+* The UV values are linearly interpolated inside the triangles.
+* The class provides an option to interpolate the normals inside the triangles to make the imitate a smooth surface.
+*
+* The mesh is constant in the sense that once created the geometry and connectivity never changes.
+*/
 class TriangleMesh
   {
   public:
+    /**
+    * Creates TriangleMesh instance with the given set of triangles and vertices.
+    * @param i_vertices Vertices coordinates.
+    * @param i_triangles Mesh triangles.
+    * @param i_use_shading_normals true if normals need to be interpolated inside the triangles.
+    */
     TriangleMesh(const std::vector<Point3D_f> &i_vertices, const std::vector<MeshTriangle> &i_triangles, bool i_use_shading_normals=true);
 
+    /**
+    * Sets UV parameterization of the mesh.
+    * @param i_uv_parameterization UV coordinates of the mesh vertices. Should have exactly the same number of elements as many vertices the mesh has.
+    */
     void SetUVParameterization(const std::vector<Point2D_f> &i_uv_parameterization);
+
+    /**
+    * Sets whether the normals should be interpolated inside the triangles.
+    */
     void SetUseShadingNormals(bool i_use_shading_normals);
 
     size_t GetNumberOfVertices() const;
@@ -35,16 +80,19 @@ class TriangleMesh
     const MeshTriangle &GetTriangle(size_t i_triangle_index) const;
     const Vector3D_f &GetTriangleNormal(size_t i_triangle_index) const;
 
+    /**
+    * Populates the DifferentialGeometry assuming the specified ray intersects the specified triangle.
+    */
     void ComputeDifferentialGeometry(size_t i_triangle_index, const RayDifferential &i_ray, DifferentialGeometry &o_dg) const;
 
     TopologyInfo GetTopologyInfo() const;
 
   private:
-    // INTERNAL TYPE
+    // Internal type.
     struct ConnectivityData;
 
   private:
-    // not implemented
+    // Not implemented, TriangleMesh should only be passed by a reference to avoid large data copying.
     TriangleMesh();
     TriangleMesh(const TriangleMesh&);
     TriangleMesh &operator=(const TriangleMesh&);
@@ -106,4 +154,4 @@ inline TopologyInfo TriangleMesh::GetTopologyInfo() const
   return m_topology_info;
   }
 
-#endif // TRIANGLEMESH_H
+#endif // TRIANGLE_MESH_H

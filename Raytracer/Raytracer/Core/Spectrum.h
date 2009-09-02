@@ -2,7 +2,13 @@
 #define SPECTRUM_H
 
 #include "Common\Common.h"
+#include <istream>
 
+/**
+* Represents the spectrum of light (i.e. color).
+* The spectrum is represented by the RGB model.
+* The template parameter corresponds to the type of the RGB components.
+*/
 template<typename T>
 class Spectrum
   {
@@ -25,9 +31,24 @@ class Spectrum
     T operator[](unsigned char i_index) const;
     T &operator[](unsigned char i_index);
 
+    /**
+    * Adds a weighted Spectrum to this one. The method is needed for the efficiency.
+    */
     void AddWeighted(const Spectrum &i_spectrum, T i_weight);
+
+    /**
+    * Returns true if the spectrum represents black light (i.e. no light).
+    */
     bool IsZero() const;
+
+    /**
+    * Converts the Spectrum to the XYZ response values.
+    */
     void XYZ(T o_xyz[3]) const;
+
+    /**
+    * Returns luminance value of the spectrum (Y value of the XYZ).
+    */
     T Luminance() const;
 
   private:
@@ -37,6 +58,15 @@ class Spectrum
 template<typename T>
 Spectrum<T> operator*(T i_value, const Spectrum<T> &i_spectrum);
 
+/**
+* Reads Spectrum from the input stream.
+*/
+template <class charT, class traits, typename T>
+std::basic_istream<charT,traits>& operator >> (std::basic_istream<charT,traits>& i_stream, Spectrum<T> &o_spectrum);
+
+/**
+* Converts Spectrum instance to a Spectrum parameterized by a specified type.
+*/
 template<typename T2, typename T>
 Spectrum<T2> Convert(const Spectrum<T> &i_spectrum);
 
@@ -185,6 +215,13 @@ template<typename T>
 Spectrum<T> operator*(T i_value, const Spectrum<T> &i_spectrum)
   {
   return i_spectrum*i_value;
+  }
+
+template <class charT, class traits, typename T>
+std::basic_istream<charT,traits>& operator >> (std::basic_istream<charT,traits>& i_stream, Spectrum<T> &o_spectrum)
+  {
+  i_stream >> o_spectrum[0] >> o_spectrum[1] >> o_spectrum[2];
+  return i_stream;
   }
 
 template<typename T2, typename T>

@@ -2,22 +2,54 @@
 #define SAMPLING_ROUTINES_H
 
 #include <vector>
-#include <Math\Geometry.h>
-#include <Math\MultiThreadedRandom.h>
+#include <Math/Geometry.h>
+#include <Math/MultiThreadedRandom.h>
 
+/**
+* This namespace contains helper routines for sampling and samples generation.
+* These routines are mostly used for Monte Carlo integration algorithms.
+*/
 namespace SamplingRoutines
   {
-  void ConcentricDiskSampling(const Point2D_d i_sample, Point2D_d &o_point);
+  /**
+  Maps 2D sample in [0;1]^2 to a unit radius disk.
+  The "concentric" algorithm belongs to Peter Shirley and avoids area distortion.
+  @param i_sample Input 2D sample in [0;1]^2.
+  @return Resulting point in the unit disk.
+  */
+  Point2D_d ConcentricDiskSampling(const Point2D_d i_sample);
 
+  /**
+  Fills the specified range with stratified 1D values. ValueIterator is a random-access iterator type.
+  @param i_begin Begin iterator of the range to be filled with the values.
+  @param i_samples_num Number of samples.
+  @param i_jitter_samples If true the samples will be randomly moved inside their stratas.
+  */
   template<typename ValueIterator>
   void StratifiedSampling1D(ValueIterator i_begin, size_t i_samples_num, bool i_jitter_samples);
 
+  /**
+  Fills the specified range with stratified 2D values. Point2DIterator is a random-access iterator type.
+  @param i_begin Begin iterator of the range to be filled with the values.
+  @param i_x_samples_num Number of samples in x direction.
+  @param i_y_samples_num Number of samples in y direction.
+  @param i_jitter_samples If true the samples will be randomly moved inside their stratas.
+  */
   template<typename Point2DIterator>
   void StratifiedSampling2D(Point2DIterator i_begin, size_t i_x_samples_num, size_t i_y_samples_num, bool i_jitter_samples);
 
+  /**
+  Fills the specified range with 2D values produced by the LatinHypecube algorithm. Point2DIterator is a random-access iterator type.
+  @param i_begin Begin iterator of the range to be filled with the values.
+  @param i_samples_num Number of samples.
+  @param i_jitter_samples If true the samples will be randomly moved inside their stratas.
+  */
   template<typename Point2DIterator>
   void LatinHypercubeSampling2D(Point2DIterator i_begin, size_t i_samples_num, bool i_jitter_samples);
 
+  /**
+  Randomly shuffles values in the specified vector.
+  */
   template<typename T>
   void Shuffle(std::vector<T> &io_values);
   };
@@ -27,7 +59,7 @@ namespace SamplingRoutines
 
 namespace SamplingRoutines
   {
-  inline void ConcentricDiskSampling(const Point2D_d i_sample, Point2D_d &o_point)
+  inline Point2D_d ConcentricDiskSampling(const Point2D_d i_sample)
     {
     double r, theta;
 
@@ -37,10 +69,8 @@ namespace SamplingRoutines
     // Map square to (r,theta)
     // Handle degeneracy at the origin
     if (s == Point2D_d(0,0))
-      {
-      o_point = Point2D_d(0,0);
-      return;
-      }
+      return Point2D_d(0,0);
+
     if (s[0] >= -s[1])
       {
       if (s[0] > s[1])
@@ -76,13 +106,14 @@ namespace SamplingRoutines
       }
 
     theta *= M_PI / 4.0;
-    o_point = Point2D_d(r*cos(theta), r*sin(theta));
+    return Point2D_d(r*cos(theta), r*sin(theta));
     }
 
   template<typename ValueIterator>
   void StratifiedSampling1D(ValueIterator i_begin, size_t i_samples_num, bool i_jitter_samples)
     {
-    ASSERT(i_samples_num>0);
+    if(i_samples_num==0)
+      return;
 
     ValueIterator it = i_begin;
     double inv_samples_num = 1.0/i_samples_num;
@@ -96,7 +127,8 @@ namespace SamplingRoutines
   template<typename Point2DIterator>
   void StratifiedSampling2D(Point2DIterator i_begin, size_t i_x_samples_num, size_t i_y_samples_num, bool i_jitter_samples)
     {
-    ASSERT(i_x_samples_num>0 && i_y_samples_num>0);
+    if(i_x_samples_num==0 || i_y_samples_num==0)
+      return;
 
     Point2DIterator it = i_begin;
     double inv_x_samples_num = 1.0/i_x_samples_num;

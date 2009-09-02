@@ -100,7 +100,7 @@ Transform MakeLookAt(const Point3D_d &i_origin, Vector3D_d i_direction, const Ve
   m[1][0] = right[1];
   m[2][0] = right[2];
   m[3][0] = 0.0;
-  m[0][1] = -newUp[0]; // minus comes from right-handedness so that y-axis actually points "down"
+  m[0][1] = -newUp[0]; // minus comes from right-handedness so that Y axis actually points "down" in the camera space
   m[1][1] = -newUp[1];
   m[2][1] = -newUp[2];
   m[3][1] = 0.0;

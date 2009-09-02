@@ -1,8 +1,8 @@
 #ifndef INTERSECTION_H
 #define INTERSECTION_H
 
-#include <Common\Common.h>
-#include <Math\Geometry.h>
+#include <Common/Common.h>
+#include <Math/Geometry.h>
 
 class Intersection
   {

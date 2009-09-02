@@ -1,11 +1,17 @@
 #ifndef VECTOR2D_H
 #define VECTOR2D_H
 
-#include <Common\Common.h>
+#include <Common/Common.h>
 #include "Point2D.h"
 #include "Constants.h"
 #include <cmath>
+#include <istream>
 
+/**
+* Class template for 2D vector entity.
+* The template parameter corresponds to the type of the vector coordinates.
+* @sa Vector3D, Point3D, Point2D
+*/
 template<typename T>
 class Vector2D
   {
@@ -53,6 +59,15 @@ Point2D<T> operator-(const Point2D<T> &i_point, const Vector2D<T> &i_vector);
 template<typename T>
 Vector2D<T> operator*(T i_value, const Vector2D<T> &i_vector);
 
+/**
+* Reads Vector2D from the input stream.
+*/
+template <class charT, class traits, typename T>
+std::basic_istream<charT,traits>& operator >> (std::basic_istream<charT,traits>& i_stream, Vector2D<T> &o_vector);
+
+/**
+* Converts Vector2D instance to a Vector2D parameterized by a specified type.
+*/
 template<typename T2, typename T>
 Vector2D<T2> Convert(const Vector2D<T> &i_vector);
 
@@ -233,6 +248,13 @@ template<typename T>
 Vector2D<T> operator*(T i_value, const Vector2D<T> &i_vector)
   {
   return i_vector*i_value;
+  }
+
+template <class charT, class traits, typename T>
+std::basic_istream<charT,traits>& operator >> (std::basic_istream<charT,traits>& i_stream, Vector2D<T> &o_vector)
+  {
+  i_stream >> o_vector[0] >> o_vector[1];
+  return i_stream;
   }
 
 template<typename T2, typename T>

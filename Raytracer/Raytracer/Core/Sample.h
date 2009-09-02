@@ -1,10 +1,15 @@
 #ifndef SAMPLE_H
 #define SAMPLE_H
 
-#include <Common\Common.h>
-#include <Math\Geometry.h>
+#include <Common/Common.h>
+#include <Math/Geometry.h>
 #include <vector>
 
+/**
+* Represent a 1D samples sequence by a pair of iterators.
+* The actual values are stored by Sample.
+* @sa Sample
+*/
 struct SamplesSequence1D 
   {
   typedef std::vector<double>::iterator IteratorType;
@@ -14,6 +19,11 @@ struct SamplesSequence1D
   IteratorType m_begin, m_end;
   };
 
+/**
+* Represent a 2D samples sequence by a pair of iterators.
+* The actual values are stored by Sample.
+* @sa Sample
+*/
 struct SamplesSequence2D 
   {
   typedef std::vector<Point2D_d>::iterator IteratorType;
@@ -23,9 +33,24 @@ struct SamplesSequence2D
   IteratorType m_begin, m_end;
   };
 
+/**
+* The class is a container for sample values.
+* It holds the following data:
+*   - Image point.
+*   - Lens UV values.
+*   - Integrator's 1D samples.
+*   - Integrator's 2D samples.
+*
+* @sa Sampler
+*/
 class Sample
   { 
   public:
+    /**
+    * Constructs Sample instance.
+    * @param i_sequences_1D_size Vector of sizes of requested 1D samples sequences.
+    * @param i_sequences_2D_size Vector of sizes of requested 2D samples sequences.
+    */
     Sample(const std::vector<size_t> &i_sequences_1D_size, const std::vector<size_t> &i_sequences_2D_size);
 
     void SetImagePoint(const Point2D_d &i_image_point);
@@ -41,7 +66,7 @@ class Sample
     SamplesSequence2D GetSamplesSequence2D(size_t i_index) const;
 
   private:
-    // not implemented, Samples should only be passed by a reference to avoid large data copying
+    // Not implemented, Samples should only be passed by a reference to avoid large data copying.
     Sample();
     Sample(const Sample&);
     Sample &operator=(const Sample&);

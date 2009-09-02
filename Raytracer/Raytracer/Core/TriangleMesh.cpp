@@ -1,15 +1,40 @@
 #include "TriangleMesh.h"
 #include <queue>
 
-//////////////// ConnectivityData  ////
+//////////////// ConnectivityData  ////////////////
 
+/**
+* This internal structure holds the connectivity data for the mesh.
+* The data is needed to find the triangles incident to a given vertex.
+*/
 struct TriangleMesh::ConnectivityData
   {
+  /**
+  * Returns number of triangles incident to the specified vertex.
+  */
   size_t GetNumberOfIncidentTriangles(size_t i_vertex_index) const;
+
+  /**
+  * Returns index of the triangle incident to the specified vertex.
+  * @param i_vertex_index Index of the vertex.
+  * @param i_incident_triangle_index Index of the triangle among all the triangles incident to the specified vertex. This is not an index of the triangle inside the mesh.
+  */
   size_t GetIncidentTriangleIndex(size_t i_vertex_index, size_t i_incident_triangle_index) const;
+
+  /**
+  * Fills the vector with all triangles incident to both specified vertices.
+  */
   void GetIncidentTriangles(size_t i_vertex_index1, size_t i_vertex_index2, std::vector<size_t> &o_triangles) const;
 
+  /**
+  * Vector of indices of triangles incident to all mesh vertices.
+  * First go all the triangles incident to the vertex 0, then all triangles incident to the vertex 1 and so on.
+  */
   std::vector<size_t> m_incident_triangles;
+
+  /**
+  * i-th element corresponds to the position in m_incident_triangles vector where the list of triangles incident to i-th vertex starts.
+  */
   std::vector<size_t> m_incident_triangles_index;
   };
 
@@ -32,6 +57,8 @@ void TriangleMesh::ConnectivityData::GetIncidentTriangles(size_t i_vertex_index1
   ASSERT(i_vertex_index2 < m_incident_triangles_index.size());
   ASSERT(i_vertex_index1 != i_vertex_index2);
 
+  // Linear pass through both lists.
+  // Here, we use fact that the triangle indices are order increasingly.
   o_triangles.clear();
   size_t i1 = m_incident_triangles_index[i_vertex_index1];
   size_t i2 = m_incident_triangles_index[i_vertex_index2];
@@ -49,7 +76,7 @@ void TriangleMesh::ConnectivityData::GetIncidentTriangles(size_t i_vertex_index1
     }
   }
 
-//////////////// MeshTriangle ////
+//////////////// MeshTriangle ////////////////
 
 MeshTriangle::MeshTriangle()
   {
@@ -67,18 +94,21 @@ m_vertices(i_vertices.begin(),i_vertices.end()),
 m_triangles(i_triangles.begin(), i_triangles.end()),
 m_use_shading_normals(i_use_shading_normals)
   {
+  // Compute and cache triangle normals.
   m_triangle_normals.reserve(m_triangles.size());
   for(size_t i=0;i<m_triangles.size();++i)
     {
     const MeshTriangle &triangle = m_triangles[i];
     if (triangle.m_vertices[0] >= m_vertices.size() || triangle.m_vertices[1] >= m_vertices.size() || triangle.m_vertices[2] >= m_vertices.size())
-      Log::Error("TriangleMesh has out of-bounds vertex index.");
+      ASSERT(0 && "TriangleMesh has out of-bounds vertex index.");
 
     Vector3D_f normal = Vector3D_f(m_vertices[triangle.m_vertices[1]]-m_vertices[triangle.m_vertices[0]]) ^ Vector3D_f(m_vertices[triangle.m_vertices[2]]-m_vertices[triangle.m_vertices[0]]);
     normal.Normalize();
     m_triangle_normals.push_back(normal);
     }
 
+  // We don't store the connectivity info as a data member because it is takes a lot of memory and is not used once the mesh is constructed.
+  // Instead, it is passed by a reference to all the methods that need it.
   ConnectivityData connectivity;
   _BuildConnectivityData(connectivity);
 
@@ -86,6 +116,9 @@ m_use_shading_normals(i_use_shading_normals)
   _ComputeShadingNormals(connectivity);
   }
 
+/**
+* Populates the specified output parameter with the connectivity data.
+*/
 void TriangleMesh::_BuildConnectivityData(ConnectivityData &o_connectivity)
   {
   std::vector<size_t> number_of_incident_triangles(m_vertices.size(),0);
@@ -110,11 +143,16 @@ void TriangleMesh::_BuildConnectivityData(ConnectivityData &o_connectivity)
     o_connectivity.m_incident_triangles[o_connectivity.m_incident_triangles_index[triangle.m_vertices[2]]++]=i;
     }
 
+  // Restore the indices because we just spoiled them (this is easier than creating a separate vector of indices).
   o_connectivity.m_incident_triangles_index[0]=0;
   for(size_t i=1;i<m_vertices.size();++i)
     o_connectivity.m_incident_triangles_index[i]=o_connectivity.m_incident_triangles_index[i-1]+number_of_incident_triangles[i-1];
   }
 
+/**
+* Computes shading normals for the vertices.
+* A vertex normal is a weighted sum of normals of incident triangles. The weights are the angles of the triangles at that vertex.
+*/
 void TriangleMesh::_ComputeShadingNormals(const ConnectivityData &i_connectivity)
   {
   m_shading_normals.assign(m_vertices.size(),Vector3D_f());
@@ -133,6 +171,7 @@ void TriangleMesh::_ComputeShadingNormals(const ConnectivityData &i_connectivity
         GetVertex(triangle.m_vertices[1]),
         GetVertex(triangle.m_vertices[2])};
 
+      // Find the index of the i-th vertex inside this triangle.
       char index = -1;
       for(char k=0;k<3;++k)
         if (triangle.m_vertices[k]==i)
@@ -156,18 +195,27 @@ void TriangleMesh::_ComputeShadingNormals(const ConnectivityData &i_connectivity
     }
   }
 
+/**
+* Computes and caches the topology info for the mesh.
+* We use BFS to iterate through all the triangles.
+*/
 void TriangleMesh::_ComputeTopologyInfo(const ConnectivityData &i_connectivity)
   {
   m_topology_info.m_solid=true;
   m_topology_info.m_manifold=true;
 
   unsigned int number_of_patches = 0;
+
+  // Keeps track of what triangles we have visited so far.
   std::vector<bool> visited(GetNumberOfTriangles(), false);
+
+  // Iterate through all the triangles to make sure we find all the connected patches.
   for(size_t i=0;i<GetNumberOfTriangles();++i)
     if (visited[i]==false)
       {
       ++number_of_patches;
 
+      // Construct a queue for the BFS and add the first triangle to start with.
       std::queue<size_t> qu;
       qu.push(i);
       visited[i]=true;
@@ -178,6 +226,7 @@ void TriangleMesh::_ComputeTopologyInfo(const ConnectivityData &i_connectivity)
         MeshTriangle current_triangle = GetTriangle(current_triangle_index);
         qu.pop();
 
+        // Iterate by triangle's edges.
         for(unsigned char v=0;v<3;++v)
           {
           size_t v1 = current_triangle.m_vertices[v];
@@ -186,6 +235,8 @@ void TriangleMesh::_ComputeTopologyInfo(const ConnectivityData &i_connectivity)
           size_t adjacent_triangles=0;
           std::vector<size_t> triangles;
           i_connectivity.GetIncidentTriangles(v1,v2,triangles);
+
+          // Iterate by all the triangles incident to the current edge.
           for(size_t t=0;t<triangles.size();++t)
             if (triangles[t]!=current_triangle_index)
               if (_ConsistentlyOriented(current_triangle_index,triangles[t])==false)
@@ -214,6 +265,9 @@ void TriangleMesh::_ComputeTopologyInfo(const ConnectivityData &i_connectivity)
       m_topology_info.m_solid=false;
   }
 
+/**
+* Returns whether two triangles are consistently oriented with respect to each other.
+*/
 bool TriangleMesh::_ConsistentlyOriented(size_t i_triangle_index1, size_t i_triangle_index2) const
   {
   ASSERT(i_triangle_index1 != i_triangle_index2);
@@ -240,6 +294,16 @@ bool TriangleMesh::_ConsistentlyOriented(size_t i_triangle_index1, size_t i_tria
   return false;
   }
 
+/**
+* Computes the point of intersection of the specified ray an the triangle's plane.
+* @param i_triangle Mesh triangle.
+* @param i_origin Ray origin.
+* @param i_direction Ray direction.
+* @param[out] o_b1 A barycentric coordinate of the intersection point corresponding to the 1th vertex of the specified triangle (0-based).
+* @param[out] o_b2 A barycentric coordinate of the intersection point corresponding to the 2nd vertex of the specified triangle (0-based).
+* @param[out] o_t The ray parameter for the intersection point.
+* @return true if the ray intersects the triangle's plane and false if it is parrallel to it.
+*/
 bool TriangleMesh::_ComputeIntersectionPoint(const MeshTriangle &i_triangle, const Point3D_d &i_origin, const Vector3D_d &i_direction, double &o_b1, double &o_b2, double &o_t) const
   {
   const Point3D_d &v0 = Convert<double>(GetVertex(i_triangle.m_vertices[0]));
@@ -255,15 +319,15 @@ bool TriangleMesh::_ComputeIntersectionPoint(const MeshTriangle &i_triangle, con
 
   double invDivisor = 1.0 / divisor;
 
-  // Compute first barycentric coordinate
+  // Compute first barycentric coordinate.
   Vector3D_d d = Vector3D_d(i_origin - v0);
   o_b1 = (d*s1) * invDivisor;
 
-  // Compute second barycentric coordinate
+  // Compute second barycentric coordinate.
   Vector3D_d s2 = d^e1;
   o_b2 = (i_direction*s2) * invDivisor;
 
-  // Compute t to intersection point
+  // Compute t to intersection point.
   o_t = (e2*s2) * invDivisor;
   return true;
   }
@@ -278,18 +342,19 @@ void TriangleMesh::ComputeDifferentialGeometry(size_t i_triangle_index, const Ra
 
   ASSERT(b1 > -DBL_EPS && b1 < 1.0+DBL_EPS);
   ASSERT(b2 > -DBL_EPS && b1 + b2 < 1.0+DBL_EPS);
-  ASSERT(t >= i_ray.m_base_ray.m_mint && t <= i_ray.m_base_ray.m_maxt);
+  ASSERT(t >= i_ray.m_base_ray.m_min_t && t <= i_ray.m_base_ray.m_max_t);
   o_dg.m_point=i_ray.m_base_ray(t);
 
   Point2D_d uv[3];
   _GetUVs(triangle,uv);
 
-  // Interpolate triangle uv coordinates
+  // Interpolate triangle uv coordinates.
   b0 = 1.0 - b1 - b2;
   o_dg.m_uv=b0*uv[0] + b1*uv[1] + b2*uv[2];
 
   o_dg.m_geometric_normal=Convert<double>(m_triangle_normals[i_triangle_index]);
-  // Compute shading normal and derivatives
+
+  // Compute shading normal and derivatives.
   if (m_use_shading_normals)
     {
     Vector3D_d vertex_normals[3] = {
@@ -300,7 +365,7 @@ void TriangleMesh::ComputeDifferentialGeometry(size_t i_triangle_index, const Ra
       o_dg.m_shading_normal=b0*vertex_normals[0]+b1*vertex_normals[1]+b2*vertex_normals[2];
       o_dg.m_shading_normal.Normalize();
 
-      // Compute deltas for triangle partial derivatives
+      // Compute deltas for triangle partial derivatives.
       double du1 = uv[1][0] - uv[0][0];
       double du2 = uv[2][0] - uv[0][0];
       double dv1 = uv[1][1] - uv[0][1];
@@ -324,7 +389,7 @@ void TriangleMesh::ComputeDifferentialGeometry(size_t i_triangle_index, const Ra
     o_dg.m_dn_du=o_dg.m_dn_dv=Vector3D_d();
     }
 
-  // Compute screen-space differentials
+  // Compute screen-space differentials.
   double b0_x,b1_x,b2_x,t_x;
   double b0_y,b1_y,b2_y,t_y;
   if (i_ray.m_has_differentials &&
@@ -347,6 +412,10 @@ void TriangleMesh::ComputeDifferentialGeometry(size_t i_triangle_index, const Ra
     }
   }
 
+/**
+* Returns UV triangles for the specified triangle.
+* If UV parameterization is not set a dummy set of UV coordinates is returned.
+*/
 void TriangleMesh::_GetUVs(const MeshTriangle &i_triangle, Point2D_d o_uv[3]) const
   {
   if (m_uv_parameterization.empty()) 
@@ -365,8 +434,7 @@ void TriangleMesh::_GetUVs(const MeshTriangle &i_triangle, Point2D_d o_uv[3]) co
 
 void TriangleMesh::SetUVParameterization(const std::vector<Point2D_f> &i_uv_parameterization)
   {
-  if (i_uv_parameterization.size() != m_vertices.size())
-    Log::Error("UV parameterization has wrong number of elements.");
+  ASSERT(i_uv_parameterization.size() == m_vertices.size());
   m_uv_parameterization.assign(i_uv_parameterization.begin(), i_uv_parameterization.end());
   }
 

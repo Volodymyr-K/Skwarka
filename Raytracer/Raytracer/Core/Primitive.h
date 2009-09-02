@@ -1,7 +1,7 @@
 #ifndef PRIMITIVE_H
 #define PRIMITIVE_H
 
-#include <Common\Common.h>
+#include <Common/Common.h>
 #include "TriangleMesh.h"
 #include "Primitive.h"
 #include "DifferentialGeometry.h"

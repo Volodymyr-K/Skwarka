@@ -1,5 +1,5 @@
 #include "StratifiedSampler.h"
-#include <Math\SamplingRoutines.h>
+#include <Math/SamplingRoutines.h>
 
 StratifiedSampler::StratifiedSampler(const Point2D_i &i_image_begin, const Point2D_i &i_image_end, size_t i_x_samples_per_pixel, size_t i_y_samples_per_pixel, bool i_jitter_samples):
 Sampler(i_image_begin, i_image_end, i_x_samples_per_pixel*i_y_samples_per_pixel),
@@ -16,10 +16,14 @@ size_t StratifiedSampler::_RoundSamplesNumber(size_t i_samples_number) const
 void StratifiedSampler::_PrecomputeSamplesForPixel(const Point2D_i &i_current_pixel)
   {
   SamplingRoutines::StratifiedSampling2D(m_image_points.begin(), m_x_samples_per_pixel, m_y_samples_per_pixel, m_jitter_samples);
+
+  // Translate the image samples.
   for (size_t i = 0; i < m_x_samples_per_pixel*m_y_samples_per_pixel; ++i)
     m_image_points[i]+=Convert<double>(i_current_pixel);
 
   SamplingRoutines::StratifiedSampling2D(m_lens_UVs.begin(), m_x_samples_per_pixel, m_y_samples_per_pixel, m_jitter_samples);
+
+  // Decorrelate image and lens samples.
   SamplingRoutines::Shuffle(m_lens_UVs);
   }
 
