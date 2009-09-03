@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<VisualStudioToolFile
+	Name="CxxTest"
+	Version="8,00"
+	>
+	<Rules>
+		<CustomBuildRule
+			Name="CxxTest"
+			DisplayName="CxxTest"
+			CommandLine="[testgen] [runner] [output] [inputs]"
+			Outputs="$(InputName).cpp"
+			FileExtensions="*.h"
+			ExecutionDescription="Generating tests"
+			>
+			<Properties>
+				<StringProperty
+					Name="testgen"
+					DisplayName="cxxtestgen.py path"
+					Category="Path"
+					Description="cxxtestgen.py path"
+					Switch="[value]"
+					DefaultValue="python ..\..\..\ThirdParty\cxxtest\cxxtestgen.py"
+					Delimited="true"
+				/>
+				<EnumProperty
+					Name="runner"
+					DisplayName="Runner"
+					Category="Option"
+					Description="Runner"
+					>
+					<Values>
+						<EnumValue
+							Value="0"
+							Switch="--part"
+							DisplayName="None"
+						/>
+						<EnumValue
+							Value="1"
+							Switch="--runner=ParenPrinter"
+							DisplayName="ParenPrinter"
+						/>
+					</Values>
+				</EnumProperty>
+				<StringProperty
+					Name="output"
+					DisplayName="Output"
+					Category="Output"
+					Switch="-o [value]"
+					DefaultValue="$(InputName).cpp"
+				/>
+			</Properties>
+		</CustomBuildRule>
+	</Rules>
+</VisualStudioToolFile>

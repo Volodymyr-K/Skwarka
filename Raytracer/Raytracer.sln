@@ -30,6 +30,13 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestTrace", "TestTrace\Test
 		{82AC70FC-4CB6-4FF4-9CEA-E8FA28D4AA3E} = {82AC70FC-4CB6-4FF4-9CEA-E8FA28D4AA3E}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UnitTests", "UnitTests\UnitTests.vcproj", "{8035CBAD-5A7C-46F2-939A-172018577A27}"
+	ProjectSection(ProjectDependencies) = postProject
+		{ED053B6A-E1C9-4781-93AE-633837016D00} = {ED053B6A-E1C9-4781-93AE-633837016D00}
+		{C22874BD-ABA3-4E5E-86D6-31F98520B557} = {C22874BD-ABA3-4E5E-86D6-31F98520B557}
+		{82AC70FC-4CB6-4FF4-9CEA-E8FA28D4AA3E} = {82AC70FC-4CB6-4FF4-9CEA-E8FA28D4AA3E}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -60,6 +67,10 @@ Global
 		{1B889D66-FDEF-4835-A924-698B5CCCDE78}.Debug|Win32.Build.0 = Debug|Win32
 		{1B889D66-FDEF-4835-A924-698B5CCCDE78}.Release|Win32.ActiveCfg = Release|Win32
 		{1B889D66-FDEF-4835-A924-698B5CCCDE78}.Release|Win32.Build.0 = Release|Win32
+		{8035CBAD-5A7C-46F2-939A-172018577A27}.Debug|Win32.ActiveCfg = Debug|Win32
+		{8035CBAD-5A7C-46F2-939A-172018577A27}.Debug|Win32.Build.0 = Debug|Win32
+		{8035CBAD-5A7C-46F2-939A-172018577A27}.Release|Win32.ActiveCfg = Release|Win32
+		{8035CBAD-5A7C-46F2-939A-172018577A27}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
