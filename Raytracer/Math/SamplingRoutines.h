@@ -161,7 +161,7 @@ namespace SamplingRoutines
     for (size_t i = 0; i < 2; ++i)
       for (size_t j = 0; j < i_samples_num; ++j)
         {
-        size_t other = RandomUInt(i_samples_num);
+        size_t other = RandomInt(i_samples_num);
         std::swap( (*(i_begin+j)) [i], (*(i_begin+other)) [i] );
         }
     }
@@ -171,7 +171,7 @@ namespace SamplingRoutines
     {
     for (size_t i = 0; i < io_values.size(); ++i)
       {
-      unsigned int other = RandomUInt(io_values.size());
+      unsigned int other = RandomInt(io_values.size());
       std::swap(io_values[i], io_values[other]);
       }
     }

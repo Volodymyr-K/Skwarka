@@ -77,7 +77,7 @@ class Sampler
     virtual void _PrecomputeSamplesForPixel(const Point2D_i &i_current_pixel);
 
   private:
-    // Not implemented, Sampler is not a value type.
+    // Not implemented, not a value type.
     Sampler();
     Sampler(const Sampler&);
     Sampler &operator=(const Sampler&);

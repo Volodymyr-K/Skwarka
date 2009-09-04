@@ -51,8 +51,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\..\ThirdParty\cxxtest"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
+				AdditionalIncludeDirectories="..\;..\..\..\ThirdParty\;..\..\..\ThirdParty\boost\;..\..\..\ThirdParty\TBB\2.2\include;..\..\..\ThirdParty\cxxtest"
+				PreprocessorDefinitions="TBB_USE_DEBUG;WIN32;_DEBUG;_WINDOWS;NOMINMAX"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -71,8 +71,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="tbb_debug.lib"
 				OutputFile="$(OutDir)\$(ProjectName)d.exe"
 				LinkIncremental="2"
+				AdditionalLibraryDirectories="..\..\..\ThirdParty\TBB\2.2\ia32\vc9\lib"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				TargetMachine="1"
@@ -133,8 +135,9 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="..\..\..\ThirdParty\cxxtest"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
+				AdditionalIncludeDirectories="..\;..\..\..\ThirdParty\;..\..\..\ThirdParty\boost\;..\..\..\ThirdParty\TBB\2.2\include;..\..\..\ThirdParty\cxxtest"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;NOMINMAX"
+				MinimalRebuild="false"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
@@ -152,7 +155,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="tbb.lib"
 				LinkIncremental="1"
+				AdditionalLibraryDirectories="..\..\..\ThirdParty\TBB\2.2\ia32\vc9\lib"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				OptimizeReferences="2"
@@ -186,14 +191,28 @@
 	</References>
 	<Files>
 		<Filter
-			Name="Test code"
+			Name="Test Code"
 			>
 			<File
-				RelativePath=".\Main.cpp"
+				RelativePath=".\CustomValueTraits.h"
 				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\Main.h"
+				RelativePath=".\Main.test.h"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -211,6 +230,82 @@
 						runner="1"
 					/>
 				</FileConfiguration>
+			</File>
+			<Filter
+				Name="Math"
+				>
+				<File
+					RelativePath=".\BBox3D.test.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Matrix.test.h"
+					>
+				</File>
+				<File
+					RelativePath=".\MultiThreadedRandom.test.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Point2D.test.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Point3D.test.h"
+					>
+				</File>
+				<File
+					RelativePath=".\RandomGenerator.test.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Vector2D.test.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Vector3D.test.h"
+					>
+				</File>
+			</Filter>
+		</Filter>
+		<Filter
+			Name="Generated Code"
+			>
+			<File
+				RelativePath=".\BBox3D.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Main.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Matrix.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\MultiThreadedRandom.Test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Point2D.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Point3D.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\RandomGenerator.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Vector2D.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Vector3D.test.cpp"
+				>
 			</File>
 		</Filter>
 	</Files>

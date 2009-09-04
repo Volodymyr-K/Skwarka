@@ -92,7 +92,7 @@ MyTransformFilter::MyTransformFilter(Camera *ip_camera, TriangleTree *ip_tree): 
   else
     { 
     Vector3D_d direction = Vector3D_d(0,-0.5,-1).Normalized();
-    float color = fabsf(-(dg.m_shading_normal*direction));
+    float color = (float)fabs(-(dg.m_shading_normal*direction));
     chunk.m_spectrum=Spectrum_f(color*255.f, color*255.f, color*255.f);
     chunk.m_alfa=1.f;
     }

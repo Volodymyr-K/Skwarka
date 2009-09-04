@@ -1,6 +1,7 @@
 #ifndef MULTI_THREADED_RANDOM_H
 #define MULTI_THREADED_RANDOM_H
 
+#include <Common\Common.h>
 #include <limits>
 #include <boost\random\mersenne_twister.hpp>
 #include <tbb\enumerable_thread_specific.h>
@@ -32,16 +33,21 @@ class MultiThreadedRandomGenerator
     MultiThreadedRandomGenerator(bool i_decorrelate_thread_generators = true);
 
     /**
-    * Generates random value in [0;UINT_MAX) range.
+    * Generates random value in [0;INT_MAX) range.
     * The method is thread-safe.
     */
-    unsigned int GenerateUIntRandom();
+    int GenerateIntRandom();
 
     /**
     * Generates random value in [0;1.0) range.
     * The method is thread-safe.
     */
     double GenerateNormalizedRandom();
+
+  private:
+    // Not implemented, not a value type.
+    MultiThreadedRandomGenerator(const MultiThreadedRandomGenerator<UnderlyingRandomGenerator>&);
+    MultiThreadedRandomGenerator &operator=(const MultiThreadedRandomGenerator<UnderlyingRandomGenerator>&);
 
   private:
     ThreadRandomGenerators m_thread_generators;
@@ -54,30 +60,34 @@ class MultiThreadedRandomGenerator
   };
 
 /**
-* Global thread-safe function generating double random values in [0;i_max_value) range.
-* @param i_max_value Upper bound on the range of random values to be produced. Can be negative.
+* Global thread-safe function generating double random values in [0;i_max) range.
+* If i_max is negative then random values are generated in (i_max;0] range.
+* @param i_max Upper bound on the range of random values to be produced. Can be negative.
 */
-double RandomDouble(double i_max_value);
+double RandomDouble(double i_max);
 
 /**
-* Global thread-safe function generating double random values in [i_min_value;i_max_value) range.
-* @param i_min_value Lower bound on the range of random values to be produced. Can be negative.
-* @param i_max_value Upper bound on the range of random values to be produced. Can be negative.
+* Global thread-safe function generating double random values in [i_min;i_max) range.
+* If i_max<i_min then random values are generated in (i_max;i_min] range.
+* @param i_min Lower bound on the range of random values to be produced. Can be negative.
+* @param i_max Upper bound on the range of random values to be produced. Can be negative.
 */
-double RandomDouble(double i_min_value, double i_max_value);
+double RandomDouble(double i_min, double i_max);
 
 /**
-* Global thread-safe function generating unsigned int random values in [0;i_max_value) range.
-* @param i_max_value Upper bound on the range of random values to be produced. Can be negative.
+* Global thread-safe function generating unsigned int random values in [0;i_max) range.
+* If i_max is negative then random values are generated in (i_max;0] range.
+* @param i_max Upper bound on the range of random values to be produced. Can be negative.
 */
-unsigned int RandomUInt(unsigned int i_max_value);
+int RandomInt(int i_max);
 
 /**
-* Global thread-safe function generating unsigned int random values in [i_min_value;i_max_value) range.
-* @param i_min_value Lower bound on the range of random values to be produced. Can be negative.
-* @param i_max_value Upper bound on the range of random values to be produced. Can be negative.
+* Global thread-safe function generating unsigned int random values in [i_min;i_max) range.
+* If i_max<i_min then random values are generated in (i_max;i_min] range.
+* @param i_min Lower bound on the range of random values to be produced. Can be negative.
+* @param i_max Upper bound on the range of random values to be produced. Can be negative.
 */
-unsigned int RandomUInt(unsigned int i_min_value, unsigned int i_max_value);
+int RandomInt(int i_min, int i_max);
 
 /////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -85,18 +95,18 @@ unsigned int RandomUInt(unsigned int i_min_value, unsigned int i_max_value);
 template<typename UnderlyingRandomGenerator>
 MultiThreadedRandomGenerator<UnderlyingRandomGenerator>::MultiThreadedRandomGenerator(bool i_decorrelate_thread_generators):
 m_decorrelate_thread_generators(i_decorrelate_thread_generators),
-m_inv_max(1.0/std::numeric_limits<typename UnderlyingRandomGenerator::result_type>::max())
+m_inv_max(1.0/INT_MAX)
   {
   }
 
 template<typename UnderlyingRandomGenerator>
 double MultiThreadedRandomGenerator<UnderlyingRandomGenerator>::GenerateNormalizedRandom()
   {  
-  return GenerateUIntRandom()*m_inv_max;
+  return GenerateIntRandom()*m_inv_max;
   }
 
 template<typename UnderlyingRandomGenerator>
-unsigned int MultiThreadedRandomGenerator<UnderlyingRandomGenerator>::GenerateUIntRandom()
+int MultiThreadedRandomGenerator<UnderlyingRandomGenerator>::GenerateIntRandom()
   {
   // Get thread-local copy of random generator (create if not exists).
   bool exists;
@@ -106,30 +116,35 @@ unsigned int MultiThreadedRandomGenerator<UnderlyingRandomGenerator>::GenerateUI
   if (exists==false && m_decorrelate_thread_generators)
     thread_local_generator.seed(GetCurrentThreadId());
 
-  return thread_local_generator();
+  return thread_local_generator()%INT_MAX;
   }
 
 // This global thread-safe random generator is used in all the global random functions below.
 extern MultiThreadedRandomGenerator<boost::mt19937> global_multi_threaded_random_generator;
 
-inline double RandomDouble(double i_max_value)
+inline double RandomDouble(double i_max)
   {
-  return global_multi_threaded_random_generator.GenerateNormalizedRandom() * i_max_value;
+  return global_multi_threaded_random_generator.GenerateNormalizedRandom() * i_max;
   }
 
-inline double RandomDouble(double i_min_value, double i_max_value)
+inline double RandomDouble(double i_min, double i_max)
   {
-  return i_min_value + RandomDouble(i_max_value-i_min_value);
+  return i_min + RandomDouble(i_max-i_min);
   }
 
-inline unsigned int RandomUInt(unsigned int i_max_value)
+inline int RandomInt(int i_max)
   {
-  return global_multi_threaded_random_generator.GenerateUIntRandom() % i_max_value;
+  if (i_max>=0)
+    return global_multi_threaded_random_generator.GenerateIntRandom() % i_max;
+  else
+    return - (global_multi_threaded_random_generator.GenerateIntRandom() % (-i_max));
   }
 
-inline unsigned int RandomUInt(unsigned int i_min_value, unsigned int i_max_value)
+inline int RandomInt(int i_min, int i_max)
   {
-  return i_min_value + RandomUInt(i_max_value - i_min_value);
+  // Assert for int overflow.
+  ASSERT( (i_max>=i_min && i_max-i_min>0) || (i_max<i_min && i_max-i_min<0) );
+  return i_min + RandomInt(i_max - i_min);
   }
 
 #endif // MULTI_THREADED_RANDOM_H

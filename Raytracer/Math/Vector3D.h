@@ -26,22 +26,38 @@ class Vector3D
     Vector3D<T> operator-(const Vector3D<T> &i_vector) const;
     Vector3D<T> &operator-=(const Vector3D<T> &i_vector);
 
-    Vector3D<T> operator*(T i_value) const;
-    Vector3D<T> &operator*=(T i_value);
-    
-    Vector3D<T> operator/(T i_value) const;
-    Vector3D<T> &operator/=(T i_value);
+    Vector3D<T> operator*(double i_value) const;
+    Vector3D<T> &operator*=(double i_value);
+
+    Vector3D<T> operator/(double i_value) const;
+    Vector3D<T> &operator/=(double i_value);
 
     bool operator==(const Vector3D<T> &i_vector) const;
     bool operator!=(const Vector3D<T> &i_vector) const;
 
+    /**
+    * Vector dot product.
+    */
     T operator*(const Vector3D<T> &i_vector) const;
+
+    /**
+    * Vector cross product.
+    */
     Vector3D<T> operator^(const Vector3D<T> &i_vector) const;
 
     T Length() const;
     T LengthSqr() const;
 
+    /**
+    * Normalizes the vector.
+    * If the vector has zero length it is not normalized.
+    */
     void Normalize();
+
+    /**
+    * Returns a normalized vector.
+    * If the vector has zero length the zero vector is returned.
+    */
     Vector3D<T> Normalized() const;
 
     T operator[](unsigned char i_index) const;
@@ -64,6 +80,12 @@ Vector3D<T> operator*(T i_value, const Vector3D<T> &i_vector);
 */
 template <class charT, class traits, typename T>
 std::basic_istream<charT,traits>& operator >> (std::basic_istream<charT,traits>& i_stream, Vector3D<T> &o_vector);
+
+/**
+* Prints Vector3D to the output stream.
+*/
+template <class charT, class traits, typename T>
+std::basic_ostream<charT,traits>& operator << (std::basic_ostream<charT,traits>& o_stream, const Vector3D<T> &i_vector);
 
 /**
 * Converts Vector3D instance to a Vector3D parameterized by a specified type.
@@ -134,36 +156,37 @@ Vector3D<T> &Vector3D<T>::operator-=(const Vector3D<T> &i_vector)
   }
 
 template<typename T>
-Vector3D<T> Vector3D<T>::operator*(T i_value) const
+Vector3D<T> Vector3D<T>::operator*(double i_value) const
   {
-  return Vector3D<T>(m_coordinates[0]*i_value, m_coordinates[1]*i_value, m_coordinates[2]*i_value);
+  return Vector3D<T>(
+    (T) (m_coordinates[0]*i_value), 
+    (T) (m_coordinates[1]*i_value), 
+    (T) (m_coordinates[2]*i_value));
   }
 
 template<typename T>
-Vector3D<T> &Vector3D<T>::operator*=(T i_value)
+Vector3D<T> &Vector3D<T>::operator*=(double i_value)
   {
-  m_coordinates[0]*=i_value;
-  m_coordinates[1]*=i_value;
-  m_coordinates[2]*=i_value;
+  m_coordinates[0]=(T)(m_coordinates[0]*i_value);
+  m_coordinates[1]=(T)(m_coordinates[1]*i_value);
+  m_coordinates[2]=(T)(m_coordinates[2]*i_value);
 
   return *this;
   }
 
 template<typename T>
-Vector3D<T> Vector3D<T>::operator/(T i_value) const
+Vector3D<T> Vector3D<T>::operator/(double i_value) const
   {
-  ASSERT(fabs(i_value) > (T)0);
-
-  T inv = (T)1.0 / i_value;
+  //Dividing by zero is considered correct. The caller code is responsible to handle resulting INF values properly.
+  double inv = 1.0 / i_value;
   return (*this) * inv;
   }
 
 template<typename T>
-Vector3D<T> &Vector3D<T>::operator/=(T i_value)
+Vector3D<T> &Vector3D<T>::operator/=(double i_value)
   {
-  ASSERT(fabs(i_value) > (T)0);
-
-  T inv = (T)1.0 / i_value;
+  //Dividing by zero is considered correct. The caller code is responsible to handle resulting INF values properly.
+  double inv = 1.0 / i_value;
   (*this)*=inv;
   return *this;
   }
@@ -263,6 +286,22 @@ std::basic_istream<charT,traits>& operator >> (std::basic_istream<charT,traits>&
   {
   i_stream >> o_vector[0] >> o_vector[1] >> o_vector[2];
   return i_stream;
+  }
+
+template <class charT, class traits, typename T>
+inline std::basic_ostream<charT,traits>& operator << (std::basic_ostream<charT,traits>& o_stream, const Vector3D<T> &i_vector)
+  {
+  /* string stream
+  * - with same format
+  * - without special field width
+  */
+  std::basic_ostringstream<charT,traits> s;
+  s.copyfmt(o_stream);
+  s.width(0);
+
+  s << i_vector[0] << ' ' << i_vector[1] << ' ' << i_vector[2];
+  o_stream << s.str();
+  return o_stream;
   }
 
 template<typename T2, typename T>

@@ -2,6 +2,7 @@
 #define BBOX3D_H
 
 #include <Common/Common.h>
+#include "Ray.h"
 #include "Point3D.h"
 #include "Triangle3D.h"
 #include <utility>
@@ -20,6 +21,7 @@ class BBox3D
 
     /**
     * Returns the volume of the box.
+    * @return Volume of the box. Can be negative if any of the m_max's coordinate is less than the corresponding m_min's coordinate.
     */
     T Volume() const;
 
@@ -75,7 +77,8 @@ bool BBox3D<T>::Intersect(const Ray &i_ray) const
   double t0 = i_ray.m_min_t, t1 = i_ray.m_max_t;
   for (int i = 0; i < 3; ++i)
     {
-    // Update interval for _i_th bounding box slab
+    // Update interval for i-th bounding box slab.
+    // No need to check for zero i_ray.m_direction[i] due to the way INF values behave.
     double invRayDir = 1.0 / i_ray.m_direction[i];
     double tNear = (m_min[i] - i_ray.m_origin[i]) * invRayDir;
     double tFar  = (m_max[i] - i_ray.m_origin[i]) * invRayDir;

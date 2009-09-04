@@ -45,6 +45,12 @@ class Camera
     void _TransformRay(const Ray &i_ray, Ray &o_ray) const;
 
   private:
+    // Not implemented, not a value type.
+    Camera();
+    Camera(const Camera&);
+    Camera &operator=(const Camera&);
+
+  private:
     Transform m_camera2world;
     shared_ptr<Film> mp_film;
   };

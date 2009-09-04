@@ -1,6 +1,8 @@
 #ifndef MATRIX_H
 #define MATRIX_H
 
+#include <cstring>
+
 /**
 * Class template for 4x4 matrix.
 * The template parameter corresponds to the type of the matrix elements.
@@ -10,7 +12,12 @@ template<typename T>
 class Matrix4x4
   {
   public:
-    Matrix4x4();
+    /**
+    * Constructs Matrix4x4 instance.
+    * If i_identity parameter is true an identity matrix is constructed.
+    * If i_identity parameter is false a zero matrix is constructed.
+    */
+    Matrix4x4(bool i_identity=false);
 
     Matrix4x4(
       T i_v00, T i_v01, T i_v02, T i_v03,
@@ -50,7 +57,7 @@ class Matrix4x4
     */
     Matrix4x4 Transposed() const;
 
-  public:
+    public:
     // Public data members.
     T m_values[4][4];
   };
@@ -68,12 +75,12 @@ typedef Matrix4x4<double> Matrix4x4_d;
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-Matrix4x4<T>::Matrix4x4()
+Matrix4x4<T>::Matrix4x4(bool i_identity)
   {
   for (unsigned char i = 0; i < 4; ++i)
     for (unsigned char j = 0; j < 4; ++j)
       if (i == j)
-        m_values[i][j] = (T)1.0;
+        m_values[i][j] = i_identity ? (T)1.0 : (T)0.0;
       else
         m_values[i][j] = (T)0.0;
   }
@@ -105,7 +112,7 @@ Matrix4x4<T> Matrix4x4<T>::operator+(const Matrix4x4<T> &i_matrix) const
   Matrix4x4<T> ret;
   for (unsigned char i = 0; i < 4; ++i)
     for (unsigned char j = 0; j < 4; ++j)
-      ret[i][j]=m_values[i][j]+i_matrix.m_values[i][j];
+      ret.m_values[i][j]=m_values[i][j]+i_matrix.m_values[i][j];
 
   return ret;
   }
@@ -127,7 +134,7 @@ Matrix4x4<T> Matrix4x4<T>::operator-(const Matrix4x4<T> &i_matrix) const
   Matrix4x4<T> ret;
   for (unsigned char i = 0; i < 4; ++i)
     for (unsigned char j = 0; j < 4; ++j)
-      ret[i][j]=m_values[i][j]-i_matrix.m_values[i][j];
+      ret.m_values[i][j]=m_values[i][j]-i_matrix.m_values[i][j];
 
   return ret;
   }
@@ -149,7 +156,7 @@ Matrix4x4<T> Matrix4x4<T>::operator*(T i_value) const
   Matrix4x4<T> ret;
   for (unsigned char i = 0; i < 4; ++i)
     for (unsigned char j = 0; j < 4; ++j)
-      ret[i][j]=m_values[i][j]*i_value;
+      ret.m_values[i][j]=m_values[i][j]*i_value;
 
   return ret;
   }
@@ -192,7 +199,7 @@ void Matrix4x4<T>::PostMultiply(const Matrix4x4<T> &i_matrix)
       tmp[i][0]*i_matrix.m_values[0][j]+
       tmp[i][1]*i_matrix.m_values[1][j]+
       tmp[i][2]*i_matrix.m_values[2][j]+
-      tmp[i][3]*i_matrix.m_values[3][j]+
+      tmp[i][3]*i_matrix.m_values[3][j];
   }
 
 template<typename T>

@@ -67,7 +67,7 @@ class Film
     void GetPixel(size_t i_x, size_t i_y, Spectrum_f &o_spectrum, float &o_alpha, bool i_clamp_values = true) const;
 
   private:
-    // Not implemented, Film is not a value type.
+    // Not implemented, not a value type.
     Film();
     Film(const Film&);
     Film &operator=(const Film&);

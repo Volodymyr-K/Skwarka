@@ -25,22 +25,28 @@ class RandomGenerator
     RandomGenerator(typename UnderlyingRandomGenerator::result_type i_seed);
 
     /**
-    * Produces random value in [0;i_max_value) range.
-    * @param i_max_value Upper bound on the range of random values to be produced. Can be negative.
+    * Produces random value in [0;i_max) range.
+    * @param i_max Upper bound on the range of random values to be produced. Can be negative.
     */
-    ResultType operator()(ResultType i_max_value);
+    ResultType operator()(ResultType i_max);
 
     /**
-    * Produces random value in [i_min_value;i_max_value) range.
-    * @param i_min_value Lower bound on the range of random values to be produced. Can be negative.
-    * @param i_max_value Upper bound on the range of random values to be produced. Can be negative.
+    * Produces random value in [i_min;i_max) range.
+    * If i_max<i_min then random values are generated in (i_max;i_min] range.
+    * @param i_min Lower bound on the range of random values to be produced. Can be negative.
+    * @param i_max Upper bound on the range of random values to be produced. Can be negative.
     */
-    ResultType operator()(ResultType i_min_value, ResultType i_max_value);
+    ResultType operator()(ResultType i_min, ResultType i_max);
 
     /**
     * Sets seed value for the random generator.
     */
     void SetSeed(typename UnderlyingRandomGenerator::result_type i_seed);
+
+  public:
+    // Not implemented, not a value type.
+    RandomGenerator(const RandomGenerator<ResultType,UnderlyingRandomGenerator>&);
+    RandomGenerator &operator=(const RandomGenerator<ResultType,UnderlyingRandomGenerator>&);
 
   private:
     UnderlyingRandomGenerator m_generator;
@@ -67,15 +73,15 @@ m_generator(i_seed), m_inv_max(1.0/std::numeric_limits<typename UnderlyingRandom
   }
 
 template<typename ResultType, typename UnderlyingRandomGenerator>
-ResultType RandomGenerator<ResultType,UnderlyingRandomGenerator>::operator()(ResultType i_max_value)
+ResultType RandomGenerator<ResultType,UnderlyingRandomGenerator>::operator()(ResultType i_max)
   {
-  return (ResultType) ( m_generator()*(i_max_value*m_inv_max) );
+  return (ResultType) ( m_generator()*(i_max*m_inv_max) );
   }
 
 template<typename ResultType, typename UnderlyingRandomGenerator>
-ResultType RandomGenerator<ResultType,UnderlyingRandomGenerator>::operator()(ResultType i_min_value, ResultType i_max_value)
+ResultType RandomGenerator<ResultType,UnderlyingRandomGenerator>::operator()(ResultType i_min, ResultType i_max)
   {
-  return i_min_value + this->operator()(i_max_value-i_min_value);
+  return i_min + this->operator()(i_max-i_min);
   }
 
 template<typename ResultType, typename UnderlyingRandomGenerator>

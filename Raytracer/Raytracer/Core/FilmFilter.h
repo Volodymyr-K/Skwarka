@@ -31,7 +31,7 @@ class FilmFilter
     FilmFilter(const double &i_x_width, const double &i_y_width);
 
   private:
-    // Not implemented, FilmFilter is not a value type.
+    // Not implemented, not a value type.
     FilmFilter();
     FilmFilter(const FilmFilter&);
     FilmFilter &operator=(const FilmFilter&);

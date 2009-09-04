@@ -24,11 +24,11 @@ class Point3D
     Point3D<T> operator-(const Point3D<T> &i_point) const;
     Point3D<T> &operator-=(const Point3D<T> &i_point);
 
-    Point3D<T> operator*(T i_value) const;
-    Point3D<T> &operator*=(T i_value);
+    Point3D<T> operator*(double i_value) const;
+    Point3D<T> &operator*=(double i_value);
 
-    Point3D<T> operator/(T i_value) const;
-    Point3D<T> &operator/=(T i_value);
+    Point3D<T> operator/(double i_value) const;
+    Point3D<T> &operator/=(double i_value);
 
     bool operator==(const Point3D<T> &i_point) const;
     bool operator!=(const Point3D<T> &i_point) const;
@@ -48,6 +48,12 @@ Point3D<T> operator*(T i_value, const Point3D<T> &i_point);
 */
 template <class charT, class traits, typename T>
 std::basic_istream<charT,traits>& operator >> (std::basic_istream<charT,traits>& i_stream, Point3D<T> &o_point);
+
+/**
+* Prints Point3D to the output stream.
+*/
+template <class charT, class traits, typename T>
+std::basic_ostream<charT,traits>& operator << (std::basic_ostream<charT,traits>& o_stream, const Point3D<T> &i_point);
 
 /**
 * Converts Point3D instance to a Point3D parameterized by a specified type.
@@ -110,36 +116,37 @@ Point3D<T> &Point3D<T>::operator-=(const Point3D<T> &i_point)
   }
 
 template<typename T>
-Point3D<T> Point3D<T>::operator*(T i_value) const
+Point3D<T> Point3D<T>::operator*(double i_value) const
   {
-  return Point3D<T>(m_coordinates[0]*i_value, m_coordinates[1]*i_value, m_coordinates[2]*i_value);
+  return Point3D<T>(
+    (T) (m_coordinates[0]*i_value), 
+    (T) (m_coordinates[1]*i_value), 
+    (T) (m_coordinates[2]*i_value));
   }
 
 template<typename T>
-Point3D<T> &Point3D<T>::operator*=(T i_value)
+Point3D<T> &Point3D<T>::operator*=(double i_value)
   {
-  m_coordinates[0]*=i_value;
-  m_coordinates[1]*=i_value;
-  m_coordinates[2]*=i_value;
+  m_coordinates[0]=(T)(m_coordinates[0]*i_value);
+  m_coordinates[1]=(T)(m_coordinates[1]*i_value);
+  m_coordinates[2]=(T)(m_coordinates[2]*i_value);
 
   return *this;
   }
 
 template<typename T>
-Point3D<T> Point3D<T>::operator/(T i_value) const
+Point3D<T> Point3D<T>::operator/(double i_value) const
   {
-  ASSERT(fabs(i_value) > (T)0);
-
-  T inv = (T)1.0 / i_value;
+  //Dividing by zero is considered correct. The caller code is responsible to handle resulting INF values properly.
+  double inv = 1.0 / i_value;
   return (*this) * inv;
   }
 
 template<typename T>
-Point3D<T> &Point3D<T>::operator/=(T i_value)
+Point3D<T> &Point3D<T>::operator/=(double i_value)
   {
-  ASSERT(fabs(i_value) > (T)0);
-
-  T inv = (T)1.0 / i_value;
+  //Dividing by zero is considered correct. The caller code is responsible to handle resulting INF values properly.
+  double inv = 1.0 / i_value;
   (*this)*=inv;
   return *this;
   }
@@ -184,6 +191,22 @@ inline std::basic_istream<charT,traits>& operator >> (std::basic_istream<charT,t
   {
   i_stream >> o_point[0] >> o_point[1] >> o_point[2];
   return i_stream;
+  }
+
+template <class charT, class traits, typename T>
+inline std::basic_ostream<charT,traits>& operator << (std::basic_ostream<charT,traits>& o_stream, const Point3D<T> &i_point)
+  {
+  /* string stream
+  * - with same format
+  * - without special field width
+  */
+  std::basic_ostringstream<charT,traits> s;
+  s.copyfmt(o_stream);
+  s.width(0);
+
+  s << i_point[0] << ' ' << i_point[1] << ' ' << i_point[2];
+  o_stream << s.str();
+  return o_stream;
   }
 
 template<typename T2, typename T>
