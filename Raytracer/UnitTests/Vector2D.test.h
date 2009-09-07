@@ -15,13 +15,13 @@ class Vector2DTestSuite : public CxxTest::TestSuite
       TS_ASSERT_EQUALS(v1, Vector2D_d(0.0,0.0));
       }
 
-    void testPointConstrWithCoords(void)
+    void testVectorConstrWithCoords(void)
       {
       Vector2D_d v1(1.1,-2.1);
       TS_ASSERT_EQUALS(v1, Vector2D_d(1.1,-2.1));
       }
 
-    void testPointConstrWithPoint(void)
+    void testVectorConstrWithPoint(void)
       {
       Point2D_d p1(1.1,-2.1);
       Vector2D_d v1(p1);

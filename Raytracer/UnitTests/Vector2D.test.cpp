@@ -26,17 +26,17 @@ public:
  void runTest() { suite_Vector2DTestSuite.testVectorDefaultConstr(); }
 } testDescription_Vector2DTestSuite_testVectorDefaultConstr;
 
-static class TestDescription_Vector2DTestSuite_testPointConstrWithCoords : public CxxTest::RealTestDescription {
+static class TestDescription_Vector2DTestSuite_testVectorConstrWithCoords : public CxxTest::RealTestDescription {
 public:
- TestDescription_Vector2DTestSuite_testPointConstrWithCoords() : CxxTest::RealTestDescription( Tests_Vector2DTestSuite, suiteDescription_Vector2DTestSuite, 18, "testPointConstrWithCoords" ) {}
- void runTest() { suite_Vector2DTestSuite.testPointConstrWithCoords(); }
-} testDescription_Vector2DTestSuite_testPointConstrWithCoords;
+ TestDescription_Vector2DTestSuite_testVectorConstrWithCoords() : CxxTest::RealTestDescription( Tests_Vector2DTestSuite, suiteDescription_Vector2DTestSuite, 18, "testVectorConstrWithCoords" ) {}
+ void runTest() { suite_Vector2DTestSuite.testVectorConstrWithCoords(); }
+} testDescription_Vector2DTestSuite_testVectorConstrWithCoords;
 
-static class TestDescription_Vector2DTestSuite_testPointConstrWithPoint : public CxxTest::RealTestDescription {
+static class TestDescription_Vector2DTestSuite_testVectorConstrWithPoint : public CxxTest::RealTestDescription {
 public:
- TestDescription_Vector2DTestSuite_testPointConstrWithPoint() : CxxTest::RealTestDescription( Tests_Vector2DTestSuite, suiteDescription_Vector2DTestSuite, 24, "testPointConstrWithPoint" ) {}
- void runTest() { suite_Vector2DTestSuite.testPointConstrWithPoint(); }
-} testDescription_Vector2DTestSuite_testPointConstrWithPoint;
+ TestDescription_Vector2DTestSuite_testVectorConstrWithPoint() : CxxTest::RealTestDescription( Tests_Vector2DTestSuite, suiteDescription_Vector2DTestSuite, 24, "testVectorConstrWithPoint" ) {}
+ void runTest() { suite_Vector2DTestSuite.testVectorConstrWithPoint(); }
+} testDescription_Vector2DTestSuite_testVectorConstrWithPoint;
 
 static class TestDescription_Vector2DTestSuite_testVectorAdd : public CxxTest::RealTestDescription {
 public:

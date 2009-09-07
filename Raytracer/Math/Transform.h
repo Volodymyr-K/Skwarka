@@ -117,7 +117,7 @@ Transform MakeRotation(const double &i_angle, Vector3D_d i_axis);
 * The "look-at" space is a coordinate system defined by the position of a camera, a viewing direction
 * and an "up" vector that orients the camera along the viewing direction implied by the first two parameters.
 * @param i_origin Position of the camera in the world space.
-* @param i_direction Viewing direction of the camera in the world space.
+* @param i_direction Viewing direction of the camera in the world space. The function normalizes the direction, so the length does not matter.
 * @param i_up "Up" vector in the world space.
 */
 Transform MakeLookAt(const Point3D_d &i_origin, Vector3D_d i_direction, const Vector3D_d &i_up);
@@ -127,7 +127,7 @@ Transform MakeLookAt(const Point3D_d &i_origin, Vector3D_d i_direction, const Ve
 
 inline Transform::Transform()
   {
-  m_matrix = m_inverted_matrix = Matrix4x4_d();
+  m_matrix = m_inverted_matrix = Matrix4x4_d(true);
   }
 
 inline Transform::Transform(double i_values[4][4]): m_matrix(i_values)
@@ -140,7 +140,7 @@ inline Transform::Transform(const Matrix4x4_d &i_matrix): m_matrix(i_matrix)
   m_matrix.Inverted(m_inverted_matrix);
   }
 
-inline Transform::Transform(const Matrix4x4_d &i_matrix, const Matrix4x4_d &i_inverted_matrix): m_matrix(i_matrix), m_inverted_matrix(m_matrix)
+inline Transform::Transform(const Matrix4x4_d &i_matrix, const Matrix4x4_d &i_inverted_matrix): m_matrix(i_matrix), m_inverted_matrix(i_inverted_matrix)
   {
   }
 

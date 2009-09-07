@@ -45,11 +45,11 @@ shared_ptr<TriangleMesh> Sphere::BuildMesh()
   std::vector<bool> deleted(4, false);
 
   // Constructs the initial tetrahedron manually.
-  float base_radius = sqrtf(8.f)/3.f;
+  double base_radius = sqrt(8.0)/3.0;
   vertices[0]=Point3D_f(0.f, 0.f, 1.f);
-  vertices[1]=Point3D_f(base_radius,  0.f, -1.f/3.f);
-  vertices[2]=Point3D_f(base_radius*cos(2.f*M_PI_3), base_radius*sin(2.f*M_PI_3), -1.f/3.f);
-  vertices[3]=Point3D_f(base_radius*cos(2.f*M_PI_3), -base_radius*sin(2.f*M_PI_3), -1.f/3.f);
+  vertices[1]=Point3D_f((float) base_radius,  0.f, -1.f/3.f);
+  vertices[2]=Point3D_f((float) (base_radius*cos(2.0*M_PI_3)), (float) ( base_radius*sin(2.0*M_PI_3)), -1.f/3.f);
+  vertices[3]=Point3D_f((float) (base_radius*cos(2.0*M_PI_3)), (float) (-base_radius*sin(2.0*M_PI_3)), -1.f/3.f);
 
   triangles[0]=MeshTriangle(1,3,2);
   triangles[1]=MeshTriangle(1,0,3);
@@ -139,10 +139,10 @@ shared_ptr<TriangleMesh> Sphere::BuildMesh()
   for (size_t i=0;i<vertices.size();++i)
     {
     float phi = atan2(vertices[i][1],vertices[i][0]);
-    if (phi < 0.0) phi+=2.0*M_PI;
+    if (phi < 0.0) phi+=(float)(2.0*M_PI);
     float theta = acos(vertices[i][2]);
 
-    uv_parameterization[i]=Point2D_f(phi*INV_2PI, theta*INV_PI);
+    uv_parameterization[i]=Point2D_f((float) (phi*INV_2PI), (float) (theta*INV_PI));
 
     vertices[i]=vertices[i]*m_params.m_radius+m_params.m_center;
     }

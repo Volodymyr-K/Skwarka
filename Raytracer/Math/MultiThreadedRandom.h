@@ -77,13 +77,14 @@ double RandomDouble(double i_min, double i_max);
 /**
 * Global thread-safe function generating unsigned int random values in [0;i_max) range.
 * If i_max is negative then random values are generated in (i_max;0] range.
-* @param i_max Upper bound on the range of random values to be produced. Can be negative.
+* @param i_max Upper bound on the range of random values to be produced. Should not be null. Can be negative.
 */
 int RandomInt(int i_max);
 
 /**
 * Global thread-safe function generating unsigned int random values in [i_min;i_max) range.
 * If i_max<i_min then random values are generated in (i_max;i_min] range.
+* i_min should not be equal to i_max.
 * @param i_min Lower bound on the range of random values to be produced. Can be negative.
 * @param i_max Upper bound on the range of random values to be produced. Can be negative.
 */
@@ -134,7 +135,9 @@ inline double RandomDouble(double i_min, double i_max)
 
 inline int RandomInt(int i_max)
   {
-  if (i_max>=0)
+  ASSERT(i_max!=0);
+
+  if (i_max>0)
     return global_multi_threaded_random_generator.GenerateIntRandom() % i_max;
   else
     return - (global_multi_threaded_random_generator.GenerateIntRandom() % (-i_max));
@@ -142,8 +145,10 @@ inline int RandomInt(int i_max)
 
 inline int RandomInt(int i_min, int i_max)
   {
+  ASSERT(i_min!=i_max);
+
   // Assert for int overflow.
-  ASSERT( (i_max>=i_min && i_max-i_min>0) || (i_max<i_min && i_max-i_min<0) );
+  ASSERT( (i_max>i_min && i_max-i_min>0) || (i_max<i_min && i_max-i_min<0) );
   return i_min + RandomInt(i_max - i_min);
   }
 

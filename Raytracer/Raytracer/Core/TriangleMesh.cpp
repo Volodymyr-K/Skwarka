@@ -185,7 +185,7 @@ void TriangleMesh::_ComputeShadingNormals(const ConnectivityData &i_connectivity
       float weight;
       float sin_value = (edge1.Normalized()^edge2.Normalized()).Length();
       if(sin_value>1.0)
-        weight = M_PI_2;
+        weight = (float)M_PI_2;
       else
         weight = asinf( (edge1.Normalized()^edge2.Normalized()).Length() );
       normal += GetTriangleNormal(triangle_index)*weight;

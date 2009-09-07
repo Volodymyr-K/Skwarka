@@ -12,12 +12,12 @@
 #include <cxxtest/TestMain.h>
 
 bool MultiThreadedRandomTestSuite_init = false;
-#include "./MultiThreadedRandom.Test.h"
+#include "./MultiThreadedRandom.test.h"
 
 static MultiThreadedRandomTestSuite suite_MultiThreadedRandomTestSuite;
 
 static CxxTest::List Tests_MultiThreadedRandomTestSuite = { 0, 0 };
-CxxTest::StaticSuiteDescription suiteDescription_MultiThreadedRandomTestSuite( "./MultiThreadedRandom.Test.h", 9, "MultiThreadedRandomTestSuite", suite_MultiThreadedRandomTestSuite, Tests_MultiThreadedRandomTestSuite );
+CxxTest::StaticSuiteDescription suiteDescription_MultiThreadedRandomTestSuite( "./MultiThreadedRandom.test.h", 9, "MultiThreadedRandomTestSuite", suite_MultiThreadedRandomTestSuite, Tests_MultiThreadedRandomTestSuite );
 
 static class TestDescription_MultiThreadedRandomTestSuite_testRandomDoubleRange1 : public CxxTest::RealTestDescription {
 public:

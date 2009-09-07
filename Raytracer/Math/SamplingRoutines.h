@@ -13,14 +13,14 @@ namespace SamplingRoutines
   {
   /**
   Maps 2D sample in [0;1]^2 to a unit radius disk.
-  The "concentric" algorithm belongs to Peter Shirley and avoids area distortion.
+  The "concentric" algorithm belongs to Peter Shirley and prevents the area distortion (elongation and/or compression).
   @param i_sample Input 2D sample in [0;1]^2.
-  @return Resulting point in the unit disk.
+  @return Resulting 2D point in the unit radius disk.
   */
   Point2D_d ConcentricDiskSampling(const Point2D_d i_sample);
 
   /**
-  Fills the specified range with stratified 1D values. ValueIterator is a random-access iterator type.
+  Fills the specified range with stratified 1D values in [0;1] range. ValueIterator is a random-access iterator type.
   @param i_begin Begin iterator of the range to be filled with the values.
   @param i_samples_num Number of samples.
   @param i_jitter_samples If true the samples will be randomly moved inside their stratas.
@@ -29,7 +29,7 @@ namespace SamplingRoutines
   void StratifiedSampling1D(ValueIterator i_begin, size_t i_samples_num, bool i_jitter_samples);
 
   /**
-  Fills the specified range with stratified 2D values. Point2DIterator is a random-access iterator type.
+  Fills the specified range with stratified 2D values in [0;1]^2 range. Point2DIterator is a random-access iterator type.
   @param i_begin Begin iterator of the range to be filled with the values.
   @param i_x_samples_num Number of samples in x direction.
   @param i_y_samples_num Number of samples in y direction.
@@ -61,13 +61,14 @@ namespace SamplingRoutines
   {
   inline Point2D_d ConcentricDiskSampling(const Point2D_d i_sample)
     {
+    ASSERT(i_sample[0]>=0.0 && i_sample[0]<=1.0 && i_sample[1]>=0.0 && i_sample[1]<=1.0);
     double r, theta;
 
     // Map uniform random numbers to [-1,1]^2
     Point2D_d s = 2.0*i_sample - Point2D_d(1,1);
 
     // Map square to (r,theta)
-    // Handle degeneracy at the origin
+    // Handle degeneracy at the origin.
     if (s == Point2D_d(0,0))
       return Point2D_d(0,0);
 
@@ -75,7 +76,7 @@ namespace SamplingRoutines
       {
       if (s[0] > s[1])
         {
-        // Handle first region of disk
+        // Handle first region of disk.
         r = s[0];
         if (s[1] > 0.0)
           theta = s[1]/r;
@@ -84,7 +85,7 @@ namespace SamplingRoutines
         }
       else
         {
-        // Handle second region of disk
+        // Handle second region of disk.
         r = s[1];
         theta = 2.0 - s[0]/r;
         }
@@ -93,13 +94,13 @@ namespace SamplingRoutines
       {
       if (s[0] <= s[1])
         {
-        // Handle third region of disk
+        // Handle third region of disk.
         r = -s[0];
         theta = 4.0 - s[1]/r;
         }
       else
         {
-        // Handle fourth region of disk
+        // Handle fourth region of disk.
         r = -s[1];
         theta = 6.0 + s[0]/r;
         }
@@ -148,7 +149,7 @@ namespace SamplingRoutines
     if (i_samples_num==0)
       return;
 
-    // Generate LHS samples along diagonal
+    // Generate LHS samples along diagonal.
     double delta = 1.0 / i_samples_num;
     for (size_t i = 0; i < i_samples_num; ++i)
       {
@@ -157,7 +158,7 @@ namespace SamplingRoutines
       *(i_begin+i) = Point2D_d( (i + jx) * delta, (i + jy) * delta );
       }
 
-    // Permute LHS samples in each dimension
+    // Permute LHS samples in each dimension.
     for (size_t i = 0; i < 2; ++i)
       for (size_t j = 0; j < i_samples_num; ++j)
         {

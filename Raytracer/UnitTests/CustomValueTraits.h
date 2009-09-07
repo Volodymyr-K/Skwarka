@@ -7,9 +7,13 @@
 #include <Math/Vector3D.h>
 #include <sstream>
 
-// This file defines ValueTraits specializations for point and vector 2D and 3D classes.
-// This is needed to make TS_ASSERT_EQUALS() support these types.
-// This file should be included into every test header that uses TS_ASSERT_EQUALS() for points or vectors.
+/*
+This file defines ValueTraits specializations for point and vector 2D and 3D classes.
+This is needed to make TS_ASSERT_EQUALS() support these types.
+It also contains assert functions for point and vector delta assertions.
+
+This file should be included into every test header.
+*/
 
 namespace CxxTest
   {
@@ -85,5 +89,36 @@ namespace CxxTest
       char m_buffer[256];
     };
   };
+
+template<typename T>
+void CustomAssertDelta(const Point3D<T> &i_point1, const Point3D<T> &i_point2, T i_delta)
+  {
+  TS_ASSERT_DELTA(i_point1[0],i_point2[0],i_delta);
+  TS_ASSERT_DELTA(i_point1[1],i_point2[1],i_delta);
+  TS_ASSERT_DELTA(i_point1[2],i_point2[2],i_delta);
+  }
+
+template<typename T>
+void CustomAssertDelta(const Point2D<T> &i_point1, const Point2D<T> &i_point2, T i_delta)
+  {
+  TS_ASSERT_DELTA(i_point1[0],i_point2[0],i_delta);
+  TS_ASSERT_DELTA(i_point1[1],i_point2[1],i_delta);
+  }
+
+
+template<typename T>
+void CustomAssertDelta(const Vector3D<T> &i_vector1, const Vector3D<T> &i_vector2, T i_delta)
+  {
+  TS_ASSERT_DELTA(i_vector1[0],i_vector2[0],i_delta);
+  TS_ASSERT_DELTA(i_vector1[1],i_vector2[1],i_delta);
+  TS_ASSERT_DELTA(i_vector1[2],i_vector2[2],i_delta);
+  }
+
+template<typename T>
+void CustomAssertDelta(const Vector2D<T> &i_vector1, const Vector2D<T> &i_vector2, T i_delta)
+  {
+  TS_ASSERT_DELTA(i_vector1[0],i_vector2[0],i_delta);
+  TS_ASSERT_DELTA(i_vector1[1],i_vector2[1],i_delta);
+  }
 
 #endif // CUSTOM_VALUE_TRAITS_H

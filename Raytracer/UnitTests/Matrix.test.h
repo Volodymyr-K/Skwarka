@@ -12,15 +12,15 @@ class MatrixTestSuite : public CxxTest::TestSuite
     // Most of the tests from this suite operate with the same sample matrix, so it is initialized in the setUp() method once.
     void setUp()
       {
-      // Change these values carefully as many tests below depends on them.
-      double elements[16]={
+      // Change these values carefully since many tests below depend on them.
+      double elements[4][4]={
         1.0,1.1,1.2,1.3,
         -1.0,2.1,2.2,2.3,
         1.0,2.0,-2.0,2.0,
         2.5,2.5,-2.5,-2.5};
 
       // The elements form singular matrix.
-      double elements2[16]={
+      double elements2[4][4]={
         1.0,2.0,3.0,4.0,
         2.0,3.0,4.0,5.0,
         6.0,7.0,8.0,9.0,
@@ -29,17 +29,8 @@ class MatrixTestSuite : public CxxTest::TestSuite
       memcpy(m_elements,elements,sizeof(m_elements));
       memcpy(m_elements2,elements2,sizeof(m_elements2));
 
-      m_matrix1=Matrix4x4_d(
-        m_elements[0],m_elements[1],m_elements[2],m_elements[3],
-        m_elements[4+0],m_elements[4+1],m_elements[4+2],m_elements[4+3],
-        m_elements[8+0],m_elements[8+1],m_elements[8+2],m_elements[8+3],
-        m_elements[12+0],m_elements[12+1],m_elements[12+2],m_elements[12+3]);
-
-      m_matrix2=Matrix4x4_d(
-        m_elements2[0],m_elements2[1],m_elements2[2],m_elements2[3],
-        m_elements2[4+0],m_elements2[4+1],m_elements2[4+2],m_elements2[4+3],
-        m_elements2[8+0],m_elements2[8+1],m_elements2[8+2],m_elements2[8+3],
-        m_elements2[12+0],m_elements2[12+1],m_elements2[12+2],m_elements2[12+3]);
+      m_matrix1=Matrix4x4_d(m_elements);
+      m_matrix2=Matrix4x4_d(m_elements2);
       } 
 
     void tearDown()
@@ -68,7 +59,7 @@ class MatrixTestSuite : public CxxTest::TestSuite
       Matrix4x4_d m_add=m_matrix1+m_matrix2;
       for(unsigned char i=0;i<4;++i)
         for(unsigned char j=0;j<4;++j)
-          TS_ASSERT_EQUALS(m_add.m_values[i][j], m_elements[4*i+j]+m_elements2[4*i+j]);
+          TS_ASSERT_EQUALS(m_add.m_values[i][j], m_elements[i][j]+m_elements2[i][j]);
       }
 
     void testMatrixAddAssign(void)
@@ -77,7 +68,7 @@ class MatrixTestSuite : public CxxTest::TestSuite
       m_add+=m_matrix2;
       for(unsigned char i=0;i<4;++i)
         for(unsigned char j=0;j<4;++j)
-          TS_ASSERT_EQUALS(m_add.m_values[i][j], m_elements[4*i+j]+m_elements2[4*i+j]);
+          TS_ASSERT_EQUALS(m_add.m_values[i][j], m_elements[i][j]+m_elements2[i][j]);
       }
 
     void testMatrixSub(void)
@@ -85,7 +76,7 @@ class MatrixTestSuite : public CxxTest::TestSuite
       Matrix4x4_d m_sub=m_matrix1-m_matrix2;
       for(unsigned char i=0;i<4;++i)
         for(unsigned char j=0;j<4;++j)
-          TS_ASSERT_EQUALS(m_sub.m_values[i][j], m_elements[4*i+j]-m_elements2[4*i+j]);
+          TS_ASSERT_EQUALS(m_sub.m_values[i][j], m_elements[i][j]-m_elements2[i][j]);
       }
 
     void testMatrixSubAssign(void)
@@ -94,7 +85,7 @@ class MatrixTestSuite : public CxxTest::TestSuite
       m_sub-=m_matrix2;
       for(unsigned char i=0;i<4;++i)
         for(unsigned char j=0;j<4;++j)
-          TS_ASSERT_EQUALS(m_sub.m_values[i][j], m_elements[4*i+j]-m_elements2[4*i+j]);
+          TS_ASSERT_EQUALS(m_sub.m_values[i][j], m_elements[i][j]-m_elements2[i][j]);
       }
     
     void testMatrixScalarMult(void)
@@ -102,7 +93,7 @@ class MatrixTestSuite : public CxxTest::TestSuite
       Matrix4x4_d m_mult=m_matrix1*1.5;
       for(unsigned char i=0;i<4;++i)
         for(unsigned char j=0;j<4;++j)
-          TS_ASSERT_EQUALS(m_mult.m_values[i][j], m_elements[4*i+j]*1.5);
+          TS_ASSERT_EQUALS(m_mult.m_values[i][j], m_elements[i][j]*1.5);
       }
 
     void testMatrixScalarMultAssign(void)
@@ -111,7 +102,7 @@ class MatrixTestSuite : public CxxTest::TestSuite
       m_mult*=1.5;
       for(unsigned char i=0;i<4;++i)
         for(unsigned char j=0;j<4;++j)
-          TS_ASSERT_EQUALS(m_mult.m_values[i][j], m_elements[4*i+j]*1.5);
+          TS_ASSERT_EQUALS(m_mult.m_values[i][j], m_elements[i][j]*1.5);
       }
 
     void testMatrixScalarPreMult(void)
@@ -119,7 +110,7 @@ class MatrixTestSuite : public CxxTest::TestSuite
       Matrix4x4_d m_mult=1.5*m_matrix1;
       for(unsigned char i=0;i<4;++i)
         for(unsigned char j=0;j<4;++j)
-          TS_ASSERT_EQUALS(m_mult.m_values[i][j], m_elements[4*i+j]*1.5);
+          TS_ASSERT_EQUALS(m_mult.m_values[i][j], m_elements[i][j]*1.5);
       }
 
     void testMatrixPreMult(void)
@@ -165,7 +156,7 @@ class MatrixTestSuite : public CxxTest::TestSuite
       Matrix4x4_d m_trans=m_matrix1.Transposed();
       for(unsigned char i=0;i<4;++i)
         for(unsigned char j=0;j<4;++j)
-          TS_ASSERT_EQUALS(m_trans.m_values[i][j], m_elements[4*j+i]);
+          TS_ASSERT_EQUALS(m_trans.m_values[i][j], m_elements[j][i]);
       }
 
     void testMatrixInverted(void)
@@ -192,7 +183,7 @@ class MatrixTestSuite : public CxxTest::TestSuite
       }
 
   private:
-    double m_elements[16], m_elements2[16];
+    double m_elements[4][4], m_elements2[4][4];
     Matrix4x4_d m_matrix1, m_matrix2;
   };
 

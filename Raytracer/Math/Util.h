@@ -21,6 +21,8 @@ inline bool SolveLinearSystem2x2(const double i_A[2][2], const double i_B[2], do
 template<typename T>
 T Clamp(T i_value, T i_low, T i_high)
   {
+  ASSERT(i_low<=i_high);
+
   if (i_value < i_low)
     return i_low;
   else if (i_value > i_high)

@@ -259,6 +259,26 @@
 					>
 				</File>
 				<File
+					RelativePath=".\Ray.test.h"
+					>
+				</File>
+				<File
+					RelativePath=".\SmaplingRoutines.test.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Transform.test.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Triangle3D.test.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Util.test.h"
+					>
+				</File>
+				<File
 					RelativePath=".\Vector2D.test.h"
 					>
 				</File>
@@ -297,6 +317,26 @@
 			</File>
 			<File
 				RelativePath=".\RandomGenerator.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Ray.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\SmaplingRoutines.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Transform.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Triangle3D.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Util.test.cpp"
 				>
 			</File>
 			<File
