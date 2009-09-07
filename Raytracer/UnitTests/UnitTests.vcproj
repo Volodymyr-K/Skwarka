@@ -243,10 +243,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\MultiThreadedRandom.test.h"
-					>
-				</File>
-				<File
 					RelativePath=".\Point2D.test.h"
 					>
 				</File>
@@ -264,6 +260,10 @@
 				</File>
 				<File
 					RelativePath=".\SmaplingRoutines.test.h"
+					>
+				</File>
+				<File
+					RelativePath=".\ThreadSafeRandom.test.h"
 					>
 				</File>
 				<File
@@ -287,12 +287,64 @@
 					>
 				</File>
 			</Filter>
+			<Filter
+				Name="Raytracer"
+				>
+				<Filter
+					Name="Core"
+					>
+					<File
+						RelativePath=".\Camera.test.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Film.test.h"
+						>
+					</File>
+					<File
+						RelativePath=".\FilmFilter.test.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Sample.test.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Sampler.test.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Spectrum.test.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="Cameras"
+					>
+					<File
+						RelativePath=".\PerspectiveCamera.test.h"
+						>
+					</File>
+				</Filter>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Generated Code"
 			>
 			<File
 				RelativePath=".\BBox3D.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Camera.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Film.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\FilmFilter.test.cpp"
 				>
 			</File>
 			<File
@@ -304,7 +356,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\MultiThreadedRandom.Test.cpp"
+				RelativePath=".\PerspectiveCamera.test.cpp"
 				>
 			</File>
 			<File
@@ -324,7 +376,23 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Sample.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Sampler.test.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\SmaplingRoutines.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Spectrum.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ThreadSafeRandom.Test.cpp"
 				>
 			</File>
 			<File
@@ -346,6 +414,57 @@
 			<File
 				RelativePath=".\Vector3D.test.cpp"
 				>
+			</File>
+		</Filter>
+		<Filter
+			Name="Mocks"
+			>
+			<File
+				RelativePath=".\Mocks\CameraMock.h"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\Mocks\FilmFilterMock.h"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\Mocks\SamplerMock.h"
+				>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
 			</File>
 		</Filter>
 	</Files>

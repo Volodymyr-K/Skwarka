@@ -5,10 +5,11 @@
 #include <Math/Point3D.h>
 #include <Math/Vector2D.h>
 #include <Math/Vector3D.h>
+#include <Raytracer/Core/Spectrum.h>
 #include <sstream>
 
 /*
-This file defines ValueTraits specializations for point and vector 2D and 3D classes.
+This file defines ValueTraits specializations for some of the custom classes classes.
 This is needed to make TS_ASSERT_EQUALS() support these types.
 It also contains assert functions for point and vector delta assertions.
 
@@ -57,10 +58,10 @@ namespace CxxTest
   class ValueTraits< Vector3D<T> >
     {
     public:
-      ValueTraits(const Vector3D<T> &i_point)
+      ValueTraits(const Vector3D<T> &i_vector)
         {
         std::stringstream m_sstream;
-        m_sstream << "( " << i_point << " )";
+        m_sstream << "( " << i_vector << " )";
         m_sstream.getline(m_buffer,256);
         }
       const char *asString() const
@@ -75,10 +76,28 @@ namespace CxxTest
   class ValueTraits< Vector2D<T> >
     {
     public:
-      ValueTraits(const Vector2D<T> &i_point)
+      ValueTraits(const Vector2D<T> &i_vector)
         {
         std::stringstream m_sstream;
-        m_sstream << "( " << i_point << " )";
+        m_sstream << "( " << i_vector << " )";
+        m_sstream.getline(m_buffer,256);
+        }
+      const char *asString() const
+        {
+        return m_buffer;
+        }
+    private:
+      char m_buffer[256];
+    };
+
+  template<class T>
+  class ValueTraits< Spectrum<T> >
+    {
+    public:
+      ValueTraits(const Spectrum<T> &i_spectrum)
+        {
+        std::stringstream m_sstream;
+        m_sstream << "( " << i_spectrum << " )";
         m_sstream.getline(m_buffer,256);
         }
       const char *asString() const

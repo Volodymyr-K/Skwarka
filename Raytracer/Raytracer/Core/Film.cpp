@@ -46,17 +46,25 @@ void Film::AddSample(const Point2D_d &i_image_point, const Spectrum_f &i_spectru
       }
   }
 
+void Film::ClearFilm()
+  {
+  for (size_t y = 0; y < m_y_resolution; ++y)
+    m_pixels[y].assign(m_x_resolution, FilmPixel());
+  }
+
 void Film::SetCropWindow(const Point2D_d &i_begin, const Point2D_d &i_end)
   {
+  // Check if crop window coordinates are out of range.
   if (i_begin[0]<0.0 || i_begin[1]<0.0 || i_end[0]>1.0 || i_end[1]>1.0)
     {
-    Log::Warning("Crop window coordinates are out of range. Skipping.");
+    ASSERT(0 && "Crop window coordinates are out of range. Skipping");
     return;
     }
 
+  // Check if crop window coordinates are invalid.
   if (i_begin[0]>=i_end[0] || i_begin[1]>=i_end[1])
     {
-    Log::Warning("Crop window coordinates are invalid. Skipping.");
+    ASSERT(0 && "Crop window coordinates are invalid. Skipping");
     return;
     }
 

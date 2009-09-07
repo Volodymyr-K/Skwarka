@@ -8,7 +8,8 @@
 
 /**
 * Perspective camera implementation.
-* The class implements the Camera interface for perspective projection. Also, the camera supports "depth of field" for blurring the out of focus objects.
+* The class implements the Camera interface for perspective projection.
+* The camera also supports "depth of field" for blurring the out of focus objects.
 */
 class PerspectiveCamera: public Camera
   {

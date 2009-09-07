@@ -10,8 +10,8 @@
 * ResultType template parameter corresponds to the type of the random values produced.
 * UnderlyingRandomGenerator template parameter corresponds to the type of the underlying random generator implementation.
 * The random generator is thread-safe if and only if the underlying random generator implementation is thread-safe (which is not the case for at least boost::mt19937).
-* For the completely thread-safe random generator implementation see MultiThreadedRandomGenerator.
-* @sa MultiThreadedRandomGenerator
+* For the completely thread-safe random generator implementation see ThreadSafeRandomGenerator.
+* @sa ThreadSafeRandomGenerator
 */
 template<typename ResultType, typename UnderlyingRandomGenerator = boost::mt19937>
 class RandomGenerator

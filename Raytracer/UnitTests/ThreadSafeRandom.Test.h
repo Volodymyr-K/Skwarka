@@ -1,15 +1,15 @@
-#ifndef MULTI_THREADED_RANDOM_TEST_H
-#define MULTI_THREADED_RANDOM_TEST_H
+#ifndef THREAD_SAFE_RANDOM_TEST_H
+#define THREAD_SAFE_RANDOM_TEST_H
 
 #include <cxxtest/TestSuite.h>
 #include "CustomValueTraits.h"
-#include <Math/MultiThreadedRandom.h>
+#include <Math/ThreadSafeRandom.h>
 
 // This class does not actually test the multi-threaded aspects of the generator, it just tests the random values and distribution in a single thread.
-class MultiThreadedRandomTestSuite : public CxxTest::TestSuite
+class ThreadSafeRandomTestSuite : public CxxTest::TestSuite
   {
   public:
-    void testRandomDoubleRange1(void)
+    void testRandomDoubleRange1()
       {
       double mn=DBL_INF,mx=-DBL_INF;
       for(size_t i=0;i<1000;++i)
@@ -21,7 +21,7 @@ class MultiThreadedRandomTestSuite : public CxxTest::TestSuite
       TS_ASSERT(mn>=0.0 && mn<123.0 && mx>=0.0 && mx<123.0);
       }
 
-    void testRandomDoubleRange2(void)
+    void testRandomDoubleRange2()
       {
       double mn=DBL_INF,mx=-DBL_INF;
       for(size_t i=0;i<1000;++i)
@@ -34,7 +34,7 @@ class MultiThreadedRandomTestSuite : public CxxTest::TestSuite
       TS_ASSERT(mn>=-10.0 && mn<123.0 && mx>=-10.0 && mx<123.0);
       }
 
-    void testRandomIntRange1(void)
+    void testRandomIntRange1()
       {
       int mn=INT_MAX,mx=INT_MIN;
       for(size_t i=0;i<1000;++i)
@@ -46,7 +46,7 @@ class MultiThreadedRandomTestSuite : public CxxTest::TestSuite
       TS_ASSERT(mn>=0 && mn<123 && mx>=0 && mx<123);
       }
 
-    void testRandomIntRange2(void)
+    void testRandomIntRange2()
       {
       int mn=INT_MAX,mx=INT_MIN;
       for(size_t i=0;i<1000;++i)
@@ -60,7 +60,7 @@ class MultiThreadedRandomTestSuite : public CxxTest::TestSuite
       }
 
     // Test for mean and variance values.
-    void testRandomDistribution(void)
+    void testRandomDistribution()
       {
       double values[1024], mean=0.0;
       for(size_t i=0;i<1024;++i)
@@ -81,4 +81,4 @@ class MultiThreadedRandomTestSuite : public CxxTest::TestSuite
       }
   };
 
-#endif // MULTI_THREADED_RANDOM_TEST_H
+#endif // THREAD_SAFE_RANDOM_TEST_H

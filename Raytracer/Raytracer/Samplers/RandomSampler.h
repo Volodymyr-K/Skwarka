@@ -5,7 +5,7 @@
 #include <Raytracer/Core/Sample.h>
 #include <Raytracer/Core/Sampler.h>
 #include <Math/Geometry.h>
-#include <Math/MultiThreadedRandom.h>
+#include <Math/ThreadSafeRandom.h>
 
 /**
 * Sampler implementation that produces completely random values for all sample values.

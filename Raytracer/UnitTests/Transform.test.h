@@ -46,7 +46,7 @@ class TransformTestSuite : public CxxTest::TestSuite
       // Nothing to clear.
       }
 
-    void testTransformDefaultConstr(void)
+    void testTransformDefaultConstr()
       {
       Transform t;
       Point3D_d p(1.0,2.0,3.0);
@@ -55,7 +55,7 @@ class TransformTestSuite : public CxxTest::TestSuite
       CustomAssertDelta(p,p2,(1e-10));
       }
 
-    void testTransformConstrWithMatrixElements(void)
+    void testTransformConstrWithMatrixElements()
       {
       Transform t(m_elements);
       Point3D_d p(1.0,2.0,3.0);
@@ -64,7 +64,7 @@ class TransformTestSuite : public CxxTest::TestSuite
       CustomAssertDelta(p2,Point3D_d(0.5,2.0,4.5),(1e-10));
       }
 
-    void testTransformConstrWithMatrix(void)
+    void testTransformConstrWithMatrix()
       {
       Transform t(m_matrix1);
       Point3D_d p(1.0,2.0,3.0);
@@ -73,7 +73,7 @@ class TransformTestSuite : public CxxTest::TestSuite
       CustomAssertDelta(p2,Point3D_d(0.5,2.0,4.5),(1e-10));
       }
 
-    void testTransformInverted(void)
+    void testTransformInverted()
       {
       Transform t(m_matrix1);
       Transform t_inv = t.Inverted();
@@ -83,7 +83,7 @@ class TransformTestSuite : public CxxTest::TestSuite
       CustomAssertDelta(p2,Point3D_d(1.0,2.0,3.0),(1e-10));
       }
 
-    void testTransformPoint(void)
+    void testTransformPoint()
       {
       Transform t(m_matrix1);
       Point3D_d p(1.0,2.0,3.0);
@@ -91,7 +91,7 @@ class TransformTestSuite : public CxxTest::TestSuite
       CustomAssertDelta(p2,Point3D_d(0.5,2.0,4.5),(1e-10));
       }
 
-    void testTransformVector(void)
+    void testTransformVector()
       {
       Transform t(m_matrix1);
       Vector3D_d v(1.0,2.0,3.0);
@@ -99,7 +99,7 @@ class TransformTestSuite : public CxxTest::TestSuite
       CustomAssertDelta(v2,Vector3D_d(1.0,4.0,9.0),(1e-10));
       }
 
-    void testTransformRay(void)
+    void testTransformRay()
       {
       Transform t(m_matrix1);
       Ray ray2=t(m_test_ray);
@@ -107,7 +107,7 @@ class TransformTestSuite : public CxxTest::TestSuite
       CustomAssertDelta(ray2.m_direction,Vector3D_d(m_direction[0],m_direction[1]*2.0,m_direction[2]*3.0),(1e-10));
       }
 
-    void testTransformComposition(void)
+    void testTransformComposition()
       {
       Transform t(m_matrix1);
       Transform t2(m_matrix2);
@@ -118,7 +118,7 @@ class TransformTestSuite : public CxxTest::TestSuite
       CustomAssertDelta(p2,t(t2(p)),(1e-10));
       }
 
-    void testTransformTranslation(void)
+    void testTransformTranslation()
       {
       Transform t=MakeTranslation(Vector3D_d(-1.0,2.0,-3.0));
 
@@ -127,7 +127,7 @@ class TransformTestSuite : public CxxTest::TestSuite
       CustomAssertDelta(ray2.m_direction,m_direction,(1e-10));
       }
 
-    void testTransformScale(void)
+    void testTransformScale()
       {
       Transform t=MakeScale(-0.1,1.0,0.3);
 
@@ -136,7 +136,7 @@ class TransformTestSuite : public CxxTest::TestSuite
       CustomAssertDelta(ray2.m_direction,Vector3D_d(-m_direction[0]*0.1,m_direction[1],m_direction[2]*0.3),(1e-10));
       }
 
-    void testTransformRotationX(void)
+    void testTransformRotationX()
       {
       Transform t=MakeRotationX(M_PI_2);
 
@@ -145,7 +145,7 @@ class TransformTestSuite : public CxxTest::TestSuite
       CustomAssertDelta(ray2.m_direction,Vector3D_d(m_direction[0],-m_direction[2],m_direction[1]),(1e-10));
       }
 
-    void testTransformRotationY(void)
+    void testTransformRotationY()
       {
       Transform t=MakeRotationY(M_PI_2);
 
@@ -154,7 +154,7 @@ class TransformTestSuite : public CxxTest::TestSuite
       CustomAssertDelta(ray2.m_direction,Vector3D_d(m_direction[2],m_direction[1],-m_direction[0]),(1e-10));
       }
 
-    void testTransformRotationZ(void)
+    void testTransformRotationZ()
       {
       Transform t=MakeRotationZ(M_PI_2);
 
@@ -163,7 +163,7 @@ class TransformTestSuite : public CxxTest::TestSuite
       CustomAssertDelta(ray2.m_direction,Vector3D_d(-m_direction[1],m_direction[0],m_direction[2]),(1e-10));
       }
 
-    void testTransformRotation(void)
+    void testTransformRotation()
       {
       Transform t=MakeRotation(2.0*M_PI_3,Vector3D_d(1.0,1.0,1.0));
 
@@ -172,7 +172,7 @@ class TransformTestSuite : public CxxTest::TestSuite
       CustomAssertDelta(ray2.m_direction,Vector3D_d(m_direction[2],m_direction[0],m_direction[1]),(1e-10));
       }
 
-    void testTransformLookAt(void)
+    void testTransformLookAt()
       {
       Point3D_d origin(3.0,2.0,1.0);
       Vector3D_d dir(-1.0,-2.0,-1.0);

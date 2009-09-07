@@ -25,7 +25,7 @@
 #include <Raytracer/Samplers/RandomSampler.h>
 #include <Raytracer/Samplers/StratifiedSampler.h>
 #include <Raytracer/Cameras/PerspectiveCamera.h>
-#include <Math/MultiThreadedRandom.h>
+#include <Math/ThreadSafeRandom.h>
 
 class TestTracer
   {
@@ -197,7 +197,7 @@ inline void TestTracer::RenderImage()
       {
       float alfa;
       Spectrum_f sp;
-      cam->GetFilm()->GetPixel(x,y,sp,alfa);
+      cam->GetFilm()->GetPixel(Point2D_i(x,y),sp,alfa);
 
       unsigned int pixel_index = (y*GetImageWidth()+x)*4;
       Byte* pixel = m_image;

@@ -4,7 +4,7 @@
 #include <cxxtest/TestSuite.h>
 #include "CustomValueTraits.h"
 #include <Math/SamplingRoutines.h>
-#include <Math/MultiThreadedRandom.h>
+#include <Math/ThreadSafeRandom.h>
 #include <cmath>
 #include <vector>
 #include <algorithm>
@@ -14,7 +14,7 @@ class SamplingRoutinesTestSuite : public CxxTest::TestSuite
   public:
 
     // Test that ConcentricDiskSampling() generates points within the unit radius disk.
-    void testConcentricDiskSamplingRadiusRange(void)
+    void testConcentricDiskSamplingRadiusRange()
       {
       const size_t num_samples = 10000;
 
@@ -34,7 +34,7 @@ class SamplingRoutinesTestSuite : public CxxTest::TestSuite
     // The method randomly generates a number of points and maps them to the disk with ConcentricDiskSampling() method.
     // Then another set of points is generated randomly in the unit radius disk using another sampling algorithm.
     // For each of the point from the second set the minimum distance to the first set is computed. The maximum of these distances is then tested for a certain threshold.
-    void testConcentricDiskSamplingCovering(void)
+    void testConcentricDiskSamplingCovering()
       {
       const size_t num_samples = 8000;
 
@@ -69,7 +69,7 @@ class SamplingRoutinesTestSuite : public CxxTest::TestSuite
       }
 
     // Test that testStratified1DRange() generates samples in [0;1] range.
-    void testStratified1DRange(void)
+    void testStratified1DRange()
       {
       const size_t num_samples = 10000;
 
@@ -86,7 +86,7 @@ class SamplingRoutinesTestSuite : public CxxTest::TestSuite
 
     // Test that testStratified1DCovering() generates points within the whole [0;1] range.
     // The idea is similar to the one used in testConcentricDiskSamplingCovering().
-    void testStratified1DCovering(void)
+    void testStratified1DCovering()
       {
       const size_t num_samples = 10000;
 
@@ -113,7 +113,7 @@ class SamplingRoutinesTestSuite : public CxxTest::TestSuite
       }
 
     // Test that testStratified2DRange() generates samples in [0;1]^2 range.
-    void testStratified2DRange(void)
+    void testStratified2DRange()
       {
       const int x_samples = 90, y_samples=110;
 
@@ -133,7 +133,7 @@ class SamplingRoutinesTestSuite : public CxxTest::TestSuite
 
     // Test that testStratified2DCovering() generates points within the whole [0;1]^2 range.
     // The idea is similar to the one used in testConcentricDiskSamplingCovering().
-    void testStratified2DCovering(void)
+    void testStratified2DCovering()
       {
       const int x_samples = 90, y_samples=110;
 
@@ -162,7 +162,7 @@ class SamplingRoutinesTestSuite : public CxxTest::TestSuite
       }
 
     // Test that LatinHypercubeSampling2D() generates samples in [0;1]^2 range.
-    void testLatinHypercube2DRange(void)
+    void testLatinHypercube2DRange()
       {
       const size_t num_samples = 10000;
 
@@ -182,7 +182,7 @@ class SamplingRoutinesTestSuite : public CxxTest::TestSuite
 
     // Test that LatinHypercubeSampling2D() generates points within the whole [0;1]^2 range.
     // The idea is similar to the one used in testConcentricDiskSamplingCovering().
-    void testLatinHypercube2DCovering(void)
+    void testLatinHypercube2DCovering()
       {
       const size_t num_samples = 10000;
 
@@ -209,7 +209,7 @@ class SamplingRoutinesTestSuite : public CxxTest::TestSuite
       TS_ASSERT(max_dist<0.025); // Empirical threshold for the given number of samples.
       }
 
-    void testShuffle(void)
+    void testShuffle()
       {
       const size_t num_samples = 10000;
 

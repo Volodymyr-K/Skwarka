@@ -3,7 +3,7 @@
 
 #include <vector>
 #include <Math/Geometry.h>
-#include <Math/MultiThreadedRandom.h>
+#include <Math/ThreadSafeRandom.h>
 
 /**
 * This namespace contains helper routines for sampling and samples generation.

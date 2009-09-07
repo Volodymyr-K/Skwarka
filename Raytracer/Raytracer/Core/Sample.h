@@ -106,7 +106,10 @@ inline Sample::Sample(const std::vector<size_t> &i_sequences_1D_size, const std:
 
   total_1D_samples=0;
   for(size_t i=0;i<i_sequences_1D_size.size();++i)
+    {
     m_sample_sequences_1D.push_back( SamplesSequence1D(m_1D_samples.begin()+total_1D_samples, m_1D_samples.begin()+total_1D_samples+i_sequences_1D_size[i]) );
+    total_1D_samples+=i_sequences_1D_size[i];
+    }
 
   // 2D
   size_t total_2D_samples=0;
@@ -117,7 +120,10 @@ inline Sample::Sample(const std::vector<size_t> &i_sequences_1D_size, const std:
 
   total_2D_samples=0;
   for(size_t i=0;i<i_sequences_2D_size.size();++i)
+    {
     m_sample_sequences_2D.push_back( SamplesSequence2D(m_2D_samples.begin()+total_2D_samples, m_2D_samples.begin()+total_2D_samples+i_sequences_2D_size[i]) );
+    total_2D_samples+=i_sequences_2D_size[i];
+    }
   }
 
 inline void Sample::SetImagePoint(const Point2D_d &i_image_point)

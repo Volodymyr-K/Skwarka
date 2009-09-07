@@ -43,9 +43,15 @@ class Film
     void AddSample(const Point2D_d &i_image_point, const Spectrum_f &i_spectrum, float i_alpha);
 
     /**
+    * Clears the film.
+    * The method removes all samples from the film saved so far.
+    */
+    void ClearFilm();
+
+    /**
     * Sets cropping window for the film. The image will be generated only inside that window.
-    * @param i_begin Left lower corner of the crop window. Should be in [0;2]^2 region. Should be lesser than i_end in each dimension.
-    * @param i_end Right upper corner of the crop window. Should be in [0;2]^2 region. Should be higher than i_begin in each dimension.
+    * @param i_begin Left lower corner of the crop window. Should be in [0;1]^2 region. Should be lesser than i_end in both dimensions.
+    * @param i_end Right upper corner of the crop window. Should be in [0;1]^2 region. Should be higher than i_begin in both dimensions.
     */
     void SetCropWindow(const Point2D_d &i_begin, const Point2D_d &i_end);
 
@@ -58,13 +64,12 @@ class Film
 
     /**
     * Returns the Spectrum and alpha values for the specified pixel.
-    * @param i_x X coordinate of the pixel.
-    * @param i_y Y coordinate of the pixel.
+    * @param i_image_point Coordinates of the pixel.
     * @param[out] o_spectrum Spectrum value of the pixel.
     * @param[out] o_alpha Alpha value of the pixel.
     * @param i_clamp_values If true, the Spectrum and alpha values will be clamped before returning.
     */
-    void GetPixel(size_t i_x, size_t i_y, Spectrum_f &o_spectrum, float &o_alpha, bool i_clamp_values = true) const;
+    void GetPixel(const Point2D_i &i_image_point, Spectrum_f &o_spectrum, float &o_alpha, bool i_clamp_values = true) const;
 
   private:
     // Not implemented, not a value type.
@@ -107,10 +112,10 @@ inline size_t Film::GetYResolution() const
   return m_y_resolution;
   }
 
-inline void Film::GetPixel(size_t i_x, size_t i_y, Spectrum_f &o_spectrum, float &o_alpha, bool i_clamp_values) const
+inline void Film::GetPixel(const Point2D_i &i_image_point, Spectrum_f &o_spectrum, float &o_alpha, bool i_clamp_values) const
   {
-  ASSERT(i_x<m_x_resolution && i_y<m_y_resolution);
-  const FilmPixel &pixel = m_pixels[i_y][i_x];
+  ASSERT(i_image_point[0]>=0 && i_image_point[1]>=0 && i_image_point[0]<(int)m_x_resolution && i_image_point[1]<(int)m_y_resolution);
+  const FilmPixel &pixel = m_pixels[i_image_point[1]][i_image_point[0]];
 
   if (pixel.m_weight_sum != 0.f)
     {
@@ -124,6 +129,11 @@ inline void Film::GetPixel(size_t i_x, size_t i_y, Spectrum_f &o_spectrum, float
       o_spectrum[2]=Clamp(o_spectrum[2], 0.f, FLT_INF);
       o_alpha=Clamp(o_alpha, 0.f, 1.f);
       }
+    }
+  else
+    {
+    o_spectrum[0]=o_spectrum[1]=o_spectrum[2]=0.f;
+    o_alpha=0.f;
     }
   }
 

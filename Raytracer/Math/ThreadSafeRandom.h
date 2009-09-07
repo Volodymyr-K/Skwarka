@@ -1,5 +1,5 @@
-#ifndef MULTI_THREADED_RANDOM_H
-#define MULTI_THREADED_RANDOM_H
+#ifndef THREAD_SAFE_RANDOM_H
+#define THREAD_SAFE_RANDOM_H
 
 #include <Common\Common.h>
 #include <limits>
@@ -16,7 +16,7 @@
 * @sa RandomGenerator
 */
 template<typename UnderlyingRandomGenerator>
-class MultiThreadedRandomGenerator
+class ThreadSafeRandomGenerator
   {
   private:
     /**
@@ -30,7 +30,7 @@ class MultiThreadedRandomGenerator
     * @param i_decorrelate_thread_generators If the value is false the thread-local generators may all produce the same sequence of random values (depending on the UnderlyingRandomGenerator,
     * at least it holds for boost::mt19937). If the value is true all the values will be decorrelated by seeding the thread-local generators the thread ID.
     */
-    MultiThreadedRandomGenerator(bool i_decorrelate_thread_generators = true);
+    ThreadSafeRandomGenerator(bool i_decorrelate_thread_generators = true);
 
     /**
     * Generates random value in [0;INT_MAX) range.
@@ -46,8 +46,8 @@ class MultiThreadedRandomGenerator
 
   private:
     // Not implemented, not a value type.
-    MultiThreadedRandomGenerator(const MultiThreadedRandomGenerator<UnderlyingRandomGenerator>&);
-    MultiThreadedRandomGenerator &operator=(const MultiThreadedRandomGenerator<UnderlyingRandomGenerator>&);
+    ThreadSafeRandomGenerator(const ThreadSafeRandomGenerator<UnderlyingRandomGenerator>&);
+    ThreadSafeRandomGenerator &operator=(const ThreadSafeRandomGenerator<UnderlyingRandomGenerator>&);
 
   private:
     ThreadRandomGenerators m_thread_generators;
@@ -94,20 +94,20 @@ int RandomInt(int i_min, int i_max);
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename UnderlyingRandomGenerator>
-MultiThreadedRandomGenerator<UnderlyingRandomGenerator>::MultiThreadedRandomGenerator(bool i_decorrelate_thread_generators):
+ThreadSafeRandomGenerator<UnderlyingRandomGenerator>::ThreadSafeRandomGenerator(bool i_decorrelate_thread_generators):
 m_decorrelate_thread_generators(i_decorrelate_thread_generators),
 m_inv_max(1.0/INT_MAX)
   {
   }
 
 template<typename UnderlyingRandomGenerator>
-double MultiThreadedRandomGenerator<UnderlyingRandomGenerator>::GenerateNormalizedRandom()
+double ThreadSafeRandomGenerator<UnderlyingRandomGenerator>::GenerateNormalizedRandom()
   {  
   return GenerateIntRandom()*m_inv_max;
   }
 
 template<typename UnderlyingRandomGenerator>
-int MultiThreadedRandomGenerator<UnderlyingRandomGenerator>::GenerateIntRandom()
+int ThreadSafeRandomGenerator<UnderlyingRandomGenerator>::GenerateIntRandom()
   {
   // Get thread-local copy of random generator (create if not exists).
   bool exists;
@@ -121,7 +121,7 @@ int MultiThreadedRandomGenerator<UnderlyingRandomGenerator>::GenerateIntRandom()
   }
 
 // This global thread-safe random generator is used in all the global random functions below.
-extern MultiThreadedRandomGenerator<boost::mt19937> global_multi_threaded_random_generator;
+extern ThreadSafeRandomGenerator<boost::mt19937> global_multi_threaded_random_generator;
 
 inline double RandomDouble(double i_max)
   {
@@ -152,4 +152,4 @@ inline int RandomInt(int i_min, int i_max)
   return i_min + RandomInt(i_max - i_min);
   }
 
-#endif // MULTI_THREADED_RANDOM_H
+#endif // THREAD_SAFE_RANDOM_H

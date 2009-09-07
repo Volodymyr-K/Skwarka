@@ -22,11 +22,14 @@ class Spectrum
     Spectrum<T> operator-(const Spectrum<T> &i_spectrum) const;
     Spectrum<T> &operator-=(const Spectrum<T> &i_spectrum);
 
-    Spectrum<T> operator*(T i_value) const;
-    Spectrum<T> &operator*=(T i_value);
+    Spectrum<T> operator*(double i_value) const;
+    Spectrum<T> &operator*=(double i_value);
 
-    Spectrum<T> operator/(T i_value) const;
-    Spectrum<T> &operator/=(T i_value);
+    Spectrum<T> operator/(double i_value) const;
+    Spectrum<T> &operator/=(double i_value);
+
+    bool operator==(const Spectrum<T> &i_point) const;
+    bool operator!=(const Spectrum<T> &i_point) const;
 
     T operator[](unsigned char i_index) const;
     T &operator[](unsigned char i_index);
@@ -39,7 +42,7 @@ class Spectrum
     /**
     * Returns true if the spectrum represents black light (i.e. no light).
     */
-    bool IsZero() const;
+    bool IsBlack() const;
 
     /**
     * Converts the Spectrum to the XYZ response values.
@@ -63,6 +66,12 @@ Spectrum<T> operator*(T i_value, const Spectrum<T> &i_spectrum);
 */
 template <class charT, class traits, typename T>
 std::basic_istream<charT,traits>& operator >> (std::basic_istream<charT,traits>& i_stream, Spectrum<T> &o_spectrum);
+
+/**
+* Prints Spectrum to the output stream.
+*/
+template <class charT, class traits, typename T>
+std::basic_ostream<charT,traits>& operator << (std::basic_ostream<charT,traits>& o_stream, const Spectrum<T> &i_spectrum);
 
 /**
 * Converts Spectrum instance to a Spectrum parameterized by a specified type.
@@ -125,38 +134,53 @@ Spectrum<T> &Spectrum<T>::operator-=(const Spectrum<T> &i_spectrum)
   }
 
 template<typename T>
-Spectrum<T> Spectrum<T>::operator*(T i_value) const
+Spectrum<T> Spectrum<T>::operator*(double i_value) const
   {
-  return Spectrum<T>(m_rgb[0]*i_value, m_rgb[1]*i_value, m_rgb[2]*i_value);
+  return Spectrum<T>(
+    (T) (m_rgb[0]*i_value), 
+    (T) (m_rgb[1]*i_value), 
+    (T) (m_rgb[2]*i_value));
   }
 
 template<typename T>
-Spectrum<T> &Spectrum<T>::operator*=(T i_value)
+Spectrum<T> &Spectrum<T>::operator*=(double i_value)
   {
-  m_rgb[0]*=i_value;
-  m_rgb[1]*=i_value;
-  m_rgb[2]*=i_value;
-
+  m_rgb[0]=(T)(m_rgb[0]*i_value);
+  m_rgb[1]=(T)(m_rgb[1]*i_value);
+  m_rgb[2]=(T)(m_rgb[2]*i_value);
   return *this;
   }
 
 template<typename T>
-Spectrum<T> Spectrum<T>::operator/(T i_value) const
+Spectrum<T> Spectrum<T>::operator/(double i_value) const
   {
-  ASSERT(fabs(i_value) > (T)0);
-
-  T inv = (T)1.0 / i_value;
+  //Dividing by zero is considered correct. The caller code is responsible to handle resulting INF values properly.
+  double inv = 1.0 / i_value;
   return (*this) * inv;
   }
 
 template<typename T>
-Spectrum<T> &Spectrum<T>::operator/=(T i_value)
+Spectrum<T> &Spectrum<T>::operator/=(double i_value)
   {
-  ASSERT(fabs(i_value) > (T)0);
-
-  T inv = (T)1.0 / i_value;
+  //Dividing by zero is considered correct. The caller code is responsible to handle resulting INF values properly.
+  double inv = 1.0 / i_value;
   (*this)*=inv;
   return *this;
+  }
+
+template<typename T>
+bool Spectrum<T>::operator==(const Spectrum<T> &i_point) const
+  {
+  if (m_rgb[0] != i_point.m_rgb[0]) return false;
+  if (m_rgb[1] != i_point.m_rgb[1]) return false;
+  if (m_rgb[2] != i_point.m_rgb[2]) return false;
+  return true;
+  }
+
+template<typename T>
+bool Spectrum<T>::operator!=(const Spectrum<T> &i_point) const
+  {
+  return !operator==(i_point);
   }
 
 template<typename T>
@@ -182,7 +206,7 @@ void Spectrum<T>::AddWeighted(const Spectrum &i_spectrum, T i_weight)
   }
 
 template<typename T>
-bool Spectrum<T>::IsZero() const
+bool Spectrum<T>::IsBlack() const
   {  
   if (m_rgb[0] != (T)0.0) return false;
   if (m_rgb[1] != (T)0.0) return false;
@@ -198,9 +222,12 @@ void Spectrum<T>::XYZ(T o_xyz[3]) const
   const T ZWeight[3] = {(T)0.019334, (T)0.119193, (T)0.950227};
 
   o_xyz[0] = o_xyz[1] = o_xyz[2] = (T)0.0;
-  o_xyz[0] += XWeight[0] * m_rgb[0];
-  o_xyz[1] += YWeight[1] * m_rgb[1];
-  o_xyz[2] += ZWeight[2] * m_rgb[2];
+  for(unsigned char i=0;i<3;++i)
+    {
+    o_xyz[0] += XWeight[i] * m_rgb[i];
+    o_xyz[1] += YWeight[i] * m_rgb[i];
+    o_xyz[2] += ZWeight[i] * m_rgb[i];
+    }
   }
 
 template<typename T>
@@ -223,6 +250,23 @@ std::basic_istream<charT,traits>& operator >> (std::basic_istream<charT,traits>&
   i_stream >> o_spectrum[0] >> o_spectrum[1] >> o_spectrum[2];
   return i_stream;
   }
+
+template <class charT, class traits, typename T>
+std::basic_ostream<charT,traits>& operator << (std::basic_ostream<charT,traits>& o_stream, const Spectrum<T> &i_spectrum)
+  {
+  /* string stream
+  * - with same format
+  * - without special field width
+  */
+  std::basic_ostringstream<charT,traits> s;
+  s.copyfmt(o_stream);
+  s.width(0);
+
+  s << i_spectrum[0] << ' ' << i_spectrum[1] << ' ' << i_spectrum[2];
+  o_stream << s.str();
+  return o_stream;
+  }
+
 
 template<typename T2, typename T>
 Spectrum<T2> Convert(const Spectrum<T> &i_spectrum)

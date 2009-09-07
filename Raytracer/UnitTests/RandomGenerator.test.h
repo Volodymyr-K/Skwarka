@@ -18,7 +18,7 @@ class RandomGeneratorTestSuite : public CxxTest::TestSuite
       // Nothing to clear.
       }
 
-    void testRandomRange1(void)
+    void testRandomRange1()
       {
       double mn=DBL_INF,mx=-DBL_INF;
       for(size_t i=0;i<1000;++i)
@@ -30,7 +30,7 @@ class RandomGeneratorTestSuite : public CxxTest::TestSuite
       TS_ASSERT(mn>=0.0 && mn<123.0 && mx>=0.0 && mx<123.0);
       }
 
-    void testRandomRange2(void)
+    void testRandomRange2()
       {
       double mn=DBL_INF,mx=-DBL_INF;
       for(size_t i=0;i<1000;++i)
@@ -44,7 +44,7 @@ class RandomGeneratorTestSuite : public CxxTest::TestSuite
       }
 
     // Test for mean and variance values.
-    void testRandomDistribution(void)
+    void testRandomDistribution()
       {
       double values[1024], mean=0.0;
       for(size_t i=0;i<1024;++i)
@@ -65,7 +65,7 @@ class RandomGeneratorTestSuite : public CxxTest::TestSuite
       }
 
     // Test that two different instances of the same generator produce the same sequence of random values.
-    void testCorrelation(void)
+    void testCorrelation()
       {
       shared_ptr<RandomGenerator<double> > mp_gen2 = shared_ptr<RandomGenerator<double> > ( new RandomGenerator<double>() );
 
@@ -79,7 +79,7 @@ class RandomGeneratorTestSuite : public CxxTest::TestSuite
       TS_ASSERT(match);
       }
 
-    void testSeed(void)
+    void testSeed()
       {
       shared_ptr<RandomGenerator<double> > mp_gen2 = shared_ptr<RandomGenerator<double> > ( new RandomGenerator<double>() );
       mp_gen2->SetSeed(123);
