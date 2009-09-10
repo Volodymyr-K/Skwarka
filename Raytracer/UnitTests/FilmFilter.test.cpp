@@ -19,9 +19,9 @@ static FilmFilterTestSuite suite_FilmFilterTestSuite;
 static CxxTest::List Tests_FilmFilterTestSuite = { 0, 0 };
 CxxTest::StaticSuiteDescription suiteDescription_FilmFilterTestSuite( "./FilmFilter.test.h", 9, "FilmFilterTestSuite", suite_FilmFilterTestSuite, Tests_FilmFilterTestSuite );
 
-static class TestDescription_FilmFilterTestSuite_testFilmDefaultConstr : public CxxTest::RealTestDescription {
+static class TestDescription_FilmFilterTestSuite_test_FilmFilter_DefaultConstr : public CxxTest::RealTestDescription {
 public:
- TestDescription_FilmFilterTestSuite_testFilmDefaultConstr() : CxxTest::RealTestDescription( Tests_FilmFilterTestSuite, suiteDescription_FilmFilterTestSuite, 12, "testFilmDefaultConstr" ) {}
- void runTest() { suite_FilmFilterTestSuite.testFilmDefaultConstr(); }
-} testDescription_FilmFilterTestSuite_testFilmDefaultConstr;
+ TestDescription_FilmFilterTestSuite_test_FilmFilter_DefaultConstr() : CxxTest::RealTestDescription( Tests_FilmFilterTestSuite, suiteDescription_FilmFilterTestSuite, 12, "test_FilmFilter_DefaultConstr" ) {}
+ void runTest() { suite_FilmFilterTestSuite.test_FilmFilter_DefaultConstr(); }
+} testDescription_FilmFilterTestSuite_test_FilmFilter_DefaultConstr;
 

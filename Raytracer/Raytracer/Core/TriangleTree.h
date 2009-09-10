@@ -1,6 +1,12 @@
 #ifndef TRIANGLE_TREE_H
 #define TRIANGLE_TREE_H
 
+/*
+This file contains temporary implementation of the acceleration tree structure.
+It is not documented and will be rewritten later when there is enough of the framework to test its performance.
+It is also not covered by the unit tests yet.
+*/
+
 #include <Common/Common.h>
 #include <Math/Geometry.h>
 #include "TriangleMesh.h"

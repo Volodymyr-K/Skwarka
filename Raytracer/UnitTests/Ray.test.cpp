@@ -19,33 +19,33 @@ static RayTestSuite suite_RayTestSuite;
 static CxxTest::List Tests_RayTestSuite = { 0, 0 };
 CxxTest::StaticSuiteDescription suiteDescription_RayTestSuite( "./Ray.test.h", 8, "RayTestSuite", suite_RayTestSuite, Tests_RayTestSuite );
 
-static class TestDescription_RayTestSuite_testRayDefaultConstr : public CxxTest::RealTestDescription {
+static class TestDescription_RayTestSuite_test_Ray_DefaultConstr : public CxxTest::RealTestDescription {
 public:
- TestDescription_RayTestSuite_testRayDefaultConstr() : CxxTest::RealTestDescription( Tests_RayTestSuite, suiteDescription_RayTestSuite, 11, "testRayDefaultConstr" ) {}
- void runTest() { suite_RayTestSuite.testRayDefaultConstr(); }
-} testDescription_RayTestSuite_testRayDefaultConstr;
+ TestDescription_RayTestSuite_test_Ray_DefaultConstr() : CxxTest::RealTestDescription( Tests_RayTestSuite, suiteDescription_RayTestSuite, 11, "test_Ray_DefaultConstr" ) {}
+ void runTest() { suite_RayTestSuite.test_Ray_DefaultConstr(); }
+} testDescription_RayTestSuite_test_Ray_DefaultConstr;
 
-static class TestDescription_RayTestSuite_testRayConstrWithCoords : public CxxTest::RealTestDescription {
+static class TestDescription_RayTestSuite_test_Ray_ConstrWithCoords : public CxxTest::RealTestDescription {
 public:
- TestDescription_RayTestSuite_testRayConstrWithCoords() : CxxTest::RealTestDescription( Tests_RayTestSuite, suiteDescription_RayTestSuite, 23, "testRayConstrWithCoords" ) {}
- void runTest() { suite_RayTestSuite.testRayConstrWithCoords(); }
-} testDescription_RayTestSuite_testRayConstrWithCoords;
+ TestDescription_RayTestSuite_test_Ray_ConstrWithCoords() : CxxTest::RealTestDescription( Tests_RayTestSuite, suiteDescription_RayTestSuite, 23, "test_Ray_ConstrWithCoords" ) {}
+ void runTest() { suite_RayTestSuite.test_Ray_ConstrWithCoords(); }
+} testDescription_RayTestSuite_test_Ray_ConstrWithCoords;
 
-static class TestDescription_RayTestSuite_testRayOperator : public CxxTest::RealTestDescription {
+static class TestDescription_RayTestSuite_test_Ray_Operator : public CxxTest::RealTestDescription {
 public:
- TestDescription_RayTestSuite_testRayOperator() : CxxTest::RealTestDescription( Tests_RayTestSuite, suiteDescription_RayTestSuite, 35, "testRayOperator" ) {}
- void runTest() { suite_RayTestSuite.testRayOperator(); }
-} testDescription_RayTestSuite_testRayOperator;
+ TestDescription_RayTestSuite_test_Ray_Operator() : CxxTest::RealTestDescription( Tests_RayTestSuite, suiteDescription_RayTestSuite, 35, "test_Ray_Operator" ) {}
+ void runTest() { suite_RayTestSuite.test_Ray_Operator(); }
+} testDescription_RayTestSuite_test_Ray_Operator;
 
-static class TestDescription_RayTestSuite_testRayDifferentialDefaultConstr : public CxxTest::RealTestDescription {
+static class TestDescription_RayTestSuite_test_Ray_DifferentialDefaultConstr : public CxxTest::RealTestDescription {
 public:
- TestDescription_RayTestSuite_testRayDifferentialDefaultConstr() : CxxTest::RealTestDescription( Tests_RayTestSuite, suiteDescription_RayTestSuite, 45, "testRayDifferentialDefaultConstr" ) {}
- void runTest() { suite_RayTestSuite.testRayDifferentialDefaultConstr(); }
-} testDescription_RayTestSuite_testRayDifferentialDefaultConstr;
+ TestDescription_RayTestSuite_test_Ray_DifferentialDefaultConstr() : CxxTest::RealTestDescription( Tests_RayTestSuite, suiteDescription_RayTestSuite, 45, "test_Ray_DifferentialDefaultConstr" ) {}
+ void runTest() { suite_RayTestSuite.test_Ray_DifferentialDefaultConstr(); }
+} testDescription_RayTestSuite_test_Ray_DifferentialDefaultConstr;
 
-static class TestDescription_RayTestSuite_testRayAndRayDifferentialMutualConstructors : public CxxTest::RealTestDescription {
+static class TestDescription_RayTestSuite_test_Ray_RayDifferentialMutualConstructors : public CxxTest::RealTestDescription {
 public:
- TestDescription_RayTestSuite_testRayAndRayDifferentialMutualConstructors() : CxxTest::RealTestDescription( Tests_RayTestSuite, suiteDescription_RayTestSuite, 51, "testRayAndRayDifferentialMutualConstructors" ) {}
- void runTest() { suite_RayTestSuite.testRayAndRayDifferentialMutualConstructors(); }
-} testDescription_RayTestSuite_testRayAndRayDifferentialMutualConstructors;
+ TestDescription_RayTestSuite_test_Ray_RayDifferentialMutualConstructors() : CxxTest::RealTestDescription( Tests_RayTestSuite, suiteDescription_RayTestSuite, 51, "test_Ray_RayDifferentialMutualConstructors" ) {}
+ void runTest() { suite_RayTestSuite.test_Ray_RayDifferentialMutualConstructors(); }
+} testDescription_RayTestSuite_test_Ray_RayDifferentialMutualConstructors;
 

@@ -1,14 +1,33 @@
 #include "Sampler.h"
+#include <Raytracer/Samplers/ConsecutiveImagePixelsOrder.h>
 
 Sampler::Sampler(const Point2D_i &i_image_begin, const Point2D_i &i_image_end, size_t i_samples_per_pixel):
-m_image_begin(i_image_begin), m_image_end(i_image_end), m_samples_per_pixel(i_samples_per_pixel)
+m_samples_per_pixel(i_samples_per_pixel)
   {
-  ASSERT(i_image_end[0]>=i_image_begin[0]);
-  ASSERT(i_image_end[1]>=i_image_begin[1]);
   ASSERT(m_samples_per_pixel>=1);
 
-  m_pixel_sample_index=0;
-  m_current_pixel=i_image_begin;
+  // ConsecutiveImagePixelsOrder implementation is used by default.
+  mp_pixels_order.reset(new ConsecutiveImagePixelsOrder());
+  mp_pixels_order->SetImageSize(i_image_begin, i_image_end);
+
+  if (mp_pixels_order->GetNextPixel(m_current_pixel))
+    m_pixel_sample_index=0;
+  else
+    m_pixel_sample_index=m_samples_per_pixel;
+  }
+
+Sampler::Sampler(const Point2D_i &i_image_begin, const Point2D_i &i_image_end, size_t i_samples_per_pixel, shared_ptr<ImagePixelsOrder> ip_pixels_order):
+m_samples_per_pixel(i_samples_per_pixel), mp_pixels_order(ip_pixels_order)
+  {
+  ASSERT(m_samples_per_pixel>=1);
+  ASSERT(mp_pixels_order != NULL);
+
+  mp_pixels_order->SetImageSize(i_image_begin, i_image_end);
+
+  if (mp_pixels_order->GetNextPixel(m_current_pixel))
+    m_pixel_sample_index=0;
+  else
+    m_pixel_sample_index=m_samples_per_pixel;
   }
 
 size_t Sampler::AddSamplesSequence1D(size_t i_size)
@@ -36,12 +55,8 @@ bool Sampler::GetNextSample(shared_ptr<Sample> op_sample)
 
   if (m_pixel_sample_index==m_samples_per_pixel)
     {
-    if (++m_current_pixel[0]>=m_image_end[0])
-      {
-      m_current_pixel[0]=m_image_begin[0];
-      if (++m_current_pixel[1]>=m_image_end[1])
-        return false;
-      }
+    if (mp_pixels_order->GetNextPixel(m_current_pixel) == false)
+      return false;
 
     m_pixel_sample_index=0;
     }
@@ -57,12 +72,12 @@ bool Sampler::GetNextSample(shared_ptr<Sample> op_sample)
 
 size_t Sampler::GetTotalSamplesNum() const
   {
-  return (m_image_end[0]-m_image_begin[0])*(m_image_end[1]-m_image_begin[1])*m_samples_per_pixel;
+  return mp_pixels_order->GetTotalPixelsNum()*m_samples_per_pixel;
   }
 
 void Sampler::_PrecomputeSamplesForPixel(const Point2D_i &i_current_pixel)
   {
-  // This is the default implementation that does nothing.
+  // Default implementation does nothing.
   }
 
 Sampler::~Sampler()

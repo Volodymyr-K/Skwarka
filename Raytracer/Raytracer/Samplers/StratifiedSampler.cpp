@@ -2,11 +2,19 @@
 #include <Math/SamplingRoutines.h>
 
 StratifiedSampler::StratifiedSampler(const Point2D_i &i_image_begin, const Point2D_i &i_image_end, size_t i_x_samples_per_pixel, size_t i_y_samples_per_pixel, bool i_jitter_samples):
-Sampler(i_image_begin, i_image_end, i_x_samples_per_pixel*i_y_samples_per_pixel),
-m_x_samples_per_pixel(i_x_samples_per_pixel), m_y_samples_per_pixel(i_y_samples_per_pixel), m_jitter_samples(i_jitter_samples),
-m_image_points(i_x_samples_per_pixel*i_y_samples_per_pixel), m_lens_UVs(i_x_samples_per_pixel*i_y_samples_per_pixel)
+  Sampler(i_image_begin, i_image_end, i_x_samples_per_pixel*i_y_samples_per_pixel),
+  m_x_samples_per_pixel(i_x_samples_per_pixel), m_y_samples_per_pixel(i_y_samples_per_pixel), m_jitter_samples(i_jitter_samples),
+  m_image_points(i_x_samples_per_pixel*i_y_samples_per_pixel), m_lens_UVs(i_x_samples_per_pixel*i_y_samples_per_pixel)
   {
   }
+
+StratifiedSampler::StratifiedSampler(const Point2D_i &i_image_begin, const Point2D_i &i_image_end, size_t i_x_samples_per_pixel, size_t i_y_samples_per_pixel,
+                                     shared_ptr<ImagePixelsOrder> ip_pixels_order, bool i_jitter_samples):
+  Sampler(i_image_begin, i_image_end, i_x_samples_per_pixel*i_y_samples_per_pixel, ip_pixels_order),
+    m_x_samples_per_pixel(i_x_samples_per_pixel), m_y_samples_per_pixel(i_y_samples_per_pixel), m_jitter_samples(i_jitter_samples),
+    m_image_points(i_x_samples_per_pixel*i_y_samples_per_pixel), m_lens_UVs(i_x_samples_per_pixel*i_y_samples_per_pixel)
+    {
+    }
 
 size_t StratifiedSampler::_RoundSamplesNumber(size_t i_samples_number) const
   {

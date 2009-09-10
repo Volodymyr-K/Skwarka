@@ -2,13 +2,57 @@
 #define SAMPLER_H
 
 #include <Common/Common.h>
-#include <Math/Geometry.h>
+#include <Math/Point2D.h>
 #include "Sample.h"
+
+/**
+* This is a pure abstract class defining the strategy contract for the order the image pixels are sampled in.
+* This strategy is used by Sampler class to iterate through all pixels of an image.
+* Different strategies are preferable when an image is displayed in a real-time and it gets refined as more samples are added to the film.
+* @sa Sampler
+*/
+class ImagePixelsOrder
+  {
+  public:
+    /**
+    * Sets the size of the image.
+    * @param i_image_begin Left lower corner of the sampling image.
+    * @param i_image_end Right upper corner of the sampling image (exclusive).
+    */
+    virtual void SetImageSize(const Point2D_i &i_image_begin, const Point2D_i &i_image_end) = 0;
+
+    /**
+    * Returns total number of image pixels.
+    */
+    virtual size_t GetTotalPixelsNum() const = 0;
+
+    /**
+    * Resets the pixel order.
+    * The next call to GetNextPixel() will get the first image pixel in the sense of the order defined by the strategy.
+    */
+    virtual void Reset() = 0;
+
+    /**
+    * Sets the next image pixel.
+    * param[out] o_image_point Next image point.
+    * return true if the next image pixel was successfully get and false if there's no more pixels.
+    */
+    virtual bool GetNextPixel(Point2D_i &o_image_pixel) = 0;
+
+  protected:
+    ImagePixelsOrder() {}
+
+  private:
+    // Not implemented, not a value type.
+    ImagePixelsOrder(const ImagePixelsOrder&);
+    ImagePixelsOrder &operator=(const ImagePixelsOrder&);
+  };
 
 /**
 * The class is responsible for generating samples.
 * This is a base abstract class. Different implementation may use different sampling patterns and algorithms for generating the samples.
-* @sa Sample
+* The class uses a pluggable ImagePixelsOrder strategy for the order the pixels are sampled in. By default, the pixels are sampled in a consecutive order.
+* @sa Sample, ImagePixelsOrder
 */
 class Sampler
   {
@@ -52,13 +96,24 @@ class Sampler
     virtual ~Sampler();
 
   protected:
+
     /**
     * Creates Sampler instance.
-    * @param i_image_begin Left lower corner of the sampling window.
-    * @param i_image_end Right upper corner of the sampling window (exclusive).
+    * ConsecutiveImagePixelsOrder implementation is used to define the order the image pixels are sampled in.
+    * @param i_image_begin Left lower corner of the sampling image.
+    * @param i_image_end Right upper corner of the sampling image (exclusive).
     * @param i_samples_per_pixel Number of pixel samples per pixel.
     */
     Sampler(const Point2D_i &i_image_begin, const Point2D_i &i_image_end, size_t i_samples_per_pixel);
+
+    /**
+    * Creates Sampler instance.
+    * @param i_image_begin Left lower corner of the sampling image.
+    * @param i_image_end Right upper corner of the sampling image (exclusive).
+    * @param i_samples_per_pixel Number of pixel samples per pixel.
+    * @param ip_pixels_order ImagePixelsOrder implementation for the order the image pixels are sampled in. Should not be NULL.
+    */
+    Sampler(const Point2D_i &i_image_begin, const Point2D_i &i_image_end, size_t i_samples_per_pixel, shared_ptr<ImagePixelsOrder> ip_pixels_order);
 
     /**
     * Returns the nearest number of integrator samples higher or equal than the specified one that the sampler can produce.
@@ -83,7 +138,8 @@ class Sampler
     Sampler &operator=(const Sampler&);
 
   private:
-    Point2D_i m_image_begin, m_image_end, m_current_pixel;
+    Point2D_i m_current_pixel;
+    shared_ptr<ImagePixelsOrder> mp_pixels_order;
     size_t m_samples_per_pixel, m_pixel_sample_index;
 
     std::vector<size_t> m_sequences_1D_size, m_sequences_2D_size;

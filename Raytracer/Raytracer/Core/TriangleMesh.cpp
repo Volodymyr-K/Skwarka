@@ -338,7 +338,7 @@ void TriangleMesh::ComputeDifferentialGeometry(size_t i_triangle_index, const Ra
 
   double b0,b1,b2,t;
   if (_ComputeIntersectionPoint(triangle, i_ray.m_base_ray.m_origin, i_ray.m_base_ray.m_direction, b1, b2, t)==false)
-    ASSERT(0 && "The ray does not intersect the triangle.");
+    ASSERT(0 && "The ray does not intersect the specified triangle of the mesh.");
 
   ASSERT(b1 > -DBL_EPS && b1 < 1.0+DBL_EPS);
   ASSERT(b2 > -DBL_EPS && b1 + b2 < 1.0+DBL_EPS);

@@ -4,6 +4,8 @@
 #include <cxxtest/TestSuite.h>
 #include "CustomValueTraits.h"
 #include <Math/RandomGenerator.h>
+#include "SamplingTestRoutines.h"
+#include <vector>
 
 class RandomGeneratorTestSuite : public CxxTest::TestSuite
   {
@@ -18,7 +20,7 @@ class RandomGeneratorTestSuite : public CxxTest::TestSuite
       // Nothing to clear.
       }
 
-    void testRandomRange1()
+    void test_RandomRange1()
       {
       double mn=DBL_INF,mx=-DBL_INF;
       for(size_t i=0;i<1000;++i)
@@ -30,7 +32,7 @@ class RandomGeneratorTestSuite : public CxxTest::TestSuite
       TS_ASSERT(mn>=0.0 && mn<123.0 && mx>=0.0 && mx<123.0);
       }
 
-    void testRandomRange2()
+    void test_RandomRange2()
       {
       double mn=DBL_INF,mx=-DBL_INF;
       for(size_t i=0;i<1000;++i)
@@ -44,28 +46,18 @@ class RandomGeneratorTestSuite : public CxxTest::TestSuite
       }
 
     // Test for mean and variance values.
-    void testRandomDistribution()
+    void test_RandomDistribution()
       {
-      double values[1024], mean=0.0;
-      for(size_t i=0;i<1024;++i)
-        {
-        values[i]=(*mp_gen)(1.0,2.0);
-        mean+=values[i];
-        }
-      mean/=1024.0;
+      std::vector<double> values;
+      for(size_t i=0;i<1000;++i)
+        values.push_back( (*mp_gen)(1.0,2.0) );
 
-      double variance=0;
-      for(size_t i=0;i<1024;++i)
-        variance+=(values[i]-mean)*(values[i]-mean);
-      variance/=1024.0;
-
-      // Although the values of mean and variance are naturally random they can hardly break the following barrier for the given number of samples.
-      TS_ASSERT_DELTA(mean, 1.5, 0.05);
-      TS_ASSERT_DELTA(variance, 1.0/12.0, 0.02);
+      bool uniform=SamplingTestRoutines::TestUniformDistribution1D(values, 1.0, 2.0);
+      TS_ASSERT(uniform);
       }
 
     // Test that two different instances of the same generator produce the same sequence of random values.
-    void testCorrelation()
+    void test_Correlation()
       {
       shared_ptr<RandomGenerator<double> > mp_gen2 = shared_ptr<RandomGenerator<double> > ( new RandomGenerator<double>() );
 
@@ -79,7 +71,7 @@ class RandomGeneratorTestSuite : public CxxTest::TestSuite
       TS_ASSERT(match);
       }
 
-    void testSeed()
+    void test_Seed()
       {
       shared_ptr<RandomGenerator<double> > mp_gen2 = shared_ptr<RandomGenerator<double> > ( new RandomGenerator<double>() );
       mp_gen2->SetSeed(123);

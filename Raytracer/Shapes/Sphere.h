@@ -5,9 +5,26 @@
 #include <Math/Geometry.h>
 
 /**
-* Sphere implementation of the Shape interface.
+* %Sphere implementation of the Shape interface.
 * The triangulation method starts from a tetrahedron and then iteratively subdivides each face into four new triangles.
 * The number of subdivision iterations is configurable.
+* 
+* The parameters for the sphere are the following:
+*   - %Sphere center.
+*     - Parameter name: "center"
+*     - Parameter type: Point3D_f
+*     - Parameter restrictions: none
+*     - Required.
+*   - %Sphere radius.
+*     - Parameter name: "radius"
+*     - Parameter type: float
+*     - Parameter restrictions: should be greater than zero
+*     - Required.
+*   - Number of subdivisions.
+*     - Parameter name: "subdivisions"
+*     - Parameter type: int
+*     - Parameter restrictions: should be greater or equal than zero
+*     - Optional, default value is 3.
 */
 class Sphere: public BaseShape
   {
@@ -20,26 +37,16 @@ class Sphere: public BaseShape
 
   private:
     /**
-    * Helper method to all the parameters.
-    * @return true if all the parameters have been read successfully.
+    * An inner struct for all the parameters Sphere has.
     */
-    bool _GetParameters();
+    struct Parameters;
 
   private:
     /**
-    * An inner struct for all the parameters Sphere needs.
+    * Helper method to read all the parameters.
+    * @return true if all the parameters have been read successfully.
     */
-    struct Parameters
-      {
-      Parameters();
-
-      Point3D_f m_center;
-      float m_radius;
-      int m_subdivisions;
-      };
-
-  private:
-    Parameters m_params;
+    bool _GetParameters(Sphere::Parameters &o_params);
   };
 
 

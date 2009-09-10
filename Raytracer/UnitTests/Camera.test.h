@@ -11,7 +11,7 @@
 class CameraTestSuite : public CxxTest::TestSuite
   {
   public:
-    void testCamera()
+    void test_Camera_Constr()
       {
       Transform t = MakeLookAt(Point3D_d(1.0,2.0,3.0), Vector3D_d(-1.0,-0.5,0.5), Vector3D_d(0.0,0.0,1.0));
       shared_ptr<FilmFilter> p_filter(new FilmFilterMock(1.0,1.0));

@@ -20,123 +20,123 @@ static Point3DTestSuite suite_Point3DTestSuite;
 static CxxTest::List Tests_Point3DTestSuite = { 0, 0 };
 CxxTest::StaticSuiteDescription suiteDescription_Point3DTestSuite( "./Point3D.test.h", 9, "Point3DTestSuite", suite_Point3DTestSuite, Tests_Point3DTestSuite );
 
-static class TestDescription_Point3DTestSuite_testPointDefaultConstr : public CxxTest::RealTestDescription {
+static class TestDescription_Point3DTestSuite_test_Point3D_DefaultConstr : public CxxTest::RealTestDescription {
 public:
- TestDescription_Point3DTestSuite_testPointDefaultConstr() : CxxTest::RealTestDescription( Tests_Point3DTestSuite, suiteDescription_Point3DTestSuite, 12, "testPointDefaultConstr" ) {}
- void runTest() { suite_Point3DTestSuite.testPointDefaultConstr(); }
-} testDescription_Point3DTestSuite_testPointDefaultConstr;
+ TestDescription_Point3DTestSuite_test_Point3D_DefaultConstr() : CxxTest::RealTestDescription( Tests_Point3DTestSuite, suiteDescription_Point3DTestSuite, 12, "test_Point3D_DefaultConstr" ) {}
+ void runTest() { suite_Point3DTestSuite.test_Point3D_DefaultConstr(); }
+} testDescription_Point3DTestSuite_test_Point3D_DefaultConstr;
 
-static class TestDescription_Point3DTestSuite_testPointConstrWithCoords : public CxxTest::RealTestDescription {
+static class TestDescription_Point3DTestSuite_test_Point3D_ConstrWithCoords : public CxxTest::RealTestDescription {
 public:
- TestDescription_Point3DTestSuite_testPointConstrWithCoords() : CxxTest::RealTestDescription( Tests_Point3DTestSuite, suiteDescription_Point3DTestSuite, 18, "testPointConstrWithCoords" ) {}
- void runTest() { suite_Point3DTestSuite.testPointConstrWithCoords(); }
-} testDescription_Point3DTestSuite_testPointConstrWithCoords;
+ TestDescription_Point3DTestSuite_test_Point3D_ConstrWithCoords() : CxxTest::RealTestDescription( Tests_Point3DTestSuite, suiteDescription_Point3DTestSuite, 18, "test_Point3D_ConstrWithCoords" ) {}
+ void runTest() { suite_Point3DTestSuite.test_Point3D_ConstrWithCoords(); }
+} testDescription_Point3DTestSuite_test_Point3D_ConstrWithCoords;
 
-static class TestDescription_Point3DTestSuite_testPointAdd : public CxxTest::RealTestDescription {
+static class TestDescription_Point3DTestSuite_test_Point3D_Add : public CxxTest::RealTestDescription {
 public:
- TestDescription_Point3DTestSuite_testPointAdd() : CxxTest::RealTestDescription( Tests_Point3DTestSuite, suiteDescription_Point3DTestSuite, 24, "testPointAdd" ) {}
- void runTest() { suite_Point3DTestSuite.testPointAdd(); }
-} testDescription_Point3DTestSuite_testPointAdd;
+ TestDescription_Point3DTestSuite_test_Point3D_Add() : CxxTest::RealTestDescription( Tests_Point3DTestSuite, suiteDescription_Point3DTestSuite, 24, "test_Point3D_Add" ) {}
+ void runTest() { suite_Point3DTestSuite.test_Point3D_Add(); }
+} testDescription_Point3DTestSuite_test_Point3D_Add;
 
-static class TestDescription_Point3DTestSuite_testPointAddAssign : public CxxTest::RealTestDescription {
+static class TestDescription_Point3DTestSuite_test_Point3D_AddAssign : public CxxTest::RealTestDescription {
 public:
- TestDescription_Point3DTestSuite_testPointAddAssign() : CxxTest::RealTestDescription( Tests_Point3DTestSuite, suiteDescription_Point3DTestSuite, 32, "testPointAddAssign" ) {}
- void runTest() { suite_Point3DTestSuite.testPointAddAssign(); }
-} testDescription_Point3DTestSuite_testPointAddAssign;
+ TestDescription_Point3DTestSuite_test_Point3D_AddAssign() : CxxTest::RealTestDescription( Tests_Point3DTestSuite, suiteDescription_Point3DTestSuite, 32, "test_Point3D_AddAssign" ) {}
+ void runTest() { suite_Point3DTestSuite.test_Point3D_AddAssign(); }
+} testDescription_Point3DTestSuite_test_Point3D_AddAssign;
 
-static class TestDescription_Point3DTestSuite_testPointSub : public CxxTest::RealTestDescription {
+static class TestDescription_Point3DTestSuite_test_Point3D_Sub : public CxxTest::RealTestDescription {
 public:
- TestDescription_Point3DTestSuite_testPointSub() : CxxTest::RealTestDescription( Tests_Point3DTestSuite, suiteDescription_Point3DTestSuite, 41, "testPointSub" ) {}
- void runTest() { suite_Point3DTestSuite.testPointSub(); }
-} testDescription_Point3DTestSuite_testPointSub;
+ TestDescription_Point3DTestSuite_test_Point3D_Sub() : CxxTest::RealTestDescription( Tests_Point3DTestSuite, suiteDescription_Point3DTestSuite, 41, "test_Point3D_Sub" ) {}
+ void runTest() { suite_Point3DTestSuite.test_Point3D_Sub(); }
+} testDescription_Point3DTestSuite_test_Point3D_Sub;
 
-static class TestDescription_Point3DTestSuite_testPointSubAssign : public CxxTest::RealTestDescription {
+static class TestDescription_Point3DTestSuite_test_Point3D_SubAssign : public CxxTest::RealTestDescription {
 public:
- TestDescription_Point3DTestSuite_testPointSubAssign() : CxxTest::RealTestDescription( Tests_Point3DTestSuite, suiteDescription_Point3DTestSuite, 49, "testPointSubAssign" ) {}
- void runTest() { suite_Point3DTestSuite.testPointSubAssign(); }
-} testDescription_Point3DTestSuite_testPointSubAssign;
+ TestDescription_Point3DTestSuite_test_Point3D_SubAssign() : CxxTest::RealTestDescription( Tests_Point3DTestSuite, suiteDescription_Point3DTestSuite, 49, "test_Point3D_SubAssign" ) {}
+ void runTest() { suite_Point3DTestSuite.test_Point3D_SubAssign(); }
+} testDescription_Point3DTestSuite_test_Point3D_SubAssign;
 
-static class TestDescription_Point3DTestSuite_testPointMult : public CxxTest::RealTestDescription {
+static class TestDescription_Point3DTestSuite_test_Point3D_Mult : public CxxTest::RealTestDescription {
 public:
- TestDescription_Point3DTestSuite_testPointMult() : CxxTest::RealTestDescription( Tests_Point3DTestSuite, suiteDescription_Point3DTestSuite, 58, "testPointMult" ) {}
- void runTest() { suite_Point3DTestSuite.testPointMult(); }
-} testDescription_Point3DTestSuite_testPointMult;
+ TestDescription_Point3DTestSuite_test_Point3D_Mult() : CxxTest::RealTestDescription( Tests_Point3DTestSuite, suiteDescription_Point3DTestSuite, 58, "test_Point3D_Mult" ) {}
+ void runTest() { suite_Point3DTestSuite.test_Point3D_Mult(); }
+} testDescription_Point3DTestSuite_test_Point3D_Mult;
 
-static class TestDescription_Point3DTestSuite_testPointPreMult : public CxxTest::RealTestDescription {
+static class TestDescription_Point3DTestSuite_test_Point3D_PreMult : public CxxTest::RealTestDescription {
 public:
- TestDescription_Point3DTestSuite_testPointPreMult() : CxxTest::RealTestDescription( Tests_Point3DTestSuite, suiteDescription_Point3DTestSuite, 65, "testPointPreMult" ) {}
- void runTest() { suite_Point3DTestSuite.testPointPreMult(); }
-} testDescription_Point3DTestSuite_testPointPreMult;
+ TestDescription_Point3DTestSuite_test_Point3D_PreMult() : CxxTest::RealTestDescription( Tests_Point3DTestSuite, suiteDescription_Point3DTestSuite, 65, "test_Point3D_PreMult" ) {}
+ void runTest() { suite_Point3DTestSuite.test_Point3D_PreMult(); }
+} testDescription_Point3DTestSuite_test_Point3D_PreMult;
 
-static class TestDescription_Point3DTestSuite_testPointMultAssign : public CxxTest::RealTestDescription {
+static class TestDescription_Point3DTestSuite_test_Point3D_MultAssign : public CxxTest::RealTestDescription {
 public:
- TestDescription_Point3DTestSuite_testPointMultAssign() : CxxTest::RealTestDescription( Tests_Point3DTestSuite, suiteDescription_Point3DTestSuite, 72, "testPointMultAssign" ) {}
- void runTest() { suite_Point3DTestSuite.testPointMultAssign(); }
-} testDescription_Point3DTestSuite_testPointMultAssign;
+ TestDescription_Point3DTestSuite_test_Point3D_MultAssign() : CxxTest::RealTestDescription( Tests_Point3DTestSuite, suiteDescription_Point3DTestSuite, 72, "test_Point3D_MultAssign" ) {}
+ void runTest() { suite_Point3DTestSuite.test_Point3D_MultAssign(); }
+} testDescription_Point3DTestSuite_test_Point3D_MultAssign;
 
-static class TestDescription_Point3DTestSuite_testPointDiv : public CxxTest::RealTestDescription {
+static class TestDescription_Point3DTestSuite_test_Point3D_Div : public CxxTest::RealTestDescription {
 public:
- TestDescription_Point3DTestSuite_testPointDiv() : CxxTest::RealTestDescription( Tests_Point3DTestSuite, suiteDescription_Point3DTestSuite, 80, "testPointDiv" ) {}
- void runTest() { suite_Point3DTestSuite.testPointDiv(); }
-} testDescription_Point3DTestSuite_testPointDiv;
+ TestDescription_Point3DTestSuite_test_Point3D_Div() : CxxTest::RealTestDescription( Tests_Point3DTestSuite, suiteDescription_Point3DTestSuite, 80, "test_Point3D_Div" ) {}
+ void runTest() { suite_Point3DTestSuite.test_Point3D_Div(); }
+} testDescription_Point3DTestSuite_test_Point3D_Div;
 
-static class TestDescription_Point3DTestSuite_testPointDivAssign : public CxxTest::RealTestDescription {
+static class TestDescription_Point3DTestSuite_test_Point3D_DivAssign : public CxxTest::RealTestDescription {
 public:
- TestDescription_Point3DTestSuite_testPointDivAssign() : CxxTest::RealTestDescription( Tests_Point3DTestSuite, suiteDescription_Point3DTestSuite, 87, "testPointDivAssign" ) {}
- void runTest() { suite_Point3DTestSuite.testPointDivAssign(); }
-} testDescription_Point3DTestSuite_testPointDivAssign;
+ TestDescription_Point3DTestSuite_test_Point3D_DivAssign() : CxxTest::RealTestDescription( Tests_Point3DTestSuite, suiteDescription_Point3DTestSuite, 87, "test_Point3D_DivAssign" ) {}
+ void runTest() { suite_Point3DTestSuite.test_Point3D_DivAssign(); }
+} testDescription_Point3DTestSuite_test_Point3D_DivAssign;
 
-static class TestDescription_Point3DTestSuite_testPointDivByZero : public CxxTest::RealTestDescription {
+static class TestDescription_Point3DTestSuite_test_Point3D_DivByZero : public CxxTest::RealTestDescription {
 public:
- TestDescription_Point3DTestSuite_testPointDivByZero() : CxxTest::RealTestDescription( Tests_Point3DTestSuite, suiteDescription_Point3DTestSuite, 98, "testPointDivByZero" ) {}
- void runTest() { suite_Point3DTestSuite.testPointDivByZero(); }
-} testDescription_Point3DTestSuite_testPointDivByZero;
+ TestDescription_Point3DTestSuite_test_Point3D_DivByZero() : CxxTest::RealTestDescription( Tests_Point3DTestSuite, suiteDescription_Point3DTestSuite, 98, "test_Point3D_DivByZero" ) {}
+ void runTest() { suite_Point3DTestSuite.test_Point3D_DivByZero(); }
+} testDescription_Point3DTestSuite_test_Point3D_DivByZero;
 
-static class TestDescription_Point3DTestSuite_testPointEqual : public CxxTest::RealTestDescription {
+static class TestDescription_Point3DTestSuite_test_Point3D_Equal : public CxxTest::RealTestDescription {
 public:
- TestDescription_Point3DTestSuite_testPointEqual() : CxxTest::RealTestDescription( Tests_Point3DTestSuite, suiteDescription_Point3DTestSuite, 106, "testPointEqual" ) {}
- void runTest() { suite_Point3DTestSuite.testPointEqual(); }
-} testDescription_Point3DTestSuite_testPointEqual;
+ TestDescription_Point3DTestSuite_test_Point3D_Equal() : CxxTest::RealTestDescription( Tests_Point3DTestSuite, suiteDescription_Point3DTestSuite, 106, "test_Point3D_Equal" ) {}
+ void runTest() { suite_Point3DTestSuite.test_Point3D_Equal(); }
+} testDescription_Point3DTestSuite_test_Point3D_Equal;
 
-static class TestDescription_Point3DTestSuite_testPointNotEqual : public CxxTest::RealTestDescription {
+static class TestDescription_Point3DTestSuite_test_Point3D_NotEqual : public CxxTest::RealTestDescription {
 public:
- TestDescription_Point3DTestSuite_testPointNotEqual() : CxxTest::RealTestDescription( Tests_Point3DTestSuite, suiteDescription_Point3DTestSuite, 114, "testPointNotEqual" ) {}
- void runTest() { suite_Point3DTestSuite.testPointNotEqual(); }
-} testDescription_Point3DTestSuite_testPointNotEqual;
+ TestDescription_Point3DTestSuite_test_Point3D_NotEqual() : CxxTest::RealTestDescription( Tests_Point3DTestSuite, suiteDescription_Point3DTestSuite, 114, "test_Point3D_NotEqual" ) {}
+ void runTest() { suite_Point3DTestSuite.test_Point3D_NotEqual(); }
+} testDescription_Point3DTestSuite_test_Point3D_NotEqual;
 
-static class TestDescription_Point3DTestSuite_testPointIndexOperator : public CxxTest::RealTestDescription {
+static class TestDescription_Point3DTestSuite_test_Point3D_IndexOperator : public CxxTest::RealTestDescription {
 public:
- TestDescription_Point3DTestSuite_testPointIndexOperator() : CxxTest::RealTestDescription( Tests_Point3DTestSuite, suiteDescription_Point3DTestSuite, 122, "testPointIndexOperator" ) {}
- void runTest() { suite_Point3DTestSuite.testPointIndexOperator(); }
-} testDescription_Point3DTestSuite_testPointIndexOperator;
+ TestDescription_Point3DTestSuite_test_Point3D_IndexOperator() : CxxTest::RealTestDescription( Tests_Point3DTestSuite, suiteDescription_Point3DTestSuite, 122, "test_Point3D_IndexOperator" ) {}
+ void runTest() { suite_Point3DTestSuite.test_Point3D_IndexOperator(); }
+} testDescription_Point3DTestSuite_test_Point3D_IndexOperator;
 
-static class TestDescription_Point3DTestSuite_testPointIntegerMult : public CxxTest::RealTestDescription {
+static class TestDescription_Point3DTestSuite_test_Point3D_IntegerMult : public CxxTest::RealTestDescription {
 public:
- TestDescription_Point3DTestSuite_testPointIntegerMult() : CxxTest::RealTestDescription( Tests_Point3DTestSuite, suiteDescription_Point3DTestSuite, 128, "testPointIntegerMult" ) {}
- void runTest() { suite_Point3DTestSuite.testPointIntegerMult(); }
-} testDescription_Point3DTestSuite_testPointIntegerMult;
+ TestDescription_Point3DTestSuite_test_Point3D_IntegerMult() : CxxTest::RealTestDescription( Tests_Point3DTestSuite, suiteDescription_Point3DTestSuite, 128, "test_Point3D_IntegerMult" ) {}
+ void runTest() { suite_Point3DTestSuite.test_Point3D_IntegerMult(); }
+} testDescription_Point3DTestSuite_test_Point3D_IntegerMult;
 
-static class TestDescription_Point3DTestSuite_testPointIntegerDiv : public CxxTest::RealTestDescription {
+static class TestDescription_Point3DTestSuite_test_Point3D_IntegerDiv : public CxxTest::RealTestDescription {
 public:
- TestDescription_Point3DTestSuite_testPointIntegerDiv() : CxxTest::RealTestDescription( Tests_Point3DTestSuite, suiteDescription_Point3DTestSuite, 135, "testPointIntegerDiv" ) {}
- void runTest() { suite_Point3DTestSuite.testPointIntegerDiv(); }
-} testDescription_Point3DTestSuite_testPointIntegerDiv;
+ TestDescription_Point3DTestSuite_test_Point3D_IntegerDiv() : CxxTest::RealTestDescription( Tests_Point3DTestSuite, suiteDescription_Point3DTestSuite, 135, "test_Point3D_IntegerDiv" ) {}
+ void runTest() { suite_Point3DTestSuite.test_Point3D_IntegerDiv(); }
+} testDescription_Point3DTestSuite_test_Point3D_IntegerDiv;
 
-static class TestDescription_Point3DTestSuite_testPointOutputStream : public CxxTest::RealTestDescription {
+static class TestDescription_Point3DTestSuite_test_Point3D_OutputStream : public CxxTest::RealTestDescription {
 public:
- TestDescription_Point3DTestSuite_testPointOutputStream() : CxxTest::RealTestDescription( Tests_Point3DTestSuite, suiteDescription_Point3DTestSuite, 142, "testPointOutputStream" ) {}
- void runTest() { suite_Point3DTestSuite.testPointOutputStream(); }
-} testDescription_Point3DTestSuite_testPointOutputStream;
+ TestDescription_Point3DTestSuite_test_Point3D_OutputStream() : CxxTest::RealTestDescription( Tests_Point3DTestSuite, suiteDescription_Point3DTestSuite, 142, "test_Point3D_OutputStream" ) {}
+ void runTest() { suite_Point3DTestSuite.test_Point3D_OutputStream(); }
+} testDescription_Point3DTestSuite_test_Point3D_OutputStream;
 
-static class TestDescription_Point3DTestSuite_testPointInputStream : public CxxTest::RealTestDescription {
+static class TestDescription_Point3DTestSuite_test_Point3D_InputStream : public CxxTest::RealTestDescription {
 public:
- TestDescription_Point3DTestSuite_testPointInputStream() : CxxTest::RealTestDescription( Tests_Point3DTestSuite, suiteDescription_Point3DTestSuite, 151, "testPointInputStream" ) {}
- void runTest() { suite_Point3DTestSuite.testPointInputStream(); }
-} testDescription_Point3DTestSuite_testPointInputStream;
+ TestDescription_Point3DTestSuite_test_Point3D_InputStream() : CxxTest::RealTestDescription( Tests_Point3DTestSuite, suiteDescription_Point3DTestSuite, 151, "test_Point3D_InputStream" ) {}
+ void runTest() { suite_Point3DTestSuite.test_Point3D_InputStream(); }
+} testDescription_Point3DTestSuite_test_Point3D_InputStream;
 
-static class TestDescription_Point3DTestSuite_testPointConversion : public CxxTest::RealTestDescription {
+static class TestDescription_Point3DTestSuite_test_Point3D_Conversion : public CxxTest::RealTestDescription {
 public:
- TestDescription_Point3DTestSuite_testPointConversion() : CxxTest::RealTestDescription( Tests_Point3DTestSuite, suiteDescription_Point3DTestSuite, 160, "testPointConversion" ) {}
- void runTest() { suite_Point3DTestSuite.testPointConversion(); }
-} testDescription_Point3DTestSuite_testPointConversion;
+ TestDescription_Point3DTestSuite_test_Point3D_Conversion() : CxxTest::RealTestDescription( Tests_Point3DTestSuite, suiteDescription_Point3DTestSuite, 160, "test_Point3D_Conversion" ) {}
+ void runTest() { suite_Point3DTestSuite.test_Point3D_Conversion(); }
+} testDescription_Point3DTestSuite_test_Point3D_Conversion;
 

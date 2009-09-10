@@ -19,9 +19,9 @@ static CameraTestSuite suite_CameraTestSuite;
 static CxxTest::List Tests_CameraTestSuite = { 0, 0 };
 CxxTest::StaticSuiteDescription suiteDescription_CameraTestSuite( "./Camera.test.h", 11, "CameraTestSuite", suite_CameraTestSuite, Tests_CameraTestSuite );
 
-static class TestDescription_CameraTestSuite_testCamera : public CxxTest::RealTestDescription {
+static class TestDescription_CameraTestSuite_test_Camera_Constr : public CxxTest::RealTestDescription {
 public:
- TestDescription_CameraTestSuite_testCamera() : CxxTest::RealTestDescription( Tests_CameraTestSuite, suiteDescription_CameraTestSuite, 14, "testCamera" ) {}
- void runTest() { suite_CameraTestSuite.testCamera(); }
-} testDescription_CameraTestSuite_testCamera;
+ TestDescription_CameraTestSuite_test_Camera_Constr() : CxxTest::RealTestDescription( Tests_CameraTestSuite, suiteDescription_CameraTestSuite, 14, "test_Camera_Constr" ) {}
+ void runTest() { suite_CameraTestSuite.test_Camera_Constr(); }
+} testDescription_CameraTestSuite_test_Camera_Constr;
 

@@ -19,93 +19,93 @@ static MatrixTestSuite suite_MatrixTestSuite;
 static CxxTest::List Tests_MatrixTestSuite = { 0, 0 };
 CxxTest::StaticSuiteDescription suiteDescription_MatrixTestSuite( "./Matrix.test.h", 9, "MatrixTestSuite", suite_MatrixTestSuite, Tests_MatrixTestSuite );
 
-static class TestDescription_MatrixTestSuite_testMatrixDefaultConstr : public CxxTest::RealTestDescription {
+static class TestDescription_MatrixTestSuite_test_Matrix_DefaultConstr : public CxxTest::RealTestDescription {
 public:
- TestDescription_MatrixTestSuite_testMatrixDefaultConstr() : CxxTest::RealTestDescription( Tests_MatrixTestSuite, suiteDescription_MatrixTestSuite, 41, "testMatrixDefaultConstr" ) {}
- void runTest() { suite_MatrixTestSuite.testMatrixDefaultConstr(); }
-} testDescription_MatrixTestSuite_testMatrixDefaultConstr;
+ TestDescription_MatrixTestSuite_test_Matrix_DefaultConstr() : CxxTest::RealTestDescription( Tests_MatrixTestSuite, suiteDescription_MatrixTestSuite, 41, "test_Matrix_DefaultConstr" ) {}
+ void runTest() { suite_MatrixTestSuite.test_Matrix_DefaultConstr(); }
+} testDescription_MatrixTestSuite_test_Matrix_DefaultConstr;
 
-static class TestDescription_MatrixTestSuite_testMatrixIdentityConstr : public CxxTest::RealTestDescription {
+static class TestDescription_MatrixTestSuite_test_Matrix_IdentityConstr : public CxxTest::RealTestDescription {
 public:
- TestDescription_MatrixTestSuite_testMatrixIdentityConstr() : CxxTest::RealTestDescription( Tests_MatrixTestSuite, suiteDescription_MatrixTestSuite, 49, "testMatrixIdentityConstr" ) {}
- void runTest() { suite_MatrixTestSuite.testMatrixIdentityConstr(); }
-} testDescription_MatrixTestSuite_testMatrixIdentityConstr;
+ TestDescription_MatrixTestSuite_test_Matrix_IdentityConstr() : CxxTest::RealTestDescription( Tests_MatrixTestSuite, suiteDescription_MatrixTestSuite, 49, "test_Matrix_IdentityConstr" ) {}
+ void runTest() { suite_MatrixTestSuite.test_Matrix_IdentityConstr(); }
+} testDescription_MatrixTestSuite_test_Matrix_IdentityConstr;
 
-static class TestDescription_MatrixTestSuite_testMatrixAdd : public CxxTest::RealTestDescription {
+static class TestDescription_MatrixTestSuite_test_Matrix_Add : public CxxTest::RealTestDescription {
 public:
- TestDescription_MatrixTestSuite_testMatrixAdd() : CxxTest::RealTestDescription( Tests_MatrixTestSuite, suiteDescription_MatrixTestSuite, 57, "testMatrixAdd" ) {}
- void runTest() { suite_MatrixTestSuite.testMatrixAdd(); }
-} testDescription_MatrixTestSuite_testMatrixAdd;
+ TestDescription_MatrixTestSuite_test_Matrix_Add() : CxxTest::RealTestDescription( Tests_MatrixTestSuite, suiteDescription_MatrixTestSuite, 57, "test_Matrix_Add" ) {}
+ void runTest() { suite_MatrixTestSuite.test_Matrix_Add(); }
+} testDescription_MatrixTestSuite_test_Matrix_Add;
 
-static class TestDescription_MatrixTestSuite_testMatrixAddAssign : public CxxTest::RealTestDescription {
+static class TestDescription_MatrixTestSuite_test_Matrix_AddAssign : public CxxTest::RealTestDescription {
 public:
- TestDescription_MatrixTestSuite_testMatrixAddAssign() : CxxTest::RealTestDescription( Tests_MatrixTestSuite, suiteDescription_MatrixTestSuite, 65, "testMatrixAddAssign" ) {}
- void runTest() { suite_MatrixTestSuite.testMatrixAddAssign(); }
-} testDescription_MatrixTestSuite_testMatrixAddAssign;
+ TestDescription_MatrixTestSuite_test_Matrix_AddAssign() : CxxTest::RealTestDescription( Tests_MatrixTestSuite, suiteDescription_MatrixTestSuite, 65, "test_Matrix_AddAssign" ) {}
+ void runTest() { suite_MatrixTestSuite.test_Matrix_AddAssign(); }
+} testDescription_MatrixTestSuite_test_Matrix_AddAssign;
 
-static class TestDescription_MatrixTestSuite_testMatrixSub : public CxxTest::RealTestDescription {
+static class TestDescription_MatrixTestSuite_test_Matrix_Sub : public CxxTest::RealTestDescription {
 public:
- TestDescription_MatrixTestSuite_testMatrixSub() : CxxTest::RealTestDescription( Tests_MatrixTestSuite, suiteDescription_MatrixTestSuite, 74, "testMatrixSub" ) {}
- void runTest() { suite_MatrixTestSuite.testMatrixSub(); }
-} testDescription_MatrixTestSuite_testMatrixSub;
+ TestDescription_MatrixTestSuite_test_Matrix_Sub() : CxxTest::RealTestDescription( Tests_MatrixTestSuite, suiteDescription_MatrixTestSuite, 74, "test_Matrix_Sub" ) {}
+ void runTest() { suite_MatrixTestSuite.test_Matrix_Sub(); }
+} testDescription_MatrixTestSuite_test_Matrix_Sub;
 
-static class TestDescription_MatrixTestSuite_testMatrixSubAssign : public CxxTest::RealTestDescription {
+static class TestDescription_MatrixTestSuite_test_Matrix_SubAssign : public CxxTest::RealTestDescription {
 public:
- TestDescription_MatrixTestSuite_testMatrixSubAssign() : CxxTest::RealTestDescription( Tests_MatrixTestSuite, suiteDescription_MatrixTestSuite, 82, "testMatrixSubAssign" ) {}
- void runTest() { suite_MatrixTestSuite.testMatrixSubAssign(); }
-} testDescription_MatrixTestSuite_testMatrixSubAssign;
+ TestDescription_MatrixTestSuite_test_Matrix_SubAssign() : CxxTest::RealTestDescription( Tests_MatrixTestSuite, suiteDescription_MatrixTestSuite, 82, "test_Matrix_SubAssign" ) {}
+ void runTest() { suite_MatrixTestSuite.test_Matrix_SubAssign(); }
+} testDescription_MatrixTestSuite_test_Matrix_SubAssign;
 
-static class TestDescription_MatrixTestSuite_testMatrixScalarMult : public CxxTest::RealTestDescription {
+static class TestDescription_MatrixTestSuite_test_Matrix_ScalarMult : public CxxTest::RealTestDescription {
 public:
- TestDescription_MatrixTestSuite_testMatrixScalarMult() : CxxTest::RealTestDescription( Tests_MatrixTestSuite, suiteDescription_MatrixTestSuite, 91, "testMatrixScalarMult" ) {}
- void runTest() { suite_MatrixTestSuite.testMatrixScalarMult(); }
-} testDescription_MatrixTestSuite_testMatrixScalarMult;
+ TestDescription_MatrixTestSuite_test_Matrix_ScalarMult() : CxxTest::RealTestDescription( Tests_MatrixTestSuite, suiteDescription_MatrixTestSuite, 91, "test_Matrix_ScalarMult" ) {}
+ void runTest() { suite_MatrixTestSuite.test_Matrix_ScalarMult(); }
+} testDescription_MatrixTestSuite_test_Matrix_ScalarMult;
 
-static class TestDescription_MatrixTestSuite_testMatrixScalarMultAssign : public CxxTest::RealTestDescription {
+static class TestDescription_MatrixTestSuite_test_Matrix_ScalarMultAssign : public CxxTest::RealTestDescription {
 public:
- TestDescription_MatrixTestSuite_testMatrixScalarMultAssign() : CxxTest::RealTestDescription( Tests_MatrixTestSuite, suiteDescription_MatrixTestSuite, 99, "testMatrixScalarMultAssign" ) {}
- void runTest() { suite_MatrixTestSuite.testMatrixScalarMultAssign(); }
-} testDescription_MatrixTestSuite_testMatrixScalarMultAssign;
+ TestDescription_MatrixTestSuite_test_Matrix_ScalarMultAssign() : CxxTest::RealTestDescription( Tests_MatrixTestSuite, suiteDescription_MatrixTestSuite, 99, "test_Matrix_ScalarMultAssign" ) {}
+ void runTest() { suite_MatrixTestSuite.test_Matrix_ScalarMultAssign(); }
+} testDescription_MatrixTestSuite_test_Matrix_ScalarMultAssign;
 
-static class TestDescription_MatrixTestSuite_testMatrixScalarPreMult : public CxxTest::RealTestDescription {
+static class TestDescription_MatrixTestSuite_test_Matrix_ScalarPreMult : public CxxTest::RealTestDescription {
 public:
- TestDescription_MatrixTestSuite_testMatrixScalarPreMult() : CxxTest::RealTestDescription( Tests_MatrixTestSuite, suiteDescription_MatrixTestSuite, 108, "testMatrixScalarPreMult" ) {}
- void runTest() { suite_MatrixTestSuite.testMatrixScalarPreMult(); }
-} testDescription_MatrixTestSuite_testMatrixScalarPreMult;
+ TestDescription_MatrixTestSuite_test_Matrix_ScalarPreMult() : CxxTest::RealTestDescription( Tests_MatrixTestSuite, suiteDescription_MatrixTestSuite, 108, "test_Matrix_ScalarPreMult" ) {}
+ void runTest() { suite_MatrixTestSuite.test_Matrix_ScalarPreMult(); }
+} testDescription_MatrixTestSuite_test_Matrix_ScalarPreMult;
 
-static class TestDescription_MatrixTestSuite_testMatrixPreMult : public CxxTest::RealTestDescription {
+static class TestDescription_MatrixTestSuite_test_Matrix_PreMult : public CxxTest::RealTestDescription {
 public:
- TestDescription_MatrixTestSuite_testMatrixPreMult() : CxxTest::RealTestDescription( Tests_MatrixTestSuite, suiteDescription_MatrixTestSuite, 116, "testMatrixPreMult" ) {}
- void runTest() { suite_MatrixTestSuite.testMatrixPreMult(); }
-} testDescription_MatrixTestSuite_testMatrixPreMult;
+ TestDescription_MatrixTestSuite_test_Matrix_PreMult() : CxxTest::RealTestDescription( Tests_MatrixTestSuite, suiteDescription_MatrixTestSuite, 116, "test_Matrix_PreMult" ) {}
+ void runTest() { suite_MatrixTestSuite.test_Matrix_PreMult(); }
+} testDescription_MatrixTestSuite_test_Matrix_PreMult;
 
-static class TestDescription_MatrixTestSuite_testMatrixPostMult : public CxxTest::RealTestDescription {
+static class TestDescription_MatrixTestSuite_test_Matrix_PostMult : public CxxTest::RealTestDescription {
 public:
- TestDescription_MatrixTestSuite_testMatrixPostMult() : CxxTest::RealTestDescription( Tests_MatrixTestSuite, suiteDescription_MatrixTestSuite, 129, "testMatrixPostMult" ) {}
- void runTest() { suite_MatrixTestSuite.testMatrixPostMult(); }
-} testDescription_MatrixTestSuite_testMatrixPostMult;
+ TestDescription_MatrixTestSuite_test_Matrix_PostMult() : CxxTest::RealTestDescription( Tests_MatrixTestSuite, suiteDescription_MatrixTestSuite, 129, "test_Matrix_PostMult" ) {}
+ void runTest() { suite_MatrixTestSuite.test_Matrix_PostMult(); }
+} testDescription_MatrixTestSuite_test_Matrix_PostMult;
 
-static class TestDescription_MatrixTestSuite_testMatrixOperatorMult : public CxxTest::RealTestDescription {
+static class TestDescription_MatrixTestSuite_test_Matrix_OperatorMult : public CxxTest::RealTestDescription {
 public:
- TestDescription_MatrixTestSuite_testMatrixOperatorMult() : CxxTest::RealTestDescription( Tests_MatrixTestSuite, suiteDescription_MatrixTestSuite, 142, "testMatrixOperatorMult" ) {}
- void runTest() { suite_MatrixTestSuite.testMatrixOperatorMult(); }
-} testDescription_MatrixTestSuite_testMatrixOperatorMult;
+ TestDescription_MatrixTestSuite_test_Matrix_OperatorMult() : CxxTest::RealTestDescription( Tests_MatrixTestSuite, suiteDescription_MatrixTestSuite, 142, "test_Matrix_OperatorMult" ) {}
+ void runTest() { suite_MatrixTestSuite.test_Matrix_OperatorMult(); }
+} testDescription_MatrixTestSuite_test_Matrix_OperatorMult;
 
-static class TestDescription_MatrixTestSuite_testMatrixTransposed : public CxxTest::RealTestDescription {
+static class TestDescription_MatrixTestSuite_test_Matrix_Transposed : public CxxTest::RealTestDescription {
 public:
- TestDescription_MatrixTestSuite_testMatrixTransposed() : CxxTest::RealTestDescription( Tests_MatrixTestSuite, suiteDescription_MatrixTestSuite, 154, "testMatrixTransposed" ) {}
- void runTest() { suite_MatrixTestSuite.testMatrixTransposed(); }
-} testDescription_MatrixTestSuite_testMatrixTransposed;
+ TestDescription_MatrixTestSuite_test_Matrix_Transposed() : CxxTest::RealTestDescription( Tests_MatrixTestSuite, suiteDescription_MatrixTestSuite, 154, "test_Matrix_Transposed" ) {}
+ void runTest() { suite_MatrixTestSuite.test_Matrix_Transposed(); }
+} testDescription_MatrixTestSuite_test_Matrix_Transposed;
 
-static class TestDescription_MatrixTestSuite_testMatrixInverted : public CxxTest::RealTestDescription {
+static class TestDescription_MatrixTestSuite_test_Matrix_Inverted : public CxxTest::RealTestDescription {
 public:
- TestDescription_MatrixTestSuite_testMatrixInverted() : CxxTest::RealTestDescription( Tests_MatrixTestSuite, suiteDescription_MatrixTestSuite, 162, "testMatrixInverted" ) {}
- void runTest() { suite_MatrixTestSuite.testMatrixInverted(); }
-} testDescription_MatrixTestSuite_testMatrixInverted;
+ TestDescription_MatrixTestSuite_test_Matrix_Inverted() : CxxTest::RealTestDescription( Tests_MatrixTestSuite, suiteDescription_MatrixTestSuite, 162, "test_Matrix_Inverted" ) {}
+ void runTest() { suite_MatrixTestSuite.test_Matrix_Inverted(); }
+} testDescription_MatrixTestSuite_test_Matrix_Inverted;
 
-static class TestDescription_MatrixTestSuite_testMatrixInvertedFail : public CxxTest::RealTestDescription {
+static class TestDescription_MatrixTestSuite_test_Matrix_InvertedFail : public CxxTest::RealTestDescription {
 public:
- TestDescription_MatrixTestSuite_testMatrixInvertedFail() : CxxTest::RealTestDescription( Tests_MatrixTestSuite, suiteDescription_MatrixTestSuite, 178, "testMatrixInvertedFail" ) {}
- void runTest() { suite_MatrixTestSuite.testMatrixInvertedFail(); }
-} testDescription_MatrixTestSuite_testMatrixInvertedFail;
+ TestDescription_MatrixTestSuite_test_Matrix_InvertedFail() : CxxTest::RealTestDescription( Tests_MatrixTestSuite, suiteDescription_MatrixTestSuite, 178, "test_Matrix_InvertedFail" ) {}
+ void runTest() { suite_MatrixTestSuite.test_Matrix_InvertedFail(); }
+} testDescription_MatrixTestSuite_test_Matrix_InvertedFail;
 

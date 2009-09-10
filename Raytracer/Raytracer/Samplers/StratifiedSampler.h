@@ -12,21 +12,35 @@
 * Sampler implementation that produces stratified samples.
 * Image and lens samples are stratified with respect to other samples inside the same pixel.
 * Integrator samples are produced by the LatinHypercube algorithm.
-* Integrator samples are stratified inside each samples sequence.
+* Integrator samples are stratified within each samples sequence.
 * Integrator samples are <b>not</b> stratified with respect to other samples sequences.
+*
+* The class uses a pluggable ImagePixelsOrder strategy for the order the pixels are sampled in. By default, the pixels are sampled in a consecutive order.
 */
 class StratifiedSampler: public Sampler
   {
   public:
     /**
     * Creates StratifiedSampler instance.
-    * @param i_image_begin Left lower corner of the sampling window.
-    * @param i_image_end Right upper corner of the sampling window (exclusive).
+    * ConsecutiveImagePixelsOrder implementation is used to define the order the image pixels are sampled in.
+    * @param i_image_begin Left lower corner of the sampling image.
+    * @param i_image_end Right upper corner of the sampling image (exclusive).
     * @param i_x_samples_per_pixel Number of pixel samples in X direction.
     * @param i_y_samples_per_pixel Number of pixel samples in Y direction.
     * @param i_jitter_samples If true the samples will be randomly moved inside their stratas.
     */
     StratifiedSampler(const Point2D_i &i_image_begin, const Point2D_i &i_image_end, size_t i_x_samples_per_pixel, size_t i_y_samples_per_pixel, bool i_jitter_samples=true);
+
+    /**
+    * Creates StratifiedSampler instance.
+    * @param i_image_begin Left lower corner of the sampling image.
+    * @param i_image_end Right upper corner of the sampling image (exclusive).
+    * @param i_x_samples_per_pixel Number of pixel samples in X direction.
+    * @param i_y_samples_per_pixel Number of pixel samples in Y direction.
+    * @param ip_pixels_order ImagePixelsOrder implementation for the order the image pixels are sampled in. Should not be NULL.
+    * @param i_jitter_samples If true the samples will be randomly moved inside their stratas.
+    */
+    StratifiedSampler(const Point2D_i &i_image_begin, const Point2D_i &i_image_end, size_t i_x_samples_per_pixel, size_t i_y_samples_per_pixel, shared_ptr<ImagePixelsOrder> ip_pixels_order, bool i_jitter_samples=true);
 
   protected:
     /**

@@ -22,7 +22,7 @@ class FilmTestSuite : public CxxTest::TestSuite
       // Nothing to clear.
       }
 
-    void testFilmDefaultConstr()
+    void test_Film_DefaultConstr()
       {
       shared_ptr<FilmFilter> p_filter = shared_ptr<FilmFilter>(new FilmFilterMock(1.0,1.0));
       Film film(100,50,p_filter);
@@ -30,7 +30,7 @@ class FilmTestSuite : public CxxTest::TestSuite
       TS_ASSERT(film.GetXResolution()==100 && film.GetYResolution()==50);
       }
 
-    void testFilmExtent()
+    void test_Film_Extent()
       {
       Point2D_i begin, end;
       mp_film->GetSampleExtent(begin, end);
@@ -39,7 +39,7 @@ class FilmTestSuite : public CxxTest::TestSuite
       TS_ASSERT_EQUALS(end, Convert<int>( Point2D_d(100+mp_filter->GetXWidth(),50+mp_filter->GetYWidth()) ) );
       }
 
-    void testFilmPixel()
+    void test_Film_Pixel()
       {
       Point2D_i test_point(15,15);
       Spectrum_f spectrum_acc;
@@ -74,7 +74,7 @@ class FilmTestSuite : public CxxTest::TestSuite
       }
 
 
-    void testFilmClear()
+    void test_Film_Clear()
       {
       for(size_t y=0;y<50;++y)
         for(size_t x=0;x<100;++x)

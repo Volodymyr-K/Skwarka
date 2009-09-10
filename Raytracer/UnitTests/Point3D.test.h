@@ -9,19 +9,19 @@
 class Point3DTestSuite : public CxxTest::TestSuite
   {
   public:
-    void testPointDefaultConstr()
+    void test_Point3D_DefaultConstr()
       {
       Point3D_d p1;
       TS_ASSERT_EQUALS(p1, Point3D_d(0.0,0.0,0.0));
       }
 
-    void testPointConstrWithCoords()
+    void test_Point3D_ConstrWithCoords()
       {
       Point3D_d p1(1.1,2.1,-3.1);
       TS_ASSERT_EQUALS(p1, Point3D_d(1.1,2.1,-3.1));
       }
 
-    void testPointAdd()
+    void test_Point3D_Add()
       {
       Point3D_d p1(1.5,2.0,3.0);
       Point3D_d p2(1.0,0.0,2.0);
@@ -29,7 +29,7 @@ class Point3DTestSuite : public CxxTest::TestSuite
       TS_ASSERT_EQUALS(p_sum, Point3D_d(2.5,2.0,5.0));
       }
 
-    void testPointAddAssign()
+    void test_Point3D_AddAssign()
       {
       Point3D_d p1(1.5,2.0,3.0);
       Point3D_d p2(1.0,0.0,2.0);
@@ -38,7 +38,7 @@ class Point3DTestSuite : public CxxTest::TestSuite
       TS_ASSERT_EQUALS(p_sum, Point3D_d(2.5,2.0,5.0));
       }
 
-    void testPointSub()
+    void test_Point3D_Sub()
       {
       Point3D_d p1(1.5,2.0, 3.0);
       Point3D_d p2(1.0,10.0,2.0);
@@ -46,7 +46,7 @@ class Point3DTestSuite : public CxxTest::TestSuite
       TS_ASSERT_EQUALS(p_sub, Point3D_d(0.5,-8.0,1.0));
       }
 
-    void testPointSubAssign()
+    void test_Point3D_SubAssign()
       {
       Point3D_d p1(1.5,2.0, 3.0);
       Point3D_d p2(1.0,10.0,2.0);
@@ -55,21 +55,21 @@ class Point3DTestSuite : public CxxTest::TestSuite
       TS_ASSERT_EQUALS(p_sub, Point3D_d(0.5,-8.0,1.0));
       }
 
-    void testPointMult()
+    void test_Point3D_Mult()
       {
       Point3D_d p1(1.0,2.0,3.0);
       Point3D_d p_scalar=p1*1.5;
       TS_ASSERT_EQUALS(p_scalar, Point3D_d(1.5,3.0,4.5));
       }
 
-    void testPointPreMult()
+    void test_Point3D_PreMult()
       {
       Point3D_d p1(1.0,2.0,3.0);
       Point3D_d p_scalar=1.5*p1;
       TS_ASSERT_EQUALS(p_scalar, Point3D_d(1.5,3.0,4.5));
       }
 
-    void testPointMultAssign()
+    void test_Point3D_MultAssign()
       {
       Point3D_d p1(1.0,2.0,3.0);
       Point3D_d p_scalar=p1;
@@ -77,14 +77,14 @@ class Point3DTestSuite : public CxxTest::TestSuite
       TS_ASSERT_EQUALS(p_scalar, Point3D_d(1.5,3.0,4.5));
       }
 
-    void testPointDiv()
+    void test_Point3D_Div()
       {
       Point3D_d p1(1.0,2.0,3.0);
       Point3D_d p_div=p1/2.0;
       TS_ASSERT_EQUALS(p_div, Point3D_d(0.5,1.0,1.5));
       }
 
-    void testPointDivAssign()
+    void test_Point3D_DivAssign()
       {
       Point3D_d p1(1.0,2.0,3.0);
       Point3D_d p_div=p1;
@@ -95,7 +95,7 @@ class Point3DTestSuite : public CxxTest::TestSuite
     // Disable compiler warning since we divide by zero intentionally.
 #pragma warning( push )
 #pragma warning( disable : 4723 )
-    void testPointDivByZero()
+    void test_Point3D_DivByZero()
       {
       Point3D_d p1(-1.0,2.0,3.0);
       Point3D_d p_div=p1/0.0;
@@ -103,7 +103,7 @@ class Point3DTestSuite : public CxxTest::TestSuite
       }
 #pragma warning( pop )
 
-    void testPointEqual()
+    void test_Point3D_Equal()
       {
       Point3D_d p1(1.0,2.0,3.0);
       Point3D_d p2(1.0,2.0,3.0);
@@ -111,7 +111,7 @@ class Point3DTestSuite : public CxxTest::TestSuite
       TS_ASSERT((p1==p2) && !(p1==p3));
       }
 
-    void testPointNotEqual()
+    void test_Point3D_NotEqual()
       {
       Point3D_d p1(1.0,2.0,3.0);
       Point3D_d p2(1.0,2.0,3.0);
@@ -119,27 +119,27 @@ class Point3DTestSuite : public CxxTest::TestSuite
       TS_ASSERT((p1!=p3) && !(p1!=p2));
       }
 
-    void testPointIndexOperator()
+    void test_Point3D_IndexOperator()
       {
       Point3D_d p1(1.0,2.0,3.0);
       TS_ASSERT(p1[0]==1.0 && p1[1]==2.0 && p1[2]==3.0);
       }
 
-    void testPointIntegerMult()
+    void test_Point3D_IntegerMult()
       {
       Point3D<int> p1(1,2,3);
       Point3D<int> p_scalar=p1*1.5;
       TS_ASSERT_EQUALS(p_scalar, Point3D<int>(1,3,4));
       }
 
-    void testPointIntegerDiv()
+    void test_Point3D_IntegerDiv()
       {
       Point3D<int> p1(1,2,3);
       Point3D<int> p_div=p1/2;
       TS_ASSERT_EQUALS(p_div, Point3D<int>(0,1,1));
       }
 
-    void testPointOutputStream()
+    void test_Point3D_OutputStream()
       {
       Point3D_d p1(1.1,-2.2,3.0);
       std::stringstream sstream;
@@ -148,7 +148,7 @@ class Point3DTestSuite : public CxxTest::TestSuite
       TS_ASSERT(s=="1.1 -2.2 3");
       }
 
-    void testPointInputStream()
+    void test_Point3D_InputStream()
       {
       std::stringstream sstream;
       sstream << "1.1 -2.2 3.0";
@@ -157,7 +157,7 @@ class Point3DTestSuite : public CxxTest::TestSuite
       TS_ASSERT_EQUALS(p_read, Point3D_d(1.1,-2.2,3.0));
       }
 
-    void testPointConversion()
+    void test_Point3D_Conversion()
       {
       Point3D_d p1(1.8,-2.3,3.0);
       Point3D<int> p_int=Convert<int>(p1);

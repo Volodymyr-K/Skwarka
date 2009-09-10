@@ -10,14 +10,14 @@
 class SamplerTestSuite : public CxxTest::TestSuite
   {
   public:
-    void testSamplerConstr()
+    void test_Sampler_Constr()
       {
       SamplerMock sampler(Point2D_i(0,0),Point2D_i(100,100),10);
 
       TS_ASSERT_EQUALS(sampler.GetTotalSamplesNum(), 100*100*10);
       }
 
-    void testSamplerCreateSample()
+    void test_Sampler_CreateSample()
       {
       SamplerMock sampler(Point2D_i(0,0),Point2D_i(100,100),10);
 
@@ -41,7 +41,7 @@ class SamplerTestSuite : public CxxTest::TestSuite
       TS_ASSERT_EQUALS(lengths[2],35);
       }
 
-    void testSamplerGenerateSamples()
+    void test_Sampler_GeneratedSamplesCount()
       {
       SamplerMock sampler(Point2D_i(0,0),Point2D_i(100,100),10);
       shared_ptr<Sample> sample = sampler.CreateSample();

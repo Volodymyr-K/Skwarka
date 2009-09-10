@@ -8,19 +8,19 @@
 class SpectrumTestSuite : public CxxTest::TestSuite
   {
   public:
-    void testSpectrumDefaultConstr()
+    void test_Spectrum_DefaultConstr()
       {
       Spectrum_d s1;
       TS_ASSERT_EQUALS(s1, Spectrum_d(0.0,0.0,0.0));
       }
 
-    void testSpectrumConstrWithCoords()
+    void test_Spectrum_ConstrWithCoords()
       {
       Spectrum_d s1(1.1,2.1,-3.1);
       TS_ASSERT_EQUALS(s1, Spectrum_d(1.1,2.1,-3.1));
       }
 
-    void testSpectrumAdd()
+    void test_Spectrum_Add()
       {
       Spectrum_d s1(1.5,2.0,3.0);
       Spectrum_d s2(1.0,0.0,2.0);
@@ -28,7 +28,7 @@ class SpectrumTestSuite : public CxxTest::TestSuite
       TS_ASSERT_EQUALS(s_sum, Spectrum_d(2.5,2.0,5.0));
       }
 
-    void testSpectrumAddAssign()
+    void test_Spectrum_AddAssign()
       {
       Spectrum_d s1(1.5,2.0,3.0);
       Spectrum_d s2(1.0,0.0,2.0);
@@ -37,7 +37,7 @@ class SpectrumTestSuite : public CxxTest::TestSuite
       TS_ASSERT_EQUALS(s_sum, Spectrum_d(2.5,2.0,5.0));
       }
 
-    void testSpectrumSub()
+    void test_Spectrum_Sub()
       {
       Spectrum_d s1(1.5,2.0, 3.0);
       Spectrum_d s2(1.0,10.0,2.0);
@@ -45,7 +45,7 @@ class SpectrumTestSuite : public CxxTest::TestSuite
       TS_ASSERT_EQUALS(s_sub, Spectrum_d(0.5,-8.0,1.0));
       }
 
-    void testSpectrumSubAssign()
+    void test_Spectrum_SubAssign()
       {
       Spectrum_d s1(1.5,2.0, 3.0);
       Spectrum_d s2(1.0,10.0,2.0);
@@ -54,21 +54,21 @@ class SpectrumTestSuite : public CxxTest::TestSuite
       TS_ASSERT_EQUALS(s_sub, Spectrum_d(0.5,-8.0,1.0));
       }
 
-    void testSpectrumMult()
+    void test_Spectrum_Mult()
       {
       Spectrum_d s1(1.0,2.0,3.0);
       Spectrum_d s_scalar=s1*1.5;
       TS_ASSERT_EQUALS(s_scalar, Spectrum_d(1.5,3.0,4.5));
       }
 
-    void testSpectrumPreMult()
+    void test_Spectrum_PreMult()
       {
       Spectrum_d s1(1.0,2.0,3.0);
       Spectrum_d s_scalar=1.5*s1;
       TS_ASSERT_EQUALS(s_scalar, Spectrum_d(1.5,3.0,4.5));
       }
 
-    void testSpectrumMultAssign()
+    void test_Spectrum_MultAssign()
       {
       Spectrum_d s1(1.0,2.0,3.0);
       Spectrum_d s_scalar=s1;
@@ -76,14 +76,14 @@ class SpectrumTestSuite : public CxxTest::TestSuite
       TS_ASSERT_EQUALS(s_scalar, Spectrum_d(1.5,3.0,4.5));
       }
 
-    void testSpectrumDiv()
+    void test_Spectrum_Div()
       {
       Spectrum_d s1(1.0,2.0,3.0);
       Spectrum_d s_div=s1/2.0;
       TS_ASSERT_EQUALS(s_div, Spectrum_d(0.5,1.0,1.5));
       }
 
-    void testSpectrumDivAssign()
+    void test_Spectrum_DivAssign()
       {
       Spectrum_d s1(1.0,2.0,3.0);
       Spectrum_d s_div=s1;
@@ -94,7 +94,7 @@ class SpectrumTestSuite : public CxxTest::TestSuite
     // Disable compiler warning since we divide by zero intentionally.
 #pragma warning( push )
 #pragma warning( disable : 4723 )
-    void testSpectrumDivByZero()
+    void test_Spectrum_DivByZero()
       {
       Spectrum_d s1(-1.0,2.0,3.0);
       Spectrum_d s_div=s1/0.0;
@@ -102,7 +102,7 @@ class SpectrumTestSuite : public CxxTest::TestSuite
       }
 #pragma warning( pop )
 
-    void testSpectrumEqual()
+    void test_Spectrum_Equal()
       {
       Spectrum_d s1(1.0,2.0,3.0);
       Spectrum_d s2(1.0,2.0,3.0);
@@ -110,7 +110,7 @@ class SpectrumTestSuite : public CxxTest::TestSuite
       TS_ASSERT((s1==s2) && !(s1==p3));
       }
 
-    void testSpectrumNotEqual()
+    void test_Spectrum_NotEqual()
       {
       Spectrum_d s1(1.0,2.0,3.0);
       Spectrum_d s2(1.0,2.0,3.0);
@@ -118,13 +118,13 @@ class SpectrumTestSuite : public CxxTest::TestSuite
       TS_ASSERT((s1!=p3) && !(s1!=s2));
       }
 
-    void testSpectrumIndexOperator()
+    void test_Spectrum_IndexOperator()
       {
       Spectrum_d s1(1.0,2.0,3.0);
       TS_ASSERT(s1[0]==1.0 && s1[1]==2.0 && s1[2]==3.0);
       }
 
-    void testSpectrumAddWeighted()
+    void test_Spectrum_AddWeighted()
       {
       Spectrum_d s1(1.5,2.0,3.0);
       Spectrum_d s2(1.0,0.0,2.0);
@@ -132,7 +132,7 @@ class SpectrumTestSuite : public CxxTest::TestSuite
       TS_ASSERT_EQUALS(s1, Spectrum_d(3.0,2.0,6.0));
       }
 
-    void testSpectrumIsBlack()
+    void test_Spectrum_IsBlack()
       {
       Spectrum_d black(0.0,0.0,0.0);
       Spectrum_d non_black(0.0,0.0,-1.0);
@@ -140,7 +140,7 @@ class SpectrumTestSuite : public CxxTest::TestSuite
       TS_ASSERT(non_black.IsBlack()==false);
       }
 
-    void testSpectrumXYZ()
+    void test_Spectrum_XYZ()
       {
       Spectrum_d s(1.0,2.0,3.0);
       double xyz[3];
@@ -148,7 +148,7 @@ class SpectrumTestSuite : public CxxTest::TestSuite
       TS_ASSERT(xyz[0]>=0.0 && xyz[1]>=0.0 && xyz[2]>=0.0);
       }
 
-    void testSpectrumLuminance()
+    void test_Spectrum_Luminance()
       {
       Spectrum_d s(1.0,2.0,3.0);
       double xyz[3];
@@ -158,7 +158,7 @@ class SpectrumTestSuite : public CxxTest::TestSuite
       TS_ASSERT_EQUALS(luminance, xyz[1]);
       }
 
-    void testSpectrumOutputStream()
+    void test_Spectrum_OutputStream()
       {
       Spectrum_d s1(1.1,-2.2,3.0);
       std::stringstream sstream;
@@ -167,7 +167,7 @@ class SpectrumTestSuite : public CxxTest::TestSuite
       TS_ASSERT(s=="1.1 -2.2 3");
       }
 
-    void testSpectrumInputStream()
+    void test_Spectrum_InputStream()
       {
       std::stringstream sstream;
       sstream << "1.1 -2.2 3.0";
@@ -176,7 +176,7 @@ class SpectrumTestSuite : public CxxTest::TestSuite
       TS_ASSERT_EQUALS(s_read, Spectrum_d(1.1,-2.2,3.0));
       }
 
-    void testSpectrumConversion()
+    void test_Spectrum_Conversion()
       {
       Spectrum_d s1(1.8,-2.3,3.0);
       Spectrum<float> s_float=Convert<float>(s1);

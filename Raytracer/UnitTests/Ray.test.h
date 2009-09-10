@@ -8,7 +8,7 @@
 class RayTestSuite : public CxxTest::TestSuite
   {
   public:
-    void testRayDefaultConstr()
+    void test_Ray_DefaultConstr()
       {
       Ray r;
       TS_ASSERT_EQUALS(r.m_origin, Point3D_d());
@@ -20,7 +20,7 @@ class RayTestSuite : public CxxTest::TestSuite
       TS_ASSERT(r.m_max_t==DBL_INF);
       }
 
-    void testRayConstrWithCoords()
+    void test_Ray_ConstrWithCoords()
       {
       Point3D_d origin(1.1,2.1,-3.1);
       Vector3D_d direction(-1.5,0.0,3.1);
@@ -32,7 +32,7 @@ class RayTestSuite : public CxxTest::TestSuite
       TS_ASSERT_EQUALS(r.m_max_t, -10.0);
       }
 
-    void testRayOperator()
+    void test_Ray_Operator()
       {
       Point3D_d origin(1.1,2.1,-3.1);
       Vector3D_d direction(-1.5,0.0,3.1);
@@ -42,13 +42,13 @@ class RayTestSuite : public CxxTest::TestSuite
       TS_ASSERT_EQUALS(point, origin+direction*2.0);
       }
 
-    void testRayDifferentialDefaultConstr()
+    void test_Ray_DifferentialDefaultConstr()
       {
       RayDifferential rd;
       TS_ASSERT(rd.m_has_differentials==false);
       }
 
-    void testRayAndRayDifferentialMutualConstructors()
+    void test_Ray_RayDifferentialMutualConstructors()
       {
       Point3D_d origin(1.1,2.1,-3.1);
       Vector3D_d direction(-1.5,0.0,3.1);

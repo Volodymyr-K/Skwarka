@@ -4,6 +4,7 @@
 #define CXXTEST_RUNNING
 #endif
 
+#define _CXXTEST_HAVE_STD
 #define _CXXTEST_LONGLONG long long
 #include <cxxtest/TestListener.h>
 #include <cxxtest/TestTracker.h>
@@ -17,35 +18,35 @@ bool RandomGeneratorTestSuite_init = false;
 static RandomGeneratorTestSuite suite_RandomGeneratorTestSuite;
 
 static CxxTest::List Tests_RandomGeneratorTestSuite = { 0, 0 };
-CxxTest::StaticSuiteDescription suiteDescription_RandomGeneratorTestSuite( "./RandomGenerator.test.h", 8, "RandomGeneratorTestSuite", suite_RandomGeneratorTestSuite, Tests_RandomGeneratorTestSuite );
+CxxTest::StaticSuiteDescription suiteDescription_RandomGeneratorTestSuite( "./RandomGenerator.test.h", 10, "RandomGeneratorTestSuite", suite_RandomGeneratorTestSuite, Tests_RandomGeneratorTestSuite );
 
-static class TestDescription_RandomGeneratorTestSuite_testRandomRange1 : public CxxTest::RealTestDescription {
+static class TestDescription_RandomGeneratorTestSuite_test_RandomRange1 : public CxxTest::RealTestDescription {
 public:
- TestDescription_RandomGeneratorTestSuite_testRandomRange1() : CxxTest::RealTestDescription( Tests_RandomGeneratorTestSuite, suiteDescription_RandomGeneratorTestSuite, 21, "testRandomRange1" ) {}
- void runTest() { suite_RandomGeneratorTestSuite.testRandomRange1(); }
-} testDescription_RandomGeneratorTestSuite_testRandomRange1;
+ TestDescription_RandomGeneratorTestSuite_test_RandomRange1() : CxxTest::RealTestDescription( Tests_RandomGeneratorTestSuite, suiteDescription_RandomGeneratorTestSuite, 23, "test_RandomRange1" ) {}
+ void runTest() { suite_RandomGeneratorTestSuite.test_RandomRange1(); }
+} testDescription_RandomGeneratorTestSuite_test_RandomRange1;
 
-static class TestDescription_RandomGeneratorTestSuite_testRandomRange2 : public CxxTest::RealTestDescription {
+static class TestDescription_RandomGeneratorTestSuite_test_RandomRange2 : public CxxTest::RealTestDescription {
 public:
- TestDescription_RandomGeneratorTestSuite_testRandomRange2() : CxxTest::RealTestDescription( Tests_RandomGeneratorTestSuite, suiteDescription_RandomGeneratorTestSuite, 33, "testRandomRange2" ) {}
- void runTest() { suite_RandomGeneratorTestSuite.testRandomRange2(); }
-} testDescription_RandomGeneratorTestSuite_testRandomRange2;
+ TestDescription_RandomGeneratorTestSuite_test_RandomRange2() : CxxTest::RealTestDescription( Tests_RandomGeneratorTestSuite, suiteDescription_RandomGeneratorTestSuite, 35, "test_RandomRange2" ) {}
+ void runTest() { suite_RandomGeneratorTestSuite.test_RandomRange2(); }
+} testDescription_RandomGeneratorTestSuite_test_RandomRange2;
 
-static class TestDescription_RandomGeneratorTestSuite_testRandomDistribution : public CxxTest::RealTestDescription {
+static class TestDescription_RandomGeneratorTestSuite_test_RandomDistribution : public CxxTest::RealTestDescription {
 public:
- TestDescription_RandomGeneratorTestSuite_testRandomDistribution() : CxxTest::RealTestDescription( Tests_RandomGeneratorTestSuite, suiteDescription_RandomGeneratorTestSuite, 47, "testRandomDistribution" ) {}
- void runTest() { suite_RandomGeneratorTestSuite.testRandomDistribution(); }
-} testDescription_RandomGeneratorTestSuite_testRandomDistribution;
+ TestDescription_RandomGeneratorTestSuite_test_RandomDistribution() : CxxTest::RealTestDescription( Tests_RandomGeneratorTestSuite, suiteDescription_RandomGeneratorTestSuite, 49, "test_RandomDistribution" ) {}
+ void runTest() { suite_RandomGeneratorTestSuite.test_RandomDistribution(); }
+} testDescription_RandomGeneratorTestSuite_test_RandomDistribution;
 
-static class TestDescription_RandomGeneratorTestSuite_testCorrelation : public CxxTest::RealTestDescription {
+static class TestDescription_RandomGeneratorTestSuite_test_Correlation : public CxxTest::RealTestDescription {
 public:
- TestDescription_RandomGeneratorTestSuite_testCorrelation() : CxxTest::RealTestDescription( Tests_RandomGeneratorTestSuite, suiteDescription_RandomGeneratorTestSuite, 68, "testCorrelation" ) {}
- void runTest() { suite_RandomGeneratorTestSuite.testCorrelation(); }
-} testDescription_RandomGeneratorTestSuite_testCorrelation;
+ TestDescription_RandomGeneratorTestSuite_test_Correlation() : CxxTest::RealTestDescription( Tests_RandomGeneratorTestSuite, suiteDescription_RandomGeneratorTestSuite, 60, "test_Correlation" ) {}
+ void runTest() { suite_RandomGeneratorTestSuite.test_Correlation(); }
+} testDescription_RandomGeneratorTestSuite_test_Correlation;
 
-static class TestDescription_RandomGeneratorTestSuite_testSeed : public CxxTest::RealTestDescription {
+static class TestDescription_RandomGeneratorTestSuite_test_Seed : public CxxTest::RealTestDescription {
 public:
- TestDescription_RandomGeneratorTestSuite_testSeed() : CxxTest::RealTestDescription( Tests_RandomGeneratorTestSuite, suiteDescription_RandomGeneratorTestSuite, 82, "testSeed" ) {}
- void runTest() { suite_RandomGeneratorTestSuite.testSeed(); }
-} testDescription_RandomGeneratorTestSuite_testSeed;
+ TestDescription_RandomGeneratorTestSuite_test_Seed() : CxxTest::RealTestDescription( Tests_RandomGeneratorTestSuite, suiteDescription_RandomGeneratorTestSuite, 74, "test_Seed" ) {}
+ void runTest() { suite_RandomGeneratorTestSuite.test_Seed(); }
+} testDescription_RandomGeneratorTestSuite_test_Seed;
 

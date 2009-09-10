@@ -4,34 +4,42 @@
 #include <utility>
 #include "Math\Constants.h"
 
-Sphere::Parameters::Parameters()
+struct Sphere::Parameters
   {
-  // Set the default parameter values.
-  m_subdivisions=3;
-  }
+  Parameters()
+    {
+    // Set the default parameter values.
+    m_subdivisions=3;
+    }
+
+  Point3D_f m_center;
+  float m_radius;
+  int m_subdivisions;
+  };
 
 Sphere::Sphere()
   {
   }
 
-bool Sphere::_GetParameters()
+bool Sphere::_GetParameters(Sphere::Parameters &o_params)
   {
   _ClearErrors();
 
-  _GetParameter("Center", m_params.m_center, true);
+  _GetParameter("center", o_params.m_center, true);
 
-  if (_GetParameter("Radius", m_params.m_radius, true) && m_params.m_radius<=0.f)
-    _AddError("Radius can not be negative.");
+  if (_GetParameter("radius", o_params.m_radius, true) && o_params.m_radius<=0.f)
+    _AddError("Radius should be greater than zero.");
 
-  if (_GetParameter("Subdivisions", m_params.m_subdivisions, false) && m_params.m_subdivisions<0)
-    _AddError("Number of subdivisions can not be negative.");
+  if (_GetParameter("subdivisions", o_params.m_subdivisions, false) && o_params.m_subdivisions<0)
+    _AddError("Number of subdivisions should be greater or equal than zero.");
 
   return _ErrorsExist()==false;
   }
 
 shared_ptr<TriangleMesh> Sphere::BuildMesh()
   {
-  if (_GetParameters()==false)
+  Parameters params;
+  if (_GetParameters(params)==false)
     return shared_ptr<TriangleMesh>((TriangleMesh*)NULL);
 
   // Vector holding all the mesh vertices.
@@ -61,7 +69,7 @@ shared_ptr<TriangleMesh> Sphere::BuildMesh()
   std::map<std::pair<size_t,size_t>,size_t> edges_to_vertices;
 
   // Iteratively subdivide the mesh.
-  for (int i=0;i<m_params.m_subdivisions;++i)
+  for (int i=0;i<params.m_subdivisions;++i)
     {
     size_t original_size = triangles.size();
     for (size_t j=0;j<original_size;++j)
@@ -144,7 +152,7 @@ shared_ptr<TriangleMesh> Sphere::BuildMesh()
 
     uv_parameterization[i]=Point2D_f((float) (phi*INV_2PI), (float) (theta*INV_PI));
 
-    vertices[i]=vertices[i]*m_params.m_radius+m_params.m_center;
+    vertices[i]=vertices[i]*params.m_radius+params.m_center;
     }
 
   TriangleMesh *p_mesh = new TriangleMesh(vertices, triangles_cleaned);

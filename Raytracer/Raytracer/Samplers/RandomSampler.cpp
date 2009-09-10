@@ -5,6 +5,11 @@ Sampler(i_image_begin, i_image_end, i_samples_per_pixel)
   {
   }
 
+RandomSampler::RandomSampler(const Point2D_i &i_image_begin, const Point2D_i &i_image_end, size_t i_samples_per_pixel, shared_ptr<ImagePixelsOrder> ip_pixels_order):
+Sampler(i_image_begin, i_image_end, i_samples_per_pixel, ip_pixels_order)
+  {
+  }
+
 size_t RandomSampler::_RoundSamplesNumber(size_t i_samples_number) const
   {
   return i_samples_number;

@@ -28,7 +28,7 @@ class PerspectiveCameraTestSuite : public CxxTest::TestSuite
       }
 
     // Tests that center image point spawns the the same direction as the "look at" direction and the origin of the ray is the camera's position.
-    void testPerspectivePinHoleCameraTransformation()
+    void test_PerspectiveCamera_PinHoleCameraTransformation()
       {
       PerspectiveCamera cam(m_transformation, mp_film, 0.0, 0.0, m_x_view_angle);
       double x_res = cam.GetFilm()->GetXResolution();
@@ -41,7 +41,7 @@ class PerspectiveCameraTestSuite : public CxxTest::TestSuite
       }
 
     // Tests the range of rays directions for pinhole camera (the camera with zero lens radius).
-    void testPerspectivePinHoleCameraRange()
+    void test_PerspectiveCamera_PinHoleCameraRange()
       {
       PerspectiveCamera cam(m_transformation, mp_film, 0.0, 0.0, m_x_view_angle);
 
@@ -67,7 +67,7 @@ class PerspectiveCameraTestSuite : public CxxTest::TestSuite
       }
 
     // Test that a ray with a randomly generated lens UVs goes through the focal point.
-    void testPerspectiveCameraDepthOfField()
+    void test_PerspectiveCamera_DepthOfField()
       {
       double lens_radius = 1.0;
       double focal_distance = 10.0;

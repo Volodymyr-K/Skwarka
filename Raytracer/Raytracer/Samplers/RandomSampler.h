@@ -10,17 +10,29 @@
 /**
 * Sampler implementation that produces completely random values for all sample values.
 * All values are generated independently with no stratification etc.
+*
+* The class uses a pluggable ImagePixelsOrder strategy for the order the pixels are sampled in. By default, the pixels are sampled in a consecutive order.
 */
 class RandomSampler: public Sampler
   {
   public:
     /**
     * Creates RandomSampler instance.
-    * @param i_image_begin Left lower corner of the sampling window.
-    * @param i_image_end Right upper corner of the sampling window (exclusive).
+    * ConsecutiveImagePixelsOrder implementation is used to define the order the image pixels are sampled in.
+    * @param i_image_begin Left lower corner of the sampling image.
+    * @param i_image_end Right upper corner of the sampling image (exclusive).
     * @param i_samples_per_pixel Number of pixel samples per pixel.
     */
     RandomSampler(const Point2D_i &i_image_begin, const Point2D_i &i_image_end, size_t i_samples_per_pixel);
+
+    /**
+    * Creates RandomSampler instance.
+    * @param i_image_begin Left lower corner of the sampling image.
+    * @param i_image_end Right upper corner of the sampling image (exclusive).
+    * @param i_samples_per_pixel Number of pixel samples per pixel.
+    * @param ip_pixels_order ImagePixelsOrder implementation for the order the image pixels are sampled in. Should not be NULL.
+    */
+    RandomSampler(const Point2D_i &i_image_begin, const Point2D_i &i_image_end, size_t i_samples_per_pixel, shared_ptr<ImagePixelsOrder> ip_pixels_order);
 
   protected:
     /**

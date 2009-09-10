@@ -9,7 +9,7 @@
 class ThreadSafeRandomTestSuite : public CxxTest::TestSuite
   {
   public:
-    void testRandomDoubleRange1()
+    void test_RandomDoubleRange1()
       {
       double mn=DBL_INF,mx=-DBL_INF;
       for(size_t i=0;i<1000;++i)
@@ -21,7 +21,7 @@ class ThreadSafeRandomTestSuite : public CxxTest::TestSuite
       TS_ASSERT(mn>=0.0 && mn<123.0 && mx>=0.0 && mx<123.0);
       }
 
-    void testRandomDoubleRange2()
+    void test_RandomDoubleRange2()
       {
       double mn=DBL_INF,mx=-DBL_INF;
       for(size_t i=0;i<1000;++i)
@@ -34,7 +34,7 @@ class ThreadSafeRandomTestSuite : public CxxTest::TestSuite
       TS_ASSERT(mn>=-10.0 && mn<123.0 && mx>=-10.0 && mx<123.0);
       }
 
-    void testRandomIntRange1()
+    void test_RandomIntRange1()
       {
       int mn=INT_MAX,mx=INT_MIN;
       for(size_t i=0;i<1000;++i)
@@ -46,7 +46,7 @@ class ThreadSafeRandomTestSuite : public CxxTest::TestSuite
       TS_ASSERT(mn>=0 && mn<123 && mx>=0 && mx<123);
       }
 
-    void testRandomIntRange2()
+    void test_RandomIntRange2()
       {
       int mn=INT_MAX,mx=INT_MIN;
       for(size_t i=0;i<1000;++i)
@@ -60,7 +60,7 @@ class ThreadSafeRandomTestSuite : public CxxTest::TestSuite
       }
 
     // Test for mean and variance values.
-    void testRandomDistribution()
+    void test_RandomDistribution()
       {
       double values[1024], mean=0.0;
       for(size_t i=0;i<1024;++i)

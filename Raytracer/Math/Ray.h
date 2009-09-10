@@ -31,7 +31,7 @@ class Ray
     * Constructs Ray object from the specified RayDifferential object.
     * It simply discards the differentials and initializes the object with it's base ray.
     */
-    Ray(const RayDifferential &i_ray_differential);
+    explicit Ray(const RayDifferential &i_ray_differential);
 
     /**
     * Returns a 3D point on the ray corresponding to the specified t parameter.
@@ -55,7 +55,7 @@ class RayDifferential
   {
   public:
     RayDifferential();
-    RayDifferential(const Ray &i_ray);
+    explicit RayDifferential(const Ray &i_ray);
 
   public:
     // Public data members.

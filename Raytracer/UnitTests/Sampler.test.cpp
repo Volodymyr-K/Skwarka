@@ -20,21 +20,21 @@ static SamplerTestSuite suite_SamplerTestSuite;
 static CxxTest::List Tests_SamplerTestSuite = { 0, 0 };
 CxxTest::StaticSuiteDescription suiteDescription_SamplerTestSuite( "./Sampler.test.h", 10, "SamplerTestSuite", suite_SamplerTestSuite, Tests_SamplerTestSuite );
 
-static class TestDescription_SamplerTestSuite_testSamplerConstr : public CxxTest::RealTestDescription {
+static class TestDescription_SamplerTestSuite_test_Sampler_Constr : public CxxTest::RealTestDescription {
 public:
- TestDescription_SamplerTestSuite_testSamplerConstr() : CxxTest::RealTestDescription( Tests_SamplerTestSuite, suiteDescription_SamplerTestSuite, 13, "testSamplerConstr" ) {}
- void runTest() { suite_SamplerTestSuite.testSamplerConstr(); }
-} testDescription_SamplerTestSuite_testSamplerConstr;
+ TestDescription_SamplerTestSuite_test_Sampler_Constr() : CxxTest::RealTestDescription( Tests_SamplerTestSuite, suiteDescription_SamplerTestSuite, 13, "test_Sampler_Constr" ) {}
+ void runTest() { suite_SamplerTestSuite.test_Sampler_Constr(); }
+} testDescription_SamplerTestSuite_test_Sampler_Constr;
 
-static class TestDescription_SamplerTestSuite_testSamplerCreateSample : public CxxTest::RealTestDescription {
+static class TestDescription_SamplerTestSuite_test_Sampler_CreateSample : public CxxTest::RealTestDescription {
 public:
- TestDescription_SamplerTestSuite_testSamplerCreateSample() : CxxTest::RealTestDescription( Tests_SamplerTestSuite, suiteDescription_SamplerTestSuite, 20, "testSamplerCreateSample" ) {}
- void runTest() { suite_SamplerTestSuite.testSamplerCreateSample(); }
-} testDescription_SamplerTestSuite_testSamplerCreateSample;
+ TestDescription_SamplerTestSuite_test_Sampler_CreateSample() : CxxTest::RealTestDescription( Tests_SamplerTestSuite, suiteDescription_SamplerTestSuite, 20, "test_Sampler_CreateSample" ) {}
+ void runTest() { suite_SamplerTestSuite.test_Sampler_CreateSample(); }
+} testDescription_SamplerTestSuite_test_Sampler_CreateSample;
 
-static class TestDescription_SamplerTestSuite_testSamplerGenerateSamples : public CxxTest::RealTestDescription {
+static class TestDescription_SamplerTestSuite_test_Sampler_GeneratedSamplesCount : public CxxTest::RealTestDescription {
 public:
- TestDescription_SamplerTestSuite_testSamplerGenerateSamples() : CxxTest::RealTestDescription( Tests_SamplerTestSuite, suiteDescription_SamplerTestSuite, 44, "testSamplerGenerateSamples" ) {}
- void runTest() { suite_SamplerTestSuite.testSamplerGenerateSamples(); }
-} testDescription_SamplerTestSuite_testSamplerGenerateSamples;
+ TestDescription_SamplerTestSuite_test_Sampler_GeneratedSamplesCount() : CxxTest::RealTestDescription( Tests_SamplerTestSuite, suiteDescription_SamplerTestSuite, 44, "test_Sampler_GeneratedSamplesCount" ) {}
+ void runTest() { suite_SamplerTestSuite.test_Sampler_GeneratedSamplesCount(); }
+} testDescription_SamplerTestSuite_test_Sampler_GeneratedSamplesCount;
 

@@ -19,27 +19,27 @@ static FilmTestSuite suite_FilmTestSuite;
 static CxxTest::List Tests_FilmTestSuite = { 0, 0 };
 CxxTest::StaticSuiteDescription suiteDescription_FilmTestSuite( "./Film.test.h", 11, "FilmTestSuite", suite_FilmTestSuite, Tests_FilmTestSuite );
 
-static class TestDescription_FilmTestSuite_testFilmDefaultConstr : public CxxTest::RealTestDescription {
+static class TestDescription_FilmTestSuite_test_Film_DefaultConstr : public CxxTest::RealTestDescription {
 public:
- TestDescription_FilmTestSuite_testFilmDefaultConstr() : CxxTest::RealTestDescription( Tests_FilmTestSuite, suiteDescription_FilmTestSuite, 25, "testFilmDefaultConstr" ) {}
- void runTest() { suite_FilmTestSuite.testFilmDefaultConstr(); }
-} testDescription_FilmTestSuite_testFilmDefaultConstr;
+ TestDescription_FilmTestSuite_test_Film_DefaultConstr() : CxxTest::RealTestDescription( Tests_FilmTestSuite, suiteDescription_FilmTestSuite, 25, "test_Film_DefaultConstr" ) {}
+ void runTest() { suite_FilmTestSuite.test_Film_DefaultConstr(); }
+} testDescription_FilmTestSuite_test_Film_DefaultConstr;
 
-static class TestDescription_FilmTestSuite_testFilmExtent : public CxxTest::RealTestDescription {
+static class TestDescription_FilmTestSuite_test_Film_Extent : public CxxTest::RealTestDescription {
 public:
- TestDescription_FilmTestSuite_testFilmExtent() : CxxTest::RealTestDescription( Tests_FilmTestSuite, suiteDescription_FilmTestSuite, 33, "testFilmExtent" ) {}
- void runTest() { suite_FilmTestSuite.testFilmExtent(); }
-} testDescription_FilmTestSuite_testFilmExtent;
+ TestDescription_FilmTestSuite_test_Film_Extent() : CxxTest::RealTestDescription( Tests_FilmTestSuite, suiteDescription_FilmTestSuite, 33, "test_Film_Extent" ) {}
+ void runTest() { suite_FilmTestSuite.test_Film_Extent(); }
+} testDescription_FilmTestSuite_test_Film_Extent;
 
-static class TestDescription_FilmTestSuite_testFilmPixel : public CxxTest::RealTestDescription {
+static class TestDescription_FilmTestSuite_test_Film_Pixel : public CxxTest::RealTestDescription {
 public:
- TestDescription_FilmTestSuite_testFilmPixel() : CxxTest::RealTestDescription( Tests_FilmTestSuite, suiteDescription_FilmTestSuite, 42, "testFilmPixel" ) {}
- void runTest() { suite_FilmTestSuite.testFilmPixel(); }
-} testDescription_FilmTestSuite_testFilmPixel;
+ TestDescription_FilmTestSuite_test_Film_Pixel() : CxxTest::RealTestDescription( Tests_FilmTestSuite, suiteDescription_FilmTestSuite, 42, "test_Film_Pixel" ) {}
+ void runTest() { suite_FilmTestSuite.test_Film_Pixel(); }
+} testDescription_FilmTestSuite_test_Film_Pixel;
 
-static class TestDescription_FilmTestSuite_testFilmClear : public CxxTest::RealTestDescription {
+static class TestDescription_FilmTestSuite_test_Film_Clear : public CxxTest::RealTestDescription {
 public:
- TestDescription_FilmTestSuite_testFilmClear() : CxxTest::RealTestDescription( Tests_FilmTestSuite, suiteDescription_FilmTestSuite, 77, "testFilmClear" ) {}
- void runTest() { suite_FilmTestSuite.testFilmClear(); }
-} testDescription_FilmTestSuite_testFilmClear;
+ TestDescription_FilmTestSuite_test_Film_Clear() : CxxTest::RealTestDescription( Tests_FilmTestSuite, suiteDescription_FilmTestSuite, 77, "test_Film_Clear" ) {}
+ void runTest() { suite_FilmTestSuite.test_Film_Clear(); }
+} testDescription_FilmTestSuite_test_Film_Clear;
 

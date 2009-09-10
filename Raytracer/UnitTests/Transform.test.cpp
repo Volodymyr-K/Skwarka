@@ -19,93 +19,93 @@ static TransformTestSuite suite_TransformTestSuite;
 static CxxTest::List Tests_TransformTestSuite = { 0, 0 };
 CxxTest::StaticSuiteDescription suiteDescription_TransformTestSuite( "./Transform.test.h", 10, "TransformTestSuite", suite_TransformTestSuite, Tests_TransformTestSuite );
 
-static class TestDescription_TransformTestSuite_testTransformDefaultConstr : public CxxTest::RealTestDescription {
+static class TestDescription_TransformTestSuite_test_Transform_DefaultConstr : public CxxTest::RealTestDescription {
 public:
- TestDescription_TransformTestSuite_testTransformDefaultConstr() : CxxTest::RealTestDescription( Tests_TransformTestSuite, suiteDescription_TransformTestSuite, 49, "testTransformDefaultConstr" ) {}
- void runTest() { suite_TransformTestSuite.testTransformDefaultConstr(); }
-} testDescription_TransformTestSuite_testTransformDefaultConstr;
+ TestDescription_TransformTestSuite_test_Transform_DefaultConstr() : CxxTest::RealTestDescription( Tests_TransformTestSuite, suiteDescription_TransformTestSuite, 49, "test_Transform_DefaultConstr" ) {}
+ void runTest() { suite_TransformTestSuite.test_Transform_DefaultConstr(); }
+} testDescription_TransformTestSuite_test_Transform_DefaultConstr;
 
-static class TestDescription_TransformTestSuite_testTransformConstrWithMatrixElements : public CxxTest::RealTestDescription {
+static class TestDescription_TransformTestSuite_test_Transform_ConstrWithMatrixElements : public CxxTest::RealTestDescription {
 public:
- TestDescription_TransformTestSuite_testTransformConstrWithMatrixElements() : CxxTest::RealTestDescription( Tests_TransformTestSuite, suiteDescription_TransformTestSuite, 58, "testTransformConstrWithMatrixElements" ) {}
- void runTest() { suite_TransformTestSuite.testTransformConstrWithMatrixElements(); }
-} testDescription_TransformTestSuite_testTransformConstrWithMatrixElements;
+ TestDescription_TransformTestSuite_test_Transform_ConstrWithMatrixElements() : CxxTest::RealTestDescription( Tests_TransformTestSuite, suiteDescription_TransformTestSuite, 58, "test_Transform_ConstrWithMatrixElements" ) {}
+ void runTest() { suite_TransformTestSuite.test_Transform_ConstrWithMatrixElements(); }
+} testDescription_TransformTestSuite_test_Transform_ConstrWithMatrixElements;
 
-static class TestDescription_TransformTestSuite_testTransformConstrWithMatrix : public CxxTest::RealTestDescription {
+static class TestDescription_TransformTestSuite_test_Transform_ConstrWithMatrix : public CxxTest::RealTestDescription {
 public:
- TestDescription_TransformTestSuite_testTransformConstrWithMatrix() : CxxTest::RealTestDescription( Tests_TransformTestSuite, suiteDescription_TransformTestSuite, 67, "testTransformConstrWithMatrix" ) {}
- void runTest() { suite_TransformTestSuite.testTransformConstrWithMatrix(); }
-} testDescription_TransformTestSuite_testTransformConstrWithMatrix;
+ TestDescription_TransformTestSuite_test_Transform_ConstrWithMatrix() : CxxTest::RealTestDescription( Tests_TransformTestSuite, suiteDescription_TransformTestSuite, 67, "test_Transform_ConstrWithMatrix" ) {}
+ void runTest() { suite_TransformTestSuite.test_Transform_ConstrWithMatrix(); }
+} testDescription_TransformTestSuite_test_Transform_ConstrWithMatrix;
 
-static class TestDescription_TransformTestSuite_testTransformInverted : public CxxTest::RealTestDescription {
+static class TestDescription_TransformTestSuite_test_Transform_Inverted : public CxxTest::RealTestDescription {
 public:
- TestDescription_TransformTestSuite_testTransformInverted() : CxxTest::RealTestDescription( Tests_TransformTestSuite, suiteDescription_TransformTestSuite, 76, "testTransformInverted" ) {}
- void runTest() { suite_TransformTestSuite.testTransformInverted(); }
-} testDescription_TransformTestSuite_testTransformInverted;
+ TestDescription_TransformTestSuite_test_Transform_Inverted() : CxxTest::RealTestDescription( Tests_TransformTestSuite, suiteDescription_TransformTestSuite, 76, "test_Transform_Inverted" ) {}
+ void runTest() { suite_TransformTestSuite.test_Transform_Inverted(); }
+} testDescription_TransformTestSuite_test_Transform_Inverted;
 
-static class TestDescription_TransformTestSuite_testTransformPoint : public CxxTest::RealTestDescription {
+static class TestDescription_TransformTestSuite_test_Transform_Point : public CxxTest::RealTestDescription {
 public:
- TestDescription_TransformTestSuite_testTransformPoint() : CxxTest::RealTestDescription( Tests_TransformTestSuite, suiteDescription_TransformTestSuite, 86, "testTransformPoint" ) {}
- void runTest() { suite_TransformTestSuite.testTransformPoint(); }
-} testDescription_TransformTestSuite_testTransformPoint;
+ TestDescription_TransformTestSuite_test_Transform_Point() : CxxTest::RealTestDescription( Tests_TransformTestSuite, suiteDescription_TransformTestSuite, 86, "test_Transform_Point" ) {}
+ void runTest() { suite_TransformTestSuite.test_Transform_Point(); }
+} testDescription_TransformTestSuite_test_Transform_Point;
 
-static class TestDescription_TransformTestSuite_testTransformVector : public CxxTest::RealTestDescription {
+static class TestDescription_TransformTestSuite_test_Transform_Vector : public CxxTest::RealTestDescription {
 public:
- TestDescription_TransformTestSuite_testTransformVector() : CxxTest::RealTestDescription( Tests_TransformTestSuite, suiteDescription_TransformTestSuite, 94, "testTransformVector" ) {}
- void runTest() { suite_TransformTestSuite.testTransformVector(); }
-} testDescription_TransformTestSuite_testTransformVector;
+ TestDescription_TransformTestSuite_test_Transform_Vector() : CxxTest::RealTestDescription( Tests_TransformTestSuite, suiteDescription_TransformTestSuite, 94, "test_Transform_Vector" ) {}
+ void runTest() { suite_TransformTestSuite.test_Transform_Vector(); }
+} testDescription_TransformTestSuite_test_Transform_Vector;
 
-static class TestDescription_TransformTestSuite_testTransformRay : public CxxTest::RealTestDescription {
+static class TestDescription_TransformTestSuite_test_Transform_Ray : public CxxTest::RealTestDescription {
 public:
- TestDescription_TransformTestSuite_testTransformRay() : CxxTest::RealTestDescription( Tests_TransformTestSuite, suiteDescription_TransformTestSuite, 102, "testTransformRay" ) {}
- void runTest() { suite_TransformTestSuite.testTransformRay(); }
-} testDescription_TransformTestSuite_testTransformRay;
+ TestDescription_TransformTestSuite_test_Transform_Ray() : CxxTest::RealTestDescription( Tests_TransformTestSuite, suiteDescription_TransformTestSuite, 102, "test_Transform_Ray" ) {}
+ void runTest() { suite_TransformTestSuite.test_Transform_Ray(); }
+} testDescription_TransformTestSuite_test_Transform_Ray;
 
-static class TestDescription_TransformTestSuite_testTransformComposition : public CxxTest::RealTestDescription {
+static class TestDescription_TransformTestSuite_test_Transform_Composition : public CxxTest::RealTestDescription {
 public:
- TestDescription_TransformTestSuite_testTransformComposition() : CxxTest::RealTestDescription( Tests_TransformTestSuite, suiteDescription_TransformTestSuite, 110, "testTransformComposition" ) {}
- void runTest() { suite_TransformTestSuite.testTransformComposition(); }
-} testDescription_TransformTestSuite_testTransformComposition;
+ TestDescription_TransformTestSuite_test_Transform_Composition() : CxxTest::RealTestDescription( Tests_TransformTestSuite, suiteDescription_TransformTestSuite, 110, "test_Transform_Composition" ) {}
+ void runTest() { suite_TransformTestSuite.test_Transform_Composition(); }
+} testDescription_TransformTestSuite_test_Transform_Composition;
 
-static class TestDescription_TransformTestSuite_testTransformTranslation : public CxxTest::RealTestDescription {
+static class TestDescription_TransformTestSuite_test_Transform_Translation : public CxxTest::RealTestDescription {
 public:
- TestDescription_TransformTestSuite_testTransformTranslation() : CxxTest::RealTestDescription( Tests_TransformTestSuite, suiteDescription_TransformTestSuite, 121, "testTransformTranslation" ) {}
- void runTest() { suite_TransformTestSuite.testTransformTranslation(); }
-} testDescription_TransformTestSuite_testTransformTranslation;
+ TestDescription_TransformTestSuite_test_Transform_Translation() : CxxTest::RealTestDescription( Tests_TransformTestSuite, suiteDescription_TransformTestSuite, 121, "test_Transform_Translation" ) {}
+ void runTest() { suite_TransformTestSuite.test_Transform_Translation(); }
+} testDescription_TransformTestSuite_test_Transform_Translation;
 
-static class TestDescription_TransformTestSuite_testTransformScale : public CxxTest::RealTestDescription {
+static class TestDescription_TransformTestSuite_test_Transform_Scale : public CxxTest::RealTestDescription {
 public:
- TestDescription_TransformTestSuite_testTransformScale() : CxxTest::RealTestDescription( Tests_TransformTestSuite, suiteDescription_TransformTestSuite, 130, "testTransformScale" ) {}
- void runTest() { suite_TransformTestSuite.testTransformScale(); }
-} testDescription_TransformTestSuite_testTransformScale;
+ TestDescription_TransformTestSuite_test_Transform_Scale() : CxxTest::RealTestDescription( Tests_TransformTestSuite, suiteDescription_TransformTestSuite, 130, "test_Transform_Scale" ) {}
+ void runTest() { suite_TransformTestSuite.test_Transform_Scale(); }
+} testDescription_TransformTestSuite_test_Transform_Scale;
 
-static class TestDescription_TransformTestSuite_testTransformRotationX : public CxxTest::RealTestDescription {
+static class TestDescription_TransformTestSuite_test_Transform_RotationX : public CxxTest::RealTestDescription {
 public:
- TestDescription_TransformTestSuite_testTransformRotationX() : CxxTest::RealTestDescription( Tests_TransformTestSuite, suiteDescription_TransformTestSuite, 139, "testTransformRotationX" ) {}
- void runTest() { suite_TransformTestSuite.testTransformRotationX(); }
-} testDescription_TransformTestSuite_testTransformRotationX;
+ TestDescription_TransformTestSuite_test_Transform_RotationX() : CxxTest::RealTestDescription( Tests_TransformTestSuite, suiteDescription_TransformTestSuite, 139, "test_Transform_RotationX" ) {}
+ void runTest() { suite_TransformTestSuite.test_Transform_RotationX(); }
+} testDescription_TransformTestSuite_test_Transform_RotationX;
 
-static class TestDescription_TransformTestSuite_testTransformRotationY : public CxxTest::RealTestDescription {
+static class TestDescription_TransformTestSuite_test_Transform_RotationY : public CxxTest::RealTestDescription {
 public:
- TestDescription_TransformTestSuite_testTransformRotationY() : CxxTest::RealTestDescription( Tests_TransformTestSuite, suiteDescription_TransformTestSuite, 148, "testTransformRotationY" ) {}
- void runTest() { suite_TransformTestSuite.testTransformRotationY(); }
-} testDescription_TransformTestSuite_testTransformRotationY;
+ TestDescription_TransformTestSuite_test_Transform_RotationY() : CxxTest::RealTestDescription( Tests_TransformTestSuite, suiteDescription_TransformTestSuite, 148, "test_Transform_RotationY" ) {}
+ void runTest() { suite_TransformTestSuite.test_Transform_RotationY(); }
+} testDescription_TransformTestSuite_test_Transform_RotationY;
 
-static class TestDescription_TransformTestSuite_testTransformRotationZ : public CxxTest::RealTestDescription {
+static class TestDescription_TransformTestSuite_test_Transform_RotationZ : public CxxTest::RealTestDescription {
 public:
- TestDescription_TransformTestSuite_testTransformRotationZ() : CxxTest::RealTestDescription( Tests_TransformTestSuite, suiteDescription_TransformTestSuite, 157, "testTransformRotationZ" ) {}
- void runTest() { suite_TransformTestSuite.testTransformRotationZ(); }
-} testDescription_TransformTestSuite_testTransformRotationZ;
+ TestDescription_TransformTestSuite_test_Transform_RotationZ() : CxxTest::RealTestDescription( Tests_TransformTestSuite, suiteDescription_TransformTestSuite, 157, "test_Transform_RotationZ" ) {}
+ void runTest() { suite_TransformTestSuite.test_Transform_RotationZ(); }
+} testDescription_TransformTestSuite_test_Transform_RotationZ;
 
-static class TestDescription_TransformTestSuite_testTransformRotation : public CxxTest::RealTestDescription {
+static class TestDescription_TransformTestSuite_test_Transform_Rotation : public CxxTest::RealTestDescription {
 public:
- TestDescription_TransformTestSuite_testTransformRotation() : CxxTest::RealTestDescription( Tests_TransformTestSuite, suiteDescription_TransformTestSuite, 166, "testTransformRotation" ) {}
- void runTest() { suite_TransformTestSuite.testTransformRotation(); }
-} testDescription_TransformTestSuite_testTransformRotation;
+ TestDescription_TransformTestSuite_test_Transform_Rotation() : CxxTest::RealTestDescription( Tests_TransformTestSuite, suiteDescription_TransformTestSuite, 166, "test_Transform_Rotation" ) {}
+ void runTest() { suite_TransformTestSuite.test_Transform_Rotation(); }
+} testDescription_TransformTestSuite_test_Transform_Rotation;
 
-static class TestDescription_TransformTestSuite_testTransformLookAt : public CxxTest::RealTestDescription {
+static class TestDescription_TransformTestSuite_test_Transform_LookAt : public CxxTest::RealTestDescription {
 public:
- TestDescription_TransformTestSuite_testTransformLookAt() : CxxTest::RealTestDescription( Tests_TransformTestSuite, suiteDescription_TransformTestSuite, 175, "testTransformLookAt" ) {}
- void runTest() { suite_TransformTestSuite.testTransformLookAt(); }
-} testDescription_TransformTestSuite_testTransformLookAt;
+ TestDescription_TransformTestSuite_test_Transform_LookAt() : CxxTest::RealTestDescription( Tests_TransformTestSuite, suiteDescription_TransformTestSuite, 175, "test_Transform_LookAt" ) {}
+ void runTest() { suite_TransformTestSuite.test_Transform_LookAt(); }
+} testDescription_TransformTestSuite_test_Transform_LookAt;
 

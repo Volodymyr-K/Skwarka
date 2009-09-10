@@ -8,7 +8,7 @@
 class UtilTestSuite : public CxxTest::TestSuite
   {
   public:
-    void testSolveLinearSystem2x2()
+    void test_SolveLinearSystem2x2()
       {
       double A[2][2]={{-1.5,2.0},{0.5,1.5}};
       double B[2]={1.2,5.0};
@@ -24,7 +24,7 @@ class UtilTestSuite : public CxxTest::TestSuite
       TS_ASSERT_EQUALS(x[1],x1);
       }
 
-    void testSolveLinearSystem2x2Degenerated()
+    void test_SolveLinearSystem2x2Degenerated()
       {
       double A[2][2]={{-1.5,2.0},{3.0,-4.0}};
       double B[2]={1.2,5.0};
@@ -35,21 +35,21 @@ class UtilTestSuite : public CxxTest::TestSuite
       }
 
     // Test when value is less than lower bound.
-    void testClamp1()
+    void test_Clamp1()
       {
       double clamped = Clamp(1.0, 2.0, 3.0);
       TS_ASSERT(clamped==2.0);
       }
 
     // Test when value is higher than upper bound.
-    void testClamp2()
+    void tes_tClamp2()
       {
       double clamped = Clamp(5.0, 2.0, 3.0);
       TS_ASSERT(clamped==3.0);
       }
 
     // Test when value is inside the bounds.
-    void testClamp3()
+    void test_Clamp3()
       {
       double clamped = Clamp(2.2, 2.0, 3.0);
       TS_ASSERT(clamped==2.2);

@@ -22,14 +22,14 @@ class BBox3DTestSuite : public CxxTest::TestSuite
       // Nothing to clear.
       }
 
-    void testBBoxDefaultConstr()
+    void test_BBox3D_DefaultConstr()
       {
       BBox3D_d b1;
       TS_ASSERT_EQUALS(b1.m_min, Point3D_d(0.0,0.0,0.0));
       TS_ASSERT_EQUALS(b1.m_max, Point3D_d(0.0,0.0,0.0));
       }
 
-    void testBBoxDefaultConstrWithCorners()
+    void test_BBox3D_DefaultConstrWithCorners()
       {
       // The min corner is intentionally greater than the max corner to test that BBox does not swap them.
       Point3D_d p_min(1.0,2.5,3.5);
@@ -39,13 +39,13 @@ class BBox3DTestSuite : public CxxTest::TestSuite
       TS_ASSERT_EQUALS(b1.m_max, p_max);
       }
 
-    void testBBoxVolume()
+    void test_BBox3D_Volume()
       {
       double volume = m_bbox.Volume();
       TS_ASSERT_EQUALS(volume, 2.0*4.5*6.5);
       }
 
-    void testBBoxNegativeVolume()
+    void test_BBox3D_NegativeVolume()
       {
       Point3D_d p_min(1.0,-2.0,-3.0);
       Point3D_d p_max(-1.0,2.5,3.5);
@@ -55,37 +55,37 @@ class BBox3DTestSuite : public CxxTest::TestSuite
       TS_ASSERT_EQUALS(volume, -2.0*4.5*6.5);
       }
 
-    void testBBoxPointInsideCompletely()
+    void test_BBox3D_PointInsideCompletely()
       {
       Point3D_d p_test(0.1,0.2,0.3);
       TS_ASSERT(m_bbox.Inside(p_test));
       }
 
-    void testBBoxPointInsideOnFace()
+    void test_BBox3D_PointInsideOnFace()
       {
       Point3D_d p_test(0.0,0.0,-3.0);
       TS_ASSERT(m_bbox.Inside(p_test));
       }
 
-    void testBBoxPointInsideOnEdge()
+    void test_BBox3D_PointInsideOnEdge()
       {
       Point3D_d p_test(0.0,-2.0,-3.0);
       TS_ASSERT(m_bbox.Inside(p_test));
       }
 
-    void testBBoxPointInsideOnVertex()
+    void test_BBox3D_PointInsideOnVertex()
       {
       Point3D_d p_test(-1.0,-2.0,3.5);
       TS_ASSERT(m_bbox.Inside(p_test));
       }
 
-    void testBBoxPointNotInside()
+    void test_BBox3D_PointNotInside()
       {
       Point3D_d p_test(10.1,0.2,0.3);
       TS_ASSERT(m_bbox.Inside(p_test)==false);
       }
 
-    void testBBoxTriangleInside()
+    void test_BBox3D_TriangleInside()
       {
       Point3D_d p1(0.1,0.2,0.3);
       Point3D_d p2(0.1,1.2,0.3);
@@ -95,7 +95,7 @@ class BBox3DTestSuite : public CxxTest::TestSuite
       TS_ASSERT(m_bbox.Inside(triangle));
       }
 
-    void testBBoxTriangleInsidePartially()
+    void test_BBox3D_TriangleInsidePartially()
       {
       Point3D_d p1(10.1,0.2,0.3);
       Point3D_d p2(0.1,1.2,0.3);
@@ -105,7 +105,7 @@ class BBox3DTestSuite : public CxxTest::TestSuite
       TS_ASSERT(m_bbox.Inside(triangle)==false);
       }
 
-    void testBBoxTriangleNotInside()
+    void test_BBox3D_TriangleNotInside()
       {
       Point3D_d p1(10.1,0.2,0.3);
       Point3D_d p2(10.1,1.2,0.3);
@@ -116,7 +116,7 @@ class BBox3DTestSuite : public CxxTest::TestSuite
       }
 
     // Ray origins outside of the box.
-    void testBBoxRayIntersect1()
+    void test_BBox3D_RayIntersect1()
       {
       Point3D_d origin(-2.0,-2.0,-2.0);
       Vector3D_d direction=Vector3D_d(1.0,1.0,1.0).Normalized();
@@ -126,7 +126,7 @@ class BBox3DTestSuite : public CxxTest::TestSuite
       }
 
     // Ray origins inside the box.
-    void testBBoxRayIntersect2()
+    void test_BBox3D_RayIntersect2()
       {
       Point3D_d origin(0.0,0.0,0.0);
       Vector3D_d direction=Vector3D_d(1.0,1.0,1.0).Normalized();
@@ -136,7 +136,7 @@ class BBox3DTestSuite : public CxxTest::TestSuite
       }
 
     // Ray origins in the vertex of the box and point outside.
-    void testBBoxRayIntersect3()
+    void test_BBox3D_RayIntersect3()
       {
       Point3D_d origin=m_bbox.m_max;
       Vector3D_d direction=Vector3D_d(1.0,1.0,1.0).Normalized();
@@ -146,7 +146,7 @@ class BBox3DTestSuite : public CxxTest::TestSuite
       }
 
     // Ray only touches a vertex of the box but does not intersect the interior.
-    void testBBoxRayIntersect4()
+    void test_BBox3D_RayIntersect4()
       {
       Point3D_d origin=m_bbox.m_max+Point3D_d(0.5,-0.5,-0.5);
       Vector3D_d direction=Vector3D_d(-1.0,1.0,1.0).Normalized();
@@ -156,7 +156,7 @@ class BBox3DTestSuite : public CxxTest::TestSuite
       }
 
     // Ray origins outside of the box and points in the opposite direction.
-    void testBBoxRayNotIntersect1()
+    void test_BBox3D_RayNotIntersect1()
       {
       Point3D_d origin(-2.0,-2.0,-2.0);
       Vector3D_d direction=Vector3D_d(-1.0,-1.0,-1.0).Normalized();
@@ -166,7 +166,7 @@ class BBox3DTestSuite : public CxxTest::TestSuite
       }
 
     // Ray origins outside of the box, points towards the box but the m_min_t parameter is beyond the box.
-    void testBBoxRayNotIntersect2()
+    void test_BBox3D_RayNotIntersect2()
       {
       Point3D_d origin(-2.0,-2.0,-2.0);
       Vector3D_d direction=Vector3D_d(1.0,1.0,1.0).Normalized();
@@ -177,7 +177,7 @@ class BBox3DTestSuite : public CxxTest::TestSuite
       }
 
     // Ray origins outside of the box, points towards the box but the m_max_t parameter is before the box.
-    void testBBoxRayNotIntersect3()
+    void test_BBox3D_RayNotIntersect3()
       {
       Point3D_d origin(-2.0,-2.0,-2.0);
       Vector3D_d direction=Vector3D_d(1.0,1.0,1.0).Normalized();

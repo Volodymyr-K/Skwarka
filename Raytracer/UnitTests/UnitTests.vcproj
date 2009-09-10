@@ -231,6 +231,24 @@
 					/>
 				</FileConfiguration>
 			</File>
+			<File
+				RelativePath=".\SamplingTestRoutines.h"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+			</File>
 			<Filter
 				Name="Math"
 				>
@@ -259,7 +277,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\SmaplingRoutines.test.h"
+					RelativePath=".\SamplingRoutines.test.h"
 					>
 				</File>
 				<File
@@ -317,6 +335,10 @@
 						RelativePath=".\Spectrum.test.h"
 						>
 					</File>
+					<File
+						RelativePath=".\TriangleMesh.test.h"
+						>
+					</File>
 				</Filter>
 				<Filter
 					Name="Cameras"
@@ -326,6 +348,42 @@
 						>
 					</File>
 				</Filter>
+				<Filter
+					Name="FilmFilters"
+					>
+					<File
+						RelativePath=".\BoxFilter.test.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="Samplers"
+					>
+					<File
+						RelativePath=".\ConsecutiveImagePixelsOrder.test.h"
+						>
+					</File>
+					<File
+						RelativePath=".\RandomSampler.test.h"
+						>
+					</File>
+					<File
+						RelativePath=".\StratifiedSampler.test.h"
+						>
+					</File>
+				</Filter>
+			</Filter>
+			<Filter
+				Name="Shapes"
+				>
+				<File
+					RelativePath=".\Shape.test.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Sphere.test.h"
+					>
+				</File>
 			</Filter>
 		</Filter>
 		<Filter
@@ -336,7 +394,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\BoxFilter.test.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Camera.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ConsecutiveImagePixelsOrder.test.cpp"
 				>
 			</File>
 			<File
@@ -372,6 +438,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\RandomSampler.test.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Ray.test.cpp"
 				>
 			</File>
@@ -384,11 +454,23 @@
 				>
 			</File>
 			<File
-				RelativePath=".\SmaplingRoutines.test.cpp"
+				RelativePath=".\SamplingRoutines.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Shape.test.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\Spectrum.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Sphere.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\StratifiedSampler.test.cpp"
 				>
 			</File>
 			<File
@@ -401,6 +483,10 @@
 			</File>
 			<File
 				RelativePath=".\Triangle3D.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\TriangleMesh.test.cpp"
 				>
 			</File>
 			<File
@@ -458,6 +544,31 @@
 			<File
 				RelativePath=".\Mocks\SamplerMock.h"
 				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\Mocks\ShapeMock.h"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
 				<FileConfiguration
 					Name="Release|Win32"
 					>

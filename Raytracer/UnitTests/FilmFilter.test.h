@@ -9,7 +9,7 @@
 class FilmFilterTestSuite : public CxxTest::TestSuite
   {
   public:
-    void testFilmDefaultConstr()
+    void test_FilmFilter_DefaultConstr()
       {
       FilmFilterMock filter(100.5,50.5);
 

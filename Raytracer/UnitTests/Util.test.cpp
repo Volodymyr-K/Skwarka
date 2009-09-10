@@ -19,33 +19,27 @@ static UtilTestSuite suite_UtilTestSuite;
 static CxxTest::List Tests_UtilTestSuite = { 0, 0 };
 CxxTest::StaticSuiteDescription suiteDescription_UtilTestSuite( "./Util.test.h", 8, "UtilTestSuite", suite_UtilTestSuite, Tests_UtilTestSuite );
 
-static class TestDescription_UtilTestSuite_testSolveLinearSystem2x2 : public CxxTest::RealTestDescription {
+static class TestDescription_UtilTestSuite_test_SolveLinearSystem2x2 : public CxxTest::RealTestDescription {
 public:
- TestDescription_UtilTestSuite_testSolveLinearSystem2x2() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 11, "testSolveLinearSystem2x2" ) {}
- void runTest() { suite_UtilTestSuite.testSolveLinearSystem2x2(); }
-} testDescription_UtilTestSuite_testSolveLinearSystem2x2;
+ TestDescription_UtilTestSuite_test_SolveLinearSystem2x2() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 11, "test_SolveLinearSystem2x2" ) {}
+ void runTest() { suite_UtilTestSuite.test_SolveLinearSystem2x2(); }
+} testDescription_UtilTestSuite_test_SolveLinearSystem2x2;
 
-static class TestDescription_UtilTestSuite_testSolveLinearSystem2x2Degenerated : public CxxTest::RealTestDescription {
+static class TestDescription_UtilTestSuite_test_SolveLinearSystem2x2Degenerated : public CxxTest::RealTestDescription {
 public:
- TestDescription_UtilTestSuite_testSolveLinearSystem2x2Degenerated() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 27, "testSolveLinearSystem2x2Degenerated" ) {}
- void runTest() { suite_UtilTestSuite.testSolveLinearSystem2x2Degenerated(); }
-} testDescription_UtilTestSuite_testSolveLinearSystem2x2Degenerated;
+ TestDescription_UtilTestSuite_test_SolveLinearSystem2x2Degenerated() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 27, "test_SolveLinearSystem2x2Degenerated" ) {}
+ void runTest() { suite_UtilTestSuite.test_SolveLinearSystem2x2Degenerated(); }
+} testDescription_UtilTestSuite_test_SolveLinearSystem2x2Degenerated;
 
-static class TestDescription_UtilTestSuite_testClamp1 : public CxxTest::RealTestDescription {
+static class TestDescription_UtilTestSuite_test_Clamp1 : public CxxTest::RealTestDescription {
 public:
- TestDescription_UtilTestSuite_testClamp1() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 38, "testClamp1" ) {}
- void runTest() { suite_UtilTestSuite.testClamp1(); }
-} testDescription_UtilTestSuite_testClamp1;
+ TestDescription_UtilTestSuite_test_Clamp1() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 38, "test_Clamp1" ) {}
+ void runTest() { suite_UtilTestSuite.test_Clamp1(); }
+} testDescription_UtilTestSuite_test_Clamp1;
 
-static class TestDescription_UtilTestSuite_testClamp2 : public CxxTest::RealTestDescription {
+static class TestDescription_UtilTestSuite_test_Clamp3 : public CxxTest::RealTestDescription {
 public:
- TestDescription_UtilTestSuite_testClamp2() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 45, "testClamp2" ) {}
- void runTest() { suite_UtilTestSuite.testClamp2(); }
-} testDescription_UtilTestSuite_testClamp2;
-
-static class TestDescription_UtilTestSuite_testClamp3 : public CxxTest::RealTestDescription {
-public:
- TestDescription_UtilTestSuite_testClamp3() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 52, "testClamp3" ) {}
- void runTest() { suite_UtilTestSuite.testClamp3(); }
-} testDescription_UtilTestSuite_testClamp3;
+ TestDescription_UtilTestSuite_test_Clamp3() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 52, "test_Clamp3" ) {}
+ void runTest() { suite_UtilTestSuite.test_Clamp3(); }
+} testDescription_UtilTestSuite_test_Clamp3;
 

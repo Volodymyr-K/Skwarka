@@ -81,7 +81,7 @@ class TriangleMesh
     const Vector3D_f &GetTriangleNormal(size_t i_triangle_index) const;
 
     /**
-    * Populates the DifferentialGeometry assuming the specified ray intersects the specified triangle.
+    * Populates the DifferentialGeometry assuming that the specified ray intersects the specified triangle.
     */
     void ComputeDifferentialGeometry(size_t i_triangle_index, const RayDifferential &i_ray, DifferentialGeometry &o_dg) const;
 

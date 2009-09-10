@@ -38,7 +38,7 @@ class MatrixTestSuite : public CxxTest::TestSuite
       // Nothing to clear.
       }
 
-    void testMatrixDefaultConstr()
+    void test_Matrix_DefaultConstr()
       {
       Matrix4x4_d m;
       for(unsigned char i=0;i<4;++i)
@@ -46,7 +46,7 @@ class MatrixTestSuite : public CxxTest::TestSuite
           TS_ASSERT_EQUALS(m.m_values[i][j], 0.0);
       }
 
-    void testMatrixIdentityConstr()
+    void test_Matrix_IdentityConstr()
       {
       Matrix4x4_d m(true);
       for(unsigned char i=0;i<4;++i)
@@ -54,7 +54,7 @@ class MatrixTestSuite : public CxxTest::TestSuite
           TS_ASSERT_EQUALS(m.m_values[i][j], (i==j ? 1.0 : 0.0));
       }
 
-    void testMatrixAdd()
+    void test_Matrix_Add()
       {
       Matrix4x4_d m_add=m_matrix1+m_matrix2;
       for(unsigned char i=0;i<4;++i)
@@ -62,7 +62,7 @@ class MatrixTestSuite : public CxxTest::TestSuite
           TS_ASSERT_EQUALS(m_add.m_values[i][j], m_elements[i][j]+m_elements2[i][j]);
       }
 
-    void testMatrixAddAssign()
+    void test_Matrix_AddAssign()
       {
       Matrix4x4_d m_add=m_matrix1;
       m_add+=m_matrix2;
@@ -71,7 +71,7 @@ class MatrixTestSuite : public CxxTest::TestSuite
           TS_ASSERT_EQUALS(m_add.m_values[i][j], m_elements[i][j]+m_elements2[i][j]);
       }
 
-    void testMatrixSub()
+    void test_Matrix_Sub()
       {
       Matrix4x4_d m_sub=m_matrix1-m_matrix2;
       for(unsigned char i=0;i<4;++i)
@@ -79,7 +79,7 @@ class MatrixTestSuite : public CxxTest::TestSuite
           TS_ASSERT_EQUALS(m_sub.m_values[i][j], m_elements[i][j]-m_elements2[i][j]);
       }
 
-    void testMatrixSubAssign()
+    void test_Matrix_SubAssign()
       {
       Matrix4x4_d m_sub=m_matrix1;
       m_sub-=m_matrix2;
@@ -88,7 +88,7 @@ class MatrixTestSuite : public CxxTest::TestSuite
           TS_ASSERT_EQUALS(m_sub.m_values[i][j], m_elements[i][j]-m_elements2[i][j]);
       }
     
-    void testMatrixScalarMult()
+    void test_Matrix_ScalarMult()
       {
       Matrix4x4_d m_mult=m_matrix1*1.5;
       for(unsigned char i=0;i<4;++i)
@@ -96,7 +96,7 @@ class MatrixTestSuite : public CxxTest::TestSuite
           TS_ASSERT_EQUALS(m_mult.m_values[i][j], m_elements[i][j]*1.5);
       }
 
-    void testMatrixScalarMultAssign()
+    void test_Matrix_ScalarMultAssign()
       {
       Matrix4x4_d m_mult=m_matrix1;
       m_mult*=1.5;
@@ -105,7 +105,7 @@ class MatrixTestSuite : public CxxTest::TestSuite
           TS_ASSERT_EQUALS(m_mult.m_values[i][j], m_elements[i][j]*1.5);
       }
 
-    void testMatrixScalarPreMult()
+    void test_Matrix_ScalarPreMult()
       {
       Matrix4x4_d m_mult=1.5*m_matrix1;
       for(unsigned char i=0;i<4;++i)
@@ -113,7 +113,7 @@ class MatrixTestSuite : public CxxTest::TestSuite
           TS_ASSERT_EQUALS(m_mult.m_values[i][j], m_elements[i][j]*1.5);
       }
 
-    void testMatrixPreMult()
+    void test_Matrix_PreMult()
       {
       Matrix4x4_d m_mult=m_matrix1;
       m_mult.PreMultiply(m_matrix2);
@@ -126,7 +126,7 @@ class MatrixTestSuite : public CxxTest::TestSuite
           }
       }
 
-    void testMatrixPostMult()
+    void test_Matrix_PostMult()
       {
       Matrix4x4_d m_mult=m_matrix1;
       m_mult.PostMultiply(m_matrix2);
@@ -139,7 +139,7 @@ class MatrixTestSuite : public CxxTest::TestSuite
           }
       }
 
-    void testMatrixOperatorMult()
+    void test_Matrix_OperatorMult()
       {
       Matrix4x4_d m_mult=m_matrix1*m_matrix2;
       for(unsigned char i=0;i<4;++i)
@@ -151,7 +151,7 @@ class MatrixTestSuite : public CxxTest::TestSuite
           }
       }
 
-    void testMatrixTransposed()
+    void test_Matrix_Transposed()
       {
       Matrix4x4_d m_trans=m_matrix1.Transposed();
       for(unsigned char i=0;i<4;++i)
@@ -159,7 +159,7 @@ class MatrixTestSuite : public CxxTest::TestSuite
           TS_ASSERT_EQUALS(m_trans.m_values[i][j], m_elements[j][i]);
       }
 
-    void testMatrixInverted()
+    void test_Matrix_Inverted()
       {
       Matrix4x4_d m_inv;
       bool not_singular=m_matrix1.Inverted(m_inv);
@@ -175,7 +175,7 @@ class MatrixTestSuite : public CxxTest::TestSuite
       }
 
     // Test for singular matrix inversion.
-    void testMatrixInvertedFail()
+    void test_Matrix_InvertedFail()
       {
       Matrix4x4_d m_inv;
       bool not_singular=m_matrix2.Inverted(m_inv);

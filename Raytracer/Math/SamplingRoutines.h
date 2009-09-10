@@ -12,43 +12,43 @@
 namespace SamplingRoutines
   {
   /**
-  Maps 2D sample in [0;1]^2 to a unit radius disk.
-  The "concentric" algorithm belongs to Peter Shirley and prevents the area distortion (elongation and/or compression).
-  @param i_sample Input 2D sample in [0;1]^2.
-  @return Resulting 2D point in the unit radius disk.
+  * Maps 2D sample in [0;1]^2 to a unit radius disk.
+  * The "concentric" algorithm belongs to Peter Shirley and prevents the area distortion (elongation and/or compression).
+  * @param i_sample Input 2D sample in [0;1]^2.
+  * @return Resulting 2D point in the unit radius disk.
   */
   Point2D_d ConcentricDiskSampling(const Point2D_d i_sample);
 
   /**
-  Fills the specified range with stratified 1D values in [0;1] range. ValueIterator is a random-access iterator type.
-  @param i_begin Begin iterator of the range to be filled with the values.
-  @param i_samples_num Number of samples.
-  @param i_jitter_samples If true the samples will be randomly moved inside their stratas.
+  * Fills the specified range with stratified 1D values in [0;1] range. ValueIterator is a random-access iterator type.
+  * @param i_begin Begin iterator of the range to be filled with the values.
+  * @param i_samples_num Number of samples.
+  * @param i_jitter_samples If true the samples will be randomly moved inside their stratas.
   */
   template<typename ValueIterator>
   void StratifiedSampling1D(ValueIterator i_begin, size_t i_samples_num, bool i_jitter_samples);
 
   /**
-  Fills the specified range with stratified 2D values in [0;1]^2 range. Point2DIterator is a random-access iterator type.
-  @param i_begin Begin iterator of the range to be filled with the values.
-  @param i_x_samples_num Number of samples in x direction.
-  @param i_y_samples_num Number of samples in y direction.
-  @param i_jitter_samples If true the samples will be randomly moved inside their stratas.
+  * Fills the specified range with stratified 2D values in [0;1]^2 range. Point2DIterator is a random-access iterator type.
+  * @param i_begin Begin iterator of the range to be filled with the values.
+  * @param i_x_samples_num Number of samples in x direction.
+  * @param i_y_samples_num Number of samples in y direction.
+  * @param i_jitter_samples If true the samples will be randomly moved inside their stratas.
   */
   template<typename Point2DIterator>
   void StratifiedSampling2D(Point2DIterator i_begin, size_t i_x_samples_num, size_t i_y_samples_num, bool i_jitter_samples);
 
   /**
-  Fills the specified range with 2D values produced by the LatinHypecube algorithm. Point2DIterator is a random-access iterator type.
-  @param i_begin Begin iterator of the range to be filled with the values.
-  @param i_samples_num Number of samples.
-  @param i_jitter_samples If true the samples will be randomly moved inside their stratas.
+  * Fills the specified range with 2D values produced by the LatinHypecube algorithm. Point2DIterator is a random-access iterator type.
+  * @param i_begin Begin iterator of the range to be filled with the values.
+  * @param i_samples_num Number of samples.
+  * @param i_jitter_samples If true the samples will be randomly moved inside their stratas.
   */
   template<typename Point2DIterator>
   void LatinHypercubeSampling2D(Point2DIterator i_begin, size_t i_samples_num, bool i_jitter_samples);
 
   /**
-  Randomly shuffles values in the specified vector.
+  * Randomly shuffles values in the specified vector.
   */
   template<typename T>
   void Shuffle(std::vector<T> &io_values);

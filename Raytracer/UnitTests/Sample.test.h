@@ -9,7 +9,7 @@
 class SampleTestSuite : public CxxTest::TestSuite
   {
   public:
-    void testSampleConstr()
+    void test_Sample_Constr()
       {
       std::vector<size_t> sequences_1D_size(1,2), sequences_2D_size(2,2);
       Sample sample(sequences_1D_size,sequences_2D_size);
@@ -18,7 +18,7 @@ class SampleTestSuite : public CxxTest::TestSuite
       TS_ASSERT_EQUALS(sequences_2D_size.size(), sample.GetNumberOfSamplesSequences2D());
       }
 
-    void testSampleImagePoint()
+    void test_Sample_ImagePoint()
       {
       std::vector<size_t> sequences_1D_size(1,2), sequences_2D_size(2,2);
       Sample sample(sequences_1D_size,sequences_2D_size);
@@ -28,7 +28,7 @@ class SampleTestSuite : public CxxTest::TestSuite
       TS_ASSERT_EQUALS(image_point, sample.GetImagePoint());
       }
 
-    void testSampleSequences()
+    void test_Sample_Sequences()
       {
       std::vector<size_t> sequences_1D_size, sequences_2D_size;
       sequences_1D_size.push_back(10);

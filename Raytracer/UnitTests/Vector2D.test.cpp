@@ -20,177 +20,177 @@ static Vector2DTestSuite suite_Vector2DTestSuite;
 static CxxTest::List Tests_Vector2DTestSuite = { 0, 0 };
 CxxTest::StaticSuiteDescription suiteDescription_Vector2DTestSuite( "./Vector2D.test.h", 9, "Vector2DTestSuite", suite_Vector2DTestSuite, Tests_Vector2DTestSuite );
 
-static class TestDescription_Vector2DTestSuite_testVectorDefaultConstr : public CxxTest::RealTestDescription {
+static class TestDescription_Vector2DTestSuite_test_Vector2D_DefaultConstr : public CxxTest::RealTestDescription {
 public:
- TestDescription_Vector2DTestSuite_testVectorDefaultConstr() : CxxTest::RealTestDescription( Tests_Vector2DTestSuite, suiteDescription_Vector2DTestSuite, 12, "testVectorDefaultConstr" ) {}
- void runTest() { suite_Vector2DTestSuite.testVectorDefaultConstr(); }
-} testDescription_Vector2DTestSuite_testVectorDefaultConstr;
+ TestDescription_Vector2DTestSuite_test_Vector2D_DefaultConstr() : CxxTest::RealTestDescription( Tests_Vector2DTestSuite, suiteDescription_Vector2DTestSuite, 12, "test_Vector2D_DefaultConstr" ) {}
+ void runTest() { suite_Vector2DTestSuite.test_Vector2D_DefaultConstr(); }
+} testDescription_Vector2DTestSuite_test_Vector2D_DefaultConstr;
 
-static class TestDescription_Vector2DTestSuite_testVectorConstrWithCoords : public CxxTest::RealTestDescription {
+static class TestDescription_Vector2DTestSuite_test_Vector2D_ConstrWithCoords : public CxxTest::RealTestDescription {
 public:
- TestDescription_Vector2DTestSuite_testVectorConstrWithCoords() : CxxTest::RealTestDescription( Tests_Vector2DTestSuite, suiteDescription_Vector2DTestSuite, 18, "testVectorConstrWithCoords" ) {}
- void runTest() { suite_Vector2DTestSuite.testVectorConstrWithCoords(); }
-} testDescription_Vector2DTestSuite_testVectorConstrWithCoords;
+ TestDescription_Vector2DTestSuite_test_Vector2D_ConstrWithCoords() : CxxTest::RealTestDescription( Tests_Vector2DTestSuite, suiteDescription_Vector2DTestSuite, 18, "test_Vector2D_ConstrWithCoords" ) {}
+ void runTest() { suite_Vector2DTestSuite.test_Vector2D_ConstrWithCoords(); }
+} testDescription_Vector2DTestSuite_test_Vector2D_ConstrWithCoords;
 
-static class TestDescription_Vector2DTestSuite_testVectorConstrWithPoint : public CxxTest::RealTestDescription {
+static class TestDescription_Vector2DTestSuite_test_Vector2D_ConstrWithPoint : public CxxTest::RealTestDescription {
 public:
- TestDescription_Vector2DTestSuite_testVectorConstrWithPoint() : CxxTest::RealTestDescription( Tests_Vector2DTestSuite, suiteDescription_Vector2DTestSuite, 24, "testVectorConstrWithPoint" ) {}
- void runTest() { suite_Vector2DTestSuite.testVectorConstrWithPoint(); }
-} testDescription_Vector2DTestSuite_testVectorConstrWithPoint;
+ TestDescription_Vector2DTestSuite_test_Vector2D_ConstrWithPoint() : CxxTest::RealTestDescription( Tests_Vector2DTestSuite, suiteDescription_Vector2DTestSuite, 24, "test_Vector2D_ConstrWithPoint" ) {}
+ void runTest() { suite_Vector2DTestSuite.test_Vector2D_ConstrWithPoint(); }
+} testDescription_Vector2DTestSuite_test_Vector2D_ConstrWithPoint;
 
-static class TestDescription_Vector2DTestSuite_testVectorAdd : public CxxTest::RealTestDescription {
+static class TestDescription_Vector2DTestSuite_test_Vector2D_Add : public CxxTest::RealTestDescription {
 public:
- TestDescription_Vector2DTestSuite_testVectorAdd() : CxxTest::RealTestDescription( Tests_Vector2DTestSuite, suiteDescription_Vector2DTestSuite, 31, "testVectorAdd" ) {}
- void runTest() { suite_Vector2DTestSuite.testVectorAdd(); }
-} testDescription_Vector2DTestSuite_testVectorAdd;
+ TestDescription_Vector2DTestSuite_test_Vector2D_Add() : CxxTest::RealTestDescription( Tests_Vector2DTestSuite, suiteDescription_Vector2DTestSuite, 31, "test_Vector2D_Add" ) {}
+ void runTest() { suite_Vector2DTestSuite.test_Vector2D_Add(); }
+} testDescription_Vector2DTestSuite_test_Vector2D_Add;
 
-static class TestDescription_Vector2DTestSuite_testVectorAddAssign : public CxxTest::RealTestDescription {
+static class TestDescription_Vector2DTestSuite_test_Vector2D_AddAssign : public CxxTest::RealTestDescription {
 public:
- TestDescription_Vector2DTestSuite_testVectorAddAssign() : CxxTest::RealTestDescription( Tests_Vector2DTestSuite, suiteDescription_Vector2DTestSuite, 39, "testVectorAddAssign" ) {}
- void runTest() { suite_Vector2DTestSuite.testVectorAddAssign(); }
-} testDescription_Vector2DTestSuite_testVectorAddAssign;
+ TestDescription_Vector2DTestSuite_test_Vector2D_AddAssign() : CxxTest::RealTestDescription( Tests_Vector2DTestSuite, suiteDescription_Vector2DTestSuite, 39, "test_Vector2D_AddAssign" ) {}
+ void runTest() { suite_Vector2DTestSuite.test_Vector2D_AddAssign(); }
+} testDescription_Vector2DTestSuite_test_Vector2D_AddAssign;
 
-static class TestDescription_Vector2DTestSuite_testVectorSub : public CxxTest::RealTestDescription {
+static class TestDescription_Vector2DTestSuite_test_Vector2D_Sub : public CxxTest::RealTestDescription {
 public:
- TestDescription_Vector2DTestSuite_testVectorSub() : CxxTest::RealTestDescription( Tests_Vector2DTestSuite, suiteDescription_Vector2DTestSuite, 48, "testVectorSub" ) {}
- void runTest() { suite_Vector2DTestSuite.testVectorSub(); }
-} testDescription_Vector2DTestSuite_testVectorSub;
+ TestDescription_Vector2DTestSuite_test_Vector2D_Sub() : CxxTest::RealTestDescription( Tests_Vector2DTestSuite, suiteDescription_Vector2DTestSuite, 48, "test_Vector2D_Sub" ) {}
+ void runTest() { suite_Vector2DTestSuite.test_Vector2D_Sub(); }
+} testDescription_Vector2DTestSuite_test_Vector2D_Sub;
 
-static class TestDescription_Vector2DTestSuite_testVectorSubAssign : public CxxTest::RealTestDescription {
+static class TestDescription_Vector2DTestSuite_test_Vector2D_SubAssign : public CxxTest::RealTestDescription {
 public:
- TestDescription_Vector2DTestSuite_testVectorSubAssign() : CxxTest::RealTestDescription( Tests_Vector2DTestSuite, suiteDescription_Vector2DTestSuite, 56, "testVectorSubAssign" ) {}
- void runTest() { suite_Vector2DTestSuite.testVectorSubAssign(); }
-} testDescription_Vector2DTestSuite_testVectorSubAssign;
+ TestDescription_Vector2DTestSuite_test_Vector2D_SubAssign() : CxxTest::RealTestDescription( Tests_Vector2DTestSuite, suiteDescription_Vector2DTestSuite, 56, "test_Vector2D_SubAssign" ) {}
+ void runTest() { suite_Vector2DTestSuite.test_Vector2D_SubAssign(); }
+} testDescription_Vector2DTestSuite_test_Vector2D_SubAssign;
 
-static class TestDescription_Vector2DTestSuite_testVectorScalarMult : public CxxTest::RealTestDescription {
+static class TestDescription_Vector2DTestSuite_test_Vector2D_ScalarMult : public CxxTest::RealTestDescription {
 public:
- TestDescription_Vector2DTestSuite_testVectorScalarMult() : CxxTest::RealTestDescription( Tests_Vector2DTestSuite, suiteDescription_Vector2DTestSuite, 65, "testVectorScalarMult" ) {}
- void runTest() { suite_Vector2DTestSuite.testVectorScalarMult(); }
-} testDescription_Vector2DTestSuite_testVectorScalarMult;
+ TestDescription_Vector2DTestSuite_test_Vector2D_ScalarMult() : CxxTest::RealTestDescription( Tests_Vector2DTestSuite, suiteDescription_Vector2DTestSuite, 65, "test_Vector2D_ScalarMult" ) {}
+ void runTest() { suite_Vector2DTestSuite.test_Vector2D_ScalarMult(); }
+} testDescription_Vector2DTestSuite_test_Vector2D_ScalarMult;
 
-static class TestDescription_Vector2DTestSuite_testVectorScalarPreMult : public CxxTest::RealTestDescription {
+static class TestDescription_Vector2DTestSuite_test_Vector2D_ScalarPreMult : public CxxTest::RealTestDescription {
 public:
- TestDescription_Vector2DTestSuite_testVectorScalarPreMult() : CxxTest::RealTestDescription( Tests_Vector2DTestSuite, suiteDescription_Vector2DTestSuite, 72, "testVectorScalarPreMult" ) {}
- void runTest() { suite_Vector2DTestSuite.testVectorScalarPreMult(); }
-} testDescription_Vector2DTestSuite_testVectorScalarPreMult;
+ TestDescription_Vector2DTestSuite_test_Vector2D_ScalarPreMult() : CxxTest::RealTestDescription( Tests_Vector2DTestSuite, suiteDescription_Vector2DTestSuite, 72, "test_Vector2D_ScalarPreMult" ) {}
+ void runTest() { suite_Vector2DTestSuite.test_Vector2D_ScalarPreMult(); }
+} testDescription_Vector2DTestSuite_test_Vector2D_ScalarPreMult;
 
-static class TestDescription_Vector2DTestSuite_testVectorScalarMultAssign : public CxxTest::RealTestDescription {
+static class TestDescription_Vector2DTestSuite_test_Vector2D_ScalarMultAssign : public CxxTest::RealTestDescription {
 public:
- TestDescription_Vector2DTestSuite_testVectorScalarMultAssign() : CxxTest::RealTestDescription( Tests_Vector2DTestSuite, suiteDescription_Vector2DTestSuite, 79, "testVectorScalarMultAssign" ) {}
- void runTest() { suite_Vector2DTestSuite.testVectorScalarMultAssign(); }
-} testDescription_Vector2DTestSuite_testVectorScalarMultAssign;
+ TestDescription_Vector2DTestSuite_test_Vector2D_ScalarMultAssign() : CxxTest::RealTestDescription( Tests_Vector2DTestSuite, suiteDescription_Vector2DTestSuite, 79, "test_Vector2D_ScalarMultAssign" ) {}
+ void runTest() { suite_Vector2DTestSuite.test_Vector2D_ScalarMultAssign(); }
+} testDescription_Vector2DTestSuite_test_Vector2D_ScalarMultAssign;
 
-static class TestDescription_Vector2DTestSuite_testVectorDiv : public CxxTest::RealTestDescription {
+static class TestDescription_Vector2DTestSuite_test_Vector2D_Div : public CxxTest::RealTestDescription {
 public:
- TestDescription_Vector2DTestSuite_testVectorDiv() : CxxTest::RealTestDescription( Tests_Vector2DTestSuite, suiteDescription_Vector2DTestSuite, 87, "testVectorDiv" ) {}
- void runTest() { suite_Vector2DTestSuite.testVectorDiv(); }
-} testDescription_Vector2DTestSuite_testVectorDiv;
+ TestDescription_Vector2DTestSuite_test_Vector2D_Div() : CxxTest::RealTestDescription( Tests_Vector2DTestSuite, suiteDescription_Vector2DTestSuite, 87, "test_Vector2D_Div" ) {}
+ void runTest() { suite_Vector2DTestSuite.test_Vector2D_Div(); }
+} testDescription_Vector2DTestSuite_test_Vector2D_Div;
 
-static class TestDescription_Vector2DTestSuite_testVectorDivAssign : public CxxTest::RealTestDescription {
+static class TestDescription_Vector2DTestSuite_test_Vector2D_DivAssign : public CxxTest::RealTestDescription {
 public:
- TestDescription_Vector2DTestSuite_testVectorDivAssign() : CxxTest::RealTestDescription( Tests_Vector2DTestSuite, suiteDescription_Vector2DTestSuite, 94, "testVectorDivAssign" ) {}
- void runTest() { suite_Vector2DTestSuite.testVectorDivAssign(); }
-} testDescription_Vector2DTestSuite_testVectorDivAssign;
+ TestDescription_Vector2DTestSuite_test_Vector2D_DivAssign() : CxxTest::RealTestDescription( Tests_Vector2DTestSuite, suiteDescription_Vector2DTestSuite, 94, "test_Vector2D_DivAssign" ) {}
+ void runTest() { suite_Vector2DTestSuite.test_Vector2D_DivAssign(); }
+} testDescription_Vector2DTestSuite_test_Vector2D_DivAssign;
 
-static class TestDescription_Vector2DTestSuite_testVectorDivByZero : public CxxTest::RealTestDescription {
+static class TestDescription_Vector2DTestSuite_test_Vector2D_DivByZero : public CxxTest::RealTestDescription {
 public:
- TestDescription_Vector2DTestSuite_testVectorDivByZero() : CxxTest::RealTestDescription( Tests_Vector2DTestSuite, suiteDescription_Vector2DTestSuite, 105, "testVectorDivByZero" ) {}
- void runTest() { suite_Vector2DTestSuite.testVectorDivByZero(); }
-} testDescription_Vector2DTestSuite_testVectorDivByZero;
+ TestDescription_Vector2DTestSuite_test_Vector2D_DivByZero() : CxxTest::RealTestDescription( Tests_Vector2DTestSuite, suiteDescription_Vector2DTestSuite, 105, "test_Vector2D_DivByZero" ) {}
+ void runTest() { suite_Vector2DTestSuite.test_Vector2D_DivByZero(); }
+} testDescription_Vector2DTestSuite_test_Vector2D_DivByZero;
 
-static class TestDescription_Vector2DTestSuite_testVectorEqual : public CxxTest::RealTestDescription {
+static class TestDescription_Vector2DTestSuite_test_Vector2D_Equal : public CxxTest::RealTestDescription {
 public:
- TestDescription_Vector2DTestSuite_testVectorEqual() : CxxTest::RealTestDescription( Tests_Vector2DTestSuite, suiteDescription_Vector2DTestSuite, 113, "testVectorEqual" ) {}
- void runTest() { suite_Vector2DTestSuite.testVectorEqual(); }
-} testDescription_Vector2DTestSuite_testVectorEqual;
+ TestDescription_Vector2DTestSuite_test_Vector2D_Equal() : CxxTest::RealTestDescription( Tests_Vector2DTestSuite, suiteDescription_Vector2DTestSuite, 113, "test_Vector2D_Equal" ) {}
+ void runTest() { suite_Vector2DTestSuite.test_Vector2D_Equal(); }
+} testDescription_Vector2DTestSuite_test_Vector2D_Equal;
 
-static class TestDescription_Vector2DTestSuite_testVectorDotMult : public CxxTest::RealTestDescription {
+static class TestDescription_Vector2DTestSuite_test_Vector2D_DotMult : public CxxTest::RealTestDescription {
 public:
- TestDescription_Vector2DTestSuite_testVectorDotMult() : CxxTest::RealTestDescription( Tests_Vector2DTestSuite, suiteDescription_Vector2DTestSuite, 121, "testVectorDotMult" ) {}
- void runTest() { suite_Vector2DTestSuite.testVectorDotMult(); }
-} testDescription_Vector2DTestSuite_testVectorDotMult;
+ TestDescription_Vector2DTestSuite_test_Vector2D_DotMult() : CxxTest::RealTestDescription( Tests_Vector2DTestSuite, suiteDescription_Vector2DTestSuite, 121, "test_Vector2D_DotMult" ) {}
+ void runTest() { suite_Vector2DTestSuite.test_Vector2D_DotMult(); }
+} testDescription_Vector2DTestSuite_test_Vector2D_DotMult;
 
-static class TestDescription_Vector2DTestSuite_testVectorCrossMult : public CxxTest::RealTestDescription {
+static class TestDescription_Vector2DTestSuite_test_Vector2D_CrossMult : public CxxTest::RealTestDescription {
 public:
- TestDescription_Vector2DTestSuite_testVectorCrossMult() : CxxTest::RealTestDescription( Tests_Vector2DTestSuite, suiteDescription_Vector2DTestSuite, 129, "testVectorCrossMult" ) {}
- void runTest() { suite_Vector2DTestSuite.testVectorCrossMult(); }
-} testDescription_Vector2DTestSuite_testVectorCrossMult;
+ TestDescription_Vector2DTestSuite_test_Vector2D_CrossMult() : CxxTest::RealTestDescription( Tests_Vector2DTestSuite, suiteDescription_Vector2DTestSuite, 129, "test_Vector2D_CrossMult" ) {}
+ void runTest() { suite_Vector2DTestSuite.test_Vector2D_CrossMult(); }
+} testDescription_Vector2DTestSuite_test_Vector2D_CrossMult;
 
-static class TestDescription_Vector2DTestSuite_testVectorLength : public CxxTest::RealTestDescription {
+static class TestDescription_Vector2DTestSuite_test_Vector2D_Length : public CxxTest::RealTestDescription {
 public:
- TestDescription_Vector2DTestSuite_testVectorLength() : CxxTest::RealTestDescription( Tests_Vector2DTestSuite, suiteDescription_Vector2DTestSuite, 137, "testVectorLength" ) {}
- void runTest() { suite_Vector2DTestSuite.testVectorLength(); }
-} testDescription_Vector2DTestSuite_testVectorLength;
+ TestDescription_Vector2DTestSuite_test_Vector2D_Length() : CxxTest::RealTestDescription( Tests_Vector2DTestSuite, suiteDescription_Vector2DTestSuite, 137, "test_Vector2D_Length" ) {}
+ void runTest() { suite_Vector2DTestSuite.test_Vector2D_Length(); }
+} testDescription_Vector2DTestSuite_test_Vector2D_Length;
 
-static class TestDescription_Vector2DTestSuite_testVectorLengthSqr : public CxxTest::RealTestDescription {
+static class TestDescription_Vector2DTestSuite_test_Vector2D_LengthSqr : public CxxTest::RealTestDescription {
 public:
- TestDescription_Vector2DTestSuite_testVectorLengthSqr() : CxxTest::RealTestDescription( Tests_Vector2DTestSuite, suiteDescription_Vector2DTestSuite, 144, "testVectorLengthSqr" ) {}
- void runTest() { suite_Vector2DTestSuite.testVectorLengthSqr(); }
-} testDescription_Vector2DTestSuite_testVectorLengthSqr;
+ TestDescription_Vector2DTestSuite_test_Vector2D_LengthSqr() : CxxTest::RealTestDescription( Tests_Vector2DTestSuite, suiteDescription_Vector2DTestSuite, 144, "test_Vector2D_LengthSqr" ) {}
+ void runTest() { suite_Vector2DTestSuite.test_Vector2D_LengthSqr(); }
+} testDescription_Vector2DTestSuite_test_Vector2D_LengthSqr;
 
-static class TestDescription_Vector2DTestSuite_testVectorNormalize : public CxxTest::RealTestDescription {
+static class TestDescription_Vector2DTestSuite_test_Vector2D_Normalize : public CxxTest::RealTestDescription {
 public:
- TestDescription_Vector2DTestSuite_testVectorNormalize() : CxxTest::RealTestDescription( Tests_Vector2DTestSuite, suiteDescription_Vector2DTestSuite, 151, "testVectorNormalize" ) {}
- void runTest() { suite_Vector2DTestSuite.testVectorNormalize(); }
-} testDescription_Vector2DTestSuite_testVectorNormalize;
+ TestDescription_Vector2DTestSuite_test_Vector2D_Normalize() : CxxTest::RealTestDescription( Tests_Vector2DTestSuite, suiteDescription_Vector2DTestSuite, 151, "test_Vector2D_Normalize" ) {}
+ void runTest() { suite_Vector2DTestSuite.test_Vector2D_Normalize(); }
+} testDescription_Vector2DTestSuite_test_Vector2D_Normalize;
 
-static class TestDescription_Vector2DTestSuite_testVectorNormalizeZeroVector : public CxxTest::RealTestDescription {
+static class TestDescription_Vector2DTestSuite_test_Vector2D_NormalizeZeroVector : public CxxTest::RealTestDescription {
 public:
- TestDescription_Vector2DTestSuite_testVectorNormalizeZeroVector() : CxxTest::RealTestDescription( Tests_Vector2DTestSuite, suiteDescription_Vector2DTestSuite, 160, "testVectorNormalizeZeroVector" ) {}
- void runTest() { suite_Vector2DTestSuite.testVectorNormalizeZeroVector(); }
-} testDescription_Vector2DTestSuite_testVectorNormalizeZeroVector;
+ TestDescription_Vector2DTestSuite_test_Vector2D_NormalizeZeroVector() : CxxTest::RealTestDescription( Tests_Vector2DTestSuite, suiteDescription_Vector2DTestSuite, 160, "test_Vector2D_NormalizeZeroVector" ) {}
+ void runTest() { suite_Vector2DTestSuite.test_Vector2D_NormalizeZeroVector(); }
+} testDescription_Vector2DTestSuite_test_Vector2D_NormalizeZeroVector;
 
-static class TestDescription_Vector2DTestSuite_testVectorNormalized : public CxxTest::RealTestDescription {
+static class TestDescription_Vector2DTestSuite_test_Vector2D_Normalized : public CxxTest::RealTestDescription {
 public:
- TestDescription_Vector2DTestSuite_testVectorNormalized() : CxxTest::RealTestDescription( Tests_Vector2DTestSuite, suiteDescription_Vector2DTestSuite, 169, "testVectorNormalized" ) {}
- void runTest() { suite_Vector2DTestSuite.testVectorNormalized(); }
-} testDescription_Vector2DTestSuite_testVectorNormalized;
+ TestDescription_Vector2DTestSuite_test_Vector2D_Normalized() : CxxTest::RealTestDescription( Tests_Vector2DTestSuite, suiteDescription_Vector2DTestSuite, 169, "test_Vector2D_Normalized" ) {}
+ void runTest() { suite_Vector2DTestSuite.test_Vector2D_Normalized(); }
+} testDescription_Vector2DTestSuite_test_Vector2D_Normalized;
 
-static class TestDescription_Vector2DTestSuite_testVectorIndexOperator : public CxxTest::RealTestDescription {
+static class TestDescription_Vector2DTestSuite_test_Vector2D_IndexOperator : public CxxTest::RealTestDescription {
 public:
- TestDescription_Vector2DTestSuite_testVectorIndexOperator() : CxxTest::RealTestDescription( Tests_Vector2DTestSuite, suiteDescription_Vector2DTestSuite, 178, "testVectorIndexOperator" ) {}
- void runTest() { suite_Vector2DTestSuite.testVectorIndexOperator(); }
-} testDescription_Vector2DTestSuite_testVectorIndexOperator;
+ TestDescription_Vector2DTestSuite_test_Vector2D_IndexOperator() : CxxTest::RealTestDescription( Tests_Vector2DTestSuite, suiteDescription_Vector2DTestSuite, 178, "test_Vector2D_IndexOperator" ) {}
+ void runTest() { suite_Vector2DTestSuite.test_Vector2D_IndexOperator(); }
+} testDescription_Vector2DTestSuite_test_Vector2D_IndexOperator;
 
-static class TestDescription_Vector2DTestSuite_testVectorIntegerScalarMult : public CxxTest::RealTestDescription {
+static class TestDescription_Vector2DTestSuite_test_Vector2D_IntegerScalarMult : public CxxTest::RealTestDescription {
 public:
- TestDescription_Vector2DTestSuite_testVectorIntegerScalarMult() : CxxTest::RealTestDescription( Tests_Vector2DTestSuite, suiteDescription_Vector2DTestSuite, 184, "testVectorIntegerScalarMult" ) {}
- void runTest() { suite_Vector2DTestSuite.testVectorIntegerScalarMult(); }
-} testDescription_Vector2DTestSuite_testVectorIntegerScalarMult;
+ TestDescription_Vector2DTestSuite_test_Vector2D_IntegerScalarMult() : CxxTest::RealTestDescription( Tests_Vector2DTestSuite, suiteDescription_Vector2DTestSuite, 184, "test_Vector2D_IntegerScalarMult" ) {}
+ void runTest() { suite_Vector2DTestSuite.test_Vector2D_IntegerScalarMult(); }
+} testDescription_Vector2DTestSuite_test_Vector2D_IntegerScalarMult;
 
-static class TestDescription_Vector2DTestSuite_testVectorIntegerDiv : public CxxTest::RealTestDescription {
+static class TestDescription_Vector2DTestSuite_test_Vector2D_IntegerDiv : public CxxTest::RealTestDescription {
 public:
- TestDescription_Vector2DTestSuite_testVectorIntegerDiv() : CxxTest::RealTestDescription( Tests_Vector2DTestSuite, suiteDescription_Vector2DTestSuite, 191, "testVectorIntegerDiv" ) {}
- void runTest() { suite_Vector2DTestSuite.testVectorIntegerDiv(); }
-} testDescription_Vector2DTestSuite_testVectorIntegerDiv;
+ TestDescription_Vector2DTestSuite_test_Vector2D_IntegerDiv() : CxxTest::RealTestDescription( Tests_Vector2DTestSuite, suiteDescription_Vector2DTestSuite, 191, "test_Vector2D_IntegerDiv" ) {}
+ void runTest() { suite_Vector2DTestSuite.test_Vector2D_IntegerDiv(); }
+} testDescription_Vector2DTestSuite_test_Vector2D_IntegerDiv;
 
-static class TestDescription_Vector2DTestSuite_testVectorVectorAdd : public CxxTest::RealTestDescription {
+static class TestDescription_Vector2DTestSuite_test_Vector2D_VectorAdd : public CxxTest::RealTestDescription {
 public:
- TestDescription_Vector2DTestSuite_testVectorVectorAdd() : CxxTest::RealTestDescription( Tests_Vector2DTestSuite, suiteDescription_Vector2DTestSuite, 198, "testVectorVectorAdd" ) {}
- void runTest() { suite_Vector2DTestSuite.testVectorVectorAdd(); }
-} testDescription_Vector2DTestSuite_testVectorVectorAdd;
+ TestDescription_Vector2DTestSuite_test_Vector2D_VectorAdd() : CxxTest::RealTestDescription( Tests_Vector2DTestSuite, suiteDescription_Vector2DTestSuite, 198, "test_Vector2D_VectorAdd" ) {}
+ void runTest() { suite_Vector2DTestSuite.test_Vector2D_VectorAdd(); }
+} testDescription_Vector2DTestSuite_test_Vector2D_VectorAdd;
 
-static class TestDescription_Vector2DTestSuite_testVectorVectorSub : public CxxTest::RealTestDescription {
+static class TestDescription_Vector2DTestSuite_test_Vector2D_VectorSub : public CxxTest::RealTestDescription {
 public:
- TestDescription_Vector2DTestSuite_testVectorVectorSub() : CxxTest::RealTestDescription( Tests_Vector2DTestSuite, suiteDescription_Vector2DTestSuite, 206, "testVectorVectorSub" ) {}
- void runTest() { suite_Vector2DTestSuite.testVectorVectorSub(); }
-} testDescription_Vector2DTestSuite_testVectorVectorSub;
+ TestDescription_Vector2DTestSuite_test_Vector2D_VectorSub() : CxxTest::RealTestDescription( Tests_Vector2DTestSuite, suiteDescription_Vector2DTestSuite, 206, "test_Vector2D_VectorSub" ) {}
+ void runTest() { suite_Vector2DTestSuite.test_Vector2D_VectorSub(); }
+} testDescription_Vector2DTestSuite_test_Vector2D_VectorSub;
 
-static class TestDescription_Vector2DTestSuite_testVectorOutputStream : public CxxTest::RealTestDescription {
+static class TestDescription_Vector2DTestSuite_test_Vector2D_OutputStream : public CxxTest::RealTestDescription {
 public:
- TestDescription_Vector2DTestSuite_testVectorOutputStream() : CxxTest::RealTestDescription( Tests_Vector2DTestSuite, suiteDescription_Vector2DTestSuite, 214, "testVectorOutputStream" ) {}
- void runTest() { suite_Vector2DTestSuite.testVectorOutputStream(); }
-} testDescription_Vector2DTestSuite_testVectorOutputStream;
+ TestDescription_Vector2DTestSuite_test_Vector2D_OutputStream() : CxxTest::RealTestDescription( Tests_Vector2DTestSuite, suiteDescription_Vector2DTestSuite, 214, "test_Vector2D_OutputStream" ) {}
+ void runTest() { suite_Vector2DTestSuite.test_Vector2D_OutputStream(); }
+} testDescription_Vector2DTestSuite_test_Vector2D_OutputStream;
 
-static class TestDescription_Vector2DTestSuite_testVectorInputStream : public CxxTest::RealTestDescription {
+static class TestDescription_Vector2DTestSuite_test_Vector2D_InputStream : public CxxTest::RealTestDescription {
 public:
- TestDescription_Vector2DTestSuite_testVectorInputStream() : CxxTest::RealTestDescription( Tests_Vector2DTestSuite, suiteDescription_Vector2DTestSuite, 223, "testVectorInputStream" ) {}
- void runTest() { suite_Vector2DTestSuite.testVectorInputStream(); }
-} testDescription_Vector2DTestSuite_testVectorInputStream;
+ TestDescription_Vector2DTestSuite_test_Vector2D_InputStream() : CxxTest::RealTestDescription( Tests_Vector2DTestSuite, suiteDescription_Vector2DTestSuite, 223, "test_Vector2D_InputStream" ) {}
+ void runTest() { suite_Vector2DTestSuite.test_Vector2D_InputStream(); }
+} testDescription_Vector2DTestSuite_test_Vector2D_InputStream;
 
-static class TestDescription_Vector2DTestSuite_testVectorConversion : public CxxTest::RealTestDescription {
+static class TestDescription_Vector2DTestSuite_test_Vector2D_Conversion : public CxxTest::RealTestDescription {
 public:
- TestDescription_Vector2DTestSuite_testVectorConversion() : CxxTest::RealTestDescription( Tests_Vector2DTestSuite, suiteDescription_Vector2DTestSuite, 232, "testVectorConversion" ) {}
- void runTest() { suite_Vector2DTestSuite.testVectorConversion(); }
-} testDescription_Vector2DTestSuite_testVectorConversion;
+ TestDescription_Vector2DTestSuite_test_Vector2D_Conversion() : CxxTest::RealTestDescription( Tests_Vector2DTestSuite, suiteDescription_Vector2DTestSuite, 232, "test_Vector2D_Conversion" ) {}
+ void runTest() { suite_Vector2DTestSuite.test_Vector2D_Conversion(); }
+} testDescription_Vector2DTestSuite_test_Vector2D_Conversion;
 
