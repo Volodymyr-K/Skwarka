@@ -210,10 +210,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\Core\Film.cpp"
-					>
-				</File>
-				<File
 					RelativePath=".\Core\FilmFilter.cpp"
 					>
 				</File>
@@ -311,6 +307,26 @@
 				>
 				<File
 					RelativePath=".\FilmFilters\BoxFilter.cpp"
+					>
+				</File>
+			</Filter>
+		</Filter>
+		<Filter
+			Name="Films"
+			>
+			<Filter
+				Name="Header Files"
+				>
+				<File
+					RelativePath=".\Films\ImageFilm.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Source Files"
+				>
+				<File
+					RelativePath=".\Films\ImageFilm.cpp"
 					>
 				</File>
 			</Filter>

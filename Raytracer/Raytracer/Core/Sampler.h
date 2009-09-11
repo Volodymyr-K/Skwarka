@@ -39,6 +39,8 @@ class ImagePixelsOrder
     */
     virtual bool GetNextPixel(Point2D_i &o_image_pixel) = 0;
 
+    virtual ~ImagePixelsOrder() {}
+
   protected:
     ImagePixelsOrder() {}
 

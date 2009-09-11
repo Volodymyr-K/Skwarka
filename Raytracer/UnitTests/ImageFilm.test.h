@@ -1,5 +1,5 @@
-#ifndef FILM_TEST_H
-#define FILM_TEST_H
+#ifndef IMAGE_FILM_TEST_H
+#define IMAGE_FILM_TEST_H
 
 #include <cxxtest/TestSuite.h>
 #include "CustomValueTraits.h"
@@ -7,14 +7,15 @@
 #include <Raytracer/Core/Spectrum.h>
 #include <UnitTests/Mocks/FilmFilterMock.h>
 #include <Math/ThreadSafeRandom.h>
+#include <Raytracer/Films/ImageFilm.h>
 
-class FilmTestSuite : public CxxTest::TestSuite
+class ImageFilmTestSuite : public CxxTest::TestSuite
   {
   public:
     void setUp()
       {
       mp_filter = shared_ptr<FilmFilter>(new FilmFilterMock(4.0,2.0));
-      mp_film=shared_ptr<Film>(new Film(100,50,mp_filter));
+      mp_film=shared_ptr<Film>(new ImageFilm(100,50,mp_filter));
       }
 
     void tearDown()
@@ -22,24 +23,24 @@ class FilmTestSuite : public CxxTest::TestSuite
       // Nothing to clear.
       }
 
-    void test_Film_DefaultConstr()
+    void test_ImageFilm_DefaultConstr()
       {
       shared_ptr<FilmFilter> p_filter = shared_ptr<FilmFilter>(new FilmFilterMock(1.0,1.0));
-      Film film(100,50,p_filter);
+      ImageFilm film(100,50,p_filter);
 
       TS_ASSERT(film.GetXResolution()==100 && film.GetYResolution()==50);
       }
 
-    void test_Film_Extent()
+    void test_ImageFilm_Extent()
       {
       Point2D_i begin, end;
-      mp_film->GetSampleExtent(begin, end);
+      mp_film->GetSamplingExtent(begin, end);
 
       TS_ASSERT_EQUALS(begin, Convert<int>( Point2D_d(-mp_filter->GetXWidth(),-mp_filter->GetYWidth()) ) );
       TS_ASSERT_EQUALS(end, Convert<int>( Point2D_d(100+mp_filter->GetXWidth(),50+mp_filter->GetYWidth()) ) );
       }
 
-    void test_Film_Pixel()
+    void test_ImageFilm_Pixel()
       {
       Point2D_i test_point(15,15);
       Spectrum_f spectrum_acc;
@@ -65,7 +66,7 @@ class FilmTestSuite : public CxxTest::TestSuite
 
       Spectrum_f spectrum_res;
       float alpha_res;
-      mp_film->GetPixel(test_point, spectrum_res, alpha_res, false);
+      TS_ASSERT( mp_film->GetPixel(test_point, spectrum_res, alpha_res, false) );
 
       TS_ASSERT_DELTA(spectrum_res[0], spectrum_acc[0], (1e-6));
       TS_ASSERT_DELTA(spectrum_res[1], spectrum_acc[1], (1e-6));
@@ -74,7 +75,7 @@ class FilmTestSuite : public CxxTest::TestSuite
       }
 
 
-    void test_Film_Clear()
+    void test_ImageFilm_Clear()
       {
       for(size_t y=0;y<50;++y)
         for(size_t x=0;x<100;++x)
@@ -93,8 +94,7 @@ class FilmTestSuite : public CxxTest::TestSuite
           {
           Spectrum_f spectrum_res;
           float alpha_res;
-          mp_film->GetPixel(Point2D_i(x,y), spectrum_res, alpha_res, false);
-          if (spectrum_res.IsBlack()==false || alpha_res!=0.f)
+          if (mp_film->GetPixel(Point2D_i(x,y), spectrum_res, alpha_res, false))
             {
             cleared=false;
             break;
@@ -109,4 +109,4 @@ class FilmTestSuite : public CxxTest::TestSuite
     shared_ptr<Film> mp_film;
   };
 
-#endif // FILM_TEST_H
+#endif // IMAGE_FILM_TEST_H

@@ -2,10 +2,10 @@
 #define FILM_FILTER_H
 
 /**
-* An abstract class defining the contract for film filters.
+* An abstract class defining the contract for image film filters.
 * A film filter is a scalar function defined on 2D. The values of the function define the weights of the samples for a given pixel.
 * Film filter has an X and Y widths, defining the region of the function domain where it can take non-zero values.
-* @sa Film
+* @sa ImageFilm
 */
 class FilmFilter
   {

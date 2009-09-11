@@ -7,6 +7,7 @@
 #include <Raytracer/Cameras/PerspectiveCamera.h>
 #include <UnitTests/Mocks/FilmFilterMock.h>
 #include <Math/ThreadSafeRandom.h>
+#include <Raytracer/Films/ImageFilm.h>
 
 class PerspectiveCameraTestSuite : public CxxTest::TestSuite
   {
@@ -17,7 +18,7 @@ class PerspectiveCameraTestSuite : public CxxTest::TestSuite
       m_direction = Vector3D_d(0.0,1.0,0.0);
       m_transformation = MakeLookAt(m_origin, m_direction, Vector3D_d(0.0,0.0,1.0));
       mp_filter = shared_ptr<FilmFilter>(new FilmFilterMock(1.0,1.0));
-      mp_film=shared_ptr<Film>(new Film(100,50,mp_filter));
+      mp_film=shared_ptr<Film>(new ImageFilm(100,50,mp_filter));
 
       m_x_view_angle = 2.0*M_PI_3;
       }

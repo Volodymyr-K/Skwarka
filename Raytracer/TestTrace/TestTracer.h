@@ -25,6 +25,7 @@
 #include <Raytracer/Cameras/PerspectiveCamera.h>
 #include <Math/ThreadSafeRandom.h>
 #include <Raytracer/Samplers/UniformImagePixelsOrder.h>
+#include <Raytracer/Films/ImageFilm.h>
 
 class TestTracer
   {
@@ -156,11 +157,11 @@ inline void TestTracer::RenderImage(HWND &g_hWnd, HDC &g_memDC)
   Log::Info("%d",k);*/
 
   FilmFilter *filter = new BoxFilter(0.5,0.5);
-  Film *film = new Film(GetImageWidth(), GetImageHeight(), shared_ptr<FilmFilter>(filter));
+  Film *film = new ImageFilm(GetImageWidth(), GetImageHeight(), shared_ptr<FilmFilter>(filter));
   //film->SetCropWindow(Point2D_d(0.3,0.0),Point2D_d(0.7,1.0));
 
   Point2D_i window_begin,window_end;
-  film->GetSampleExtent(window_begin, window_end);
+  film->GetSamplingExtent(window_begin, window_end);
 
   Vector3D_d direction = Vector3D_d(0,-0.5,-1).Normalized();
   Camera *cam =  new PerspectiveCamera( MakeLookAt(Point3D_d(0.0,0.25,0.17)+direction*0.08,direction,Vector3D_d(0,1,0)), shared_ptr<Film>(film), 0.005, 0.087, 1.3);

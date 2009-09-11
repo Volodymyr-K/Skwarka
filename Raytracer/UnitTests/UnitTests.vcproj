@@ -316,7 +316,7 @@
 						>
 					</File>
 					<File
-						RelativePath=".\Film.test.h"
+						RelativePath=".\Mocks\Film.test.h"
 						>
 					</File>
 					<File
@@ -376,6 +376,14 @@
 						>
 					</File>
 				</Filter>
+				<Filter
+					Name="Films"
+					>
+					<File
+						RelativePath=".\ImageFilm.test.h"
+						>
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="Shapes"
@@ -410,11 +418,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Film.test.cpp"
+				RelativePath=".\FilmFilter.test.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\FilmFilter.test.cpp"
+				RelativePath=".\ImageFilm.test.cpp"
 				>
 			</File>
 			<File
@@ -533,6 +541,24 @@
 			</File>
 			<File
 				RelativePath=".\Mocks\FilmFilterMock.h"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\Mocks\FilmMock.h"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
