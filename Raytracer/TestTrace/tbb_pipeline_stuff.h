@@ -9,6 +9,8 @@
 #include <Raytracer/Core/Sampler.h>
 #include "tbb/pipeline.h"
 
+class TestTracer;
+
 struct SampleChunk
   {
   shared_ptr<Sample> mp_sample;
@@ -104,20 +106,46 @@ MyTransformFilter::MyTransformFilter(Camera *ip_camera, TriangleTree *ip_tree): 
 class MyOutputFilter: public tbb::filter
   {
   public:
-    MyOutputFilter( shared_ptr<Film> ip_film );
+    MyOutputFilter( shared_ptr<Film> ip_film, HWND &ig_hWnd, HDC &ig_memDC, TestTracer *ip_tracer );
     /*override*/void* operator()( void* item );
   private:
     shared_ptr<Film> mp_film;
+    const HWND &g_hWnd;
+    const HDC &g_memDC;
+    TestTracer *p_tracer;
   };
 
-MyOutputFilter::MyOutputFilter( shared_ptr<Film> ip_film ) : tbb::filter(serial_out_of_order), mp_film(ip_film)
+MyOutputFilter::MyOutputFilter( shared_ptr<Film> ip_film, HWND &ig_hWnd, HDC &ig_memDC, TestTracer *ip_tracer ) : tbb::filter(serial_out_of_order), mp_film(ip_film),
+g_hWnd(ig_hWnd), g_memDC(ig_memDC), p_tracer(ip_tracer)
   {
   }
+
+extern int pixel_counter;
 
 void* MyOutputFilter::operator()( void* item )
   {
   SampleChunk &chunk = *static_cast<SampleChunk*>(item);
   mp_film->AddSample(chunk.mp_sample->GetImagePoint(), chunk.m_spectrum, chunk.m_alfa);
+
+  ++pixel_counter;
+  if ((pixel_counter%50000)!=0) return NULL;
+
+  for(int y=0;y<p_tracer->GetImageHeight();++y)
+    for(int x=0;x<p_tracer->GetImageWidth();++x)
+      {
+      float alfa;
+      Spectrum_f sp;
+      mp_film->GetPixel(Point2D_i(x,y),sp,alfa);
+
+      unsigned int pixel_index = (y*p_tracer->GetImageWidth()+x)*4;
+      Byte* pixel = p_tracer->m_image;
+      pixel[pixel_index+0] = Byte(std::min(sp[0],255.f));
+      pixel[pixel_index+1] = Byte(std::min(sp[1],255.f));
+      pixel[pixel_index+2] = Byte(std::min(sp[2],255.f));
+      }
+
+    BitBlt(GetDC(g_hWnd), 0, 0, p_tracer->GetImageWidth(), p_tracer->GetImageHeight(), g_memDC, 0, 0, SRCCOPY);
+
   return NULL;
   }
 

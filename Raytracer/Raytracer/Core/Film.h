@@ -124,10 +124,10 @@ inline void Film::GetPixel(const Point2D_i &i_image_point, Spectrum_f &o_spectru
     o_alpha=pixel.m_alpha*invWt;
     if (i_clamp_values)
       {
-      o_spectrum[0]=Clamp(o_spectrum[0], 0.f, FLT_INF);
-      o_spectrum[1]=Clamp(o_spectrum[1], 0.f, FLT_INF);
-      o_spectrum[2]=Clamp(o_spectrum[2], 0.f, FLT_INF);
-      o_alpha=Clamp(o_alpha, 0.f, 1.f);
+      o_spectrum[0]=MathRoutines::Clamp(o_spectrum[0], 0.f, FLT_INF);
+      o_spectrum[1]=MathRoutines::Clamp(o_spectrum[1], 0.f, FLT_INF);
+      o_spectrum[2]=MathRoutines::Clamp(o_spectrum[2], 0.f, FLT_INF);
+      o_alpha=MathRoutines::Clamp(o_alpha, 0.f, 1.f);
       }
     }
   else

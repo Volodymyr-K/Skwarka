@@ -4,8 +4,7 @@
 #include <Common/Common.h>
 #include <Raytracer/Core/Sample.h>
 #include <Raytracer/Core/Sampler.h>
-#include <Math/Geometry.h>
-#include <Math/ThreadSafeRandom.h>
+#include <Math/Point2D.h>
 #include <vector>
 
 /**
@@ -37,7 +36,7 @@ class StratifiedSampler: public Sampler
     * @param i_image_end Right upper corner of the sampling image (exclusive).
     * @param i_x_samples_per_pixel Number of pixel samples in X direction.
     * @param i_y_samples_per_pixel Number of pixel samples in Y direction.
-    * @param ip_pixels_order ImagePixelsOrder implementation for the order the image pixels are sampled in. Should not be NULL.
+    * @param ip_pixels_order ImagePixelsOrder implementation defining the order the image pixels are sampled in. Should not be NULL.
     * @param i_jitter_samples If true the samples will be randomly moved inside their stratas.
     */
     StratifiedSampler(const Point2D_i &i_image_begin, const Point2D_i &i_image_end, size_t i_x_samples_per_pixel, size_t i_y_samples_per_pixel, shared_ptr<ImagePixelsOrder> ip_pixels_order, bool i_jitter_samples=true);

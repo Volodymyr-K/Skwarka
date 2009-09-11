@@ -14,7 +14,7 @@ class UtilTestSuite : public CxxTest::TestSuite
       double B[2]={1.2,5.0};
       double x[2];
 
-      bool solved=SolveLinearSystem2x2(A,B,x);
+      bool solved=MathRoutines::SolveLinearSystem2x2(A,B,x);
       TS_ASSERT(solved);
 
       double det=A[0][0]*A[1][1]-A[1][0]*A[0][1];
@@ -30,30 +30,89 @@ class UtilTestSuite : public CxxTest::TestSuite
       double B[2]={1.2,5.0};
       double x[2];
 
-      bool solved=SolveLinearSystem2x2(A,B,x);
+      bool solved=MathRoutines::SolveLinearSystem2x2(A,B,x);
       TS_ASSERT(solved==false);
       }
 
     // Test when value is less than lower bound.
     void test_Clamp1()
       {
-      double clamped = Clamp(1.0, 2.0, 3.0);
+      double clamped = MathRoutines::Clamp(1.0, 2.0, 3.0);
       TS_ASSERT(clamped==2.0);
       }
 
     // Test when value is higher than upper bound.
     void tes_tClamp2()
       {
-      double clamped = Clamp(5.0, 2.0, 3.0);
+      double clamped = MathRoutines::Clamp(5.0, 2.0, 3.0);
       TS_ASSERT(clamped==3.0);
       }
 
     // Test when value is inside the bounds.
     void test_Clamp3()
       {
-      double clamped = Clamp(2.2, 2.0, 3.0);
+      double clamped = MathRoutines::Clamp(2.2, 2.0, 3.0);
       TS_ASSERT(clamped==2.2);
       }
+
+    // Tests for a special case when 0 is passed.
+    void test_IsPowerOf2_ZeroCase()
+      {
+      TS_ASSERT_EQUALS(MathRoutines::IsPowerOf2(0), false);
+      }
+
+    void test_IsPowerOf2_PowerOf2Case()
+      {
+      TS_ASSERT_EQUALS(MathRoutines::IsPowerOf2(16), true);
+      }
+
+    void test_IsPowerOf2_NotPowerOf2Case()
+      {
+      TS_ASSERT_EQUALS(MathRoutines::IsPowerOf2(15), false);
+      }
+
+    // Tests for a special case when 0 is passed.
+    void test_FloorLog2_ZeroCase()
+      {
+      TS_ASSERT_EQUALS(MathRoutines::FloorLog2(0),-1);
+      }
+
+    void test_FloorLog2_OneCase()
+      {
+      TS_ASSERT_EQUALS(MathRoutines::FloorLog2(1),0);
+      }
+
+    void test_FloorLog2_PowerOf2Case()
+      {
+      TS_ASSERT_EQUALS(MathRoutines::FloorLog2(16),4);
+      }
+
+    void test_FloorLog2_NotPowerOf2Case()
+      {
+      TS_ASSERT_EQUALS(MathRoutines::FloorLog2(15),3);
+      }
+
+    // Tests for a special case when 0 is passed.
+    void test_CeilLog2_ZeroCase()
+      {
+      TS_ASSERT_EQUALS(MathRoutines::CeilLog2(0),-1);
+      }
+
+    void test_CeilLog2_OneCase()
+      {
+      TS_ASSERT_EQUALS(MathRoutines::CeilLog2(1),0);
+      }
+
+    void test_CeilLog2_PowerOf2Case()
+      {
+      TS_ASSERT_EQUALS(MathRoutines::CeilLog2(16),4);
+      }
+
+    void test_CeilLog2_NotPowerOf2Case()
+      {
+      TS_ASSERT_EQUALS(MathRoutines::CeilLog2(15),4);
+      }
+
   };
 
 #endif // UTIL_TEST_H

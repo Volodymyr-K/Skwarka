@@ -1,5 +1,6 @@
 #include "StratifiedSampler.h"
 #include <Math/SamplingRoutines.h>
+#include <Math/ThreadSafeRandom.h>
 
 StratifiedSampler::StratifiedSampler(const Point2D_i &i_image_begin, const Point2D_i &i_image_end, size_t i_x_samples_per_pixel, size_t i_y_samples_per_pixel, bool i_jitter_samples):
   Sampler(i_image_begin, i_image_end, i_x_samples_per_pixel*i_y_samples_per_pixel),

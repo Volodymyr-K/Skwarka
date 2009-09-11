@@ -8,8 +8,6 @@
 #include "tbb/tick_count.h"
 #include "tbb/task_scheduler_init.h"
 
-#include "tbb_pipeline_stuff.h"
-
 #include <Math/Geometry.h>
 #include <Raytracer/Core/TriangleMesh.h>
 #include <Shapes/Sphere.h>
@@ -26,6 +24,7 @@
 #include <Raytracer/Samplers/StratifiedSampler.h>
 #include <Raytracer/Cameras/PerspectiveCamera.h>
 #include <Math/ThreadSafeRandom.h>
+#include <Raytracer/Samplers/UniformImagePixelsOrder.h>
 
 class TestTracer
   {
@@ -45,7 +44,7 @@ class TestTracer
     int GetImageWidth() const { return m_imageWidth; }
     int GetImageHeight() const { return m_imageHeight; }
 
-  void RenderImage();
+  void RenderImage(HWND &g_hWnd, HDC &g_memDC);
   bool ComputeDG(Point3D_d c, Vector3D_d dir, DifferentialGeometry &dg);
 
   public:
@@ -56,6 +55,10 @@ class TestTracer
   shared_ptr<TriangleMesh> mp_mesh;
   TriangleTree *mp_tree;
   };
+
+int pixel_counter=0;
+
+#include "tbb_pipeline_stuff.h"
 
 inline void TestTracer::LoadMesh()
   {/*
@@ -124,7 +127,7 @@ inline void TestTracer::LoadMesh()
   }
 
 // 73 291
-inline void TestTracer::RenderImage()
+inline void TestTracer::RenderImage(HWND &g_hWnd, HDC &g_memDC)
   {
   //Point3D_d c(0.0,-0.0,-0.2);
 /*
@@ -152,7 +155,7 @@ inline void TestTracer::RenderImage()
 
   Log::Info("%d",k);*/
 
-  FilmFilter *filter = new BoxFilter(1.0,1.0);
+  FilmFilter *filter = new BoxFilter(0.5,0.5);
   Film *film = new Film(GetImageWidth(), GetImageHeight(), shared_ptr<FilmFilter>(filter));
   //film->SetCropWindow(Point2D_d(0.3,0.0),Point2D_d(0.7,1.0));
 
@@ -160,10 +163,13 @@ inline void TestTracer::RenderImage()
   film->GetSampleExtent(window_begin, window_end);
 
   Vector3D_d direction = Vector3D_d(0,-0.5,-1).Normalized();
-  Camera *cam =  new PerspectiveCamera( MakeLookAt(Point3D_d(0.0,0.25,0.17),direction,Vector3D_d(0,1,0)), shared_ptr<Film>(film), 0.02, 0.165, 2.0);
+  Camera *cam =  new PerspectiveCamera( MakeLookAt(Point3D_d(0.0,0.25,0.17)+direction*0.08,direction,Vector3D_d(0,1,0)), shared_ptr<Film>(film), 0.005, 0.087, 1.3);
 
   //Sampler *sampler = new RandomSampler(Point2D_i(0,0),Point2D_i(GetImageWidth(), GetImageHeight()),10);
-  Sampler *sampler = new StratifiedSampler(window_begin, window_end, 4, 4, true);
+
+  shared_ptr<ImagePixelsOrder> pixel_order(new UniformImagePixelsOrder);
+
+  Sampler *sampler = new StratifiedSampler(window_begin, window_end, 5, 5, pixel_order, true);
   //sampler->AddSamplesSequence2D(100);
 
   tbb::task_scheduler_init init( 2 );
@@ -178,7 +184,7 @@ inline void TestTracer::RenderImage()
   pipeline.add_filter(transform_filter);
 
   // Create file-writing stage and add it to the pipeline
-  MyOutputFilter output_filter(cam->GetFilm());
+  MyOutputFilter output_filter(cam->GetFilm(), g_hWnd, g_memDC, this);
   pipeline.add_filter( output_filter );
 
   // Run the pipeline
@@ -192,6 +198,7 @@ inline void TestTracer::RenderImage()
   pipeline.clear(); 
 
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  
   for(int y=0;y<GetImageHeight();++y)
     for(int x=0;x<GetImageWidth();++x)
       {
@@ -205,6 +212,9 @@ inline void TestTracer::RenderImage()
       pixel[pixel_index+1] = Byte(std::min(sp[1],255.f));
       pixel[pixel_index+2] = Byte(std::min(sp[2],255.f));
       }
+
+  BitBlt(GetDC(g_hWnd), 0, 0, GetImageWidth(), GetImageHeight(), g_memDC, 0, 0, SRCCOPY);
+  
   }
 
 #endif // TESTTRACER_H

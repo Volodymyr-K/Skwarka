@@ -1,4 +1,5 @@
 #include "RandomSampler.h"
+#include <Math/ThreadSafeRandom.h>
 
 RandomSampler::RandomSampler(const Point2D_i &i_image_begin, const Point2D_i &i_image_end, size_t i_samples_per_pixel):
 Sampler(i_image_begin, i_image_end, i_samples_per_pixel)

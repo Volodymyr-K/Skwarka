@@ -8,14 +8,14 @@
 /**
 * This is a pure abstract class defining the strategy contract for the order the image pixels are sampled in.
 * This strategy is used by Sampler class to iterate through all pixels of an image.
-* Different strategies are preferable when an image is displayed in a real-time and it gets refined as more samples are added to the film.
+* Different strategies are preferable when an image is displayed in a real-time and gets refined as more samples are added to the film.
 * @sa Sampler
 */
 class ImagePixelsOrder
   {
   public:
     /**
-    * Sets the size of the image.
+    * Sets image size.
     * @param i_image_begin Left lower corner of the sampling image.
     * @param i_image_end Right upper corner of the sampling image (exclusive).
     */
@@ -33,7 +33,7 @@ class ImagePixelsOrder
     virtual void Reset() = 0;
 
     /**
-    * Sets the next image pixel.
+    * Gets the next image pixel.
     * param[out] o_image_point Next image point.
     * return true if the next image pixel was successfully get and false if there's no more pixels.
     */
@@ -96,7 +96,6 @@ class Sampler
     virtual ~Sampler();
 
   protected:
-
     /**
     * Creates Sampler instance.
     * ConsecutiveImagePixelsOrder implementation is used to define the order the image pixels are sampled in.
@@ -111,7 +110,7 @@ class Sampler
     * @param i_image_begin Left lower corner of the sampling image.
     * @param i_image_end Right upper corner of the sampling image (exclusive).
     * @param i_samples_per_pixel Number of pixel samples per pixel.
-    * @param ip_pixels_order ImagePixelsOrder implementation for the order the image pixels are sampled in. Should not be NULL.
+    * @param ip_pixels_order ImagePixelsOrder implementation defining the order the image pixels are sampled in. Should not be NULL.
     */
     Sampler(const Point2D_i &i_image_begin, const Point2D_i &i_image_end, size_t i_samples_per_pixel, shared_ptr<ImagePixelsOrder> ip_pixels_order);
 

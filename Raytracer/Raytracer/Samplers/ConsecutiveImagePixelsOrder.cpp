@@ -1,4 +1,5 @@
 #include "ConsecutiveImagePixelsOrder.h"
+#include <Common/Common.h>
 
 ConsecutiveImagePixelsOrder::ConsecutiveImagePixelsOrder(): ImagePixelsOrder()
   {
@@ -6,13 +7,13 @@ ConsecutiveImagePixelsOrder::ConsecutiveImagePixelsOrder(): ImagePixelsOrder()
 
 void ConsecutiveImagePixelsOrder::SetImageSize(const Point2D_i &i_image_begin, const Point2D_i &i_image_end)
   {
-  ASSERT(i_image_end[0]>=i_image_begin[0]);
-  ASSERT(i_image_end[1]>=i_image_begin[1]);
+  ASSERT(i_image_end[0]>i_image_begin[0]);
+  ASSERT(i_image_end[1]>i_image_begin[1]);
 
   m_image_begin=i_image_begin;
   m_image_end=i_image_end;
 
-  this->Reset();
+  m_next_pixel=m_image_begin;
   }
 
 size_t ConsecutiveImagePixelsOrder::GetTotalPixelsNum() const

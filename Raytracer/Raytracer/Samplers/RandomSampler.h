@@ -4,8 +4,7 @@
 #include <Common/Common.h>
 #include <Raytracer/Core/Sample.h>
 #include <Raytracer/Core/Sampler.h>
-#include <Math/Geometry.h>
-#include <Math/ThreadSafeRandom.h>
+#include <Math/Point2D.h>
 
 /**
 * Sampler implementation that produces completely random values for all sample values.
@@ -30,7 +29,7 @@ class RandomSampler: public Sampler
     * @param i_image_begin Left lower corner of the sampling image.
     * @param i_image_end Right upper corner of the sampling image (exclusive).
     * @param i_samples_per_pixel Number of pixel samples per pixel.
-    * @param ip_pixels_order ImagePixelsOrder implementation for the order the image pixels are sampled in. Should not be NULL.
+    * @param ip_pixels_order ImagePixelsOrder implementation defining the order the image pixels are sampled in. Should not be NULL.
     */
     RandomSampler(const Point2D_i &i_image_begin, const Point2D_i &i_image_end, size_t i_samples_per_pixel, shared_ptr<ImagePixelsOrder> ip_pixels_order);
 

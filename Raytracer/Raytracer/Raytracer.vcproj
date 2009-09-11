@@ -249,6 +249,10 @@
 					RelativePath=".\Samplers\StratifiedSampler.h"
 					>
 				</File>
+				<File
+					RelativePath=".\Samplers\UniformImagePixelsOrder.h"
+					>
+				</File>
 			</Filter>
 			<Filter
 				Name="Source Files"
@@ -263,6 +267,10 @@
 				</File>
 				<File
 					RelativePath=".\Samplers\StratifiedSampler.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Samplers\UniformImagePixelsOrder.cpp"
 					>
 				</File>
 			</Filter>
