@@ -52,10 +52,10 @@ class ImageFilm: public Film
 
     /**
     * Sets cropping window for the film. The image will be generated only inside that window.
-    * @param i_begin Left lower corner of the crop window. Should be in [0;1]^2 region. Should be lesser than i_end in both dimensions.
-    * @param i_end Right upper corner of the crop window. Should be in [0;1]^2 region. Should be higher than i_begin in both dimensions.
+    * @param i_begin Left lower corner of the crop window. Should be in [0;m_x_resolution] x [0;m_y_resolution] range. Should be lesser or equal than i_end in both dimensions.
+    * @param i_end Right upper corner of the crop window. Should be in [0;m_x_resolution] x [0;m_y_resolution] range. Should be higher or equal than i_begin in both dimensions.
     */
-    void SetCropWindow(const Point2D_d &i_begin, const Point2D_d &i_end);
+    void SetCropWindow(const Point2D_i &i_begin, const Point2D_i &i_end);
 
   private:
     // Internal types.

@@ -8,6 +8,7 @@
 #include <UnitTests/Mocks/FilmFilterMock.h>
 #include <Math/ThreadSafeRandom.h>
 #include <Raytracer/Films/ImageFilm.h>
+#include <Math/Point2D.h>
 
 class ImageFilmTestSuite : public CxxTest::TestSuite
   {
@@ -15,20 +16,12 @@ class ImageFilmTestSuite : public CxxTest::TestSuite
     void setUp()
       {
       mp_filter = shared_ptr<FilmFilter>(new FilmFilterMock(4.0,2.0));
-      mp_film=shared_ptr<Film>(new ImageFilm(100,50,mp_filter));
+      mp_film = shared_ptr<ImageFilm>(new ImageFilm(100,50,mp_filter));
       }
 
     void tearDown()
       {
       // Nothing to clear.
-      }
-
-    void test_ImageFilm_DefaultConstr()
-      {
-      shared_ptr<FilmFilter> p_filter = shared_ptr<FilmFilter>(new FilmFilterMock(1.0,1.0));
-      ImageFilm film(100,50,p_filter);
-
-      TS_ASSERT(film.GetXResolution()==100 && film.GetYResolution()==50);
       }
 
     void test_ImageFilm_Extent()
@@ -38,6 +31,16 @@ class ImageFilmTestSuite : public CxxTest::TestSuite
 
       TS_ASSERT_EQUALS(begin, Convert<int>( Point2D_d(-mp_filter->GetXWidth(),-mp_filter->GetYWidth()) ) );
       TS_ASSERT_EQUALS(end, Convert<int>( Point2D_d(100+mp_filter->GetXWidth(),50+mp_filter->GetYWidth()) ) );
+      }
+
+    void test_ImageFilm_CropWindowExtent()
+      {
+      Point2D_i begin, end;
+      mp_film->SetCropWindow(Point2D_i(20,10),Point2D_i(80,40));
+      mp_film->GetSamplingExtent(begin, end);
+
+      TS_ASSERT_EQUALS(begin, Convert<int>( Point2D_d(20-mp_filter->GetXWidth(),10-mp_filter->GetYWidth()) ) );
+      TS_ASSERT_EQUALS(end, Convert<int>( Point2D_d(80+mp_filter->GetXWidth(),40+mp_filter->GetYWidth()) ) );
       }
 
     void test_ImageFilm_Pixel()
@@ -104,9 +107,28 @@ class ImageFilmTestSuite : public CxxTest::TestSuite
       TS_ASSERT(cleared);
       }
 
+    // Test that GetPixel() method returns false outside of the cropping window.
+    void test_ImageFilm_CropWindowPixels()
+      {
+      mp_film->SetCropWindow(Point2D_i(20,10),Point2D_i(80,40));
+      for(size_t y=0;y<50;++y)
+        for(size_t x=0;x<100;++x)
+          {
+          Point2D_d image_point=Point2D_d(y+RandomDouble(1.0),x+RandomDouble(1.0));
+          Spectrum_f sp((float)RandomDouble(1.0),(float)RandomDouble(1.0),(float)RandomDouble(1.0));
+          float alpha = (float)RandomDouble(1.0);
+          mp_film->AddSample(image_point,sp,alpha);
+          }
+
+      Spectrum_f spectrum_res;
+      float alpha_res;
+      TS_ASSERT(mp_film->GetPixel(Point2D_i(5,10), spectrum_res, alpha_res, false)==false);
+      TS_ASSERT(mp_film->GetPixel(Point2D_i(25,10), spectrum_res, alpha_res, false)==true);
+      }
+
   private:
     shared_ptr<FilmFilter> mp_filter;
-    shared_ptr<Film> mp_film;
+    shared_ptr<ImageFilm> mp_film;
   };
 
 #endif // IMAGE_FILM_TEST_H

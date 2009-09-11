@@ -88,22 +88,17 @@ void ImageFilm::GetSamplingExtent(Point2D_i &o_begin, Point2D_i &o_end) const
   o_end = Point2D_i( (int)floor(end[0]), (int)floor(end[1]) );
   }
 
-void ImageFilm::SetCropWindow(const Point2D_d &i_begin, const Point2D_d &i_end)
+void ImageFilm::SetCropWindow(const Point2D_i &i_begin, const Point2D_i &i_end)
   {
-  // Check if crop window coordinates are out of range.
-  if (i_begin[0]<0.0 || i_begin[1]<0.0 || i_end[0]>1.0 || i_end[1]>1.0)
-    {
-    ASSERT(0 && "Crop window coordinates are out of range. Skipping");
-    return;
-    }
+  ASSERT(i_begin[0]>=0 && i_begin[1]>=0 && i_end[0]<=(int)m_x_resolution && i_end[1]<=(int)m_y_resolution && "Crop window coordinates are out of range.");
 
   // Check if crop window coordinates are invalid.
-  if (i_begin[0]>=i_end[0] || i_begin[1]>=i_end[1])
+  if (i_begin[0]>i_end[0] || i_begin[1]>i_end[1])
     {
     ASSERT(0 && "Crop window coordinates are invalid. Skipping");
     return;
     }
 
-  m_crop_window_begin = Convert<int>(Point2D_d(floor(m_x_resolution*i_begin[0]), floor(m_y_resolution*i_begin[1])));
-  m_crop_window_end = Convert<int>(Point2D_d(ceil(m_x_resolution*i_end[0]), ceil(m_y_resolution*i_end[1])));
+  m_crop_window_begin = Point2D_i(std::max(0,i_begin[0]), std::max(0,i_begin[1]));
+  m_crop_window_end = Point2D_i(std::min((int)m_x_resolution,i_end[0]), std::min((int)m_y_resolution,i_end[1]));
   }

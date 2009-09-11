@@ -316,7 +316,7 @@
 						>
 					</File>
 					<File
-						RelativePath=".\Mocks\Film.test.h"
+						RelativePath=".\Film.test.h"
 						>
 					</File>
 					<File
@@ -415,6 +415,10 @@
 			</File>
 			<File
 				RelativePath=".\ConsecutiveImagePixelsOrder.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Film.test.cpp"
 				>
 			</File>
 			<File
