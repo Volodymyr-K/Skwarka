@@ -16,31 +16,44 @@ struct SampleChunk
   shared_ptr<Sample> mp_sample;
   Spectrum_f m_spectrum;
   float m_alfa;
+
+  size_t chunk_index;
   };
+
+static const size_t n_chunks = 8;
+SampleChunk m_chunks[n_chunks];
+bool chunks_free[n_chunks];
 
 class MyInputFilter: public tbb::filter
   {
   public:
-    static const size_t n_chunks = 8;
     MyInputFilter( Sampler *ip_sampler );
 
   private:
     Sampler *mp_sampler;
-    size_t m_next_chunk;
-
-    SampleChunk m_chunks[n_chunks];
     /*override*/ void* operator()(void*);
+
+    size_t m_next_chunk;
   };
 
 MyInputFilter::MyInputFilter( Sampler *ip_sampler ): filter(serial_in_order),mp_sampler(ip_sampler), m_next_chunk(0)
   {
+  for(int i=0;i<n_chunks;++i)
+    chunks_free[i]=true;
   }
 
 void* MyInputFilter::operator()(void*)
   {
+  while(chunks_free[m_next_chunk]==false)
+    m_next_chunk = (m_next_chunk+1) % n_chunks;
+
+  chunks_free[m_next_chunk]=false;
+
   SampleChunk &chunk = m_chunks[m_next_chunk];
   if (chunk.mp_sample.get()==NULL)
     chunk.mp_sample=mp_sampler->CreateSample();
+
+  chunk.chunk_index=m_next_chunk;
 
   m_next_chunk = (m_next_chunk+1) % n_chunks;
 
@@ -127,8 +140,10 @@ void* MyOutputFilter::operator()( void* item )
   SampleChunk &chunk = *static_cast<SampleChunk*>(item);
   mp_film->AddSample(chunk.mp_sample->GetImagePoint(), chunk.m_spectrum, chunk.m_alfa);
 
+  chunks_free[chunk.chunk_index]=true;
+
   ++pixel_counter;
-  if ((pixel_counter%50000)!=0) return NULL;
+  if ((pixel_counter%10000)!=0) return NULL;
 
   for(int y=0;y<p_tracer->GetImageHeight();++y)
     for(int x=0;x<p_tracer->GetImageWidth();++x)

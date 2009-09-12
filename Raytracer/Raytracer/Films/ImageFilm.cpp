@@ -4,7 +4,9 @@
 ImageFilm::ImageFilm(size_t i_x_resolution, size_t i_y_resolution, shared_ptr<FilmFilter> ip_filter):
 Film(i_x_resolution, i_y_resolution), m_x_resolution(i_x_resolution), m_y_resolution(i_y_resolution), mp_filter(ip_filter)
   {
+  ASSERT(i_x_resolution>0 && i_y_resolution>0);
   ASSERT(mp_filter != NULL);
+
   m_filter_x_width=mp_filter->GetXWidth();
   m_filter_y_width=mp_filter->GetYWidth();
   ASSERT(m_filter_x_width > 0.0 && m_filter_y_width > 0.0);
@@ -12,7 +14,7 @@ Film(i_x_resolution, i_y_resolution), m_x_resolution(i_x_resolution), m_y_resolu
   m_crop_window_begin = Point2D_i(0, 0);
   m_crop_window_end = Point2D_i(m_x_resolution, m_y_resolution);
 
-  m_pixels.assign(m_y_resolution, std::vector<ImageFilmPixel>(m_x_resolution, ImageFilmPixel()));
+  m_pixels.assign(m_y_resolution*m_x_resolution, ImageFilmPixel());
   }
 
 void ImageFilm::AddSample(const Point2D_d &i_image_point, const Spectrum_f &i_spectrum, float i_alpha)
@@ -35,7 +37,7 @@ void ImageFilm::AddSample(const Point2D_d &i_image_point, const Spectrum_f &i_sp
   for (int y = y0; y <= y1; ++y)
     for (int x = x0; x <= x1; ++x)
       {
-      ImageFilmPixel &pixel = m_pixels[y][x];
+      ImageFilmPixel &pixel = m_pixels[y*m_x_resolution + x];
 
       float filter_weight = (float)mp_filter->Evaluate(x-image_x, y-image_y);
 
@@ -47,8 +49,7 @@ void ImageFilm::AddSample(const Point2D_d &i_image_point, const Spectrum_f &i_sp
 
 void ImageFilm::ClearFilm()
   {
-  for (size_t y = 0; y < m_y_resolution; ++y)
-    m_pixels[y].assign(m_x_resolution, ImageFilmPixel());
+  m_pixels.assign(m_y_resolution*m_x_resolution, ImageFilmPixel());
   }
 
 bool ImageFilm::GetPixel(const Point2D_i &i_image_point, Spectrum_f &o_spectrum, float &o_alpha, bool i_clamp_values) const
@@ -59,7 +60,7 @@ bool ImageFilm::GetPixel(const Point2D_i &i_image_point, Spectrum_f &o_spectrum,
   if (i_image_point[0]<m_crop_window_begin[0] || i_image_point[1]<m_crop_window_begin[1] || i_image_point[0]>=m_crop_window_end[0] || i_image_point[1]>=m_crop_window_end[1])
     return false;
 
-  const ImageFilmPixel &pixel = m_pixels[i_image_point[1]][i_image_point[0]];
+  const ImageFilmPixel &pixel = m_pixels[i_image_point[1]*m_x_resolution + i_image_point[0]];
 
   if (pixel.m_weight_sum != 0.f)
     {

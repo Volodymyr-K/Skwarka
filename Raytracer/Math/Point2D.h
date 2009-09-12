@@ -123,8 +123,8 @@ Point2D<T> Point2D<T>::operator*(double i_value) const
 template<typename T>
 Point2D<T> &Point2D<T>::operator*=(double i_value)
   {
-  m_coordinates[0]*=i_value;
-  m_coordinates[1]*=i_value;
+  m_coordinates[0]=(T)(m_coordinates[0]*i_value);
+  m_coordinates[1]=(T)(m_coordinates[1]*i_value);
 
   return *this;
   }

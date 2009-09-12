@@ -1,7 +1,7 @@
 #ifndef FILM_H
 #define FILM_H
 
-#include "Common\Common.h"
+#include <Common\Common.h>
 #include <Math/Point2D.h>
 #include <Math/Constants.h>
 #include "Spectrum.h"
@@ -58,6 +58,8 @@ class Film
   protected:
     /**
     * Creates an instance of Film with the specified resolution.
+    * @param i_x_resolution X resolution. Should be greater than 0.
+    * @param i_y_resolution Y resolution. Should be greater than 0.
     */
     Film(size_t i_x_resolution, size_t i_y_resolution);
 
@@ -77,6 +79,7 @@ class Film
 inline Film::Film(size_t i_x_resolution, size_t i_y_resolution):
   m_x_resolution(i_x_resolution), m_y_resolution(i_y_resolution)
     {
+    ASSERT(i_x_resolution>0 && i_y_resolution>0);
     }
 
 inline size_t Film::GetXResolution() const

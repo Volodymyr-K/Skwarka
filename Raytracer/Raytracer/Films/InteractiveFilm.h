@@ -1,27 +1,35 @@
-#ifndef IMAGE_FILM_H
-#define IMAGE_FILM_H
+#ifndef INTERACTIVE_FILM_H
+#define INTERACTIVE_FILM_H
 
 #include <Common\Common.h>
 #include <Raytracer/Core/Film.h>
 #include <Raytracer/Core/FilmFilter.h>
+#include "ImageFilm.h"
 #include <Raytracer/Core/Spectrum.h>
 #include <Math/Point2D.h>
 #include <vector>
 
 /**
-* Film implementation that stores the resulting image as a two-dimensional array.
-* The final value of each film pixel is evaluated by filtering the nearby samples with a pluggable filter implementation.
-* @sa FilmFilter
+* Film implementation that approximates the whole image from all the samples added so far.
+* The implementation is useful for displaying the generated image in "real time" while new samples are get added to the film.
+* When only few samples are added to the film the image looks coarse but it gets finer as more samples are added to the film.
+* The class constructs several images which can be considered as layers. The lowest layer is the resulting image with the specified resolution. 
+* The next layer is the image with half the resolution (or other fixed fraction) of the original image, and so on. The last layer is an image of one pixel size.
+* The class uses ImageFilm as the underlying implementation for these layer images. When a sample is added to the film it is added to all layers.
+* Similarly, when a pixel is read from the film it is read from the lowest layer first. If the pixel can not be computed for the layer, it is read from the next layer and so on.
+* An important point is that though each next layer is a fraction size of the previous layer, the filter width is constant. Thus a sample added to a higher layer contributes to more
+* pixels of the resulting image. The layers can be considered as different films positioned at different distance from the lens.
+* @sa ImageFilm, FilmFilter
 */
-class ImageFilm: public Film
+class InteractiveFilm: public Film
   {
   public:
     /**
-    * Creates an instance of ImageFilm with the specified resolution and FilmFilter implementation.
+    * Creates an instance of InteractiveFilm with the specified resolution and FilmFilter implementation.
     * @param i_x_resolution X resolution. Should be greater than 0.
     * @param i_y_resolution Y resolution. Should be greater than 0.
     */
-    ImageFilm(size_t i_x_resolution, size_t i_y_resolution, shared_ptr<FilmFilter> ip_filter);
+    InteractiveFilm(size_t i_x_resolution, size_t i_y_resolution, shared_ptr<FilmFilter> ip_filter);
 
     /**
     * Adds sample value to the film.
@@ -61,33 +69,15 @@ class ImageFilm: public Film
     void SetCropWindow(const Point2D_i &i_begin, const Point2D_i &i_end);
 
   private:
-    // Internal types.
-    struct ImageFilmPixel;
-
-  private:
     size_t m_x_resolution, m_y_resolution;
-    double m_filter_x_width, m_filter_y_width;
-
-    // TBD: Cache filter values
-    shared_ptr<FilmFilter> mp_filter;
-    std::vector< ImageFilmPixel > m_pixels; // TBD: rewrite as blocked array
-    
     Point2D_i m_crop_window_begin, m_crop_window_end;
+
+    // Vector of image layers.
+    std::vector<shared_ptr<ImageFilm> > m_image_films;
+
+    // Defines the size factor between consecutive layers.
+    // Smaller factor results in a better approximation but takes more processing time when adding samples.
+    static const unsigned int FRACTION_FACTOR = 4;
   };
 
-/////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-struct ImageFilm::ImageFilmPixel
-  {
-  ImageFilmPixel(): m_spectrum()
-    {
-    m_alpha = 0.f;
-    m_weight_sum = 0.f;
-    }
-
-  Spectrum_f m_spectrum;
-  float m_alpha, m_weight_sum;
-  };
-
-#endif // IMAGE_FILM_H
+#endif // INTERACTIVE_FILM_H

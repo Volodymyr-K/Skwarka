@@ -25,7 +25,9 @@
 #include <Raytracer/Cameras/PerspectiveCamera.h>
 #include <Math/ThreadSafeRandom.h>
 #include <Raytracer/Samplers/UniformImagePixelsOrder.h>
+#include <Raytracer/Samplers/ConsecutiveImagePixelsOrder.h>
 #include <Raytracer/Films/ImageFilm.h>
+#include <Raytracer/Films/InteractiveFilm.h>
 
 class TestTracer
   {
@@ -105,7 +107,7 @@ inline void TestTracer::LoadMesh()
   while(true)
     {
     size_t v1,v2,v3;
-   // if(++tr>1000) break;
+    //if(++tr>1000) break;
     int read = fscanf(fp,"%d %d %d",&v1,&v2,&v3);
     if (read<=0) break;
 
@@ -157,8 +159,8 @@ inline void TestTracer::RenderImage(HWND &g_hWnd, HDC &g_memDC)
   Log::Info("%d",k);*/
 
   FilmFilter *filter = new BoxFilter(0.5,0.5);
-  Film *film = new ImageFilm(GetImageWidth(), GetImageHeight(), shared_ptr<FilmFilter>(filter));
-  //film->SetCropWindow(Point2D_d(0.3,0.0),Point2D_d(0.7,1.0));
+  InteractiveFilm *film = new InteractiveFilm(GetImageWidth(), GetImageHeight(), shared_ptr<FilmFilter>(filter));
+  //film->SetCropWindow(Point2D_i(100,200),Point2D_i(550,300));
 
   Point2D_i window_begin,window_end;
   film->GetSamplingExtent(window_begin, window_end);
@@ -170,7 +172,7 @@ inline void TestTracer::RenderImage(HWND &g_hWnd, HDC &g_memDC)
 
   shared_ptr<ImagePixelsOrder> pixel_order(new UniformImagePixelsOrder);
 
-  Sampler *sampler = new StratifiedSampler(window_begin, window_end, 5, 5, pixel_order, true);
+  Sampler *sampler = new StratifiedSampler(window_begin, window_end, 3, 3, pixel_order, true);
   //sampler->AddSamplesSequence2D(100);
 
   tbb::task_scheduler_init init( 2 );
@@ -190,7 +192,7 @@ inline void TestTracer::RenderImage(HWND &g_hWnd, HDC &g_memDC)
 
   // Run the pipeline
   tbb::tick_count t0 = tbb::tick_count::now();
-  pipeline.run( MyInputFilter::n_chunks );
+  pipeline.run( n_chunks );
   tbb::tick_count t1 = tbb::tick_count::now();
 
   printf("time = %g\n", (t1-t0).seconds());

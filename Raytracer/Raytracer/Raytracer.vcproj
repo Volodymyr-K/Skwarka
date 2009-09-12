@@ -321,12 +321,20 @@
 					RelativePath=".\Films\ImageFilm.h"
 					>
 				</File>
+				<File
+					RelativePath=".\Films\InteractiveFilm.h"
+					>
+				</File>
 			</Filter>
 			<Filter
 				Name="Source Files"
 				>
 				<File
 					RelativePath=".\Films\ImageFilm.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Films\InteractiveFilm.cpp"
 					>
 				</File>
 			</Filter>

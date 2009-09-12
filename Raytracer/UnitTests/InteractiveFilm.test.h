@@ -1,5 +1,5 @@
-#ifndef IMAGE_FILM_TEST_H
-#define IMAGE_FILM_TEST_H
+#ifndef INTERACTIVE_FILM_TEST_H
+#define INTERACTIVE_FILM_TEST_H
 
 #include <cxxtest/TestSuite.h>
 #include "CustomValueTraits.h"
@@ -7,16 +7,16 @@
 #include <Raytracer/Core/Spectrum.h>
 #include <UnitTests/Mocks/FilmFilterMock.h>
 #include <Math/ThreadSafeRandom.h>
-#include <Raytracer/Films/ImageFilm.h>
+#include <Raytracer/Films/InteractiveFilm.h>
 #include <Math/Point2D.h>
 
-class ImageFilmTestSuite : public CxxTest::TestSuite
+class InteractiveFilmTestSuite : public CxxTest::TestSuite
   {
   public:
     void setUp()
       {
       mp_filter = shared_ptr<FilmFilter>(new FilmFilterMock(4.0,2.0));
-      mp_film = shared_ptr<ImageFilm>(new ImageFilm(100,50,mp_filter));
+      mp_film = shared_ptr<InteractiveFilm>(new InteractiveFilm(100,50,mp_filter));
       }
 
     void tearDown()
@@ -24,7 +24,7 @@ class ImageFilmTestSuite : public CxxTest::TestSuite
       // Nothing to clear.
       }
 
-    void test_ImageFilm_Extent()
+    void test_InteractiveFilm_Extent()
       {
       Point2D_i begin, end;
       mp_film->GetSamplingExtent(begin, end);
@@ -33,7 +33,7 @@ class ImageFilmTestSuite : public CxxTest::TestSuite
       TS_ASSERT_EQUALS(end, Convert<int>( Point2D_d(100+mp_filter->GetXWidth(),50+mp_filter->GetYWidth()) ) );
       }
 
-    void test_ImageFilm_CropWindowExtent()
+    void test_InteractiveFilm_CropWindowExtent()
       {
       Point2D_i begin, end;
       mp_film->SetCropWindow(Point2D_i(20,10),Point2D_i(80,40));
@@ -43,7 +43,7 @@ class ImageFilmTestSuite : public CxxTest::TestSuite
       TS_ASSERT_EQUALS(end, Convert<int>( Point2D_d(80+mp_filter->GetXWidth(),40+mp_filter->GetYWidth()) ) );
       }
 
-    void test_ImageFilm_Pixel()
+    void test_InteractiveFilm_Pixel()
       {
       Point2D_i test_point(15,15);
       Spectrum_f spectrum_acc;
@@ -78,7 +78,7 @@ class ImageFilmTestSuite : public CxxTest::TestSuite
       }
 
 
-    void test_ImageFilm_Clear()
+    void test_InteractiveFilm_Clear()
       {
       for(size_t x=0;x<100;++x)
         for(size_t y=0;y<50;++y)
@@ -108,7 +108,7 @@ class ImageFilmTestSuite : public CxxTest::TestSuite
       }
 
     // Test that GetPixel() method returns false outside of the cropping window.
-    void test_ImageFilm_CropWindowPixels()
+    void test_InteractiveFilm_CropWindowPixels()
       {
       mp_film->SetCropWindow(Point2D_i(20,10),Point2D_i(80,40));
 
@@ -139,9 +139,24 @@ class ImageFilmTestSuite : public CxxTest::TestSuite
       TS_ASSERT(correct);
       }
 
+    // Test that after adding one sample other unfilled pixels have its spectrum and alpha value.
+    void test_InteractiveFilm_Approximation()
+      {
+      Spectrum_f sp(1.f, 0.5f, 0.2f);
+      mp_film->AddSample(Point2D_d(10.0,20.0),sp,0.5f);
+
+      Spectrum_f spectrum_res;
+      float alpha_res;
+      bool pixel_read = mp_film->GetPixel(Point2D_i(20,30), spectrum_res, alpha_res, false);
+
+      TS_ASSERT(pixel_read);
+      TS_ASSERT_EQUALS(sp,spectrum_res);
+      TS_ASSERT_EQUALS(0.5f,alpha_res);
+      }
+
   private:
     shared_ptr<FilmFilter> mp_filter;
-    shared_ptr<ImageFilm> mp_film;
+    shared_ptr<InteractiveFilm> mp_film;
   };
 
-#endif // IMAGE_FILM_TEST_H
+#endif // INTERACTIVE_FILM_TEST_H

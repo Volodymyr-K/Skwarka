@@ -383,6 +383,10 @@
 						RelativePath=".\ImageFilm.test.h"
 						>
 					</File>
+					<File
+						RelativePath=".\InteractiveFilm.test.h"
+						>
+					</File>
 				</Filter>
 			</Filter>
 			<Filter
@@ -427,6 +431,10 @@
 			</File>
 			<File
 				RelativePath=".\ImageFilm.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\InteractiveFilm.test.cpp"
 				>
 			</File>
 			<File
