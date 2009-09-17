@@ -60,6 +60,11 @@ class Vector3D
     */
     Vector3D<T> Normalized() const;
 
+    /**
+    * Returns true if the vector is normalized.
+    */
+    bool IsNormalized() const;
+
     T operator[](unsigned char i_index) const;
     T &operator[](unsigned char i_index);
   private:
@@ -247,6 +252,12 @@ Vector3D<T> Vector3D<T>::Normalized() const
   Vector3D<T> tmp(*this);
   tmp.Normalize();
   return tmp;
+  }
+
+template<typename T>
+bool Vector3D<T>::IsNormalized() const
+  {
+  return fabs(LengthSqr()-1.0)<DBL_3D_EPS;
   }
 
 template<typename T>

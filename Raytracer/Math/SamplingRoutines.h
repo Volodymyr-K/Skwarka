@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <Math/Geometry.h>
+#include <Math/Constants.h>
 #include <Math/ThreadSafeRandom.h>
 
 /**
@@ -18,6 +19,34 @@ namespace SamplingRoutines
   * @return Resulting 2D point in the unit radius disk.
   */
   Point2D_d ConcentricDiskSampling(const Point2D_d i_sample);
+
+  /**
+  * Maps 2D sample in [0;1]^2 to a hemisphere point uniformly.
+  * The hemisphere is considered to be centered at origin above the XY plane.
+  * @param i_sample Input 2D sample in [0;1]^2.
+  * @return Resulting 3D vector pointing to a point on the hemisphere surface.
+  */
+  Vector3D_d UniformHemisphereSampling(const Point2D_d i_sample);
+
+  /**
+  * Returns PDF value for hemisphere uniform sampling.
+  * The returned value is constant over the hemisphere.
+  */
+  double UniformHemispherePDF();
+
+  /**
+  * Maps 2D sample in [0;1]^2 to a hemisphere point with theta cosine distribution.
+  * The hemisphere is considered to be centered at origin above the XY plane.
+  * @param i_sample Input 2D sample in [0;1]^2.
+  * @return Resulting 3D vector pointing to a point on the hemisphere surface.
+  */
+  Vector3D_d CosineHemisphereSampling(const Point2D_d i_sample);
+
+  /**
+  * Returns PDF value for hemisphere cosine sampling for the specified theta angle cosine.
+  * @param i_cos_theta Cosine of the theta angle. Should be in [0;1] range.
+  */
+  double CosineHemispherePDF(double i_cos_theta);
 
   /**
   * Fills the specified range with stratified 1D values in [0;1] range. ValueIterator is a random-access iterator type.
@@ -61,7 +90,7 @@ namespace SamplingRoutines
   {
   inline Point2D_d ConcentricDiskSampling(const Point2D_d i_sample)
     {
-    ASSERT(i_sample[0]>=0.0 && i_sample[0]<=1.0 && i_sample[1]>=0.0 && i_sample[1]<=1.0);
+    ASSERT(i_sample[0]>=0.0 && i_sample[0]<1.0 && i_sample[1]>=0.0 && i_sample[1]<1.0);
     double r, theta;
 
     // Map uniform random numbers to [-1,1]^2
@@ -108,6 +137,39 @@ namespace SamplingRoutines
 
     theta *= M_PI / 4.0;
     return Point2D_d(r*cos(theta), r*sin(theta));
+    }
+
+  inline Vector3D_d UniformHemisphereSampling(const Point2D_d i_sample)
+    {
+    ASSERT(i_sample[0]>=0.0 && i_sample[0]<1.0 && i_sample[1]>=0.0 && i_sample[1]<1.0);
+
+    double z = i_sample[0];
+    double r = sqrt(std::max(0.0, 1.0 - z*z));
+    double phi = 2.0 * M_PI * i_sample[1];
+    double x = r * cos(phi);
+    double y = r * sin(phi);
+    return Vector3D_d(x, y, z);
+    }
+
+  inline double UniformHemispherePDF()
+    {
+    return INV_2PI;
+    }
+
+  inline Vector3D_d CosineHemisphereSampling(const Point2D_d i_sample)
+    {
+    // The simplest way to cosine sample the hemisphere is to sample the disk uniformly and then project the point onto the hemisphere.
+    Point2D_d disk_point = ConcentricDiskSampling(i_sample);
+
+    double z = sqrt(std::max(0.0, 1.0 - disk_point[0]* disk_point[0] - disk_point[1]* disk_point[1]));
+    return Vector3D_d(disk_point[0], disk_point[1], z);
+    }
+
+  inline double CosineHemispherePDF(double i_cos_theta)
+    {
+    ASSERT(i_cos_theta>=0.0 && i_cos_theta<=1.0);
+
+    return i_cos_theta * INV_PI;
     }
 
   template<typename ValueIterator>
@@ -158,13 +220,19 @@ namespace SamplingRoutines
       *(i_begin+i) = Point2D_d( (i + jx) * delta, (i + jy) * delta );
       }
 
-    // Permute LHS samples in each dimension.
-    for (size_t i = 0; i < 2; ++i)
-      for (size_t j = 0; j < i_samples_num; ++j)
-        {
-        size_t other = RandomInt(i_samples_num);
-        std::swap( (*(i_begin+j)) [i], (*(i_begin+other)) [i] );
-        }
+    // Permute LHS samples in X dimension.
+    for (size_t j = 0; j < i_samples_num; ++j)
+      {
+      size_t other = RandomInt(i_samples_num);
+      std::swap( (*(i_begin+j)) [0], (*(i_begin+other)) [0] );
+      }
+
+    // Permute LHS samples in Y dimension.
+    for (size_t j = 0; j < i_samples_num; ++j)
+      {
+      size_t other = RandomInt(i_samples_num);
+      std::swap( (*(i_begin+j)) [1], (*(i_begin+other)) [1] );
+      }
     }
 
   template<typename T>

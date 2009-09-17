@@ -4,14 +4,11 @@
 #define CXXTEST_RUNNING
 #endif
 
-#define _CXXTEST_LONGLONG long long
 #include <cxxtest/TestListener.h>
 #include <cxxtest/TestTracker.h>
 #include <cxxtest/TestRunner.h>
 #include <cxxtest/RealDescriptions.h>
-#include <cxxtest/TestMain.h>
 
-bool MatrixTestSuite_init = false;
 #include "./Matrix.test.h"
 
 static MatrixTestSuite suite_MatrixTestSuite;

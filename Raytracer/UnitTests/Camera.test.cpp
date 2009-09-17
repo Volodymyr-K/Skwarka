@@ -4,14 +4,11 @@
 #define CXXTEST_RUNNING
 #endif
 
-#define _CXXTEST_LONGLONG long long
 #include <cxxtest/TestListener.h>
 #include <cxxtest/TestTracker.h>
 #include <cxxtest/TestRunner.h>
 #include <cxxtest/RealDescriptions.h>
-#include <cxxtest/TestMain.h>
 
-bool CameraTestSuite_init = false;
 #include "./Camera.test.h"
 
 static CameraTestSuite suite_CameraTestSuite;

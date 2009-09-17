@@ -60,6 +60,11 @@ class Vector2D
     */
     Vector2D<T> Normalized() const;
 
+    /**
+    * Returns true if the vector is normalized.
+    */
+    bool IsNormalized() const;
+
     T operator[](unsigned char i_index) const;
     T &operator[](unsigned char i_index);
   private:
@@ -236,6 +241,12 @@ Vector2D<T> Vector2D<T>::Normalized() const
   Vector2D<T> tmp(*this);
   tmp.Normalize();
   return tmp;
+  }
+
+template<typename T>
+bool Vector2D<T>::IsNormalized() const
+  {
+  return fabs(LengthSqr()-1.0)<DBL_3D_EPS;
   }
 
 template<typename T>

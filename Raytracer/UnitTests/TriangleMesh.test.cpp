@@ -5,14 +5,11 @@
 #endif
 
 #define _CXXTEST_HAVE_STD
-#define _CXXTEST_LONGLONG long long
 #include <cxxtest/TestListener.h>
 #include <cxxtest/TestTracker.h>
 #include <cxxtest/TestRunner.h>
 #include <cxxtest/RealDescriptions.h>
-#include <cxxtest/TestMain.h>
 
-bool TriangleMeshTestSuite_init = false;
 #include "./TriangleMesh.test.h"
 
 static TriangleMeshTestSuite suite_TriangleMeshTestSuite;

@@ -14,6 +14,12 @@ class SpectrumTestSuite : public CxxTest::TestSuite
       TS_ASSERT_EQUALS(s1, Spectrum_d(0.0,0.0,0.0));
       }
 
+    void test_Spectrum_ConstrWithValue()
+      {
+      Spectrum_d s1(1.1);
+      TS_ASSERT_EQUALS(s1, Spectrum_d(1.1,1.1,1.1));
+      }
+
     void test_Spectrum_ConstrWithCoords()
       {
       Spectrum_d s1(1.1,2.1,-3.1);

@@ -5,7 +5,7 @@
 #include "CustomValueTraits.h"
 #include <Math/Transform.h>
 #include <Raytracer/Core/Camera.h>
-#include <UnitTests/Mocks/CameraMock.h>
+#include "Mocks/CameraMock.h"
 #include "Mocks/FilmMock.h"
 
 class CameraTestSuite : public CxxTest::TestSuite

@@ -15,7 +15,7 @@ class SamplingRoutinesTestSuite : public CxxTest::TestSuite
   public:
 
     // Test that ConcentricDiskSampling() generates points within the unit radius disk.
-    void test_ConcentricDiskSamplingRadiusRange()
+    void test_ConcentricDiskSampling_RadiusRange()
       {
       const size_t num_samples = 10000;
 
@@ -35,7 +35,7 @@ class SamplingRoutinesTestSuite : public CxxTest::TestSuite
     // The method randomly generates a number of points and maps them to the disk with ConcentricDiskSampling() method.
     // Then another set of points is generated randomly in the unit radius disk using another sampling algorithm.
     // For each of the point from the second set the minimum distance to the first set is computed. The maximum of these distances is then tested for a certain threshold.
-    void test_ConcentricDiskSamplingCovering()
+    void test_ConcentricDiskSampling_Covering()
       {
       const size_t num_samples = 8000;
 
@@ -69,8 +69,74 @@ class SamplingRoutinesTestSuite : public CxxTest::TestSuite
       TS_ASSERT(max_dist<0.05); // Empirical threshold for the given number of samples.
       }
 
+    void test_UniformHemisphereSampling_Range()
+      {
+      const size_t num_samples = 1000;
+
+      for(size_t i=0;i<num_samples;++i)
+        {
+        Point2D_d point(RandomDouble(1.0),RandomDouble(1.0));
+        Vector3D_d sampled = SamplingRoutines::UniformHemisphereSampling(point);
+        double radius = sqrt(sampled[0]*sampled[0]+sampled[1]*sampled[1]+sampled[2]*sampled[2]);
+        if (fabs(radius-1.0)>DBL_EPS)
+          {
+          TS_FAIL("Direction vector is not normalized.");
+          break;
+          }
+        if (sampled[2]<0.0)
+          {
+          TS_FAIL("Z coordinate is negative.");
+          break;
+          }
+        }
+      }
+
+    void test_UniformHemispherePDF()
+      {
+      double pdf = SamplingRoutines::UniformHemispherePDF();
+      TS_ASSERT(fabs(pdf-INV_2PI)<DBL_EPS);
+      }
+
+    void test_CosineHemisphereSampling_Range()
+      {
+      const size_t num_samples = 1000;
+
+      for(size_t i=0;i<num_samples;++i)
+        {
+        Point2D_d point(RandomDouble(1.0),RandomDouble(1.0));
+        Vector3D_d sampled = SamplingRoutines::CosineHemisphereSampling(point);
+        double radius = sqrt(sampled[0]*sampled[0]+sampled[1]*sampled[1]+sampled[2]*sampled[2]);
+        if (fabs(radius-1.0)>DBL_EPS)
+          {
+          TS_FAIL("Direction vector is not normalized.");
+          break;
+          }
+        if (sampled[2]<0.0)
+          {
+          TS_FAIL("Z coordinate is negative.");
+          break;
+          }
+        }
+      }
+
+    void test_CosineHemispherePDF()
+      {
+      const size_t num_samples = 1000;
+
+      for(size_t i=0;i<num_samples;++i)
+        {
+        double cos_theta=cos(RandomDouble(M_PI_2));
+        double pdf = SamplingRoutines::CosineHemispherePDF(cos_theta);
+        if (fabs(pdf-cos_theta*INV_PI)>DBL_EPS)
+          {
+          TS_FAIL("PDF is incorrect.");
+          break;
+          }
+        }
+      }
+
     // Test that StratifiedSampling1D() generates samples in the whole [0;1] range.
-    void test_Stratified1DRange()
+    void test_Stratified1D_Range()
       {
       const size_t num_samples = 5000;
 
@@ -86,7 +152,7 @@ class SamplingRoutinesTestSuite : public CxxTest::TestSuite
       }
 
     // Test that StratifiedSampling1D() does not generate clumping samples.
-    void test_Stratified1DClumping()
+    void test_Stratified1D_Clumping()
       {
       const size_t num_samples = 5000;
       std::vector<double> samples(num_samples);
@@ -97,7 +163,7 @@ class SamplingRoutinesTestSuite : public CxxTest::TestSuite
       }
 
     // Test that StratifiedSampling2D() generates samples in the whole [0;1]^2 range.
-    void test_Stratified2DRange()
+    void test_Stratified2D_Range()
       {
       const int x_samples = 60, y_samples=70;
 
@@ -130,7 +196,7 @@ class SamplingRoutinesTestSuite : public CxxTest::TestSuite
       }
 
     // Test that LatinHypercubeSampling2D() generates samples in the whole [0;1]^2 range.
-    void test_LatinHypercube2DRange()
+    void test_LatinHypercube2D_Range()
       {
       const size_t num_samples = 5000;
 
@@ -152,7 +218,7 @@ class SamplingRoutinesTestSuite : public CxxTest::TestSuite
       }
 
     // Test that LatinHypercubeSampling2D() does not generate clumping samples.
-    void test_LatinHypercube2DClumping()
+    void test_LatinHypercube2D_Clumping()
       {
       const size_t num_samples = 5000;
 

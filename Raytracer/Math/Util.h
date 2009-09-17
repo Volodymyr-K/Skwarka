@@ -1,6 +1,8 @@
 #ifndef UTIL_H
 #define UTIL_H
 
+#include "Vector3D.h"
+
 /**
 * This namespace contains helper routines for various math operations that are commonly used.
 */
@@ -35,6 +37,13 @@ namespace MathRoutines
   */
   int CeilLog2(unsigned int i_value);
 
+  /**
+  * Creates an arbitrary orthonormal coordinate system with one of the base vectors specified.
+  * @param i_e1 First base vector. Should be normalized.
+  * @param[out] o_e2 Second base vector. Will be normalized and perpendicular to the other two base vectors.
+  * @param[out] o_e3 Third base vector. Will be normalized and perpendicular to the other two base vectors.
+  */
+  void CoordinateSystem(const Vector3D_d &i_e1, Vector3D_d &o_e2, Vector3D_d &o_e3);
   };
 
 /////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
@@ -97,6 +106,23 @@ namespace MathRoutines
     if (i_value >= 1<< 1) pos +=  1;
 
     return ((i_value == 0) ? (-1) : pos);
+    }
+
+  inline void CoordinateSystem(const Vector3D_d &i_e1, Vector3D_d &o_e2, Vector3D_d &o_e3)
+    {
+    ASSERT(i_e1.IsNormalized());
+
+    if (fabs(i_e1[0]) > fabs(i_e1[1]))
+      {
+      double invLen = 1.0 / sqrt(i_e1[0]*i_e1[0] + i_e1[2]*i_e1[2]);
+      o_e2 = Vector3D_d(-i_e1[2] * invLen, 0.0, i_e1[0] * invLen);
+      }
+    else
+      {
+      double invLen = 1.0 / sqrt(i_e1[1]*i_e1[1] + i_e1[2]*i_e1[2]);
+      o_e2 = Vector3D_d(0.0, i_e1[2] * invLen, -i_e1[1] * invLen);
+      }
+    o_e3 = i_e1^o_e2;
     }
 
   }

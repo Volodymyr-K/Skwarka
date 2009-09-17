@@ -4,14 +4,11 @@
 #define CXXTEST_RUNNING
 #endif
 
-#define _CXXTEST_LONGLONG long long
 #include <cxxtest/TestListener.h>
 #include <cxxtest/TestTracker.h>
 #include <cxxtest/TestRunner.h>
 #include <cxxtest/RealDescriptions.h>
-#include <cxxtest/TestMain.h>
 
-bool BBox3DTestSuite_init = false;
 #include "./BBox3D.test.h"
 
 static BBox3DTestSuite suite_BBox3DTestSuite;

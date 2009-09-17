@@ -1,6 +1,10 @@
 #ifndef COMMON_H
 #define COMMON_H
 
+/*
+* This file is a convenient header including and defining the most common stuff that is used almost everywhere (e.g. assert).
+*/
+
 #include <crtdbg.h>
 #include <boost\shared_ptr.hpp>
 #include "Log.h"

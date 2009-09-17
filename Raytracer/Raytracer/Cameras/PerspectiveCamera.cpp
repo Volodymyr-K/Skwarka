@@ -18,7 +18,7 @@ Camera(i_camera2world, ip_film), m_lens_radius(i_lens_radius), m_focal_distance(
 
 double PerspectiveCamera::GenerateRay(const Point2D_d &i_image_point, const Point2D_d &i_lens_uv, Ray &o_ray) const
   {
-  ASSERT(i_lens_uv[0]>=0.0 && i_lens_uv[0]<=1.0 && i_lens_uv[1]>=0.0 && i_lens_uv[1]<=1.0);
+  ASSERT(i_lens_uv[0]>=0.0 && i_lens_uv[0]<1.0 && i_lens_uv[1]>=0.0 && i_lens_uv[1]<1.0);
 
   o_ray.m_origin=Point3D_d();
 

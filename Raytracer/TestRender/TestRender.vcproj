@@ -44,7 +44,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="..\;..\..\..\ThirdParty\;..\..\..\ThirdParty\boost\;..\..\..\ThirdParty\TBB\2.2\include"
+				AdditionalIncludeDirectories="..\;..\..\..\ThirdParty\;..\..\..\ThirdParty\boost\1.40\;..\..\..\ThirdParty\TBB\2.2\include"
 				PreprocessorDefinitions="WIN32,NDEBUG,_CONSOLE;NOMINMAX"
 				StringPooling="true"
 				RuntimeLibrary="2"
@@ -136,7 +136,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\;..\..\..\ThirdParty\;..\..\..\ThirdParty\boost\;..\..\..\ThirdParty\TBB\2.2\include"
+				AdditionalIncludeDirectories="..\;..\..\..\ThirdParty\;..\..\..\ThirdParty\boost\1.40\;..\..\..\ThirdParty\TBB\2.2\include"
 				PreprocessorDefinitions="TBB_USE_DEBUG;WIN32,_DEBUG,_CONSOLE;NOMINMAX"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"

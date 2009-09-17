@@ -175,6 +175,15 @@ class Vector2DTestSuite : public CxxTest::TestSuite
       TS_ASSERT_EQUALS(normalized, Vector2D_d(1.0/length,2.0/length));
       }
 
+    void test_Vector2D_IsNormalized()
+      {
+      Vector2D_d v1(1.0,2.0);
+      Vector2D_d normalized = v1.Normalized();
+
+      TS_ASSERT(v1.IsNormalized()==false);
+      TS_ASSERT(normalized.IsNormalized());
+      }
+
     void test_Vector2D_IndexOperator()
       {
       Vector2D_d v1(1.0,2.0);

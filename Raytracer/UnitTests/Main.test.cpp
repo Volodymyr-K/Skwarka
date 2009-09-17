@@ -4,19 +4,15 @@
 #define CXXTEST_RUNNING
 #endif
 
-#define _CXXTEST_LONGLONG long long
 #include <cxxtest/TestListener.h>
 #include <cxxtest/TestTracker.h>
 #include <cxxtest/TestRunner.h>
 #include <cxxtest/RealDescriptions.h>
-#include <cxxtest/TestMain.h>
 #include <cxxtest/ParenPrinter.h>
 
-int main( int argc, char *argv[] ) {
-    CxxTest::ParenPrinter tmp;
-    return CxxTest::Main<CxxTest::ParenPrinter>( tmp, argc, argv );
+int main() {
+ return CxxTest::ParenPrinter().run();
 }
-bool DummySuite_init = false;
 #include "./Main.test.h"
 
 static DummySuite suite_DummySuite;
@@ -31,4 +27,3 @@ public:
 } testDescription_DummySuite_testDummy;
 
 #include <cxxtest/Root.cpp>
-const char* CxxTest::RealWorldDescription::_worldName = "cxxtest";

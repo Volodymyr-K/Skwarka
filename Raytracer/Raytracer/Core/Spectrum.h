@@ -14,6 +14,7 @@ class Spectrum
   {
   public:
     Spectrum();
+    explicit Spectrum(T i_value);
     Spectrum(T i_r, T i_g, T i_b);
 
     Spectrum<T> operator+(const Spectrum<T> &i_spectrum) const;
@@ -91,6 +92,14 @@ Spectrum<T>::Spectrum()
   m_rgb[0]=0;
   m_rgb[1]=0;
   m_rgb[2]=0;
+  }
+
+template<typename T>
+Spectrum<T>::Spectrum(T i_value)
+  {
+  m_rgb[0]=i_value;
+  m_rgb[1]=i_value;
+  m_rgb[2]=i_value;
   }
 
 template<typename T>

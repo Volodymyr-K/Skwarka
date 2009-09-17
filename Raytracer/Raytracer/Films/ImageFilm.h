@@ -20,6 +20,7 @@ class ImageFilm: public Film
     * Creates an instance of ImageFilm with the specified resolution and FilmFilter implementation.
     * @param i_x_resolution X resolution. Should be greater than 0.
     * @param i_y_resolution Y resolution. Should be greater than 0.
+    * @param ip_filter FilmFilter to be used for filtering pixel samples.
     */
     ImageFilm(size_t i_x_resolution, size_t i_y_resolution, shared_ptr<FilmFilter> ip_filter);
 

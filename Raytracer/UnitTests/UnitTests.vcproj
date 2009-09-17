@@ -51,7 +51,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\;..\..\..\ThirdParty\;..\..\..\ThirdParty\boost\;..\..\..\ThirdParty\TBB\2.2\include;..\..\..\ThirdParty\cxxtest"
+				AdditionalIncludeDirectories="..\;..\..\..\ThirdParty\;..\..\..\ThirdParty\boost\1.40\;..\..\..\ThirdParty\TBB\2.2\include;..\..\..\ThirdParty\cxxtest\3.10.1\"
 				PreprocessorDefinitions="TBB_USE_DEBUG;WIN32;_DEBUG;_WINDOWS;NOMINMAX"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -135,7 +135,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="..\;..\..\..\ThirdParty\;..\..\..\ThirdParty\boost\;..\..\..\ThirdParty\TBB\2.2\include;..\..\..\ThirdParty\cxxtest"
+				AdditionalIncludeDirectories="..\;..\..\..\ThirdParty\;..\..\..\ThirdParty\boost\1.40\;..\..\..\ThirdParty\TBB\2.2\include;..\..\..\ThirdParty\cxxtest\3.10.1\"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;NOMINMAX"
 				MinimalRebuild="false"
 				RuntimeLibrary="2"
@@ -312,6 +312,14 @@
 					Name="Core"
 					>
 					<File
+						RelativePath=".\BSDF.test.h"
+						>
+					</File>
+					<File
+						RelativePath=".\BxDF.test.h"
+						>
+					</File>
+					<File
 						RelativePath=".\Camera.test.h"
 						>
 					</File>
@@ -388,6 +396,18 @@
 						>
 					</File>
 				</Filter>
+				<Filter
+					Name="BxDFs"
+					>
+					<File
+						RelativePath=".\Lambertian.test.h"
+						>
+					</File>
+					<File
+						RelativePath=".\OrenNayar.test.h"
+						>
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="Shapes"
@@ -401,6 +421,14 @@
 					>
 				</File>
 			</Filter>
+			<Filter
+				Name="Common"
+				>
+				<File
+					RelativePath=".\MemoryPool.test.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Generated Code"
@@ -411,6 +439,14 @@
 			</File>
 			<File
 				RelativePath=".\BoxFilter.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\BSDF.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\BxDF.test.cpp"
 				>
 			</File>
 			<File
@@ -438,11 +474,23 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Lambertian.test.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Main.test.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\Matrix.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\MemoryPool.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\OrenNayar.test.cpp"
 				>
 			</File>
 			<File
@@ -533,6 +581,24 @@
 		<Filter
 			Name="Mocks"
 			>
+			<File
+				RelativePath=".\Mocks\BxDFMock.h"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+			</File>
 			<File
 				RelativePath=".\Mocks\CameraMock.h"
 				>

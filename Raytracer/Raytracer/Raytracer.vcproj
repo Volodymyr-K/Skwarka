@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\;..\..\..\ThirdParty\;..\..\..\ThirdParty\boost\;..\..\..\ThirdParty\TBB\2.2\include"
+				AdditionalIncludeDirectories="..\;..\..\..\ThirdParty\;..\..\..\ThirdParty\boost\1.40\;..\..\..\ThirdParty\TBB\2.2\include"
 				PreprocessorDefinitions="TBB_USE_DEBUG;_DEBUG;NOMINMAX"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -106,7 +106,7 @@
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
-				AdditionalIncludeDirectories="..\;..\..\..\ThirdParty\;..\..\..\ThirdParty\boost\;..\..\..\ThirdParty\TBB\2.2\include"
+				AdditionalIncludeDirectories="..\;..\..\..\ThirdParty\;..\..\..\ThirdParty\boost\1.40\;..\..\..\ThirdParty\TBB\2.2\include"
 				PreprocessorDefinitions="NDEBUG;NOMINMAX"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -155,6 +155,14 @@
 				Filter="h;hpp;hxx;hm;inl;inc;xsd"
 				UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 				>
+				<File
+					RelativePath=".\Core\BSDF.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Core\BxDF.h"
+					>
+				</File>
 				<File
 					RelativePath=".\Core\Camera.h"
 					>
@@ -205,6 +213,14 @@
 				Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
 				UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 				>
+				<File
+					RelativePath=".\Core\BSDF.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Core\BxDF.cpp"
+					>
+				</File>
 				<File
 					RelativePath=".\Core\Camera.cpp"
 					>
@@ -335,6 +351,34 @@
 				</File>
 				<File
 					RelativePath=".\Films\InteractiveFilm.cpp"
+					>
+				</File>
+			</Filter>
+		</Filter>
+		<Filter
+			Name="BxDFs"
+			>
+			<Filter
+				Name="Header Files"
+				>
+				<File
+					RelativePath=".\BxDFs\Lambertian.h"
+					>
+				</File>
+				<File
+					RelativePath=".\BxDFs\OrenNayar.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Source Files"
+				>
+				<File
+					RelativePath=".\BxDFs\Lambertian.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\BxDFs\OrenNayar.cpp"
 					>
 				</File>
 			</Filter>

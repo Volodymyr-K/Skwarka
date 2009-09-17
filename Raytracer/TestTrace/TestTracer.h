@@ -64,7 +64,8 @@ int pixel_counter=0;
 #include "tbb_pipeline_stuff.h"
 
 inline void TestTracer::LoadMesh()
-  {/*
+  {
+  /*
   Sphere s;
   s.SetParameter("Center","0 0 0");
   s.SetParameter("Radius","0.4");

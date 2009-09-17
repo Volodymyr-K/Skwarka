@@ -175,6 +175,15 @@ class Vector3DTestSuite : public CxxTest::TestSuite
       TS_ASSERT_EQUALS(normalized, Vector3D_d(1.0/length,2.0/length,3.0/length));
       }
 
+    void test_Vector3D_IsNormalized()
+      {
+      Vector3D_d v1(1.0,2.0,3.0);
+      Vector3D_d normalized = v1.Normalized();
+
+      TS_ASSERT(v1.IsNormalized()==false);
+      TS_ASSERT(normalized.IsNormalized());
+      }
+
     void test_Vector3D_IndexOperator()
       {
       Vector3D_d v1(1.0,2.0,3.0);

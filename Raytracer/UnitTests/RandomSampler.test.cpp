@@ -5,14 +5,11 @@
 #endif
 
 #define _CXXTEST_HAVE_STD
-#define _CXXTEST_LONGLONG long long
 #include <cxxtest/TestListener.h>
 #include <cxxtest/TestTracker.h>
 #include <cxxtest/TestRunner.h>
 #include <cxxtest/RealDescriptions.h>
-#include <cxxtest/TestMain.h>
 
-bool RandomSamplerTestSuite_init = false;
 #include "./RandomSampler.test.h"
 
 static RandomSamplerTestSuite suite_RandomSamplerTestSuite;

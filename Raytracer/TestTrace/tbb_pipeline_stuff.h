@@ -143,7 +143,7 @@ void* MyOutputFilter::operator()( void* item )
   chunks_free[chunk.chunk_index]=true;
 
   ++pixel_counter;
-  if ((pixel_counter%10000)!=0) return NULL;
+  if ((pixel_counter%20000)!=0) return NULL;
 
   for(int y=0;y<p_tracer->GetImageHeight();++y)
     for(int x=0;x<p_tracer->GetImageWidth();++x)
