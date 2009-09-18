@@ -31,7 +31,7 @@ class Sphere: public BaseShape
   public:
     Sphere();
 
-    shared_ptr<TriangleMesh> BuildMesh();
+    intrusive_ptr<TriangleMesh> BuildMesh();
 
     ~Sphere();
 

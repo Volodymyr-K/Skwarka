@@ -16,7 +16,7 @@ It is also not covered by the unit tests yet.
 struct IntersectResult
   {
   bool m_intersection_found;
-  shared_ptr<TriangleMesh> mp_mesh;
+  intrusive_ptr<TriangleMesh> mp_mesh;
   size_t m_triangle_index;
   };
 
@@ -34,7 +34,7 @@ class TriangleTree
     ~TriangleTree();
 
     // Call this method to set the container (Wrapper). This method destroys the tree if has already been constructed for some another Wrapper.
-    void AddTriangleMesh(shared_ptr<TriangleMesh> ip_triangle_mesh);
+    void AddTriangleMesh(intrusive_ptr<TriangleMesh> ip_triangle_mesh);
 
     /*
     Build the tree.
@@ -67,7 +67,7 @@ class TriangleTree
     std::vector<size_t> m_mesh_indices;
     std::vector<size_t> m_triangle_indices;
 
-    std::vector<shared_ptr<TriangleMesh> > m_meshes;
+    std::vector<intrusive_ptr<TriangleMesh> > m_meshes;
 
     // The root node of the tree.
     BaseNode *mp_root;

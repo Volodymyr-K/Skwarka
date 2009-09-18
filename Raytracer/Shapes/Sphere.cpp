@@ -36,11 +36,11 @@ bool Sphere::_GetParameters(Sphere::Parameters &o_params)
   return _ErrorsExist()==false;
   }
 
-shared_ptr<TriangleMesh> Sphere::BuildMesh()
+intrusive_ptr<TriangleMesh> Sphere::BuildMesh()
   {
   Parameters params;
   if (_GetParameters(params)==false)
-    return shared_ptr<TriangleMesh>((TriangleMesh*)NULL);
+    return intrusive_ptr<TriangleMesh>((TriangleMesh*)NULL);
 
   // Vector holding all the mesh vertices.
   std::vector<Point3D_f> vertices(4);
@@ -161,7 +161,7 @@ shared_ptr<TriangleMesh> Sphere::BuildMesh()
   // The sphere is supposed to be smooth by definition so we use interpolated normals.
   p_mesh->SetUseShadingNormals(true);
 
-  return shared_ptr<TriangleMesh>(p_mesh);
+  return intrusive_ptr<TriangleMesh>(p_mesh);
   }
 
 Sphere::~Sphere()

@@ -30,7 +30,7 @@ class Shape
     * Build mesh after all the parameters are set.
     * @return Smart pointer to the built mesh or a point to NULL if the mesh was not built yet.
     */
-    virtual shared_ptr<TriangleMesh> BuildMesh() = 0;
+    virtual intrusive_ptr<TriangleMesh> BuildMesh() = 0;
 
     /**
     * Returns descriptions of the errors meet when building the mesh.

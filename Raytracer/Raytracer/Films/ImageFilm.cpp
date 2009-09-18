@@ -1,7 +1,7 @@
 #include "ImageFilm.h"
 #include <Math/Util.h>
 
-ImageFilm::ImageFilm(size_t i_x_resolution, size_t i_y_resolution, shared_ptr<FilmFilter> ip_filter):
+ImageFilm::ImageFilm(size_t i_x_resolution, size_t i_y_resolution, intrusive_ptr<FilmFilter> ip_filter):
 Film(i_x_resolution, i_y_resolution), m_x_resolution(i_x_resolution), m_y_resolution(i_y_resolution), mp_filter(ip_filter)
   {
   ASSERT(i_x_resolution>0 && i_y_resolution>0);

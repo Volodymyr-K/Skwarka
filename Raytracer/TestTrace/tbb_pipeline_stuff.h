@@ -13,7 +13,7 @@ class TestTracer;
 
 struct SampleChunk
   {
-  shared_ptr<Sample> mp_sample;
+  intrusive_ptr<Sample> mp_sample;
   Spectrum_f m_spectrum;
   float m_alfa;
 
@@ -119,16 +119,16 @@ MyTransformFilter::MyTransformFilter(Camera *ip_camera, TriangleTree *ip_tree): 
 class MyOutputFilter: public tbb::filter
   {
   public:
-    MyOutputFilter( shared_ptr<Film> ip_film, HWND &ig_hWnd, HDC &ig_memDC, TestTracer *ip_tracer );
+    MyOutputFilter( intrusive_ptr<Film> ip_film, HWND &ig_hWnd, HDC &ig_memDC, TestTracer *ip_tracer );
     /*override*/void* operator()( void* item );
   private:
-    shared_ptr<Film> mp_film;
+    intrusive_ptr<Film> mp_film;
     const HWND &g_hWnd;
     const HDC &g_memDC;
     TestTracer *p_tracer;
   };
 
-MyOutputFilter::MyOutputFilter( shared_ptr<Film> ip_film, HWND &ig_hWnd, HDC &ig_memDC, TestTracer *ip_tracer ) : tbb::filter(serial_out_of_order), mp_film(ip_film),
+MyOutputFilter::MyOutputFilter( intrusive_ptr<Film> ip_film, HWND &ig_hWnd, HDC &ig_memDC, TestTracer *ip_tracer ) : tbb::filter(serial_out_of_order), mp_film(ip_film),
 g_hWnd(ig_hWnd), g_memDC(ig_memDC), p_tracer(ip_tracer)
   {
   }

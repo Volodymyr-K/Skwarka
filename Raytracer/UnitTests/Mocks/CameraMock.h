@@ -13,7 +13,7 @@ Always generates the same ray pointing along the camera direction.
 class CameraMock: public Camera
   {
   public:
-    CameraMock(const Transform &i_camera2world, shared_ptr<Film> ip_film): Camera(i_camera2world, ip_film)
+    CameraMock(const Transform &i_camera2world, intrusive_ptr<Film> ip_film): Camera(i_camera2world, ip_film)
       {
       }
 

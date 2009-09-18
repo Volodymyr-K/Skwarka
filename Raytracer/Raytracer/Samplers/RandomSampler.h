@@ -31,7 +31,7 @@ class RandomSampler: public Sampler
     * @param i_samples_per_pixel Number of pixel samples per pixel.
     * @param ip_pixels_order ImagePixelsOrder implementation defining the order the image pixels are sampled in. Should not be NULL.
     */
-    RandomSampler(const Point2D_i &i_image_begin, const Point2D_i &i_image_end, size_t i_samples_per_pixel, shared_ptr<ImagePixelsOrder> ip_pixels_order);
+    RandomSampler(const Point2D_i &i_image_begin, const Point2D_i &i_image_end, size_t i_samples_per_pixel, intrusive_ptr<ImagePixelsOrder> ip_pixels_order);
 
   protected:
     /**
@@ -43,7 +43,7 @@ class RandomSampler: public Sampler
     /**
     * Populates the Sample with the samples data for the specified image pixel and specified sample's index inside that pixel.
     */
-    void _GetSample(const Point2D_i &i_current_pixel, size_t i_pixel_sample_index, shared_ptr<Sample> op_sample);
+    void _GetSample(const Point2D_i &i_current_pixel, size_t i_pixel_sample_index, intrusive_ptr<Sample> op_sample);
   };
 
 #endif // RANDOM_SAMPLER_H

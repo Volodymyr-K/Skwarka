@@ -1,0 +1,74 @@
+#ifndef INTRUSIVE_SMART_POINTER_H
+#define INTRUSIVE_SMART_POINTER_H
+
+#include "Assert.h"
+#include <boost/intrusive_ptr.hpp>
+using boost::intrusive_ptr;
+
+/**
+* This is the base class for all classes that need to be references-counted by the intrusive smart pointer strategy.
+* The class has a single member field for the references counter.
+* Intrusive pointers from the boost library based on this class are NOT thread-safe.
+*/
+class ReferenceCounted
+  {
+  public:
+    ReferenceCounted();
+
+    /**
+    * Increments the counter by one and returns the incremented value.
+    */
+    size_t IncRef();
+
+    /**
+    * Decrements the counter by one and returns the decremented value.
+    */
+    size_t DecRef();
+
+  private:
+    size_t m_references;
+
+    // Not implemented. All classes inheriting ReferenceCounted should only be passed by pointer or reference.
+    ReferenceCounted(const ReferenceCounted &);
+    ReferenceCounted &operator=(const ReferenceCounted &);
+  };
+
+/////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+inline ReferenceCounted::ReferenceCounted():
+  m_references(0)
+  {
+  }
+
+inline size_t ReferenceCounted::IncRef()
+  {
+  return ++m_references;
+  }
+
+inline size_t ReferenceCounted::DecRef()
+  {
+  ASSERT(m_references>0);
+  return --m_references;
+  }
+
+/**
+* This function is called by boost library when a new intrusive_ptr instance is created.
+*/
+template<typename T>
+void intrusive_ptr_add_ref(T *i_ptr)
+  {
+  i_ptr->IncRef();
+  }
+
+/**
+* This function is called by boost library when a an intrusive_ptr instance is deleted.
+*/
+template<typename T>
+void intrusive_ptr_release(T *i_ptr)
+  {
+  if (i_ptr->DecRef()==0)
+    delete i_ptr;
+  }
+
+#endif // INTRUSIVE_SMART_POINTER_H

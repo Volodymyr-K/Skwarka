@@ -23,7 +23,7 @@ class SamplerMock: public Sampler
       return i_samples_number;
       }
 
-    void _GetSample(const Point2D_i &i_current_pixel, size_t i_pixel_sample_index, shared_ptr<Sample> op_sample)
+    void _GetSample(const Point2D_i &i_current_pixel, size_t i_pixel_sample_index, intrusive_ptr<Sample> op_sample)
       {
       op_sample->SetImagePoint(Point2D_d(0.5,0.5));
       op_sample->SetLensUV(Point2D_d(0.5,0.5));

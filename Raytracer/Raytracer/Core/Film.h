@@ -11,7 +11,7 @@
 * The contribution of each camera ray to the image is represented as a sample on the film.
 * @sa Camera
 */
-class Film
+class Film: public ReferenceCounted
   {
   public:
     /**

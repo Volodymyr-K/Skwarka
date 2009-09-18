@@ -6,14 +6,14 @@
 #include "Primitive.h"
 #include "DifferentialGeometry.h"
 
-class Primitive
+class Primitive: public ReferenceCounted
   {
   public:
     Primitive();
-    Primitive(shared_ptr<TriangleMesh> ip_mesh);
+    Primitive(intrusive_ptr<TriangleMesh> ip_mesh);
 
   private:
-    shared_ptr<TriangleMesh> mp_mesh;
+    intrusive_ptr<TriangleMesh> mp_mesh;
     // NYI: material
   };
 
@@ -24,7 +24,7 @@ inline Primitive::Primitive()
   {
   }
 
-inline Primitive::Primitive(shared_ptr<TriangleMesh> ip_mesh):
+inline Primitive::Primitive(intrusive_ptr<TriangleMesh> ip_mesh):
 mp_mesh(ip_mesh)
   {
   }

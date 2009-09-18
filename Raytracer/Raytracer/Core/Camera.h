@@ -11,7 +11,7 @@
 * The camera holds an instance of Film class.
 * @sa Film
 */
-class Camera
+class Camera: public ReferenceCounted
   {
   public:
     /**
@@ -27,7 +27,7 @@ class Camera
     /**
     * Returns the film.
     */
-    shared_ptr<Film> GetFilm() const;
+    intrusive_ptr<Film> GetFilm() const;
 
     virtual ~Camera() {}
 
@@ -37,7 +37,7 @@ class Camera
     * @param i_camera2world The transformation object that defines the transformation between the camera space and world space.
     * @param ip_film A smart pointer to the film the camera holds.
     */
-    Camera(const Transform &i_camera2world, shared_ptr<Film> ip_film);
+    Camera(const Transform &i_camera2world, intrusive_ptr<Film> ip_film);
 
     /**
     * Helper method for derived classes that transform the ray in the camera space to the world space.
@@ -52,7 +52,7 @@ class Camera
 
   private:
     Transform m_camera2world;
-    shared_ptr<Film> mp_film;
+    intrusive_ptr<Film> mp_film;
   };
 
 #endif // CAMERA_H

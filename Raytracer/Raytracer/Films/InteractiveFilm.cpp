@@ -1,7 +1,7 @@
 #include "InteractiveFilm.h"
 #include <Math/Util.h>
 
-InteractiveFilm::InteractiveFilm(size_t i_x_resolution, size_t i_y_resolution, shared_ptr<FilmFilter> ip_filter):
+InteractiveFilm::InteractiveFilm(size_t i_x_resolution, size_t i_y_resolution, intrusive_ptr<FilmFilter> ip_filter):
 Film(i_x_resolution, i_y_resolution), m_x_resolution(i_x_resolution), m_y_resolution(i_y_resolution)
   {
   ASSERT(i_x_resolution>0 && i_y_resolution>0);
@@ -15,7 +15,7 @@ Film(i_x_resolution, i_y_resolution), m_x_resolution(i_x_resolution), m_y_resolu
   size_t layer_x_resolution=m_x_resolution, layer_y_resolution=m_y_resolution;
   while(true)
     {
-    m_image_films.push_back( shared_ptr<ImageFilm>(new ImageFilm(layer_x_resolution, layer_y_resolution, ip_filter)) );
+    m_image_films.push_back( intrusive_ptr<ImageFilm>(new ImageFilm(layer_x_resolution, layer_y_resolution, ip_filter)) );
 
     // Break from the loop after we reached the highest layer which is one pixel sized.
     if (layer_x_resolution==1 && layer_y_resolution==1) break;

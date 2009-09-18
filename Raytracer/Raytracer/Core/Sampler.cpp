@@ -16,7 +16,7 @@ m_samples_per_pixel(i_samples_per_pixel)
     m_pixel_sample_index=m_samples_per_pixel;
   }
 
-Sampler::Sampler(const Point2D_i &i_image_begin, const Point2D_i &i_image_end, size_t i_samples_per_pixel, shared_ptr<ImagePixelsOrder> ip_pixels_order):
+Sampler::Sampler(const Point2D_i &i_image_begin, const Point2D_i &i_image_end, size_t i_samples_per_pixel, intrusive_ptr<ImagePixelsOrder> ip_pixels_order):
 m_samples_per_pixel(i_samples_per_pixel), mp_pixels_order(ip_pixels_order)
   {
   ASSERT(m_samples_per_pixel>=1);
@@ -42,12 +42,12 @@ size_t Sampler::AddSamplesSequence2D(size_t i_size)
   return m_sequences_2D_size.size()-1;
   }
 
-shared_ptr<Sample> Sampler::CreateSample() const
+intrusive_ptr<Sample> Sampler::CreateSample() const
   {
-  return shared_ptr<Sample>( new Sample(m_sequences_1D_size, m_sequences_2D_size) );
+  return intrusive_ptr<Sample>( new Sample(m_sequences_1D_size, m_sequences_2D_size) );
   }
 
-bool Sampler::GetNextSample(shared_ptr<Sample> op_sample)
+bool Sampler::GetNextSample(intrusive_ptr<Sample> op_sample)
   {
   ASSERT(op_sample);
   ASSERT(m_sequences_1D_size.size() == op_sample->GetNumberOfSamplesSequences1D() && "Sample has wrong number of 1D samples sequences.");

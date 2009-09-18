@@ -18,9 +18,9 @@ class ShapeMock: public BaseShape
       {
       }
 
-    shared_ptr<TriangleMesh> BuildMesh()
+    intrusive_ptr<TriangleMesh> BuildMesh()
       {
-      return shared_ptr<TriangleMesh>(new TriangleMesh(std::vector<Point3D_f>(),std::vector<MeshTriangle>()));
+      return intrusive_ptr<TriangleMesh>(new TriangleMesh(std::vector<Point3D_f>(),std::vector<MeshTriangle>()));
       }
     
     void AddError(const std::string &i_error)

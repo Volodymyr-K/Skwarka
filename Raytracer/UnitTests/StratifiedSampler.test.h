@@ -25,7 +25,7 @@ class StratifiedSamplerTestSuite : public CxxTest::TestSuite
       bool out_of_range=false;
       std::vector<Point2D_d> points;
 
-      shared_ptr<Sample> sample = sampler.CreateSample();
+      intrusive_ptr<Sample> sample = sampler.CreateSample();
       while(sampler.GetNextSample(sample))
         {
         Point2D_d point = sample->GetImagePoint();
@@ -49,7 +49,7 @@ class StratifiedSamplerTestSuite : public CxxTest::TestSuite
       bool out_of_range=false;
       bool not_clumped=true, uniform=true;
 
-      shared_ptr<Sample> sample = sampler.CreateSample();
+      intrusive_ptr<Sample> sample = sampler.CreateSample();
 
       std::vector<Point2D_d> UVs;
       while(sampler.GetNextSample(sample))
@@ -84,7 +84,7 @@ class StratifiedSamplerTestSuite : public CxxTest::TestSuite
       bool out_of_range=false;
       bool not_clumped=true, uniform=true;
 
-      shared_ptr<Sample> sample = sampler.CreateSample();
+      intrusive_ptr<Sample> sample = sampler.CreateSample();
       while(sampler.GetNextSample(sample))
         {
         std::vector<double> values;
@@ -117,7 +117,7 @@ class StratifiedSamplerTestSuite : public CxxTest::TestSuite
       bool out_of_range=false;
       bool not_clumped=true, uniform=true;
 
-      shared_ptr<Sample> sample = sampler.CreateSample();
+      intrusive_ptr<Sample> sample = sampler.CreateSample();
       while(sampler.GetNextSample(sample))
         {
         std::vector<Point2D_d> values;

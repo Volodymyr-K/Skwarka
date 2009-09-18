@@ -51,7 +51,7 @@ struct MeshTriangle
 *
 * The mesh is constant in the sense that once created the geometry and connectivity never changes.
 */
-class TriangleMesh
+class TriangleMesh: public ReferenceCounted
   {
   public:
     /**

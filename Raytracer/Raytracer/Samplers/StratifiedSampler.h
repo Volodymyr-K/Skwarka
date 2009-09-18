@@ -39,7 +39,7 @@ class StratifiedSampler: public Sampler
     * @param ip_pixels_order ImagePixelsOrder implementation defining the order the image pixels are sampled in. Should not be NULL.
     * @param i_jitter_samples If true the samples will be randomly moved inside their stratas.
     */
-    StratifiedSampler(const Point2D_i &i_image_begin, const Point2D_i &i_image_end, size_t i_x_samples_per_pixel, size_t i_y_samples_per_pixel, shared_ptr<ImagePixelsOrder> ip_pixels_order, bool i_jitter_samples=true);
+    StratifiedSampler(const Point2D_i &i_image_begin, const Point2D_i &i_image_end, size_t i_x_samples_per_pixel, size_t i_y_samples_per_pixel, intrusive_ptr<ImagePixelsOrder> ip_pixels_order, bool i_jitter_samples=true);
 
   protected:
     /**
@@ -51,7 +51,7 @@ class StratifiedSampler: public Sampler
     /**
     * Populates the Sample with the samples data for the specified image pixel and specified sample's index inside that pixel.
     */
-    void _GetSample(const Point2D_i &i_current_pixel, size_t i_pixel_sample_index, shared_ptr<Sample> op_sample);
+    void _GetSample(const Point2D_i &i_current_pixel, size_t i_pixel_sample_index, intrusive_ptr<Sample> op_sample);
 
     /**
     * Precomputes image and lens samples for the specified pixel.

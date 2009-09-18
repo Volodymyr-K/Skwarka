@@ -30,7 +30,7 @@ class InteractiveFilm: public Film
     * @param i_y_resolution Y resolution. Should be greater than 0.
     * @param ip_filter FilmFilter to be used for filtering pixel samples.
     */
-    InteractiveFilm(size_t i_x_resolution, size_t i_y_resolution, shared_ptr<FilmFilter> ip_filter);
+    InteractiveFilm(size_t i_x_resolution, size_t i_y_resolution, intrusive_ptr<FilmFilter> ip_filter);
 
     /**
     * Adds sample value to the film.
@@ -74,7 +74,7 @@ class InteractiveFilm: public Film
     Point2D_i m_crop_window_begin, m_crop_window_end;
 
     // Vector of image layers.
-    std::vector<shared_ptr<ImageFilm> > m_image_films;
+    std::vector<intrusive_ptr<ImageFilm> > m_image_films;
 
     // Defines the size factor between consecutive layers.
     // Smaller factor results in a better approximation but takes more processing time when adding samples.

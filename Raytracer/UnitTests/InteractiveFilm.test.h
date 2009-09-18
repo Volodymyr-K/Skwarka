@@ -15,8 +15,8 @@ class InteractiveFilmTestSuite : public CxxTest::TestSuite
   public:
     void setUp()
       {
-      mp_filter = shared_ptr<FilmFilter>(new FilmFilterMock(4.0,2.0));
-      mp_film = shared_ptr<InteractiveFilm>(new InteractiveFilm(100,50,mp_filter));
+      mp_filter = intrusive_ptr<FilmFilter>(new FilmFilterMock(4.0,2.0));
+      mp_film = intrusive_ptr<InteractiveFilm>(new InteractiveFilm(100,50,mp_filter));
       }
 
     void tearDown()
@@ -155,8 +155,8 @@ class InteractiveFilmTestSuite : public CxxTest::TestSuite
       }
 
   private:
-    shared_ptr<FilmFilter> mp_filter;
-    shared_ptr<InteractiveFilm> mp_film;
+    intrusive_ptr<FilmFilter> mp_filter;
+    intrusive_ptr<InteractiveFilm> mp_film;
   };
 
 #endif // INTERACTIVE_FILM_TEST_H

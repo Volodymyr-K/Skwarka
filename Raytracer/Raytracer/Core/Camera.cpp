@@ -1,12 +1,12 @@
 #include "Camera.h"
 
-Camera::Camera(const Transform &i_camera2world, shared_ptr<Film> ip_film):
+Camera::Camera(const Transform &i_camera2world, intrusive_ptr<Film> ip_film):
 m_camera2world(i_camera2world), mp_film(ip_film)
   {
   ASSERT(ip_film!=NULL);
   }
 
-shared_ptr<Film> Camera::GetFilm() const
+intrusive_ptr<Film> Camera::GetFilm() const
   {
   return mp_film;
   }

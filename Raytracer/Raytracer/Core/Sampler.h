@@ -11,7 +11,7 @@
 * Different strategies are preferable when an image is displayed in a real-time and gets refined as more samples are added to the film.
 * @sa Sampler
 */
-class ImagePixelsOrder
+class ImagePixelsOrder: public ReferenceCounted
   {
   public:
     /**
@@ -56,7 +56,7 @@ class ImagePixelsOrder
 * The class uses a pluggable ImagePixelsOrder strategy for the order the pixels are sampled in. By default, the pixels are sampled in a consecutive order.
 * @sa Sample, ImagePixelsOrder
 */
-class Sampler
+class Sampler: public ReferenceCounted
   {
   public:
     /**
@@ -81,14 +81,14 @@ class Sampler
     * Creates empty Sample instance with no real data but with all the required storages allocated.
     * The sample should be passed to GetNextSample() method to populate it with the data.
     */
-    shared_ptr<Sample> CreateSample() const;
+    intrusive_ptr<Sample> CreateSample() const;
 
     /**
     * Populates the specified Sample with the samples data.
     * param[out] op_sample Sample instance to be populated with the data.
     * return true if sample was successfully populated and false if there's no more samples.
     */
-    bool GetNextSample(shared_ptr<Sample> op_sample);
+    bool GetNextSample(intrusive_ptr<Sample> op_sample);
 
     /**
     * Returns total number of samples the Sampler produces.
@@ -114,7 +114,7 @@ class Sampler
     * @param i_samples_per_pixel Number of pixel samples per pixel.
     * @param ip_pixels_order ImagePixelsOrder implementation defining the order the image pixels are sampled in. Should not be NULL.
     */
-    Sampler(const Point2D_i &i_image_begin, const Point2D_i &i_image_end, size_t i_samples_per_pixel, shared_ptr<ImagePixelsOrder> ip_pixels_order);
+    Sampler(const Point2D_i &i_image_begin, const Point2D_i &i_image_end, size_t i_samples_per_pixel, intrusive_ptr<ImagePixelsOrder> ip_pixels_order);
 
     /**
     * Returns the nearest number of integrator samples higher or equal than the specified one that the sampler can produce.
@@ -124,7 +124,7 @@ class Sampler
     /**
     * Populates the Sample with the samples data for the specified image pixel and specified sample's index inside that pixel.
     */
-    virtual void _GetSample(const Point2D_i &i_current_pixel, size_t i_pixel_sample_index, shared_ptr<Sample> op_sample) = 0;
+    virtual void _GetSample(const Point2D_i &i_current_pixel, size_t i_pixel_sample_index, intrusive_ptr<Sample> op_sample) = 0;
 
     /**
     * The Sampler calls this method for each new pixel before calling _GetSample() method for that pixel.
@@ -140,7 +140,7 @@ class Sampler
 
   private:
     Point2D_i m_current_pixel;
-    shared_ptr<ImagePixelsOrder> mp_pixels_order;
+    intrusive_ptr<ImagePixelsOrder> mp_pixels_order;
     size_t m_samples_per_pixel, m_pixel_sample_index;
 
     std::vector<size_t> m_sequences_1D_size, m_sequences_2D_size;

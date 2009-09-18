@@ -15,7 +15,7 @@
 #pragma warning(disable : 4996)
 
 const char window_caption[] = "Raytracer";
-shared_ptr<TriangleMesh> p_mesh;
+intrusive_ptr<TriangleMesh> p_mesh;
 
 void LoadMesh()
   {
@@ -64,7 +64,7 @@ void LoadMesh()
     }
   fclose(fp);
 
-  shared_ptr<TriangleMesh> meshlocal = shared_ptr<TriangleMesh>( new TriangleMesh(vertices, triangles, uv_parameterization) );
+  intrusive_ptr<TriangleMesh> meshlocal = intrusive_ptr<TriangleMesh>( new TriangleMesh(vertices, triangles, uv_parameterization) );
 
   p_mesh=p_meshlocal;
   */

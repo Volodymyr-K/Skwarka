@@ -17,7 +17,7 @@ class SphereTestSuite : public CxxTest::TestSuite
       sphere.SetParameter("center","0.0 0.0 0.0");
       sphere.SetParameter("radius","1.0");
 
-      shared_ptr<TriangleMesh> p_mesh=sphere.BuildMesh();
+      intrusive_ptr<TriangleMesh> p_mesh=sphere.BuildMesh();
       TS_ASSERT(p_mesh!=NULL);
       TS_ASSERT(sphere.GetErrors().empty());
       }
@@ -28,7 +28,7 @@ class SphereTestSuite : public CxxTest::TestSuite
       sphere.SetParameter("center","0.0 0.0 0.0");
       sphere.SetParameter("radius","1.0");
 
-      shared_ptr<TriangleMesh> p_mesh=sphere.BuildMesh();
+      intrusive_ptr<TriangleMesh> p_mesh=sphere.BuildMesh();
       TopologyInfo info = p_mesh->GetTopologyInfo();
       TS_ASSERT(info.m_manifold);
       TS_ASSERT(info.m_solid);
@@ -42,7 +42,7 @@ class SphereTestSuite : public CxxTest::TestSuite
       sphere.SetParameter("radius","1.0");
       sphere.SetParameter("subdivisions","0");
 
-      shared_ptr<TriangleMesh> p_mesh=sphere.BuildMesh();
+      intrusive_ptr<TriangleMesh> p_mesh=sphere.BuildMesh();
       TS_ASSERT_EQUALS(p_mesh->GetNumberOfTriangles(), 4);
       }
 
@@ -53,7 +53,7 @@ class SphereTestSuite : public CxxTest::TestSuite
       sphere.SetParameter("radius","1.0");
       sphere.SetParameter("subdivisions","4");
 
-      shared_ptr<TriangleMesh> p_mesh=sphere.BuildMesh();
+      intrusive_ptr<TriangleMesh> p_mesh=sphere.BuildMesh();
       TS_ASSERT_EQUALS(p_mesh->GetNumberOfTriangles(), 4*4*4*4*4);
       }
 
@@ -63,7 +63,7 @@ class SphereTestSuite : public CxxTest::TestSuite
       sphere.SetParameter("center","0.0 0.0 0.0");
       sphere.SetParameter("radius","-1.0");
 
-      shared_ptr<TriangleMesh> p_mesh=sphere.BuildMesh();
+      intrusive_ptr<TriangleMesh> p_mesh=sphere.BuildMesh();
       TS_ASSERT(p_mesh==NULL);
       TS_ASSERT(sphere.GetErrors().empty()==false);
       }
@@ -75,7 +75,7 @@ class SphereTestSuite : public CxxTest::TestSuite
       sphere.SetParameter("radius","1.0");
       sphere.SetParameter("subdivisions","-1");
 
-      shared_ptr<TriangleMesh> p_mesh=sphere.BuildMesh();
+      intrusive_ptr<TriangleMesh> p_mesh=sphere.BuildMesh();
       TS_ASSERT(p_mesh==NULL);
       TS_ASSERT(sphere.GetErrors().empty()==false);
       }

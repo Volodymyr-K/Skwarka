@@ -12,7 +12,7 @@ TriangleTree::~TriangleTree()
   _DestroyTree();
   }
 
-void TriangleTree::AddTriangleMesh(shared_ptr<TriangleMesh> ip_triangle_mesh)
+void TriangleTree::AddTriangleMesh(intrusive_ptr<TriangleMesh> ip_triangle_mesh)
   {
   ASSERT(ip_triangle_mesh!=NULL);
 

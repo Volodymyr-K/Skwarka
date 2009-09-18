@@ -55,7 +55,7 @@ class TestTracer
   int     m_imageWidth;
   int     m_imageHeight;
 
-  shared_ptr<TriangleMesh> mp_mesh;
+  intrusive_ptr<TriangleMesh> mp_mesh;
   TriangleTree *mp_tree;
   };
 
@@ -65,6 +65,7 @@ int pixel_counter=0;
 
 inline void TestTracer::LoadMesh()
   {
+    intrusive_ptr<ImagePixelsOrder> pixel_order(new UniformImagePixelsOrder);
   /*
   Sphere s;
   s.SetParameter("Center","0 0 0");
@@ -123,7 +124,7 @@ inline void TestTracer::LoadMesh()
     }
   fclose(fp);
 
-  mp_mesh = shared_ptr<TriangleMesh>( new TriangleMesh(vertices, triangles, false) );
+  mp_mesh = intrusive_ptr<TriangleMesh>( new TriangleMesh(vertices, triangles, false) );
 
   mp_tree = new TriangleTree();
   mp_tree->AddTriangleMesh(mp_mesh);
@@ -160,18 +161,18 @@ inline void TestTracer::RenderImage(HWND &g_hWnd, HDC &g_memDC)
   Log::Info("%d",k);*/
 
   FilmFilter *filter = new BoxFilter(0.5,0.5);
-  InteractiveFilm *film = new InteractiveFilm(GetImageWidth(), GetImageHeight(), shared_ptr<FilmFilter>(filter));
+  InteractiveFilm *film = new InteractiveFilm(GetImageWidth(), GetImageHeight(), intrusive_ptr<FilmFilter>(filter));
   //film->SetCropWindow(Point2D_i(100,200),Point2D_i(550,300));
 
   Point2D_i window_begin,window_end;
   film->GetSamplingExtent(window_begin, window_end);
 
   Vector3D_d direction = Vector3D_d(0,-0.5,-1).Normalized();
-  Camera *cam =  new PerspectiveCamera( MakeLookAt(Point3D_d(0.0,0.25,0.17)+direction*0.08,direction,Vector3D_d(0,1,0)), shared_ptr<Film>(film), 0.005, 0.087, 1.3);
+  Camera *cam =  new PerspectiveCamera( MakeLookAt(Point3D_d(0.0,0.25,0.17)+direction*0.08,direction,Vector3D_d(0,1,0)), intrusive_ptr<Film>(film), 0.005, 0.087, 1.3);
 
   //Sampler *sampler = new RandomSampler(Point2D_i(0,0),Point2D_i(GetImageWidth(), GetImageHeight()),10);
 
-  shared_ptr<ImagePixelsOrder> pixel_order(new UniformImagePixelsOrder);
+  intrusive_ptr<ImagePixelsOrder> pixel_order(new UniformImagePixelsOrder);
 
   Sampler *sampler = new StratifiedSampler(window_begin, window_end, 3, 3, pixel_order, true);
   //sampler->AddSamplesSequence2D(100);

@@ -22,7 +22,7 @@ class ImageFilm: public Film
     * @param i_y_resolution Y resolution. Should be greater than 0.
     * @param ip_filter FilmFilter to be used for filtering pixel samples.
     */
-    ImageFilm(size_t i_x_resolution, size_t i_y_resolution, shared_ptr<FilmFilter> ip_filter);
+    ImageFilm(size_t i_x_resolution, size_t i_y_resolution, intrusive_ptr<FilmFilter> ip_filter);
 
     /**
     * Adds sample value to the film.
@@ -70,7 +70,7 @@ class ImageFilm: public Film
     double m_filter_x_width, m_filter_y_width;
 
     // TBD: Cache filter values
-    shared_ptr<FilmFilter> mp_filter;
+    intrusive_ptr<FilmFilter> mp_filter;
     std::vector< ImageFilmPixel > m_pixels; // TBD: rewrite as blocked array
     
     Point2D_i m_crop_window_begin, m_crop_window_end;

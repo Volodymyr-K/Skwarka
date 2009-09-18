@@ -26,7 +26,7 @@ class SamplerTestSuite : public CxxTest::TestSuite
       indices[1]=sampler.AddSamplesSequence2D(25);
       indices[2]=sampler.AddSamplesSequence1D(35);
 
-      shared_ptr<Sample> sample = sampler.CreateSample();
+      intrusive_ptr<Sample> sample = sampler.CreateSample();
 
       TS_ASSERT_EQUALS(sample->GetNumberOfSamplesSequences1D(),2);
       TS_ASSERT_EQUALS(sample->GetNumberOfSamplesSequences2D(),1);
@@ -44,7 +44,7 @@ class SamplerTestSuite : public CxxTest::TestSuite
     void test_Sampler_GeneratedSamplesCount()
       {
       SamplerMock sampler(Point2D_i(0,0),Point2D_i(100,100),10);
-      shared_ptr<Sample> sample = sampler.CreateSample();
+      intrusive_ptr<Sample> sample = sampler.CreateSample();
 
       size_t count=0;
       while(sampler.GetNextSample(sample))

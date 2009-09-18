@@ -22,7 +22,7 @@ class PerspectiveCamera: public Camera
     * @param i_focal_distance Distance from the camera at which objects appear in focus.
     * @param i_x_view_angle Angle value in radians of the camera's field of view along the x direction in the image plane.
     */
-    PerspectiveCamera(const Transform &i_camera2world, shared_ptr<Film> ip_film, const double &i_lens_radius, const double &i_focal_distance, const double &i_x_view_angle);
+    PerspectiveCamera(const Transform &i_camera2world, intrusive_ptr<Film> ip_film, const double &i_lens_radius, const double &i_focal_distance, const double &i_x_view_angle);
 
     /**
     * Generates ray based on the image point and lens UV coordinates.

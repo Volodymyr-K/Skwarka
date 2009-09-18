@@ -10,7 +10,7 @@ StratifiedSampler::StratifiedSampler(const Point2D_i &i_image_begin, const Point
   }
 
 StratifiedSampler::StratifiedSampler(const Point2D_i &i_image_begin, const Point2D_i &i_image_end, size_t i_x_samples_per_pixel, size_t i_y_samples_per_pixel,
-                                     shared_ptr<ImagePixelsOrder> ip_pixels_order, bool i_jitter_samples):
+                                     intrusive_ptr<ImagePixelsOrder> ip_pixels_order, bool i_jitter_samples):
   Sampler(i_image_begin, i_image_end, i_x_samples_per_pixel*i_y_samples_per_pixel, ip_pixels_order),
     m_x_samples_per_pixel(i_x_samples_per_pixel), m_y_samples_per_pixel(i_y_samples_per_pixel), m_jitter_samples(i_jitter_samples),
     m_image_points(i_x_samples_per_pixel*i_y_samples_per_pixel), m_lens_UVs(i_x_samples_per_pixel*i_y_samples_per_pixel)
@@ -32,11 +32,11 @@ void StratifiedSampler::_PrecomputeSamplesForPixel(const Point2D_i &i_current_pi
 
   SamplingRoutines::StratifiedSampling2D(m_lens_UVs.begin(), m_x_samples_per_pixel, m_y_samples_per_pixel, m_jitter_samples);
 
-  // Decorrelate image and lens samples.
+  // De-correlate image and lens samples.
   SamplingRoutines::Shuffle(m_lens_UVs);
   }
 
-void StratifiedSampler::_GetSample(const Point2D_i &i_current_pixel, size_t i_pixel_sample_index, shared_ptr<Sample> op_sample)
+void StratifiedSampler::_GetSample(const Point2D_i &i_current_pixel, size_t i_pixel_sample_index, intrusive_ptr<Sample> op_sample)
   {
   op_sample->SetImagePoint( m_image_points[i_pixel_sample_index] );
   op_sample->SetLensUV( m_lens_UVs[i_pixel_sample_index] );

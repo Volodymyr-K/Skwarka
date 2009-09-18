@@ -43,7 +43,7 @@ struct SamplesSequence2D
 *
 * @sa Sampler
 */
-class Sample
+class Sample: public ReferenceCounted
   { 
   public:
     /**

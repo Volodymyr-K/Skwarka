@@ -25,7 +25,7 @@ class RandomSamplerTestSuite : public CxxTest::TestSuite
       bool out_of_range=false;
       std::vector<Point2D_d> points;
 
-      shared_ptr<Sample> sample = sampler.CreateSample();
+      intrusive_ptr<Sample> sample = sampler.CreateSample();
       while(sampler.GetNextSample(sample))
         {
         Point2D_d point = sample->GetImagePoint();
@@ -46,7 +46,7 @@ class RandomSamplerTestSuite : public CxxTest::TestSuite
       bool out_of_range=false;
       bool uniform=true;
 
-      shared_ptr<Sample> sample = sampler.CreateSample();
+      intrusive_ptr<Sample> sample = sampler.CreateSample();
 
       std::vector<Point2D_d> UVs;
       while(sampler.GetNextSample(sample))
@@ -78,7 +78,7 @@ class RandomSamplerTestSuite : public CxxTest::TestSuite
       bool out_of_range=false;
       bool uniform=true;
 
-      shared_ptr<Sample> sample = sampler.CreateSample();
+      intrusive_ptr<Sample> sample = sampler.CreateSample();
       while(sampler.GetNextSample(sample))
         {
         std::vector<double> values;
@@ -109,7 +109,7 @@ class RandomSamplerTestSuite : public CxxTest::TestSuite
       bool out_of_range=false;
       bool uniform=true;
 
-      shared_ptr<Sample> sample = sampler.CreateSample();
+      intrusive_ptr<Sample> sample = sampler.CreateSample();
       while(sampler.GetNextSample(sample))
         {
         std::vector<Point2D_d> values;
