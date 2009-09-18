@@ -17,7 +17,7 @@ class BSDFTestSuite : public CxxTest::TestSuite
     void setUp()
       {
       DifferentialGeometry dg;
-      dg.m_shading_normal=dg.m_shading_normal=Vector3D_d(0,0,1);
+      dg.m_shading_normal=dg.m_geometric_normal=Vector3D_d(0,0,1);
       mp_bsdf = shared_ptr<BSDF> (new BSDF(dg));
       }
 

@@ -136,6 +136,7 @@ class BSDF
 
     // Three base vectors defining the local orthonormal coordinate system.
     Vector3D_d m_normal, m_e1, m_e2;
+    Vector3D_d m_geometric_normal;
     double m_refractive_index;
   };
 
@@ -143,7 +144,7 @@ class BSDF
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 inline BSDF::BSDF(const DifferentialGeometry &i_dg, double i_refractive_index):
-m_normal(i_dg.m_shading_normal), m_refractive_index(i_refractive_index), m_BxDFs_num(0)
+m_normal(i_dg.m_shading_normal), m_geometric_normal(i_dg.m_geometric_normal), m_refractive_index(i_refractive_index), m_BxDFs_num(0)
   {
   ASSERT(i_refractive_index>0.0);
   MathRoutines::CoordinateSystem(i_dg.m_shading_normal, m_e1, m_e2);

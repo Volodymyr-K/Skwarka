@@ -10,6 +10,13 @@ Spectrum_d BSDF::Evaluate(const Vector3D_d &i_incident, const Vector3D_d &i_exit
   ASSERT(incident_local.IsNormalized());
   ASSERT(exitant_local.IsNormalized());
 
+  // To avoid "light leaks" and "dark spots" due to the difference between geometric and shading normal
+  // we evaluate only BxDFs of the types corresponding to the hemisphere defined by the geometric normal at the surface point.
+  if ((i_incident*m_geometric_normal) * (i_exitant*m_geometric_normal) > 0)
+    i_flags = BxDFType(i_flags & ~BSDF_TRANSMISSION); // Ignore BTDFs.
+  else
+    i_flags = BxDFType(i_flags & ~BSDF_REFLECTION); // Ignore BRDFs.
+
   Spectrum_d ret;
   for(size_t i=0;i<m_BxDFs_num;++i)
     if (m_BxDFs[i]->MatchesFlags(i_flags))
@@ -87,23 +94,39 @@ Spectrum_d BSDF::Sample(const Vector3D_d &i_incident, Vector3D_d &o_exitant,
   // Sample the selected component to get the exitant direction.
   o_pdf=0.0;
   Vector3D_d exitant_local;
-  Spectrum_d ret_value=bxdf->Sample(incident_local, exitant_local, i_sample, o_pdf);
+  Spectrum_d ret_value = bxdf->Sample(incident_local, exitant_local, i_sample, o_pdf);
   
   ASSERT(o_pdf>0.0);
 
   o_exitant=LocalToWorld(exitant_local);
   ASSERT(o_exitant.IsNormalized());
 
-  // If sampled component is not specular add PDF and BxDF values for other components.
+  // If sampled component is not specular add PDF values for other components.
   if (num_matched>1 && IsSpecular(o_sampled_type)==false)
     for(size_t i=0;i<m_BxDFs_num;++i)
       if (m_BxDFs[i]!=bxdf && m_BxDFs[i]->MatchesFlags(i_flags))
-        {
         o_pdf+=m_BxDFs[i]->PDF(incident_local, exitant_local);
-        ret_value+=m_BxDFs[i]->Evaluate(incident_local, exitant_local);
-        }
 
-  o_pdf/=num_matched;
+  if (num_matched>1)
+    o_pdf/=num_matched;
+
+  // If sampled component is not specular compute BxDF values for all matching components.
+  if (IsSpecular(o_sampled_type)==false)
+    {
+    ret_value=Spectrum_d(0.0);
+
+    // To avoid "light leaks" and "dark spots" due to the difference between geometric and shading normal
+    // we evaluate only BxDFs of the types corresponding to the hemisphere defined by the geometric normal at the surface point.
+  if ((i_incident*m_geometric_normal) * (o_exitant*m_geometric_normal) > 0)
+      i_flags = BxDFType(i_flags & ~BSDF_TRANSMISSION); // Ignore BTDFs.
+    else
+      i_flags = BxDFType(i_flags & ~BSDF_REFLECTION); // Ignore BRDFs.
+
+    for(size_t i=0;i<m_BxDFs_num;++i)
+      if (m_BxDFs[i]->MatchesFlags(i_flags))
+        ret_value+=m_BxDFs[i]->Evaluate(incident_local, exitant_local);
+    }
+
   return ret_value;
   }
 

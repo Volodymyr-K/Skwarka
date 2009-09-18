@@ -21,15 +21,9 @@ class BxDFMock: public BxDF
     Spectrum_d Evaluate(const Vector3D_d &i_incident, const Vector3D_d &i_exitant) const
       {
       if (IsSpecular(GetType()))
-        {
         return Spectrum_d(0.0);
-        }
       else
-        {
-        bool same_hemisphere = i_incident[2]*i_exitant[2]>0.0;
-        bool reflection = (GetType()&BSDF_REFLECTION) != 0;
-        return same_hemisphere == reflection ? m_R*Spectrum_d(INV_PI) : Spectrum_d(0.0);
-        }
+        return m_R*Spectrum_d(INV_PI);
       }
 
     Spectrum_d Sample(const Vector3D_d &i_incident, Vector3D_d &o_exitant, const Point2D_d &i_sample, double &o_pdf) const

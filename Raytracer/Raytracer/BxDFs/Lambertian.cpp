@@ -9,14 +9,10 @@ BxDF(BxDFType(BSDF_REFLECTION | BSDF_DIFFUSE)), m_reflectance(i_reflectance), m_
   ASSERT(i_reflectance[2]>=0.0 && i_reflectance[2]<=1.0);
   }
 
+// The method does not check if the vectors are in the same hemisphere and returns constant value everywhere.
 Spectrum_d Lambertian::Evaluate(const Vector3D_d &i_incident, const Vector3D_d &i_exitant) const
   {
-  bool same_hemisphere = i_incident[2]*i_exitant[2] > 0.0;
-
-  if (same_hemisphere)
-    return m_reflectance_inv_pi;
-  else
-    return Spectrum_d(0.0);
+  return m_reflectance_inv_pi;
   }
 
 Spectrum_d Lambertian::TotalScattering(const Vector3D_d &i_incident, SamplesSequence2D i_samples) const

@@ -13,13 +13,9 @@ BxDF(BxDFType(BSDF_REFLECTION | BSDF_DIFFUSE)), m_reflectance(i_reflectance)
   m_B = 0.45 * sigma_sqr / (sigma_sqr + 0.09);
   }
 
+// The method does not check if the vectors are in the same hemisphere.
 Spectrum_d OrenNayar::Evaluate(const Vector3D_d &i_incident, const Vector3D_d &i_exitant) const
   {
-  bool same_hemisphere = i_incident[2]*i_exitant[2] > 0.0;
-
-  if (same_hemisphere==false)
-    return Spectrum_d(0.0);
-
   double sin_theta_incident, cos_theta_incident, sin_phi_incident, cos_phi_incident;
   VectorToAngles(i_incident, sin_theta_incident, cos_theta_incident, sin_phi_incident, cos_phi_incident);
 

@@ -48,9 +48,15 @@ bool IsSpecular(BxDFType i_type);
 * All BxDF implementation are assumed to be isotropic in the sense that their properties only depend on the mutual location of
 * incident and exitant directions and do not change if both vectors are rotated around the normal simultaneously.
 *
+* A subtle thing that needs to be followed by the implementations is related to the difference between geometric and shading normals.
+* To avoid "light leaks" and "dark spots" Evaluate() method should not check for the correct hemisphere and should return
+* reasonable result even if the vectors are in different hemispheres for a reflection BxDF and the same hemisphere for a transmission BxDF.
+* What is considered "reasonable" is up to the implementations.
+*
 * @warning The BxDFs have a specific memory management. All BxDFs are allocated in a special memory pool. When the memory is freed
 * the destructors for the BxDFs are not called. That means that all BxDFs should be lightweight objects and should not allocate any
 * resources that need to be freed in the destructor (e.g. dynamical memory, shared pointers etc.).
+* @sa BSDF
 */
 class BxDF
   {
