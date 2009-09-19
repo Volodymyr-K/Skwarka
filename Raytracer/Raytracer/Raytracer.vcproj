@@ -184,6 +184,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\Core\Material.h"
+					>
+				</File>
+				<File
 					RelativePath=".\Core\Primitive.h"
 					>
 				</File>
@@ -197,6 +201,10 @@
 				</File>
 				<File
 					RelativePath=".\Core\Spectrum.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Core\Texture.h"
 					>
 				</File>
 				<File
@@ -230,6 +238,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\Core\Primitive.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\Core\Sampler.cpp"
 					>
 				</File>
@@ -239,50 +251,6 @@
 				</File>
 				<File
 					RelativePath=".\Core\TriangleTree.cpp"
-					>
-				</File>
-			</Filter>
-		</Filter>
-		<Filter
-			Name="Samplers"
-			>
-			<Filter
-				Name="Header Files"
-				>
-				<File
-					RelativePath=".\Samplers\ConsecutiveImagePixelsOrder.h"
-					>
-				</File>
-				<File
-					RelativePath=".\Samplers\RandomSampler.h"
-					>
-				</File>
-				<File
-					RelativePath=".\Samplers\StratifiedSampler.h"
-					>
-				</File>
-				<File
-					RelativePath=".\Samplers\UniformImagePixelsOrder.h"
-					>
-				</File>
-			</Filter>
-			<Filter
-				Name="Source Files"
-				>
-				<File
-					RelativePath=".\Samplers\ConsecutiveImagePixelsOrder.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\Samplers\RandomSampler.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\Samplers\StratifiedSampler.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\Samplers\UniformImagePixelsOrder.cpp"
 					>
 				</File>
 			</Filter>
@@ -379,6 +347,86 @@
 				</File>
 				<File
 					RelativePath=".\BxDFs\OrenNayar.cpp"
+					>
+				</File>
+			</Filter>
+		</Filter>
+		<Filter
+			Name="Materials"
+			>
+			<Filter
+				Name="Header Files"
+				>
+				<File
+					RelativePath=".\Materials\Matte.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Source Files"
+				>
+				<File
+					RelativePath=".\Materials\Matte.cpp"
+					>
+				</File>
+			</Filter>
+		</Filter>
+		<Filter
+			Name="Textures"
+			>
+			<Filter
+				Name="Header Files"
+				>
+				<File
+					RelativePath=".\Textures\ConstantTexture.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Source Files"
+				>
+			</Filter>
+		</Filter>
+		<Filter
+			Name="Samplers"
+			>
+			<Filter
+				Name="Header Files"
+				>
+				<File
+					RelativePath=".\Samplers\ConsecutiveImagePixelsOrder.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Samplers\RandomSampler.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Samplers\StratifiedSampler.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Samplers\UniformImagePixelsOrder.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Source Files"
+				>
+				<File
+					RelativePath=".\Samplers\ConsecutiveImagePixelsOrder.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Samplers\RandomSampler.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Samplers\StratifiedSampler.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Samplers\UniformImagePixelsOrder.cpp"
 					>
 				</File>
 			</Filter>

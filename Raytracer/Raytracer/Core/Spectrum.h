@@ -3,6 +3,7 @@
 
 #include "Common\Common.h"
 #include <istream>
+#include <Math/Util.h>
 
 /**
 * Represents the spectrum of light (i.e. color).
@@ -34,6 +35,11 @@ class Spectrum
 
     T operator[](unsigned char i_index) const;
     T &operator[](unsigned char i_index);
+
+    /**
+    * Clamps the spectrum components to the specified range.
+    */
+    void Clamp(T i_low, T i_high);
 
     /**
     * Adds a weighted Spectrum to this one. The method is needed for the efficiency.
@@ -204,6 +210,15 @@ T &Spectrum<T>::operator[](unsigned char i_index)
   {
   ASSERT(i_index>=0 && i_index<3);
   return m_rgb[i_index];
+  }
+
+template<typename T>
+void Spectrum<T>::Clamp(T i_low, T i_high)
+  {
+  ASSERT(i_low<=i_high);
+  m_rgb[0]=MathRoutines::Clamp(m_rgb[0], i_low, i_high);
+  m_rgb[1]=MathRoutines::Clamp(m_rgb[1], i_low, i_high);
+  m_rgb[2]=MathRoutines::Clamp(m_rgb[2], i_low, i_high);
   }
 
 template<typename T>

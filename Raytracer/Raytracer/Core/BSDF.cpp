@@ -75,7 +75,7 @@ Spectrum_d BSDF::Sample(const Vector3D_d &i_incident, Vector3D_d &o_exitant,
 
   // First, select a component to be sampled.
   BxDF *bxdf = NULL;
-  size_t samled_component=(size_t)(i_component_sample*num_matched);
+  size_t samled_component=std::min((size_t)(i_component_sample*num_matched), num_matched-1);
   for(size_t i=0;i<m_BxDFs_num;++i)
     if (m_BxDFs[i]->MatchesFlags(i_flags) && samled_component==0)
       {

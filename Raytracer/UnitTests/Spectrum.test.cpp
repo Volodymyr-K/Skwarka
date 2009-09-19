@@ -113,45 +113,51 @@ public:
  void runTest() { suite_SpectrumTestSuite.test_Spectrum_IndexOperator(); }
 } testDescription_SpectrumTestSuite_test_Spectrum_IndexOperator;
 
+static class TestDescription_SpectrumTestSuite_test_Spectrum_Clamp : public CxxTest::RealTestDescription {
+public:
+ TestDescription_SpectrumTestSuite_test_Spectrum_Clamp() : CxxTest::RealTestDescription( Tests_SpectrumTestSuite, suiteDescription_SpectrumTestSuite, 133, "test_Spectrum_Clamp" ) {}
+ void runTest() { suite_SpectrumTestSuite.test_Spectrum_Clamp(); }
+} testDescription_SpectrumTestSuite_test_Spectrum_Clamp;
+
 static class TestDescription_SpectrumTestSuite_test_Spectrum_AddWeighted : public CxxTest::RealTestDescription {
 public:
- TestDescription_SpectrumTestSuite_test_Spectrum_AddWeighted() : CxxTest::RealTestDescription( Tests_SpectrumTestSuite, suiteDescription_SpectrumTestSuite, 133, "test_Spectrum_AddWeighted" ) {}
+ TestDescription_SpectrumTestSuite_test_Spectrum_AddWeighted() : CxxTest::RealTestDescription( Tests_SpectrumTestSuite, suiteDescription_SpectrumTestSuite, 140, "test_Spectrum_AddWeighted" ) {}
  void runTest() { suite_SpectrumTestSuite.test_Spectrum_AddWeighted(); }
 } testDescription_SpectrumTestSuite_test_Spectrum_AddWeighted;
 
 static class TestDescription_SpectrumTestSuite_test_Spectrum_IsBlack : public CxxTest::RealTestDescription {
 public:
- TestDescription_SpectrumTestSuite_test_Spectrum_IsBlack() : CxxTest::RealTestDescription( Tests_SpectrumTestSuite, suiteDescription_SpectrumTestSuite, 141, "test_Spectrum_IsBlack" ) {}
+ TestDescription_SpectrumTestSuite_test_Spectrum_IsBlack() : CxxTest::RealTestDescription( Tests_SpectrumTestSuite, suiteDescription_SpectrumTestSuite, 148, "test_Spectrum_IsBlack" ) {}
  void runTest() { suite_SpectrumTestSuite.test_Spectrum_IsBlack(); }
 } testDescription_SpectrumTestSuite_test_Spectrum_IsBlack;
 
 static class TestDescription_SpectrumTestSuite_test_Spectrum_XYZ : public CxxTest::RealTestDescription {
 public:
- TestDescription_SpectrumTestSuite_test_Spectrum_XYZ() : CxxTest::RealTestDescription( Tests_SpectrumTestSuite, suiteDescription_SpectrumTestSuite, 149, "test_Spectrum_XYZ" ) {}
+ TestDescription_SpectrumTestSuite_test_Spectrum_XYZ() : CxxTest::RealTestDescription( Tests_SpectrumTestSuite, suiteDescription_SpectrumTestSuite, 156, "test_Spectrum_XYZ" ) {}
  void runTest() { suite_SpectrumTestSuite.test_Spectrum_XYZ(); }
 } testDescription_SpectrumTestSuite_test_Spectrum_XYZ;
 
 static class TestDescription_SpectrumTestSuite_test_Spectrum_Luminance : public CxxTest::RealTestDescription {
 public:
- TestDescription_SpectrumTestSuite_test_Spectrum_Luminance() : CxxTest::RealTestDescription( Tests_SpectrumTestSuite, suiteDescription_SpectrumTestSuite, 157, "test_Spectrum_Luminance" ) {}
+ TestDescription_SpectrumTestSuite_test_Spectrum_Luminance() : CxxTest::RealTestDescription( Tests_SpectrumTestSuite, suiteDescription_SpectrumTestSuite, 164, "test_Spectrum_Luminance" ) {}
  void runTest() { suite_SpectrumTestSuite.test_Spectrum_Luminance(); }
 } testDescription_SpectrumTestSuite_test_Spectrum_Luminance;
 
 static class TestDescription_SpectrumTestSuite_test_Spectrum_OutputStream : public CxxTest::RealTestDescription {
 public:
- TestDescription_SpectrumTestSuite_test_Spectrum_OutputStream() : CxxTest::RealTestDescription( Tests_SpectrumTestSuite, suiteDescription_SpectrumTestSuite, 167, "test_Spectrum_OutputStream" ) {}
+ TestDescription_SpectrumTestSuite_test_Spectrum_OutputStream() : CxxTest::RealTestDescription( Tests_SpectrumTestSuite, suiteDescription_SpectrumTestSuite, 174, "test_Spectrum_OutputStream" ) {}
  void runTest() { suite_SpectrumTestSuite.test_Spectrum_OutputStream(); }
 } testDescription_SpectrumTestSuite_test_Spectrum_OutputStream;
 
 static class TestDescription_SpectrumTestSuite_test_Spectrum_InputStream : public CxxTest::RealTestDescription {
 public:
- TestDescription_SpectrumTestSuite_test_Spectrum_InputStream() : CxxTest::RealTestDescription( Tests_SpectrumTestSuite, suiteDescription_SpectrumTestSuite, 176, "test_Spectrum_InputStream" ) {}
+ TestDescription_SpectrumTestSuite_test_Spectrum_InputStream() : CxxTest::RealTestDescription( Tests_SpectrumTestSuite, suiteDescription_SpectrumTestSuite, 183, "test_Spectrum_InputStream" ) {}
  void runTest() { suite_SpectrumTestSuite.test_Spectrum_InputStream(); }
 } testDescription_SpectrumTestSuite_test_Spectrum_InputStream;
 
 static class TestDescription_SpectrumTestSuite_test_Spectrum_Conversion : public CxxTest::RealTestDescription {
 public:
- TestDescription_SpectrumTestSuite_test_Spectrum_Conversion() : CxxTest::RealTestDescription( Tests_SpectrumTestSuite, suiteDescription_SpectrumTestSuite, 185, "test_Spectrum_Conversion" ) {}
+ TestDescription_SpectrumTestSuite_test_Spectrum_Conversion() : CxxTest::RealTestDescription( Tests_SpectrumTestSuite, suiteDescription_SpectrumTestSuite, 192, "test_Spectrum_Conversion" ) {}
  void runTest() { suite_SpectrumTestSuite.test_Spectrum_Conversion(); }
 } testDescription_SpectrumTestSuite_test_Spectrum_Conversion;
 

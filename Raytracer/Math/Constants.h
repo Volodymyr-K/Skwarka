@@ -8,7 +8,7 @@
 
 #define DBL_INF       (std::numeric_limits<double>::infinity())
 #define DBL_EPS       (std::numeric_limits<double>::epsilon())  /* smallest such that 1.0+DBL_EPSILON != 1.0 */
-#define DBL_3D_EPS    (1e-10) /* an empirical epsilon value for 3D vector and point operations */
+#define DBL_3D_EPS    (1e-9) /* an empirical epsilon value for 3D vector and point operations */
 
 #ifdef M_PI
 #undef M_PI

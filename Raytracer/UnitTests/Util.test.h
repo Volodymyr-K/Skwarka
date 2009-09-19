@@ -42,7 +42,7 @@ class UtilTestSuite : public CxxTest::TestSuite
       }
 
     // Test when value is higher than upper bound.
-    void tes_tClamp2()
+    void test_Clamp2()
       {
       double clamped = MathRoutines::Clamp(5.0, 2.0, 3.0);
       TS_ASSERT(clamped==3.0);
@@ -113,6 +113,25 @@ class UtilTestSuite : public CxxTest::TestSuite
       TS_ASSERT_EQUALS(MathRoutines::CeilLog2(15),4);
       }
 
+    void test_CoordinateSystem()
+      {
+      Vector3D_d e1(1.5,-0.5,1.0);
+      e1.Normalize();
+
+      Vector3D_d e2,e3;
+      MathRoutines::CoordinateSystem(e1,e2,e3);
+
+      TS_ASSERT(e2.IsNormalized());
+      TS_ASSERT(e3.IsNormalized());
+
+      TS_ASSERT_DELTA((e1^e2)[0],e3[0],(1e-10));
+      TS_ASSERT_DELTA((e1^e2)[1],e3[1],(1e-10));
+      TS_ASSERT_DELTA((e1^e2)[2],e3[2],(1e-10));
+
+      TS_ASSERT_DELTA((e2^e3)[0],e1[0],(1e-10));
+      TS_ASSERT_DELTA((e2^e3)[1],e1[1],(1e-10));
+      TS_ASSERT_DELTA((e2^e3)[2],e1[2],(1e-10));
+      }
   };
 
 #endif // UTIL_TEST_H

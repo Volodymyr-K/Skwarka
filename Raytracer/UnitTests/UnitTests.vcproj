@@ -408,6 +408,22 @@
 						>
 					</File>
 				</Filter>
+				<Filter
+					Name="Textures"
+					>
+					<File
+						RelativePath=".\ConstantTexture.test.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="Materials"
+					>
+					<File
+						RelativePath=".\Matte.test.h"
+						>
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="Shapes"
@@ -458,6 +474,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ConstantTexture.test.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Film.test.cpp"
 				>
 			</File>
@@ -483,6 +503,10 @@
 			</File>
 			<File
 				RelativePath=".\Matrix.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Matte.test.cpp"
 				>
 			</File>
 			<File
@@ -654,6 +678,24 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\Mocks\MaterialMock.h"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
 				RelativePath=".\Mocks\SamplerMock.h"
 				>
 				<FileConfiguration
@@ -673,6 +715,24 @@
 			</File>
 			<File
 				RelativePath=".\Mocks\ShapeMock.h"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\Mocks\TextureMock.h"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"

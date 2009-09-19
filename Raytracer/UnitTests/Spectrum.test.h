@@ -130,6 +130,13 @@ class SpectrumTestSuite : public CxxTest::TestSuite
       TS_ASSERT(s1[0]==1.0 && s1[1]==2.0 && s1[2]==3.0);
       }
 
+    void test_Spectrum_Clamp()
+      {
+      Spectrum_d s1(1.0,2.0,3.0);
+      s1.Clamp(1.5,2.5);
+      TS_ASSERT_EQUALS(s1, Spectrum_d(1.5,2.0,2.5));
+      }
+
     void test_Spectrum_AddWeighted()
       {
       Spectrum_d s1(1.5,2.0,3.0);

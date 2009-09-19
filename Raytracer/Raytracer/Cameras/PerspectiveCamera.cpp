@@ -12,8 +12,11 @@ Camera(i_camera2world, ip_film), m_lens_radius(i_lens_radius), m_focal_distance(
   if (m_lens_radius<0.0)
     m_lens_radius=0.0;
 
+  m_film_x_resolution = ip_film->GetXResolution();
+  m_film_y_resolution = ip_film->GetYResolution();
+
   m_x_tan=tan(m_x_view_angle/2.0);
-  m_y_tan=m_x_tan*((double)GetFilm()->GetYResolution())/GetFilm()->GetXResolution();
+  m_y_tan=m_x_tan*((double)m_film_y_resolution)/m_film_x_resolution;
   }
 
 double PerspectiveCamera::GenerateRay(const Point2D_d &i_image_point, const Point2D_d &i_lens_uv, Ray &o_ray) const
@@ -22,8 +25,8 @@ double PerspectiveCamera::GenerateRay(const Point2D_d &i_image_point, const Poin
 
   o_ray.m_origin=Point3D_d();
 
-  double x = 2.0 * m_x_tan * (i_image_point[0]-(double)GetFilm()->GetXResolution()*0.5)/(double)GetFilm()->GetXResolution();
-  double y = 2.0 * m_y_tan * (i_image_point[1]-(double)GetFilm()->GetYResolution()*0.5)/(double)GetFilm()->GetYResolution();
+  double x = 2.0 * m_x_tan * (i_image_point[0]-m_film_x_resolution*0.5)/m_film_x_resolution;
+  double y = 2.0 * m_y_tan * (i_image_point[1]-m_film_y_resolution*0.5)/m_film_y_resolution;
 
   o_ray.m_direction=Vector3D_d(x,y,1.0);
   if (m_lens_radius > 0.0)

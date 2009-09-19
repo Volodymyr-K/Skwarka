@@ -141,9 +141,9 @@ void* MyOutputFilter::operator()( void* item )
   mp_film->AddSample(chunk.mp_sample->GetImagePoint(), chunk.m_spectrum, chunk.m_alfa);
 
   chunks_free[chunk.chunk_index]=true;
-
+/*
   ++pixel_counter;
-  if ((pixel_counter%20000)!=0) return NULL;
+  if ((pixel_counter%2000)!=0) return NULL;
 
   for(int y=0;y<p_tracer->GetImageHeight();++y)
     for(int x=0;x<p_tracer->GetImageWidth();++x)
@@ -160,7 +160,7 @@ void* MyOutputFilter::operator()( void* item )
       }
 
     BitBlt(GetDC(g_hWnd), 0, 0, p_tracer->GetImageWidth(), p_tracer->GetImageHeight(), g_memDC, 0, 0, SRCCOPY);
-
+*/
   return NULL;
   }
 

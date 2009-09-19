@@ -34,6 +34,12 @@ public:
  void runTest() { suite_UtilTestSuite.test_Clamp1(); }
 } testDescription_UtilTestSuite_test_Clamp1;
 
+static class TestDescription_UtilTestSuite_test_Clamp2 : public CxxTest::RealTestDescription {
+public:
+ TestDescription_UtilTestSuite_test_Clamp2() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 45, "test_Clamp2" ) {}
+ void runTest() { suite_UtilTestSuite.test_Clamp2(); }
+} testDescription_UtilTestSuite_test_Clamp2;
+
 static class TestDescription_UtilTestSuite_test_Clamp3 : public CxxTest::RealTestDescription {
 public:
  TestDescription_UtilTestSuite_test_Clamp3() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 52, "test_Clamp3" ) {}
@@ -105,4 +111,10 @@ public:
  TestDescription_UtilTestSuite_test_CeilLog2_NotPowerOf2Case() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 111, "test_CeilLog2_NotPowerOf2Case" ) {}
  void runTest() { suite_UtilTestSuite.test_CeilLog2_NotPowerOf2Case(); }
 } testDescription_UtilTestSuite_test_CeilLog2_NotPowerOf2Case;
+
+static class TestDescription_UtilTestSuite_test_CoordinateSystem : public CxxTest::RealTestDescription {
+public:
+ TestDescription_UtilTestSuite_test_CoordinateSystem() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 116, "test_CoordinateSystem" ) {}
+ void runTest() { suite_UtilTestSuite.test_CoordinateSystem(); }
+} testDescription_UtilTestSuite_test_CoordinateSystem;
 

@@ -39,6 +39,8 @@ class PerspectiveCamera: public Camera
     double m_x_view_angle;
 
     double m_x_tan, m_y_tan;
+
+    size_t m_film_x_resolution, m_film_y_resolution;
   };
 
 #endif // PERSPECTIVE_CAMERA_H
