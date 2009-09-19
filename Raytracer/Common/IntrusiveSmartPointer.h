@@ -3,12 +3,13 @@
 
 #include "Assert.h"
 #include <boost/intrusive_ptr.hpp>
+#include <tbb/atomic.h>
 using boost::intrusive_ptr;
 
 /**
 * This is the base class for all classes that need to be references-counted by the intrusive smart pointer strategy.
 * The class has a single member field for the references counter.
-* Intrusive pointers from the boost library based on this class are NOT thread-safe.
+* Intrusive pointers from the boost library based on this class are thread-safe.
 */
 class ReferenceCounted
   {
@@ -26,7 +27,8 @@ class ReferenceCounted
     size_t DecRef();
 
   private:
-    size_t m_references;
+    tbb::atomic<size_t> m_references;
+    //size_t m_references;
 
     // Not implemented. All classes inheriting ReferenceCounted should only be passed by pointer or reference.
     ReferenceCounted(const ReferenceCounted &);
@@ -37,7 +39,7 @@ class ReferenceCounted
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 inline ReferenceCounted::ReferenceCounted():
-  m_references(0)
+  m_references()
   {
   }
 
