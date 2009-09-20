@@ -6,13 +6,14 @@
 #include "TriangleMesh.h"
 #include "Texture.h"
 #include "Material.h"
+#include "BSDF.h"
 
 /**
 * Encapsulates geometrical and material properties of an object.
 * The class is mostly used to map Material objects to the corresponding TriangleMesh objects.
 * The class also contains a bump map that is used to perturb the shading normals before evaluating the BSDF.
 */
-class Primitive: ReferenceCounted
+class Primitive: public ReferenceCounted
   {
   public:
     /**
@@ -42,6 +43,10 @@ class Primitive: ReferenceCounted
     Primitive(const Primitive&);
     Primitive &operator=(const Primitive&);
 
+    /**
+    * The helper private method that bump maps the shading normal based on the bump map texture.
+    * The method should only be called if mp_bump_map is not NULL.
+    */
     void _Bump(const DifferentialGeometry &i_dg, size_t i_triangle_index, DifferentialGeometry &o_bumped_dg) const;
 
   private:
@@ -60,12 +65,12 @@ mp_mesh(ip_mesh), mp_material(ip_material), mp_bump_map(ip_bump_map)
   ASSERT(ip_material);
   }
 
-intrusive_ptr<TriangleMesh> Primitive::GetTriangleMesh() const
+inline intrusive_ptr<TriangleMesh> Primitive::GetTriangleMesh() const
   {
   return mp_mesh;
   }
 
-intrusive_ptr<Material> Primitive::GetMaterial() const
+inline intrusive_ptr<Material> Primitive::GetMaterial() const
   {
   return mp_material;
   }

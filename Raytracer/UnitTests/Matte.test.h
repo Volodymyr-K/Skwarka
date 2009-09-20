@@ -29,10 +29,9 @@ class MatteTestSuite : public CxxTest::TestSuite
 
       TS_ASSERT(p_bsdf != NULL);
       TS_ASSERT_EQUALS(p_bsdf->GetComponentsNum(), 1);
+
       Spectrum_d val = p_bsdf->Evaluate(Vector3D_d(0.0,0.0,1.0), Vector3D_d(0.0,0.0,1.0));
-      TS_ASSERT_DELTA(val[0], 1.0*INV_PI, (1e-6));
-      TS_ASSERT_DELTA(val[1], 0.5*INV_PI, (1e-6));
-      TS_ASSERT_DELTA(val[2], 0.1*INV_PI, (1e-6));
+      CustomAssertDelta(val, Spectrum_d(1.0,0.5,0.1)*INV_PI, (1e-6));
       }
 
     // Tests for the case when sigma is not zero, the returned value should match OrenNayar BxDF.
@@ -54,9 +53,7 @@ class MatteTestSuite : public CxxTest::TestSuite
       Spectrum_d val = p_bsdf->Evaluate(Vector3D_d(0.0,0.0,1.0), Vector3D_d(0.0,0.0,1.0));
       Spectrum_d val2 = OrenNayar(Spectrum_d(1.0,0.5,0.1), 0.1).Evaluate(Vector3D_d(0.0,0.0,1.0), Vector3D_d(0.0,0.0,1.0));
 
-      TS_ASSERT_DELTA(val[0], val2[0], (1e-6));
-      TS_ASSERT_DELTA(val[1], val2[1], (1e-6));
-      TS_ASSERT_DELTA(val[2], val2[2], (1e-6));
+      CustomAssertDelta(val, val2, (1e-6));
       }
   };
 

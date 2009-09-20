@@ -66,7 +66,7 @@ public:
 
 static class TestDescription_BSDFTestSuite_test_BSDF_TotalScattering2 : public CxxTest::RealTestDescription {
 public:
- TestDescription_BSDFTestSuite_test_BSDF_TotalScattering2() : CxxTest::RealTestDescription( Tests_BSDFTestSuite, suiteDescription_BSDFTestSuite, 203, "test_BSDF_TotalScattering2" ) {}
+ TestDescription_BSDFTestSuite_test_BSDF_TotalScattering2() : CxxTest::RealTestDescription( Tests_BSDFTestSuite, suiteDescription_BSDFTestSuite, 201, "test_BSDF_TotalScattering2" ) {}
  void runTest() { suite_BSDFTestSuite.test_BSDF_TotalScattering2(); }
 } testDescription_BSDFTestSuite_test_BSDF_TotalScattering2;
 

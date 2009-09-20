@@ -50,9 +50,10 @@ class Vector3D
 
     /**
     * Normalizes the vector.
-    * If the vector has zero length it is not normalized.
+    * If the vector has zero length it is not changed.
+    * @return true if the vector was normalized and false if it had zero length.
     */
-    void Normalize();
+    bool Normalize();
 
     /**
     * Returns a normalized vector.
@@ -239,11 +240,16 @@ T Vector3D<T>::LengthSqr() const
   }
 
 template<typename T>
-void Vector3D<T>::Normalize()
+bool Vector3D<T>::Normalize()
   {
-  T length = Length();
-  if(length > 0.0)
-    (*this)/=length;
+  T length_sqr = LengthSqr();
+  if(length_sqr > 0.0)
+    {
+    (*this)/=std::sqrt(length_sqr);
+    return true;
+    }
+  else
+    return false;
   }
 
 template<typename T>

@@ -84,9 +84,7 @@ class BxDFTestSuite : public CxxTest::TestSuite
       Spectrum_d total=bxdf->TotalScattering(Vector3D_d(0.5,0.5,0.5).Normalized(), SamplesSequence2D(samples.begin(), samples.end()));
 
       TS_ASSERT(total[0]<=1.0 && total[1]<=1.0 && total[2]<=1.0);
-      TS_ASSERT_DELTA(total[0], 1.0, 0.03);
-      TS_ASSERT_DELTA(total[1], 1.0, 0.03);
-      TS_ASSERT_DELTA(total[2], 1.0, 0.03);
+      CustomAssertDelta(total, Spectrum_d(1.0,1.0,1.0), 0.03);
       }
 
     void test_BxDF_TotalScattering2()
@@ -100,9 +98,7 @@ class BxDFTestSuite : public CxxTest::TestSuite
       Spectrum_d total=bxdf->TotalScattering(SamplesSequence2D(samples.begin(), samples.end()));
 
       TS_ASSERT(total[0]<=1.0 && total[1]<=1.0 && total[2]<=1.0);
-      TS_ASSERT_DELTA(total[0], 1.0, 0.03);
-      TS_ASSERT_DELTA(total[1], 1.0, 0.03);
-      TS_ASSERT_DELTA(total[2], 1.0, 0.03);
+      CustomAssertDelta(total, Spectrum_d(1.0,1.0,1.0), 0.03);
       }
   };
 

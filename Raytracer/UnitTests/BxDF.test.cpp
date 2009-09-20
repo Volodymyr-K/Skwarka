@@ -49,7 +49,7 @@ public:
 
 static class TestDescription_BxDFTestSuite_test_BxDF_TotalScattering2 : public CxxTest::RealTestDescription {
 public:
- TestDescription_BxDFTestSuite_test_BxDF_TotalScattering2() : CxxTest::RealTestDescription( Tests_BxDFTestSuite, suiteDescription_BxDFTestSuite, 92, "test_BxDF_TotalScattering2" ) {}
+ TestDescription_BxDFTestSuite_test_BxDF_TotalScattering2() : CxxTest::RealTestDescription( Tests_BxDFTestSuite, suiteDescription_BxDFTestSuite, 90, "test_BxDF_TotalScattering2" ) {}
  void runTest() { suite_BxDFTestSuite.test_BxDF_TotalScattering2(); }
 } testDescription_BxDFTestSuite_test_BxDF_TotalScattering2;
 

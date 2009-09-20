@@ -71,9 +71,7 @@ class InteractiveFilmTestSuite : public CxxTest::TestSuite
       float alpha_res;
       TS_ASSERT( mp_film->GetPixel(test_point, spectrum_res, alpha_res, false) );
 
-      TS_ASSERT_DELTA(spectrum_res[0], spectrum_acc[0], (1e-6));
-      TS_ASSERT_DELTA(spectrum_res[1], spectrum_acc[1], (1e-6));
-      TS_ASSERT_DELTA(spectrum_res[2], spectrum_acc[2], (1e-6));
+      CustomAssertDelta(spectrum_res, spectrum_acc, (1e-6f));
       TS_ASSERT_DELTA(alpha_res, alpha_acc, (1e-6));
       }
 

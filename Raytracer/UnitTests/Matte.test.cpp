@@ -24,7 +24,7 @@ public:
 
 static class TestDescription_MatteTestSuite_test_Matte_EvaluateNotZeroSigma : public CxxTest::RealTestDescription {
 public:
- TestDescription_MatteTestSuite_test_Matte_EvaluateNotZeroSigma() : CxxTest::RealTestDescription( Tests_MatteTestSuite, suiteDescription_MatteTestSuite, 39, "test_Matte_EvaluateNotZeroSigma" ) {}
+ TestDescription_MatteTestSuite_test_Matte_EvaluateNotZeroSigma() : CxxTest::RealTestDescription( Tests_MatteTestSuite, suiteDescription_MatteTestSuite, 38, "test_Matte_EvaluateNotZeroSigma" ) {}
  void runTest() { suite_MatteTestSuite.test_Matte_EvaluateNotZeroSigma(); }
 } testDescription_MatteTestSuite_test_Matte_EvaluateNotZeroSigma;
 

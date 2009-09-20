@@ -118,10 +118,10 @@ class TriangleMeshTestSuite : public CxxTest::TestSuite
       // Test that the shading normal is the same as the geometric one, since we turned shading normals off.
       CustomAssertDelta(dg.m_shading_normal, Convert<double>(p_mesh->GetTriangleNormal(0)), (1e-6));
 
-      TS_ASSERT_EQUALS(dg.m_dn_du, Vector3D_d());
-      TS_ASSERT_EQUALS(dg.m_dn_dv, Vector3D_d());
-      TS_ASSERT_EQUALS(dg.m_dp_dx, Vector3D_d());
-      TS_ASSERT_EQUALS(dg.m_dp_dy, Vector3D_d());
+      TS_ASSERT_EQUALS(dg.m_normal_dx, dg.m_geometric_normal);
+      TS_ASSERT_EQUALS(dg.m_normal_dy, dg.m_geometric_normal);
+      TS_ASSERT_EQUALS(dg.m_point_dx, dg.m_point);
+      TS_ASSERT_EQUALS(dg.m_point_dy, dg.m_point);
       TS_ASSERT_EQUALS(dg.m_duv_dx, Vector2D_d());
       TS_ASSERT_EQUALS(dg.m_duv_dy, Vector2D_d());
       }
@@ -145,12 +145,10 @@ class TriangleMeshTestSuite : public CxxTest::TestSuite
       // Test that the shading normal lies in the same hemisphere as the geometric one.
       TS_ASSERT(dg.m_shading_normal*dg.m_geometric_normal > 0.0);
 
-      // Test that the normal derivatives are not nulls.
-      TS_ASSERT(dg.m_dn_du.Length() > 0.0);
-      TS_ASSERT(dg.m_dn_dv.Length() > 0.0);
-
-      TS_ASSERT_EQUALS(dg.m_dp_dx, Vector3D_d());
-      TS_ASSERT_EQUALS(dg.m_dp_dy, Vector3D_d());
+      TS_ASSERT_EQUALS(dg.m_normal_dx, dg.m_shading_normal);
+      TS_ASSERT_EQUALS(dg.m_normal_dy, dg.m_shading_normal);
+      TS_ASSERT_EQUALS(dg.m_point_dx, dg.m_point);
+      TS_ASSERT_EQUALS(dg.m_point_dy, dg.m_point);
       TS_ASSERT_EQUALS(dg.m_duv_dx, Vector2D_d());
       TS_ASSERT_EQUALS(dg.m_duv_dy, Vector2D_d());
       }
@@ -177,12 +175,16 @@ class TriangleMeshTestSuite : public CxxTest::TestSuite
       DifferentialGeometry dg;
       p_mesh->ComputeDifferentialGeometry(0,ray,dg);
 
-      CustomAssertDelta(dg.m_dp_dx, Vector3D_d(0.05,0.05,0.0), (1e-10));
-      CustomAssertDelta(dg.m_dp_dy, Vector3D_d(-0.05,-0.05,0.0), (1e-10));
+      CustomAssertDelta(dg.m_point_dx, Point3D_d(0.15,0.25,-1.0/3.0), (1e-6));
+      CustomAssertDelta(dg.m_point_dy, Point3D_d(0.05,0.15,-1.0/3.0), (1e-6));
 
       // Test that the UV derivatives are not nulls.
       TS_ASSERT(dg.m_duv_dx.Length() > 0.0);
       TS_ASSERT(dg.m_duv_dy.Length() > 0.0);
+
+      // Test dx and dy shading normals.
+      TS_ASSERT(dg.m_normal_dx != dg.m_shading_normal);
+      TS_ASSERT(dg.m_normal_dy != dg.m_shading_normal);
       }
 
     // Tests shading normal by evaluating DifferentialGeometry at a triangle's vertex.

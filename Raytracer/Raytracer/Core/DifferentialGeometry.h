@@ -6,7 +6,8 @@
 
 /**
 * The structure holds the data describing the local object's geometry at a surface point.
-* The data includes the 3D point, normal direction, UV coordinates and various first derivatives.
+* The data includes the 3D point, normal direction and UV coordinates and derivatives.
+* The structure also holds the surface points and shading normals corresponding to the next X and Y screen-space coordinates.
 */
 struct DifferentialGeometry
   {
@@ -21,7 +22,7 @@ struct DifferentialGeometry
   Vector3D_d m_geometric_normal;
 
   /**
-  * A shading normal of a surface. This is a normal that is used for shading and can (slightly) differ from the geometric normal.
+  * Shading normal of a surface. This is a normal that is used for shading and can (slightly) differ from the geometric normal.
   */
   Vector3D_d m_shading_normal;
 
@@ -31,24 +32,24 @@ struct DifferentialGeometry
   Point2D_d m_uv;
 
   /**
-  * First derivative of shading normal at U coordinate.
+  * Surface point corresponding to the next X screen-space coordinate.
   */
-  Vector3D_d m_dn_du;
+  Point3D_d m_point_dx;
 
   /**
-  * First derivative of shading normal at V coordinate.
+  * Surface point corresponding to the next Y screen-space coordinate.
   */
-  Vector3D_d m_dn_dv;
+  Point3D_d m_point_dy;
 
   /**
-  * First derivative of point at U screen-space X coordinate.
+  * Shading normal at a surface point corresponding to the next X screen-space coordinate.
   */
-  Vector3D_d m_dp_dx;
-  
+  Vector3D_d m_normal_dx;
+
   /**
-  * First derivative of point at U screen-space Y coordinate.
+  * Shading normal at a surface point corresponding to the next Y screen-space coordinate.
   */
-  Vector3D_d m_dp_dy;
+  Vector3D_d m_normal_dy;
 
   /**
   * First derivative of UV coordinates at U screen-space X coordinate.

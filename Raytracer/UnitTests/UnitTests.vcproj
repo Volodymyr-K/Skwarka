@@ -332,6 +332,10 @@
 						>
 					</File>
 					<File
+						RelativePath=".\Primitive.test.h"
+						>
+					</File>
+					<File
 						RelativePath=".\Sample.test.h"
 						>
 					</File>
@@ -527,6 +531,10 @@
 			</File>
 			<File
 				RelativePath=".\Point3D.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Primitive.test.cpp"
 				>
 			</File>
 			<File

@@ -151,7 +151,7 @@ class Vector2DTestSuite : public CxxTest::TestSuite
     void test_Vector2D_Normalize()
       {
       Vector2D_d v1(1.0,2.0);
-      v1.Normalize();
+      TS_ASSERT(v1.Normalize());
 
       double length=sqrt(5.0);
       TS_ASSERT_EQUALS(v1, Vector2D_d(1.0/length,2.0/length));
@@ -160,10 +160,10 @@ class Vector2DTestSuite : public CxxTest::TestSuite
     void test_Vector2D_NormalizeZeroVector()
       {
       Vector2D_d v1(0.0,0.0);
-      Vector2D_d normalized = v1.Normalized();
+      TS_ASSERT(v1.Normalize()==false);
 
       // Vector should not be divided by zero when normalizing.
-      TS_ASSERT_EQUALS(normalized, Vector2D_d(0.0,0.0));
+      TS_ASSERT_EQUALS(v1, Vector2D_d(0.0,0.0));
       }
 
     void test_Vector2D_Normalized()

@@ -124,7 +124,6 @@ void CustomAssertDelta(const Point2D<T> &i_point1, const Point2D<T> &i_point2, T
   TS_ASSERT_DELTA(i_point1[1],i_point2[1],i_delta);
   }
 
-
 template<typename T>
 void CustomAssertDelta(const Vector3D<T> &i_vector1, const Vector3D<T> &i_vector2, T i_delta)
   {
@@ -138,6 +137,14 @@ void CustomAssertDelta(const Vector2D<T> &i_vector1, const Vector2D<T> &i_vector
   {
   TS_ASSERT_DELTA(i_vector1[0],i_vector2[0],i_delta);
   TS_ASSERT_DELTA(i_vector1[1],i_vector2[1],i_delta);
+  }
+
+template<typename T>
+void CustomAssertDelta(const Spectrum<T> &i_spectrum1, const Spectrum<T> &i_spectrum2, T i_delta)
+  {
+  TS_ASSERT_DELTA(i_spectrum1[0],i_spectrum2[0],i_delta);
+  TS_ASSERT_DELTA(i_spectrum1[1],i_spectrum2[1],i_delta);
+  TS_ASSERT_DELTA(i_spectrum1[2],i_spectrum2[2],i_delta);
   }
 
 #endif // CUSTOM_VALUE_TRAITS_H

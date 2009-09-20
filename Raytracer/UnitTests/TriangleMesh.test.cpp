@@ -67,13 +67,13 @@ public:
 
 static class TestDescription_TriangleMeshTestSuite_test_TriangleMesh_DifferentialGeometry3 : public CxxTest::RealTestDescription {
 public:
- TestDescription_TriangleMeshTestSuite_test_TriangleMesh_DifferentialGeometry3() : CxxTest::RealTestDescription( Tests_TriangleMeshTestSuite, suiteDescription_TriangleMeshTestSuite, 159, "test_TriangleMesh_DifferentialGeometry3" ) {}
+ TestDescription_TriangleMeshTestSuite_test_TriangleMesh_DifferentialGeometry3() : CxxTest::RealTestDescription( Tests_TriangleMeshTestSuite, suiteDescription_TriangleMeshTestSuite, 157, "test_TriangleMesh_DifferentialGeometry3" ) {}
  void runTest() { suite_TriangleMeshTestSuite.test_TriangleMesh_DifferentialGeometry3(); }
 } testDescription_TriangleMeshTestSuite_test_TriangleMesh_DifferentialGeometry3;
 
 static class TestDescription_TriangleMeshTestSuite_test_TriangleMesh_ShadingNormal : public CxxTest::RealTestDescription {
 public:
- TestDescription_TriangleMeshTestSuite_test_TriangleMesh_ShadingNormal() : CxxTest::RealTestDescription( Tests_TriangleMeshTestSuite, suiteDescription_TriangleMeshTestSuite, 189, "test_TriangleMesh_ShadingNormal" ) {}
+ TestDescription_TriangleMeshTestSuite_test_TriangleMesh_ShadingNormal() : CxxTest::RealTestDescription( Tests_TriangleMeshTestSuite, suiteDescription_TriangleMeshTestSuite, 191, "test_TriangleMesh_ShadingNormal" ) {}
  void runTest() { suite_TriangleMeshTestSuite.test_TriangleMesh_ShadingNormal(); }
 } testDescription_TriangleMeshTestSuite_test_TriangleMesh_ShadingNormal;
 

@@ -354,40 +354,20 @@ void TriangleMesh::ComputeDifferentialGeometry(size_t i_triangle_index, const Ra
 
   o_dg.m_geometric_normal=Convert<double>(m_triangle_normals[i_triangle_index]);
 
-  // Compute shading normal and derivatives.
+  // Get shading normals at the vertices.
+  Vector3D_d vertex_normals[3] = {
+    Convert<double>(m_shading_normals[triangle.m_vertices[0]]),
+    Convert<double>(m_shading_normals[triangle.m_vertices[1]]),
+    Convert<double>(m_shading_normals[triangle.m_vertices[2]])};
+
+  // Compute shading normal.
   if (m_use_shading_normals)
     {
-    Vector3D_d vertex_normals[3] = {
-      Convert<double>(m_shading_normals[triangle.m_vertices[0]]),
-      Convert<double>(m_shading_normals[triangle.m_vertices[1]]),
-      Convert<double>(m_shading_normals[triangle.m_vertices[2]])};
-
-      o_dg.m_shading_normal=b0*vertex_normals[0]+b1*vertex_normals[1]+b2*vertex_normals[2];
-      o_dg.m_shading_normal.Normalize();
-
-      // Compute deltas for triangle partial derivatives.
-      double du1 = uv[1][0] - uv[0][0];
-      double du2 = uv[2][0] - uv[0][0];
-      double dv1 = uv[1][1] - uv[0][1];
-      double dv2 = uv[2][1] - uv[0][1];
-      double determinant = du1 * dv2 - dv1 * du2;
-      if (determinant == 0.0)
-        {
-        o_dg.m_dn_du = Vector3D_d();
-        o_dg.m_dn_dv = Vector3D_d();
-        }
-      else
-        {
-        double invdet = 1.0 / determinant;
-        o_dg.m_dn_du = ( dv2 * (vertex_normals[1] - vertex_normals[0]) - dv1 * (vertex_normals[2] - vertex_normals[0])) * invdet;
-        o_dg.m_dn_dv = (-du2 * (vertex_normals[1] - vertex_normals[0]) + du1 * (vertex_normals[2] - vertex_normals[0])) * invdet;
-        }
+    o_dg.m_shading_normal=b0*vertex_normals[0]+b1*vertex_normals[1]+b2*vertex_normals[2];
+    o_dg.m_shading_normal.Normalize();
     }
   else
-    {
     o_dg.m_shading_normal=o_dg.m_geometric_normal;
-    o_dg.m_dn_du=o_dg.m_dn_dv=Vector3D_d();
-    }
 
   // Compute screen-space differentials.
   double b0_x,b1_x,b2_x,t_x;
@@ -397,18 +377,29 @@ void TriangleMesh::ComputeDifferentialGeometry(size_t i_triangle_index, const Ra
     _ComputeIntersectionPoint(triangle, i_ray.m_origin_dy, i_ray.m_direction_dy, b1_y, b2_y, t_y))
     {
     b0_x = 1.0 - b1_x - b2_x;
-    o_dg.m_dp_dx=Vector3D_d(i_ray.m_origin_dx+i_ray.m_direction_dx*t_x-o_dg.m_point);
+    o_dg.m_point_dx=i_ray.m_origin_dx+i_ray.m_direction_dx*t_x;
     o_dg.m_duv_dx=Vector2D_d(b0_x*uv[0] + b1_x*uv[1] + b2_x*uv[2] - o_dg.m_uv);
 
     b0_y = 1.0 - b1_y - b2_y;
-    o_dg.m_dp_dy=Vector3D_d(i_ray.m_origin_dy+i_ray.m_direction_dy*t_y-o_dg.m_point);
+    o_dg.m_point_dy=i_ray.m_origin_dy+i_ray.m_direction_dy*t_y;
     o_dg.m_duv_dy=Vector2D_d(b0_y*uv[0] + b1_y*uv[1] + b2_y*uv[2] - o_dg.m_uv);
+
+    if (m_use_shading_normals)
+      {
+      o_dg.m_normal_dx=b0_x*vertex_normals[0]+b1_x*vertex_normals[1]+b2_x*vertex_normals[2];
+      o_dg.m_normal_dy=b0_y*vertex_normals[0]+b1_y*vertex_normals[1]+b2_y*vertex_normals[2];
+      o_dg.m_normal_dx.Normalize();
+      o_dg.m_normal_dy.Normalize();
+      }
+    else 
+      o_dg.m_normal_dx = o_dg.m_normal_dy = o_dg.m_geometric_normal;
     }
   else
     {
     o_dg.m_duv_dx = Vector2D_d();
     o_dg.m_duv_dy = Vector2D_d();
-    o_dg.m_dp_dx = o_dg.m_dp_dy = Vector3D_d();
+    o_dg.m_point_dx = o_dg.m_point_dy = o_dg.m_point;
+    o_dg.m_normal_dx = o_dg.m_normal_dy= o_dg.m_shading_normal;
     }
   }
 
@@ -420,9 +411,9 @@ void TriangleMesh::_GetUVs(const MeshTriangle &i_triangle, Point2D_d o_uv[3]) co
   {
   if (m_uv_parameterization.empty()) 
     {
-    o_uv[0] = Point2D_d(0.f, 0.f);
-    o_uv[1] = Point2D_d(1.f, 0.f);
-    o_uv[2] = Point2D_d(0.f, 1.f);
+    o_uv[0] = Point2D_d(0.0, 0.0);
+    o_uv[1] = Point2D_d(1.0, 0.0);
+    o_uv[2] = Point2D_d(0.0, 1.0);
     }
   else
     {
