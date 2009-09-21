@@ -54,7 +54,9 @@ Transform MakeRotationZ(const double &i_angle)
 
 Transform MakeRotation(const double &i_angle, Vector3D_d i_axis)
   {
-  i_axis.Normalize();
+  bool can_be_normalized=i_axis.Normalize();
+  ASSERT(can_be_normalized);
+
   double s = sin(i_angle);
   double c = cos(i_angle);
   double m[4][4];

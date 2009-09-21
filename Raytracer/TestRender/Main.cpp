@@ -107,7 +107,7 @@ void glut_display() {
     Point3D_d v2 = Convert<double>(p_mesh->GetVertex(triangle.m_vertices[1]));
     Point3D_d v3 = Convert<double>(p_mesh->GetVertex(triangle.m_vertices[2]));
 
-    Vector3D_d n = Convert<double>(p_mesh->GetTriangleNormal(i));
+    Vector3D_d n = Convert<double>((Vector3D_d(v2-v1)^Vector3D_d(v3-v1)).Normalized());
 
     glNormal3f(n[0],n[1],n[2]);
     glVertex3f(v1[0], v1[1], v1[2]);

@@ -20,7 +20,7 @@ class Primitive: public ReferenceCounted
     * Creates Primitive instance with the specified TriangleMesh, Material and bump map.
     * ip_bump_map parameter can be NULL; in that case the bump mapping is not used.
     */
-    Primitive(intrusive_ptr<TriangleMesh> ip_mesh, intrusive_ptr<Material> ip_material, intrusive_ptr<Texture<double> > ip_bump_map);
+    Primitive(intrusive_ptr<TriangleMesh> ip_mesh, intrusive_ptr<Material> ip_material, intrusive_ptr<Texture<double> > ip_bump_map = NULL);
 
     intrusive_ptr<TriangleMesh> GetTriangleMesh() const;
 

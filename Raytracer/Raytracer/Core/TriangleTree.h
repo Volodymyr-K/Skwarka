@@ -10,15 +10,10 @@ It is also not covered by the unit tests yet.
 #include <Common/Common.h>
 #include <Math/Geometry.h>
 #include "TriangleMesh.h"
+#include "Primitive.h"
+#include "Intersection.h"
 #include <boost\pool\object_pool.hpp>
 #include <vector>
-
-struct IntersectResult
-  {
-  bool m_intersection_found;
-  intrusive_ptr<TriangleMesh> mp_mesh;
-  size_t m_triangle_index;
-  };
 
 class TriangleTree
   {
@@ -34,7 +29,7 @@ class TriangleTree
     ~TriangleTree();
 
     // Call this method to set the container (Wrapper). This method destroys the tree if has already been constructed for some another Wrapper.
-    void AddTriangleMesh(intrusive_ptr<TriangleMesh> ip_triangle_mesh);
+    void AddPrimitive(intrusive_ptr<Primitive> ip_primitive);
 
     /*
     Build the tree.
@@ -46,7 +41,7 @@ class TriangleTree
     ////////////////////////////////////////////////////// QUERIES  /////////////////////////////////////////////////////////
 
     // Search for the triangle nearest to the i_point along the i_direction.
-    IntersectResult Intersect(const Ray &i_ray) const;
+    Intersection Intersect(const RayDifferential &i_ray) const;
 
     bool IntersectTest(const Ray &i_ray) const;
 
@@ -64,10 +59,10 @@ class TriangleTree
   private:
     // Internal list of triangles.
     std::vector<Triangle3D_f> m_triangles;
-    std::vector<size_t> m_mesh_indices;
+    std::vector<size_t> m_primitive_indices;
     std::vector<size_t> m_triangle_indices;
 
-    std::vector<intrusive_ptr<TriangleMesh> > m_meshes;
+    std::vector<intrusive_ptr<Primitive> > m_primitives;
 
     // The root node of the tree.
     BaseNode *mp_root;

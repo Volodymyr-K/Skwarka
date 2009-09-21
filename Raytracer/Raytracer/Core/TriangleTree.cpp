@@ -12,18 +12,18 @@ TriangleTree::~TriangleTree()
   _DestroyTree();
   }
 
-void TriangleTree::AddTriangleMesh(intrusive_ptr<TriangleMesh> ip_triangle_mesh)
+void TriangleTree::AddPrimitive(intrusive_ptr<Primitive> ip_primitive)
   {
-  ASSERT(ip_triangle_mesh!=NULL);
+  ASSERT(ip_primitive!=NULL);
 
-  for(size_t i=0;i<m_meshes.size();++i)
-    if (m_meshes[i]==ip_triangle_mesh)
+  for(size_t i=0;i<m_primitives.size();++i)
+    if (m_primitives[i]->GetTriangleMesh()==ip_primitive->GetTriangleMesh())
       {
       Log::Warning("The same mesh added twice to the triangle tree. Skipping.");
       return;
       }
 
-  m_meshes.push_back(ip_triangle_mesh);
+  m_primitives.push_back(ip_primitive);
   }
 
 /*
@@ -41,8 +41,8 @@ void TriangleTree::BuildTree()
     }
 
   size_t number_of_triangles=0;
-  for(size_t i=0;i<m_meshes.size();++i)
-    number_of_triangles+=m_meshes[i]->GetNumberOfTriangles();
+  for(size_t i=0;i<m_primitives.size();++i)
+    number_of_triangles+=m_primitives[i]->GetTriangleMesh()->GetNumberOfTriangles();
 
   if (number_of_triangles==0)
     {
@@ -51,23 +51,26 @@ void TriangleTree::BuildTree()
     }
 
   m_triangles.resize(number_of_triangles);
-  m_mesh_indices.resize(number_of_triangles);
+  m_primitive_indices.resize(number_of_triangles);
   m_triangle_indices.resize(number_of_triangles);
 
   size_t index = 0;
-  for(size_t i=0;i<m_meshes.size();++i)
-    for(size_t j=0;j<m_meshes[i]->GetNumberOfTriangles();++j)
+  for(size_t i=0;i<m_primitives.size();++i)
+    {
+    intrusive_ptr<TriangleMesh> p_mesh=m_primitives[i]->GetTriangleMesh();
+    for(size_t j=0;j<p_mesh->GetNumberOfTriangles();++j)
       {
-      MeshTriangle triangle = m_meshes[i]->GetTriangle(j);
+      MeshTriangle triangle = p_mesh->GetTriangle(j);
       m_triangles[index]=Triangle3D_f(
-        m_meshes[i]->GetVertex(triangle.m_vertices[0]),
-        m_meshes[i]->GetVertex(triangle.m_vertices[1]),
-        m_meshes[i]->GetVertex(triangle.m_vertices[2]));
+        p_mesh->GetVertex(triangle.m_vertices[0]),
+        p_mesh->GetVertex(triangle.m_vertices[1]),
+        p_mesh->GetVertex(triangle.m_vertices[2]));
 
-      m_mesh_indices[index]=i;
+      m_primitive_indices[index]=i;
       m_triangle_indices[index]=j;
       ++index;
       }
+    }
 
   /*
   Create the root node of the tree.
@@ -126,7 +129,7 @@ void TriangleTree::_SwapTriangles(size_t i_index1, size_t i_index2)
   ASSERT(i_index2<m_triangles.size());
 
   std::swap(m_triangles[i_index1], m_triangles[i_index2]);
-  std::swap(m_mesh_indices[i_index1], m_mesh_indices[i_index2]);
+  std::swap(m_primitive_indices[i_index1], m_primitive_indices[i_index2]);
   std::swap(m_triangle_indices[i_index1], m_triangle_indices[i_index2]);
   }
 
@@ -134,22 +137,24 @@ void TriangleTree::_SwapTriangles(size_t i_index1, size_t i_index2)
 Search for the triangle nearest to the i_point along the i_direction.
 */
 
-IntersectResult TriangleTree::Intersect(const Ray &i_ray) const
+Intersection TriangleTree::Intersect(const RayDifferential &i_ray) const
   {
   ASSERT(mp_root && "Intersect operation is called for not built tree.");
 
-  IntersectResult ret;
-  ret.m_intersection_found=false;
+  Intersection ret;
+  ret.m_intersection_exists=false;
 
-  Ray ray(i_ray);
+  Ray ray(i_ray.m_base_ray);
   size_t triangle_index = mp_root->m_end;
   mp_root->Intersect(ray, triangle_index);
   if (triangle_index != mp_root->m_end)
     {
-    ret.m_intersection_found=true;
-    ret.mp_mesh = m_meshes[m_mesh_indices[triangle_index]];
+    ret.m_intersection_exists=true;
+    ret.mp_primitive = m_primitives[m_primitive_indices[triangle_index]];
     ret.m_triangle_index = m_triangle_indices[triangle_index];
+    ret.mp_primitive->GetTriangleMesh()->ComputeDifferentialGeometry(ret.m_triangle_index, i_ray,ret.m_dg);
     }
+
   return ret;
   }
 

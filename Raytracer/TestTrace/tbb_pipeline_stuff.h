@@ -7,7 +7,13 @@
 #include <Raytracer/Core/TriangleTree.h>
 #include <Raytracer/Core/Sample.h>
 #include <Raytracer/Core/Sampler.h>
+#include <Raytracer/Core/Primitive.h>
+#include <Raytracer/Core/Intersection.h>
+#include <Common/MemoryPool.h>
+#include <Raytracer/Core/BSDF.h>
 #include "tbb/pipeline.h"
+#include <Raytracer/MicrofacetDistributions/BlinnDistribution.h>
+#include <Raytracer/BxDFs/Microfacet.h>
 
 class TestTracer;
 
@@ -16,6 +22,7 @@ struct SampleChunk
   intrusive_ptr<Sample> mp_sample;
   Spectrum_f m_spectrum;
   float m_alfa;
+  MemoryPool pool;
 
   size_t chunk_index;
   };
@@ -82,36 +89,47 @@ MyTransformFilter::MyTransformFilter(Camera *ip_camera, TriangleTree *ip_tree): 
   {
   SampleChunk &chunk = *static_cast<SampleChunk*>(item);
 
-  Ray ray;
+  Ray ray,rx,ry;
   mp_camera->GenerateRay(chunk.mp_sample->GetImagePoint(), chunk.mp_sample->GetLensUV(), ray);
+  mp_camera->GenerateRay(chunk.mp_sample->GetImagePoint()+Point2D_d(1,0), chunk.mp_sample->GetLensUV(), rx);
+  mp_camera->GenerateRay(chunk.mp_sample->GetImagePoint()+Point2D_d(0,1), chunk.mp_sample->GetLensUV(), ry);
 
-  DifferentialGeometry dg;
-  IntersectResult result = mp_tree->Intersect(ray);
+  RayDifferential rd;
+  rd.m_has_differentials=true;
+  rd.m_base_ray=ray;
+  rd.m_origin_dx=rx.m_origin;
+  rd.m_origin_dy=ry.m_origin;
+  rd.m_direction_dx=rx.m_direction;
+  rd.m_direction_dy=ry.m_direction;
 
-  bool hit;
-  if (result.m_intersection_found==false)
-    hit=false;
-  else
+  Intersection isect = mp_tree->Intersect(rd);
+
+  if (isect.m_intersection_exists==false)
     {
-    RayDifferential rd;
-    rd.m_base_ray=ray;
-    result.mp_mesh->ComputeDifferentialGeometry(result.m_triangle_index,rd,dg);
-    hit=true;
-    }
-
-  if (hit==false)
-    {
-    chunk.m_spectrum=Spectrum_f(255.f, 0.f, 0.f);
+    chunk.m_spectrum=Spectrum_f(0.f, 0.f, 255.f);
     chunk.m_alfa=0.f;
     }
   else
     { 
-    Vector3D_d direction = Vector3D_d(0,-0.5,-1).Normalized();
-    float color = (float)fabs(-(dg.m_shading_normal*direction));
-    chunk.m_spectrum=Spectrum_f(color*255.f, color*255.f, color*255.f);
+    BSDF *p_bsdf=isect.mp_primitive->GetBSDF(isect.m_dg, isect.m_triangle_index, chunk.pool);
+
+    //BSDF *p_bsdf = new ( chunk.pool.Alloc(sizeof(BSDF)) ) BSDF(isect.m_dg);
+
+    BlinnDistribution blinn(10.0);
+    BxDF *p_bxdf = new ( chunk.pool.Alloc(sizeof(Microfacet<BlinnDistribution>)) ) Microfacet<BlinnDistribution>(
+      Spectrum_d(1.0,233.0/255.0,0.0)*0.7, blinn, 0.37, 2.82);
+
+    p_bsdf->AddBxDF(p_bxdf);
+
+    Vector3D_d view_direction = Vector3D_d(0,-0.5,-1).Normalized();
+    Vector3D_d light_direction = Vector3D_d(0,-0.2,-1).Normalized();
+    Spectrum_d color = p_bsdf->Evaluate(light_direction,view_direction)* (p_bsdf->GetShadingNormal()*light_direction)*(-3.0);
+    //color.Clamp(0.0,DBL_INF);
+    chunk.m_spectrum=Spectrum_f(color[0]*255.f, color[1]*255.f, color[2]*255.f);
     chunk.m_alfa=1.f;
     }
 
+  chunk.pool.FreeAll();
   return &chunk;
   }
 

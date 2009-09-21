@@ -180,6 +180,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\Core\Fresnel.h"
+					>
+				</File>
+				<File
 					RelativePath=".\Core\Intersection.h"
 					>
 				</File>
@@ -334,6 +338,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\BxDFs\Microfacet.h"
+					>
+				</File>
+				<File
 					RelativePath=".\BxDFs\OrenNayar.h"
 					>
 				</File>
@@ -429,6 +437,22 @@
 					RelativePath=".\Samplers\UniformImagePixelsOrder.cpp"
 					>
 				</File>
+			</Filter>
+		</Filter>
+		<Filter
+			Name="MicrofacetDistributions"
+			>
+			<Filter
+				Name="Header Files"
+				>
+				<File
+					RelativePath=".\MicrofacetDistributions\BlinnDistribution.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Source Files"
+				>
 			</Filter>
 		</Filter>
 	</Files>

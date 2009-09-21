@@ -1,5 +1,6 @@
 #include "TriangleMesh.h"
 #include <queue>
+#include <algorithm>
 
 //////////////// ConnectivityData  ////////////////
 
@@ -76,7 +77,7 @@ void TriangleMesh::ConnectivityData::GetIncidentTriangles(size_t i_vertex_index1
     }
   }
 
-//////////////// MeshTriangle ////////////////
+////////////////// MeshTriangle //////////////////
 
 MeshTriangle::MeshTriangle()
   {
@@ -89,22 +90,57 @@ MeshTriangle::MeshTriangle(size_t i_v1, size_t i_v2, size_t i_v3)
   m_vertices[2]=i_v3;
   }
 
+/////////////// IllegalTrianglesPredicate ////////////////
+
+/**
+* This is a helper predicate class that is used for removing triangles with of-bounds vertex indices.
+*/
+class TriangleMesh::IllegalTrianglePredicate
+  {
+  public:
+    IllegalTrianglePredicate(size_t i_number_of_vertices);
+
+    bool operator()(const MeshTriangle &i_triangle) const;
+  private:
+    size_t m_number_of_vertices;
+  };
+
+TriangleMesh::IllegalTrianglePredicate::IllegalTrianglePredicate(size_t i_number_of_vertices):
+  m_number_of_vertices(i_number_of_vertices)
+  {
+  }
+
+bool TriangleMesh::IllegalTrianglePredicate::operator()(const MeshTriangle &i_triangle) const
+  {
+  return
+    i_triangle.m_vertices[0] >= m_number_of_vertices ||
+    i_triangle.m_vertices[1] >= m_number_of_vertices ||
+    i_triangle.m_vertices[2] >= m_number_of_vertices;
+  }
+
+/////////////// TriangleMesh ////////////////
+
 TriangleMesh::TriangleMesh(const std::vector<Point3D_f> &i_vertices, const std::vector<MeshTriangle> &i_triangles, bool i_use_shading_normals):
 m_vertices(i_vertices.begin(),i_vertices.end()),
 m_triangles(i_triangles.begin(), i_triangles.end()),
 m_use_shading_normals(i_use_shading_normals)
   {
-  // Compute and cache triangle normals.
-  m_triangle_normals.reserve(m_triangles.size());
+  bool invalid_triangles_exist=false;
   for(size_t i=0;i<m_triangles.size();++i)
     {
     const MeshTriangle &triangle = m_triangles[i];
     if (triangle.m_vertices[0] >= m_vertices.size() || triangle.m_vertices[1] >= m_vertices.size() || triangle.m_vertices[2] >= m_vertices.size())
-      ASSERT(0 && "TriangleMesh has out of-bounds vertex index.");
+      {
+      ASSERT(0 && "TriangleMesh has out of-bounds vertex index. Skipping such triangles.");
+      invalid_triangles_exist=true;
+      }
+    }
 
-    Vector3D_f normal = Vector3D_f(m_vertices[triangle.m_vertices[1]]-m_vertices[triangle.m_vertices[0]]) ^ Vector3D_f(m_vertices[triangle.m_vertices[2]]-m_vertices[triangle.m_vertices[0]]);
-    normal.Normalize();
-    m_triangle_normals.push_back(normal);
+  if (invalid_triangles_exist)
+    {
+    IllegalTrianglePredicate pred(m_vertices.size());
+    std::vector<MeshTriangle>::iterator it=std::remove_if(m_triangles.begin(), m_triangles.end(), pred);
+    m_triangles.erase(it,m_triangles.end());
     }
 
   // We don't store the connectivity info as a data member because it is takes a lot of memory and is not used once the mesh is constructed.
@@ -159,17 +195,17 @@ void TriangleMesh::_ComputeShadingNormals(const ConnectivityData &i_connectivity
 
   for (size_t i=0;i<m_vertices.size();++i)
     {
-    Vector3D_f normal;
+    Vector3D_d normal;
 
     size_t number_of_incident_triangles = i_connectivity.GetNumberOfIncidentTriangles(i);
     for (size_t j=0;j<number_of_incident_triangles;++j)
       {
       size_t triangle_index = i_connectivity.GetIncidentTriangleIndex(i,j);
       MeshTriangle triangle = GetTriangle(triangle_index);
-      Point3D_f vertices[3] = {
-        GetVertex(triangle.m_vertices[0]),
-        GetVertex(triangle.m_vertices[1]),
-        GetVertex(triangle.m_vertices[2])};
+      Point3D_d vertices[3] = {
+        Convert<double>(GetVertex(triangle.m_vertices[0])),
+        Convert<double>(GetVertex(triangle.m_vertices[1])),
+        Convert<double>(GetVertex(triangle.m_vertices[2]))};
 
       // Find the index of the i-th vertex inside this triangle.
       char index = -1;
@@ -179,19 +215,12 @@ void TriangleMesh::_ComputeShadingNormals(const ConnectivityData &i_connectivity
 
       ASSERT(index != -1);
 
-      Vector3D_f edge1 = Vector3D_f(vertices[(index+1)%3]-vertices[index]);
-      Vector3D_f edge2 = Vector3D_f(vertices[(index+2)%3]-vertices[index]);
-
-      float weight;
-      float sin_value = (edge1.Normalized()^edge2.Normalized()).Length();
-      if(sin_value>1.0)
-        weight = (float)M_PI_2;
-      else
-        weight = asinf( (edge1.Normalized()^edge2.Normalized()).Length() );
-      normal += GetTriangleNormal(triangle_index)*weight;
+      Vector3D_d edge1 = Vector3D_d(vertices[(index+1)%3]-vertices[index]);
+      Vector3D_d edge2 = Vector3D_d(vertices[(index+2)%3]-vertices[index]);
+      normal += edge1 ^ edge2;
       }
 
-    m_shading_normals[i]=normal.Normalized();
+    m_shading_normals[i]=Convert<float>(normal.Normalized());
     }
   }
 
@@ -302,16 +331,13 @@ bool TriangleMesh::_ConsistentlyOriented(size_t i_triangle_index1, size_t i_tria
 * @param[out] o_b1 A barycentric coordinate of the intersection point corresponding to the 1th vertex of the specified triangle (0-based).
 * @param[out] o_b2 A barycentric coordinate of the intersection point corresponding to the 2nd vertex of the specified triangle (0-based).
 * @param[out] o_t The ray parameter for the intersection point.
-* @return true if the ray intersects the triangle's plane and false if it is parrallel to it.
+* @return true if the ray intersects the triangle's plane and false if it is parallel to it.
 */
-bool TriangleMesh::_ComputeIntersectionPoint(const MeshTriangle &i_triangle, const Point3D_d &i_origin, const Vector3D_d &i_direction, double &o_b1, double &o_b2, double &o_t) const
+bool TriangleMesh::_ComputeIntersectionPoint(const Point3D_d i_vertices[3], const Point3D_d &i_origin, const Vector3D_d &i_direction, double &o_b1, double &o_b2, double &o_t) const
   {
-  const Point3D_d &v0 = Convert<double>(GetVertex(i_triangle.m_vertices[0]));
-  const Point3D_d &v1 = Convert<double>(GetVertex(i_triangle.m_vertices[1]));
-  const Point3D_d &v2 = Convert<double>(GetVertex(i_triangle.m_vertices[2]));
+  Vector3D_d e1 = Vector3D_d(i_vertices[1] - i_vertices[0]);
+  Vector3D_d e2 = Vector3D_d(i_vertices[2] - i_vertices[0]);
 
-  Vector3D_d e1 = Vector3D_d(v1 - v0);
-  Vector3D_d e2 = Vector3D_d(v2 - v0);
   Vector3D_d s1 = i_direction^e2;
   double divisor = s1*e1;
   if(divisor == 0.0)
@@ -320,7 +346,7 @@ bool TriangleMesh::_ComputeIntersectionPoint(const MeshTriangle &i_triangle, con
   double invDivisor = 1.0 / divisor;
 
   // Compute first barycentric coordinate.
-  Vector3D_d d = Vector3D_d(i_origin - v0);
+  Vector3D_d d = Vector3D_d(i_origin - i_vertices[0]);
   o_b1 = (d*s1) * invDivisor;
 
   // Compute second barycentric coordinate.
@@ -336,8 +362,13 @@ void TriangleMesh::ComputeDifferentialGeometry(size_t i_triangle_index, const Ra
   {
   const MeshTriangle &triangle = GetTriangle(i_triangle_index);
 
+  Point3D_d vertices[3] = {
+    Convert<double>(m_vertices[triangle.m_vertices[0]]),
+    Convert<double>(m_vertices[triangle.m_vertices[1]]),
+    Convert<double>(m_vertices[triangle.m_vertices[2]])};
+
   double b0,b1,b2,t;
-  if (_ComputeIntersectionPoint(triangle, i_ray.m_base_ray.m_origin, i_ray.m_base_ray.m_direction, b1, b2, t)==false)
+  if (_ComputeIntersectionPoint(vertices, i_ray.m_base_ray.m_origin, i_ray.m_base_ray.m_direction, b1, b2, t)==false)
     ASSERT(0 && "The ray does not intersect the specified triangle of the mesh.");
 
   ASSERT(b1 > -DBL_EPS && b1 < 1.0+DBL_EPS);
@@ -352,7 +383,8 @@ void TriangleMesh::ComputeDifferentialGeometry(size_t i_triangle_index, const Ra
   b0 = 1.0 - b1 - b2;
   o_dg.m_uv=b0*uv[0] + b1*uv[1] + b2*uv[2];
 
-  o_dg.m_geometric_normal=Convert<double>(m_triangle_normals[i_triangle_index]);
+  o_dg.m_geometric_normal=Vector3D_d(vertices[1]-vertices[0])^Vector3D_d(vertices[2]-vertices[0]);
+  o_dg.m_geometric_normal.Normalize();
 
   // Get shading normals at the vertices.
   Vector3D_d vertex_normals[3] = {
@@ -373,8 +405,8 @@ void TriangleMesh::ComputeDifferentialGeometry(size_t i_triangle_index, const Ra
   double b0_x,b1_x,b2_x,t_x;
   double b0_y,b1_y,b2_y,t_y;
   if (i_ray.m_has_differentials &&
-    _ComputeIntersectionPoint(triangle, i_ray.m_origin_dx, i_ray.m_direction_dx, b1_x, b2_x, t_x) &&
-    _ComputeIntersectionPoint(triangle, i_ray.m_origin_dy, i_ray.m_direction_dy, b1_y, b2_y, t_y))
+    _ComputeIntersectionPoint(vertices, i_ray.m_origin_dx, i_ray.m_direction_dx, b1_x, b2_x, t_x) &&
+    _ComputeIntersectionPoint(vertices, i_ray.m_origin_dy, i_ray.m_direction_dy, b1_y, b2_y, t_y))
     {
     b0_x = 1.0 - b1_x - b2_x;
     o_dg.m_point_dx=i_ray.m_origin_dx+i_ray.m_direction_dx*t_x;

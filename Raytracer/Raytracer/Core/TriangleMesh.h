@@ -74,11 +74,14 @@ class TriangleMesh: public ReferenceCounted
     void SetUseShadingNormals(bool i_use_shading_normals);
 
     size_t GetNumberOfVertices() const;
+
     size_t GetNumberOfTriangles() const;
 
     const Point3D_f &GetVertex(size_t i_vertex_index) const;
+
     const MeshTriangle &GetTriangle(size_t i_triangle_index) const;
-    const Vector3D_f &GetTriangleNormal(size_t i_triangle_index) const;
+
+    Vector3D_f GetTriangleNormal(size_t i_triangle_index) const;
 
     /**
     * Populates the DifferentialGeometry assuming that the specified ray intersects the specified triangle.
@@ -88,8 +91,9 @@ class TriangleMesh: public ReferenceCounted
     TopologyInfo GetTopologyInfo() const;
 
   private:
-    // Internal type.
+    // Internal types.
     struct ConnectivityData;
+    class IllegalTrianglePredicate;
 
   private:
     // Not implemented, TriangleMesh should only be passed by a reference to avoid large data copying.
@@ -102,14 +106,13 @@ class TriangleMesh: public ReferenceCounted
     bool _ConsistentlyOriented(size_t i_triangle_index1, size_t i_triangle_index2) const;
 
     void _GetUVs(const MeshTriangle &i_triangle, Point2D_d o_uv[3]) const;
-    bool _ComputeIntersectionPoint(const MeshTriangle &i_triangle, const Point3D_d &i_origin, const Vector3D_d &i_direction, double &o_b1, double &o_b2, double &o_t) const;
+    bool _ComputeIntersectionPoint(const Point3D_d i_vertices[3], const Point3D_d &i_origin, const Vector3D_d &i_direction, double &o_b1, double &o_b2, double &o_t) const;
 
     void _BuildConnectivityData(ConnectivityData &o_connectivity);
 
   private:
     std::vector<Point3D_f> m_vertices;
     std::vector<MeshTriangle> m_triangles;
-    std::vector<Vector3D_f> m_triangle_normals;
     std::vector<Vector3D_f> m_shading_normals;
     std::vector<Point2D_f> m_uv_parameterization;
 
@@ -143,10 +146,16 @@ inline const MeshTriangle &TriangleMesh::GetTriangle(size_t i_triangle_index) co
   return m_triangles[i_triangle_index];
   }
 
-inline const Vector3D_f &TriangleMesh::GetTriangleNormal(size_t i_triangle_index) const
+inline Vector3D_f TriangleMesh::GetTriangleNormal(size_t i_triangle_index) const
   {
   ASSERT(i_triangle_index < m_triangles.size());
-  return m_triangle_normals[i_triangle_index];
+  MeshTriangle triangle = m_triangles[i_triangle_index];
+  Point3D_f vertices[3] = {
+    m_vertices[triangle.m_vertices[0]],
+    m_vertices[triangle.m_vertices[1]],
+    m_vertices[triangle.m_vertices[2]]};
+
+  return (Vector3D_f(vertices[1]-vertices[0])^Vector3D_f(vertices[2]-vertices[0])).Normalized();
   }
 
 inline TopologyInfo TriangleMesh::GetTopologyInfo() const

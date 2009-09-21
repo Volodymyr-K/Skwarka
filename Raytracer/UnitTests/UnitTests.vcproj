@@ -332,6 +332,10 @@
 						>
 					</File>
 					<File
+						RelativePath=".\Fresnel.test.h"
+						>
+					</File>
+					<File
 						RelativePath=".\Primitive.test.h"
 						>
 					</File>
@@ -487,6 +491,10 @@
 			</File>
 			<File
 				RelativePath=".\FilmFilter.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Fresnel.test.cpp"
 				>
 			</File>
 			<File

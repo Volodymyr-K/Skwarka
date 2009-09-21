@@ -23,9 +23,9 @@ public:
  void runTest() { suite_PrimitiveTestSuite.test_Primitive_Constr(); }
 } testDescription_PrimitiveTestSuite_test_Primitive_Constr;
 
-static class TestDescription_PrimitiveTestSuite_test_Primitive_GetBSDF : public CxxTest::RealTestDescription {
+static class TestDescription_PrimitiveTestSuite_test_Primitive_BumpMap1 : public CxxTest::RealTestDescription {
 public:
- TestDescription_PrimitiveTestSuite_test_Primitive_GetBSDF() : CxxTest::RealTestDescription( Tests_PrimitiveTestSuite, suiteDescription_PrimitiveTestSuite, 30, "test_Primitive_GetBSDF" ) {}
- void runTest() { suite_PrimitiveTestSuite.test_Primitive_GetBSDF(); }
-} testDescription_PrimitiveTestSuite_test_Primitive_GetBSDF;
+ TestDescription_PrimitiveTestSuite_test_Primitive_BumpMap1() : CxxTest::RealTestDescription( Tests_PrimitiveTestSuite, suiteDescription_PrimitiveTestSuite, 30, "test_Primitive_BumpMap1" ) {}
+ void runTest() { suite_PrimitiveTestSuite.test_Primitive_BumpMap1(); }
+} testDescription_PrimitiveTestSuite_test_Primitive_BumpMap1;
 

@@ -28,6 +28,8 @@
 #include <Raytracer/Samplers/ConsecutiveImagePixelsOrder.h>
 #include <Raytracer/Films/ImageFilm.h>
 #include <Raytracer/Films/InteractiveFilm.h>
+#include <Raytracer/Materials/Matte.h>
+#include <Raytracer/Textures/ConstantTexture.h>
 
 class TestTracer
   {
@@ -65,12 +67,11 @@ int pixel_counter=0;
 
 inline void TestTracer::LoadMesh()
   {
-    intrusive_ptr<ImagePixelsOrder> pixel_order(new UniformImagePixelsOrder);
   /*
   Sphere s;
   s.SetParameter("Center","0 0 0");
   s.SetParameter("Radius","0.4");
-  s.SetParameter("Subdivisions","-3");
+  s.SetParameter("Subdivisions","5");
   mp_mesh = s.BuildMesh();
 */
 
@@ -124,10 +125,16 @@ inline void TestTracer::LoadMesh()
     }
   fclose(fp);
 
-  mp_mesh = intrusive_ptr<TriangleMesh>( new TriangleMesh(vertices, triangles, false) );
+  mp_mesh = intrusive_ptr<TriangleMesh>( new TriangleMesh(vertices, triangles, true) );
+
+  intrusive_ptr<Texture<Spectrum_d> > p_reflectance(new ConstantTexture<Spectrum_d> (Spectrum_d(1.0,233.0/255.0,0.0)*0.3));
+  intrusive_ptr<Texture<double> > p_sigma(new ConstantTexture<double> (0.15));
+  intrusive_ptr<Material> p_material(new Matte(p_reflectance, p_sigma));
+
+  intrusive_ptr<Primitive> p_primitive(new Primitive(mp_mesh, p_material));
 
   mp_tree = new TriangleTree();
-  mp_tree->AddTriangleMesh(mp_mesh);
+  mp_tree->AddPrimitive(p_primitive);
   mp_tree->BuildTree();
   }
 
@@ -168,13 +175,16 @@ inline void TestTracer::RenderImage(HWND &g_hWnd, HDC &g_memDC)
   film->GetSamplingExtent(window_begin, window_end);
 
   Vector3D_d direction = Vector3D_d(0,-0.5,-1).Normalized();
-  Camera *cam =  new PerspectiveCamera( MakeLookAt(Point3D_d(0.0,0.25,0.17)+direction*0.08,direction,Vector3D_d(0,1,0)), intrusive_ptr<Film>(film), 0.005, 0.087, 1.3);
+  Camera *cam =  new PerspectiveCamera( MakeLookAt(Point3D_d(0.0,0.26,0.17)+direction*0.08,direction,Vector3D_d(0,1,0)), intrusive_ptr<Film>(film), 0.000, 0.087, 1.3);
+
+  //Vector3D_d direction = Vector3D_d(0,0,-1).Normalized();
+  //Camera *cam =  new PerspectiveCamera( MakeLookAt(Point3D_d(0.0,0.0,0.7),direction,Vector3D_d(0,1,0)), intrusive_ptr<Film>(film), 0.000, 0.087, 1.3);
 
   //Sampler *sampler = new RandomSampler(Point2D_i(0,0),Point2D_i(GetImageWidth(), GetImageHeight()),10);
 
   intrusive_ptr<ImagePixelsOrder> pixel_order(new UniformImagePixelsOrder);
 
-  Sampler *sampler = new StratifiedSampler(window_begin, window_end, 3, 3, pixel_order, true);
+  Sampler *sampler = new StratifiedSampler(window_begin, window_end, 2, 2, pixel_order, true);
   //sampler->AddSamplesSequence2D(100);
 
   tbb::task_scheduler_init init( 2 );
@@ -213,9 +223,9 @@ inline void TestTracer::RenderImage(HWND &g_hWnd, HDC &g_memDC)
 
       unsigned int pixel_index = (y*GetImageWidth()+x)*4;
       Byte* pixel = m_image;
-      pixel[pixel_index+0] = Byte(std::min(sp[0],255.f));
+      pixel[pixel_index+2] = Byte(std::min(sp[0],255.f));
       pixel[pixel_index+1] = Byte(std::min(sp[1],255.f));
-      pixel[pixel_index+2] = Byte(std::min(sp[2],255.f));
+      pixel[pixel_index+0] = Byte(std::min(sp[2],255.f));
       }
 
   BitBlt(GetDC(g_hWnd), 0, 0, GetImageWidth(), GetImageHeight(), g_memDC, 0, 0, SRCCOPY);

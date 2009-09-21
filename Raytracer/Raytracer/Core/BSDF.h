@@ -34,6 +34,11 @@ class BSDF
     BSDF(const DifferentialGeometry &i_dg, double i_refractive_index=1.0);
 
     /**
+    * Returns shading normal at the surface point.
+    */
+    Vector3D_d GetShadingNormal() const;
+
+    /**
     * Returns refractive index of the object.
     */
     double GetRefractiveIndex() const;
@@ -148,6 +153,11 @@ m_normal(i_dg.m_shading_normal), m_geometric_normal(i_dg.m_geometric_normal), m_
   {
   ASSERT(i_refractive_index>0.0);
   MathRoutines::CoordinateSystem(i_dg.m_shading_normal, m_e1, m_e2);
+  }
+
+inline Vector3D_d BSDF::GetShadingNormal() const
+  {
+  return m_normal;
   }
 
 inline double BSDF::GetRefractiveIndex() const
