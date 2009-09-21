@@ -13,10 +13,12 @@ class FresnelTestSuite : public CxxTest::TestSuite
     // Tests that the method always returns values in [0;1] range.
     void test_Fresnel_DielectricRange()
       {
+      FresnelDielectric fresnel(1.5,1.0);
+
       bool range_valid=true;
       for(double theta=0.0;theta<=M_PI;theta+=0.01)
         {
-        double R = FresnelDielectricReflectance(1.5, 1.0, cos(theta));
+        double R = fresnel(cos(theta));
         if (R<0.0 || R>1.0)
           range_valid=false;
         }
@@ -27,8 +29,10 @@ class FresnelTestSuite : public CxxTest::TestSuite
     // Tests for the total internal reflection case.
     void test_Fresnel_DielectricTotalInternalReflection()
       {
+      FresnelDielectric fresnel(1.5,1.0);
+
       double theta=M_PI_2+0.1;
-      double R = FresnelDielectricReflectance(1.5, 1.0, cos(theta));
+      double R = fresnel(cos(theta));
 
       TS_ASSERT_EQUALS(R, 1.0);
       }
@@ -36,11 +40,13 @@ class FresnelTestSuite : public CxxTest::TestSuite
     // Tests that the method always returns values in [0;1] range.
     void test_Fresnel_ConductorRange()
       {
+      // These settings are for gold.
+      FresnelConductor fresnel(0.37, 2.82);
+
       bool range_valid=true;
       for(double theta=0.0;theta<=M_PI_2;theta+=0.01)
         {
-        // These settings are for gold.
-        double R = FresnelConductorReflectance(0.37, 2.82, cos(theta));
+        double R = fresnel(cos(theta));
         if (R<0.0 || R>1.0)
           range_valid=false;
         }

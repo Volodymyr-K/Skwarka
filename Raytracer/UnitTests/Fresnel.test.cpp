@@ -24,13 +24,13 @@ public:
 
 static class TestDescription_FresnelTestSuite_test_Fresnel_DielectricTotalInternalReflection : public CxxTest::RealTestDescription {
 public:
- TestDescription_FresnelTestSuite_test_Fresnel_DielectricTotalInternalReflection() : CxxTest::RealTestDescription( Tests_FresnelTestSuite, suiteDescription_FresnelTestSuite, 28, "test_Fresnel_DielectricTotalInternalReflection" ) {}
+ TestDescription_FresnelTestSuite_test_Fresnel_DielectricTotalInternalReflection() : CxxTest::RealTestDescription( Tests_FresnelTestSuite, suiteDescription_FresnelTestSuite, 30, "test_Fresnel_DielectricTotalInternalReflection" ) {}
  void runTest() { suite_FresnelTestSuite.test_Fresnel_DielectricTotalInternalReflection(); }
 } testDescription_FresnelTestSuite_test_Fresnel_DielectricTotalInternalReflection;
 
 static class TestDescription_FresnelTestSuite_test_Fresnel_ConductorRange : public CxxTest::RealTestDescription {
 public:
- TestDescription_FresnelTestSuite_test_Fresnel_ConductorRange() : CxxTest::RealTestDescription( Tests_FresnelTestSuite, suiteDescription_FresnelTestSuite, 37, "test_Fresnel_ConductorRange" ) {}
+ TestDescription_FresnelTestSuite_test_Fresnel_ConductorRange() : CxxTest::RealTestDescription( Tests_FresnelTestSuite, suiteDescription_FresnelTestSuite, 41, "test_Fresnel_ConductorRange" ) {}
  void runTest() { suite_FresnelTestSuite.test_Fresnel_ConductorRange(); }
 } testDescription_FresnelTestSuite_test_Fresnel_ConductorRange;
 
