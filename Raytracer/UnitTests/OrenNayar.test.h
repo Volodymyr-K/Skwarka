@@ -80,7 +80,6 @@ class OrenNayarTestSuite : public CxxTest::TestSuite
       TS_ASSERT(equal);
       }
 
-    // Just tests the range, could not came up with a more intelligent test...
     void test_OrenNayar_TotalScattering1()
       {
       shared_ptr<BxDF> bxdf = shared_ptr<BxDF>( new OrenNayar(Spectrum_d(0.9),0.1) );
@@ -93,7 +92,6 @@ class OrenNayarTestSuite : public CxxTest::TestSuite
       CustomAssertDelta(total, Spectrum_d(0.8974), (1e-3)); // This is an empirical value.
       }
 
-    // Just tests the range, could not came up with a more intelligent test...
     void test_OrenNayar_TotalScattering2()
       {
       shared_ptr<BxDF> bxdf = shared_ptr<BxDF>( new OrenNayar(Spectrum_d(0.9),0.1) );

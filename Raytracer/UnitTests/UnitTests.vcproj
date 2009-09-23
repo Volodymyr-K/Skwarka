@@ -419,6 +419,10 @@
 						RelativePath=".\OrenNayar.test.h"
 						>
 					</File>
+					<File
+						RelativePath=".\SpecularReflection.test.h"
+						>
+					</File>
 				</Filter>
 				<Filter
 					Name="Textures"
@@ -595,6 +599,10 @@
 			</File>
 			<File
 				RelativePath=".\Spectrum.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\SpecularReflection.test.cpp"
 				>
 			</File>
 			<File

@@ -5,6 +5,7 @@
 #include <Math/Constants.h>
 #include <Math/Util.h>
 #include <Math/Geometry.h>
+#include <cmath>
 
 /**
 * The Blinn microfacet normal distribution implementation.

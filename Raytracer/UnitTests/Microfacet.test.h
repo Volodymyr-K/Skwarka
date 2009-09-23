@@ -114,7 +114,6 @@ class MicrofacetTestSuite : public CxxTest::TestSuite
       TS_ASSERT_DELTA(sum, 1.0, 0.06);
       }
 
-    // Just tests the range, could not came up with a more intelligent test...
     void test_Microfacet_TotalScattering1()
       {
       size_t num_samples=20000;
@@ -125,7 +124,6 @@ class MicrofacetTestSuite : public CxxTest::TestSuite
       CustomAssertDelta(total, Spectrum_d(0.7551), 0.005); // This is an empirical value.
       }
 
-    // Just tests the range, could not came up with a more intelligent test...
     void test_Microfacet_TotalScattering2()
       {
       size_t num_samples=100000;

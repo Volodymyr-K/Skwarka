@@ -43,13 +43,13 @@ public:
 
 static class TestDescription_OrenNayarTestSuite_test_OrenNayar_TotalScattering1 : public CxxTest::RealTestDescription {
 public:
- TestDescription_OrenNayarTestSuite_test_OrenNayar_TotalScattering1() : CxxTest::RealTestDescription( Tests_OrenNayarTestSuite, suiteDescription_OrenNayarTestSuite, 84, "test_OrenNayar_TotalScattering1" ) {}
+ TestDescription_OrenNayarTestSuite_test_OrenNayar_TotalScattering1() : CxxTest::RealTestDescription( Tests_OrenNayarTestSuite, suiteDescription_OrenNayarTestSuite, 83, "test_OrenNayar_TotalScattering1" ) {}
  void runTest() { suite_OrenNayarTestSuite.test_OrenNayar_TotalScattering1(); }
 } testDescription_OrenNayarTestSuite_test_OrenNayar_TotalScattering1;
 
 static class TestDescription_OrenNayarTestSuite_test_OrenNayar_TotalScattering2 : public CxxTest::RealTestDescription {
 public:
- TestDescription_OrenNayarTestSuite_test_OrenNayar_TotalScattering2() : CxxTest::RealTestDescription( Tests_OrenNayarTestSuite, suiteDescription_OrenNayarTestSuite, 97, "test_OrenNayar_TotalScattering2" ) {}
+ TestDescription_OrenNayarTestSuite_test_OrenNayar_TotalScattering2() : CxxTest::RealTestDescription( Tests_OrenNayarTestSuite, suiteDescription_OrenNayarTestSuite, 95, "test_OrenNayar_TotalScattering2" ) {}
  void runTest() { suite_OrenNayarTestSuite.test_OrenNayar_TotalScattering2(); }
 } testDescription_OrenNayarTestSuite_test_OrenNayar_TotalScattering2;
 

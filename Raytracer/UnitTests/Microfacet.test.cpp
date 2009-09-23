@@ -49,13 +49,13 @@ public:
 
 static class TestDescription_MicrofacetTestSuite_test_Microfacet_TotalScattering1 : public CxxTest::RealTestDescription {
 public:
- TestDescription_MicrofacetTestSuite_test_Microfacet_TotalScattering1() : CxxTest::RealTestDescription( Tests_MicrofacetTestSuite, suiteDescription_MicrofacetTestSuite, 118, "test_Microfacet_TotalScattering1" ) {}
+ TestDescription_MicrofacetTestSuite_test_Microfacet_TotalScattering1() : CxxTest::RealTestDescription( Tests_MicrofacetTestSuite, suiteDescription_MicrofacetTestSuite, 117, "test_Microfacet_TotalScattering1" ) {}
  void runTest() { suite_MicrofacetTestSuite.test_Microfacet_TotalScattering1(); }
 } testDescription_MicrofacetTestSuite_test_Microfacet_TotalScattering1;
 
 static class TestDescription_MicrofacetTestSuite_test_Microfacet_TotalScattering2 : public CxxTest::RealTestDescription {
 public:
- TestDescription_MicrofacetTestSuite_test_Microfacet_TotalScattering2() : CxxTest::RealTestDescription( Tests_MicrofacetTestSuite, suiteDescription_MicrofacetTestSuite, 129, "test_Microfacet_TotalScattering2" ) {}
+ TestDescription_MicrofacetTestSuite_test_Microfacet_TotalScattering2() : CxxTest::RealTestDescription( Tests_MicrofacetTestSuite, suiteDescription_MicrofacetTestSuite, 127, "test_Microfacet_TotalScattering2" ) {}
  void runTest() { suite_MicrofacetTestSuite.test_Microfacet_TotalScattering2(); }
 } testDescription_MicrofacetTestSuite_test_Microfacet_TotalScattering2;
 

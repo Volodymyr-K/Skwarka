@@ -26,6 +26,7 @@ class FresnelDielectric
     * @param i_cos_theta Cosine of the angle between the surface normal and the incident direction.
     * If the light is coming from the outer medium into the object the value should be positive.
     * If the light is coming from within the object into the medium the value should be negative.
+    * @return Reflected light fraction. Will be in [0;1] range.
     */
     double operator()(double i_cos_theta) const;
 
@@ -50,6 +51,7 @@ class FresnelConductor
     * Returns the fraction of the incoming light that is reflected by a conductor surface.
     * Conductors do not transmit light.
     * @param i_cos_theta Cosine of the angle between the surface normal and the incident direction. Should be positive.
+    * @return Reflected light fraction. Will be in [0;1] range.
     */
     double operator()(double i_cos_theta) const;
 

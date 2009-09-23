@@ -345,6 +345,10 @@
 					RelativePath=".\BxDFs\OrenNayar.h"
 					>
 				</File>
+				<File
+					RelativePath=".\BxDFs\SpecularReflection.h"
+					>
+				</File>
 			</Filter>
 			<Filter
 				Name="Source Files"

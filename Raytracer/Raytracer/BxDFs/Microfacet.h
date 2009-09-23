@@ -8,7 +8,7 @@
 * Glossy reflective BxDF implementation that follows the Torrance-Sparrow model for rough surfaces.
 * The model takes into account complex physical phenomena such as masking, shadowing and interreflections between points on the surface facets.
 * The two template parameters are:
-*   - Fresnel implementation that is used to get the facet reflectance. Should define "double operator(double) const".
+*   - Fresnel implementation that is used to get the facet reflectance. Should define "double operator(double) const" method.
 *   - Microfacet distribution implementation that defines the distribution of the facets normals.
 */
 template<typename Fresnel, typename MicrofacetDistribution>
