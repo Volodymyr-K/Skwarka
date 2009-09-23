@@ -13,7 +13,7 @@
 class LambertianTestSuite : public CxxTest::TestSuite
   {
   public:
-    void test_Lambertian_Constr()
+    void test_Lambertian_Type()
       {
       shared_ptr<BxDF> bxdf = shared_ptr<BxDF>( new Lambertian(Spectrum_d(1.0)) );
 

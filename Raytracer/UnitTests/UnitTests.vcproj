@@ -412,6 +412,10 @@
 						>
 					</File>
 					<File
+						RelativePath=".\Microfacet.test.h"
+						>
+					</File>
+					<File
 						RelativePath=".\OrenNayar.test.h"
 						>
 					</File>
@@ -429,6 +433,14 @@
 					>
 					<File
 						RelativePath=".\Matte.test.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="MicrofacetDistributions"
+					>
+					<File
+						RelativePath=".\BlinnDistribution.test.h"
 						>
 					</File>
 				</Filter>
@@ -459,6 +471,10 @@
 			>
 			<File
 				RelativePath=".\BBox3D.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\BlinnDistribution.test.cpp"
 				>
 			</File>
 			<File
@@ -523,6 +539,10 @@
 			</File>
 			<File
 				RelativePath=".\MemoryPool.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Microfacet.test.cpp"
 				>
 			</File>
 			<File

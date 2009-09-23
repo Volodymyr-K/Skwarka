@@ -31,27 +31,6 @@ class BxDFTestSuite : public CxxTest::TestSuite
       TS_ASSERT(bxdf.MatchesFlags(BxDFType(BSDF_TRANSMISSION | BSDF_SPECULAR))==false);
       }
 
-    void test_BxDF_Sample()
-      {
-      shared_ptr<BxDF> bxdf = shared_ptr<BxDF>( new BxDFMock(BxDFType(BSDF_TRANSMISSION | BSDF_DIFFUSE)) );
-      size_t num_samples=1000;
-
-      bool correct_hemisphere=true;
-      for(size_t i=0;i<num_samples;++i)
-        {
-        Point2D_d sample(RandomDouble(1.0),RandomDouble(1.0));
-
-        double pdf;
-        Vector3D_d exitant;
-        Spectrum_d sp = bxdf->Sample(Vector3D_d(0.5,0.5,0.5).Normalized(), exitant, sample, pdf);
-      
-        if (exitant[2]>0.0)
-          correct_hemisphere=false;
-        }
-
-      TS_ASSERT(correct_hemisphere);
-      }
-
     void test_BxDF_PDF()
       {
       shared_ptr<BxDF> bxdf = shared_ptr<BxDF>( new BxDFMock(BxDFType(BSDF_TRANSMISSION | BSDF_DIFFUSE)) );

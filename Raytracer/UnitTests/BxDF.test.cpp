@@ -29,27 +29,21 @@ public:
  void runTest() { suite_BxDFTestSuite.test_BxDF_MathcesFlags(); }
 } testDescription_BxDFTestSuite_test_BxDF_MathcesFlags;
 
-static class TestDescription_BxDFTestSuite_test_BxDF_Sample : public CxxTest::RealTestDescription {
-public:
- TestDescription_BxDFTestSuite_test_BxDF_Sample() : CxxTest::RealTestDescription( Tests_BxDFTestSuite, suiteDescription_BxDFTestSuite, 34, "test_BxDF_Sample" ) {}
- void runTest() { suite_BxDFTestSuite.test_BxDF_Sample(); }
-} testDescription_BxDFTestSuite_test_BxDF_Sample;
-
 static class TestDescription_BxDFTestSuite_test_BxDF_PDF : public CxxTest::RealTestDescription {
 public:
- TestDescription_BxDFTestSuite_test_BxDF_PDF() : CxxTest::RealTestDescription( Tests_BxDFTestSuite, suiteDescription_BxDFTestSuite, 55, "test_BxDF_PDF" ) {}
+ TestDescription_BxDFTestSuite_test_BxDF_PDF() : CxxTest::RealTestDescription( Tests_BxDFTestSuite, suiteDescription_BxDFTestSuite, 34, "test_BxDF_PDF" ) {}
  void runTest() { suite_BxDFTestSuite.test_BxDF_PDF(); }
 } testDescription_BxDFTestSuite_test_BxDF_PDF;
 
 static class TestDescription_BxDFTestSuite_test_BxDF_TotalScattering1 : public CxxTest::RealTestDescription {
 public:
- TestDescription_BxDFTestSuite_test_BxDF_TotalScattering1() : CxxTest::RealTestDescription( Tests_BxDFTestSuite, suiteDescription_BxDFTestSuite, 76, "test_BxDF_TotalScattering1" ) {}
+ TestDescription_BxDFTestSuite_test_BxDF_TotalScattering1() : CxxTest::RealTestDescription( Tests_BxDFTestSuite, suiteDescription_BxDFTestSuite, 55, "test_BxDF_TotalScattering1" ) {}
  void runTest() { suite_BxDFTestSuite.test_BxDF_TotalScattering1(); }
 } testDescription_BxDFTestSuite_test_BxDF_TotalScattering1;
 
 static class TestDescription_BxDFTestSuite_test_BxDF_TotalScattering2 : public CxxTest::RealTestDescription {
 public:
- TestDescription_BxDFTestSuite_test_BxDF_TotalScattering2() : CxxTest::RealTestDescription( Tests_BxDFTestSuite, suiteDescription_BxDFTestSuite, 90, "test_BxDF_TotalScattering2" ) {}
+ TestDescription_BxDFTestSuite_test_BxDF_TotalScattering2() : CxxTest::RealTestDescription( Tests_BxDFTestSuite, suiteDescription_BxDFTestSuite, 69, "test_BxDF_TotalScattering2" ) {}
  void runTest() { suite_BxDFTestSuite.test_BxDF_TotalScattering2(); }
 } testDescription_BxDFTestSuite_test_BxDF_TotalScattering2;
 

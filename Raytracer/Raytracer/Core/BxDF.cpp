@@ -5,6 +5,8 @@
 
 Spectrum_d BxDF::Sample(const Vector3D_d &i_incident, Vector3D_d &o_exitant, const Point2D_d &i_sample, double &o_pdf) const
   {
+  ASSERT(i_sample[0]>=0.0 && i_sample[0]<=1.0);
+  ASSERT(i_sample[1]>=0.0 && i_sample[1]<=1.0);
   ASSERT(i_incident.IsNormalized());
   o_exitant=SamplingRoutines::CosineHemisphereSampling(i_sample);
 
@@ -38,8 +40,8 @@ Spectrum_d BxDF::TotalScattering(const Vector3D_d &i_incident, SamplesSequence2D
     double pdf_exitant=0.0;
     Vector3D_d exitant;
     Spectrum_d tmp = this->Sample(i_incident, exitant, sample, pdf_exitant);
-
     ASSERT(exitant.IsNormalized());
+    ASSERT(pdf_exitant >= 0.0);
 
     if (pdf_exitant > 0.0)
       ret.AddWeighted(tmp, fabs(exitant[2]) / pdf_exitant);
@@ -73,6 +75,7 @@ Spectrum_d BxDF::TotalScattering(SamplesSequence2D i_samples) const
     double pdf_exitant=0.0;
     Spectrum_d tmp = this->Sample(incident, exitant, sample_exitant, pdf_exitant);
     ASSERT(exitant.IsNormalized());
+    ASSERT(pdf_exitant >= 0.0);
 
     if (pdf_exitant > 0.0)
       ret.AddWeighted(tmp, fabs(incident[2]*exitant[2]) / (INV_2PI*pdf_exitant) );

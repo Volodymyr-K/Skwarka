@@ -223,14 +223,14 @@ namespace SamplingRoutines
     // Permute LHS samples in X dimension.
     for (size_t j = 0; j < i_samples_num; ++j)
       {
-      size_t other = RandomInt(i_samples_num);
+      size_t other = RandomInt((int)i_samples_num);
       std::swap( (*(i_begin+j)) [0], (*(i_begin+other)) [0] );
       }
 
     // Permute LHS samples in Y dimension.
     for (size_t j = 0; j < i_samples_num; ++j)
       {
-      size_t other = RandomInt(i_samples_num);
+      size_t other = RandomInt((int)i_samples_num);
       std::swap( (*(i_begin+j)) [1], (*(i_begin+other)) [1] );
       }
     }

@@ -74,7 +74,6 @@ inline void TestTracer::LoadMesh()
   s.SetParameter("Subdivisions","5");
   mp_mesh = s.BuildMesh();
 */
-
   std::vector<Point3D_f> vertices;
   std::vector<MeshTriangle> triangles;
   std::vector<float> uv_parameterization;
@@ -127,7 +126,7 @@ inline void TestTracer::LoadMesh()
 
   mp_mesh = intrusive_ptr<TriangleMesh>( new TriangleMesh(vertices, triangles, true) );
 
-  intrusive_ptr<Texture<Spectrum_d> > p_reflectance(new ConstantTexture<Spectrum_d> (Spectrum_d(1.0,233.0/255.0,0.0)*0.3));
+  intrusive_ptr<Texture<Spectrum_d> > p_reflectance(new ConstantTexture<Spectrum_d> (Spectrum_d(212,175,55)/255.0*0.95));
   intrusive_ptr<Texture<double> > p_sigma(new ConstantTexture<double> (0.15));
   intrusive_ptr<Material> p_material(new Matte(p_reflectance, p_sigma));
 

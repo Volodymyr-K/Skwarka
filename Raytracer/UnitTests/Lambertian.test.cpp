@@ -17,11 +17,11 @@ static LambertianTestSuite suite_LambertianTestSuite;
 static CxxTest::List Tests_LambertianTestSuite = { 0, 0 };
 CxxTest::StaticSuiteDescription suiteDescription_LambertianTestSuite( "./Lambertian.test.h", 13, "LambertianTestSuite", suite_LambertianTestSuite, Tests_LambertianTestSuite );
 
-static class TestDescription_LambertianTestSuite_test_Lambertian_Constr : public CxxTest::RealTestDescription {
+static class TestDescription_LambertianTestSuite_test_Lambertian_Type : public CxxTest::RealTestDescription {
 public:
- TestDescription_LambertianTestSuite_test_Lambertian_Constr() : CxxTest::RealTestDescription( Tests_LambertianTestSuite, suiteDescription_LambertianTestSuite, 16, "test_Lambertian_Constr" ) {}
- void runTest() { suite_LambertianTestSuite.test_Lambertian_Constr(); }
-} testDescription_LambertianTestSuite_test_Lambertian_Constr;
+ TestDescription_LambertianTestSuite_test_Lambertian_Type() : CxxTest::RealTestDescription( Tests_LambertianTestSuite, suiteDescription_LambertianTestSuite, 16, "test_Lambertian_Type" ) {}
+ void runTest() { suite_LambertianTestSuite.test_Lambertian_Type(); }
+} testDescription_LambertianTestSuite_test_Lambertian_Type;
 
 static class TestDescription_LambertianTestSuite_test_Lambertian_Sample : public CxxTest::RealTestDescription {
 public:

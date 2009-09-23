@@ -81,8 +81,7 @@ class BxDF
 
     /**
     * Samples BxDF value for the specified incident direction.
-    * If the BxDF is of reflection type the sampled exitant direction will be in the same hemisphere than the incident one.
-    * If the BxDF is of transmission type the sampled exitant direction will be in the opposite hemisphere than the incident one.
+    * The sampled exitant direction may be in any hemisphere, regardless of the incident direction.
     * Default implementation uses cosine hemisphere sampling for the exitant direction.
     * @param i_incident Incident direction. Should be normalized.
     * @param[out] o_exitant Exitant direction in the correct hemisphere. The returned value should be normalized.

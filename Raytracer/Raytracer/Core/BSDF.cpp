@@ -117,10 +117,10 @@ Spectrum_d BSDF::Sample(const Vector3D_d &i_incident, Vector3D_d &o_exitant,
 
     // To avoid "light leaks" and "dark spots" due to the difference between geometric and shading normal
     // we evaluate only BxDFs of the types corresponding to the hemisphere defined by the geometric normal at the surface point.
-  if ((i_incident*m_geometric_normal) * (o_exitant*m_geometric_normal) > 0)
-      i_flags = BxDFType(i_flags & ~BSDF_TRANSMISSION); // Ignore BTDFs.
-    else
-      i_flags = BxDFType(i_flags & ~BSDF_REFLECTION); // Ignore BRDFs.
+    if ((i_incident*m_geometric_normal) * (o_exitant*m_geometric_normal) > 0)
+        i_flags = BxDFType(i_flags & ~BSDF_TRANSMISSION); // Ignore BTDFs.
+      else
+        i_flags = BxDFType(i_flags & ~BSDF_REFLECTION); // Ignore BRDFs.
 
     for(size_t i=0;i<m_BxDFs_num;++i)
       if (m_BxDFs[i]->MatchesFlags(i_flags))

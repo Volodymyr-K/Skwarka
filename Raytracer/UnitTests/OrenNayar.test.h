@@ -14,11 +14,23 @@
 class OrenNayarTestSuite : public CxxTest::TestSuite
   {
   public:
-    void test_OrenNayar_Constr()
+    void test_OrenNayar_Type()
       {
       shared_ptr<BxDF> bxdf = shared_ptr<BxDF>( new OrenNayar(Spectrum_d(1.0),0.1) );
 
       TS_ASSERT(bxdf->GetType() == (BSDF_REFLECTION | BSDF_DIFFUSE));
+      }
+
+    void test_OrenNayar_Reciprocity()
+      {
+      shared_ptr<BxDF> bxdf = shared_ptr<BxDF>( new OrenNayar(Spectrum_d(1.0),0.1) );
+
+      Vector3D_d v1=Vector3D_d(0.2,0.5,0.5).Normalized();
+      Vector3D_d v2=Vector3D_d(-0.1,0.3,0.1).Normalized();
+      Spectrum_d val1 = bxdf->Evaluate(v1, v2);
+      Spectrum_d val2 = bxdf->Evaluate(v2, v1);
+
+      TS_ASSERT_EQUALS(val1,val2);
       }
 
     void test_OrenNayar_Sample()
@@ -35,14 +47,16 @@ class OrenNayarTestSuite : public CxxTest::TestSuite
         Vector3D_d exitant;
         Spectrum_d sp = bxdf->Sample(Vector3D_d(0.5,0.5,0.5).Normalized(), exitant, sample, pdf);
 
-        if (sp[0]<0||sp[0]>1.0||sp[1]<0||sp[1]>1.0||sp[2]<0||sp[2]>1.0)
+        if (exitant[2]<0.0 || pdf<0.0)
+          correct=false;
+        if (sp[0]<0.0 || sp[1]<0.0 || sp[2]<0.0)
           correct=false;
         }
 
       TS_ASSERT(correct);
       }
 
-    // When sigma parameter is zero Oren Nayar should give the same results as Lambertian.
+    // When sigma parameter is zero Oren-Nayar should give the same results as Lambertian.
     void test_OrenNayar_ZeroVariance()
       {
       shared_ptr<BxDF> oren_nayar = shared_ptr<BxDF>( new OrenNayar(Spectrum_d(1.0),0.0) );
@@ -70,14 +84,13 @@ class OrenNayarTestSuite : public CxxTest::TestSuite
     void test_OrenNayar_TotalScattering1()
       {
       shared_ptr<BxDF> bxdf = shared_ptr<BxDF>( new OrenNayar(Spectrum_d(0.9),0.1) );
+
       size_t num_samples=10000;
       std::vector<Point2D_d> samples(num_samples);
       SamplingRoutines::LatinHypercubeSampling2D(samples.begin(),num_samples,true);
 
       Spectrum_d total=bxdf->TotalScattering(Vector3D_d(0.5,0.5,0.5).Normalized(), SamplesSequence2D(samples.begin(), samples.end()));
-      TS_ASSERT(total[0]>=0 && total[0]<=0.9);
-      TS_ASSERT(total[1]>=0 && total[1]<=0.9);
-      TS_ASSERT(total[2]>=0 && total[2]<=0.9);
+      CustomAssertDelta(total, Spectrum_d(0.8974), (1e-3)); // This is an empirical value.
       }
 
     // Just tests the range, could not came up with a more intelligent test...
@@ -85,14 +98,12 @@ class OrenNayarTestSuite : public CxxTest::TestSuite
       {
       shared_ptr<BxDF> bxdf = shared_ptr<BxDF>( new OrenNayar(Spectrum_d(0.9),0.1) );
 
-      size_t num_samples=20000;
+      size_t num_samples=100000;
       std::vector<Point2D_d> samples(num_samples);
       SamplingRoutines::LatinHypercubeSampling2D(samples.begin(),num_samples,true);
 
       Spectrum_d total=bxdf->TotalScattering(SamplesSequence2D(samples.begin(), samples.end()));
-      TS_ASSERT(total[0]>=0 && total[0]<=0.93);
-      TS_ASSERT(total[1]>=0 && total[1]<=0.93);
-      TS_ASSERT(total[2]>=0 && total[2]<=0.93);
+      CustomAssertDelta(total, Spectrum_d(0.8954), 0.005); // This is an empirical value.
       }
   };
 

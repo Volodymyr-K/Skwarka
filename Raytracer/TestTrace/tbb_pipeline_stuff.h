@@ -116,9 +116,9 @@ MyTransformFilter::MyTransformFilter(Camera *ip_camera, TriangleTree *ip_tree): 
     //BSDF *p_bsdf = new ( chunk.pool.Alloc(sizeof(BSDF)) ) BSDF(isect.m_dg);
 
     FresnelConductor fresnel(0.37, 2.82);
-    BlinnDistribution blinn(10.0);
+    BlinnDistribution blinn(400.0);
     typedef Microfacet<FresnelConductor,BlinnDistribution> Metal;
-    BxDF *p_bxdf = new ( chunk.pool.Alloc(sizeof(Metal)) ) Metal(Spectrum_d(1.0,233.0/255.0,0.0)*0.7, fresnel, blinn);
+    BxDF *p_bxdf = new ( chunk.pool.Alloc(sizeof(Metal)) ) Metal(Spectrum_d(212,175,55)/255.0*0.08, fresnel, blinn);
 
     p_bsdf->AddBxDF(p_bxdf);
 
