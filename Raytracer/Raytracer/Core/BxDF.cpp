@@ -56,10 +56,12 @@ Spectrum_d BxDF::TotalScattering(const Vector3D_d &i_incident, SamplesSequence2D
   return ret;
   }
 
-Spectrum_d BxDF::TotalScattering(SamplesSequence2D i_samples) const
+Spectrum_d BxDF::TotalScattering(bool i_hemisphere, SamplesSequence2D i_samples) const
   {
   size_t num_sample_pairs = std::distance(i_samples.m_begin, i_samples.m_end) / 2;
   ASSERT(num_sample_pairs > 0);
+
+  double Z_sign = i_hemisphere ? 1.0 : -1.0;
 
   Spectrum_d ret;
   SamplesSequence2D::IteratorType it=i_samples.m_begin;
@@ -69,6 +71,9 @@ Spectrum_d BxDF::TotalScattering(SamplesSequence2D i_samples) const
     Point2D_d sample_exitant = *(it++);
 
     Vector3D_d incident = SamplingRoutines::UniformHemisphereSampling(sample_incident);
+
+    // Flip the hemisphere if needed.
+    incident[2] *= Z_sign;
     ASSERT(incident.IsNormalized());
 
     Vector3D_d exitant;
@@ -78,10 +83,10 @@ Spectrum_d BxDF::TotalScattering(SamplesSequence2D i_samples) const
     ASSERT(pdf_exitant >= 0.0);
 
     if (pdf_exitant > 0.0)
-      ret.AddWeighted(tmp, fabs(incident[2]*exitant[2]) / (INV_2PI*pdf_exitant) );
+      ret.AddWeighted(tmp, fabs(incident[2]*exitant[2]) / pdf_exitant );
     }
 
-  ret/=M_PI*num_sample_pairs;
+  ret*=2.0/num_sample_pairs;
 
   // Clamp spectrum values because a surface can not physically scatter more light than it received.
   ret[0]=MathRoutines::Clamp(ret[0],0.0,1.0);

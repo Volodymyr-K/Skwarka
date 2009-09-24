@@ -103,7 +103,7 @@ class BSDF
     double PDF(const Vector3D_d &i_incident, const Vector3D_d &i_exitant, BxDFType i_flags=BSDF_ALL) const;
 
     /**
-    * Returns total hemisphere scattering assuming a unit of light coming from the specified incident direction.
+    * Returns total scattering (i.e. fraction of scattered light) assuming a unit of light coming from the specified incident direction.
     * The method generates Latin Hypercube samples sequences for each of the BxDF components.
     * Only BxDF components matching specified flags are considered.
     * @param i_incident Incident direction. Should be normalized.
@@ -111,17 +111,19 @@ class BSDF
     * @param i_flags Specifies the subset of BxDF components.
     * @return Total scattering value. Each spectrum component will be in [0;1] range.
     */
-    Spectrum_d TotalScattering(const Vector3D_d &i_incident, size_t i_samples_num=16, BxDFType i_flags=BSDF_ALL) const;
+    Spectrum_d TotalScattering(const Vector3D_d &i_incident, size_t i_samples_num, BxDFType i_flags=BSDF_ALL) const;
 
     /**
-    * Returns total hemisphere scattering assuming a light coming uniformly from the entire hemisphere.
+    * Returns total scattering (i.e. fraction of scattered light) assuming a light coming uniformly from the specified hemisphere.
     * The method generates Latin Hypercube samples sequences for each of the BxDF components.
     * Only BxDF components matching specified flags are considered.
+    * @param i_hemisphere Defines the hemisphere of the incoming light.
+    * Value true corresponds to the hemisphere above the surface and value false corresponds to the hemisphere below the surface.
     * @param i_samples_num Number of samples to be generated for each matching BxDF component. Should be greater than zero.
     * @param i_flags Specifies the subset of BxDF components.
     * @return Total scattering value. Each spectrum component will be in [0;1] range.
     */
-    Spectrum_d TotalScattering(size_t i_samples_num=16, BxDFType i_flags=BSDF_ALL) const;
+    Spectrum_d TotalScattering(bool i_hemisphere, size_t i_samples_num, BxDFType i_flags=BSDF_ALL) const;
 
   private:
     /**

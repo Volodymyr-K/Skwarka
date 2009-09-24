@@ -161,7 +161,7 @@ Spectrum_d BSDF::TotalScattering(const Vector3D_d &i_incident, size_t i_samples_
   return ret;
   }
 
-Spectrum_d BSDF::TotalScattering(size_t i_samples_num, BxDFType i_flags) const
+Spectrum_d BSDF::TotalScattering(bool i_hemisphere, size_t i_samples_num, BxDFType i_flags) const
   {
   ASSERT(i_samples_num>0);
 
@@ -175,7 +175,7 @@ Spectrum_d BSDF::TotalScattering(size_t i_samples_num, BxDFType i_flags) const
     if (m_BxDFs[i]->MatchesFlags(i_flags))
       {
       SamplingRoutines::LatinHypercubeSampling2D(sequence.m_begin, 2*i_samples_num, true);
-      ret+=m_BxDFs[i]->TotalScattering(sequence);
+      ret+=m_BxDFs[i]->TotalScattering(i_hemisphere, sequence);
       }
 
   // Clamp spectrum values because a surface can not physically scatter more light than it received.

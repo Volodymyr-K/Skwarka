@@ -2,6 +2,7 @@
 #define SPECULAR_REFLECTION_H
 
 #include <Raytracer/Core/BxDF.h>
+#include <Math/SamplingRoutines.h>
 
 /**
 * Specular reflective BxDF implementation.
@@ -47,7 +48,7 @@ class SpecularReflection: public BxDF
     virtual double PDF(const Vector3D_d &i_incident, const Vector3D_d &i_exitant) const;
 
     /**
-    * Returns total hemisphere scattering assuming a unit of light coming from the specified incident direction.
+    * Returns total scattering (i.e. fraction of scattered light) assuming a unit of light coming from the specified incident direction.
     * @param i_incident Incident direction. Should be normalized.
     * @param i_samples 2D Samples sequence to be used for sampling the hemisphere. Should have at least one sample.
     * @return Total scattering value. Each spectrum component will be in [0;1] range.
@@ -55,12 +56,15 @@ class SpecularReflection: public BxDF
     virtual Spectrum_d TotalScattering(const Vector3D_d &i_incident, SamplesSequence2D i_samples) const;
 
     /**
-    * Returns total hemisphere scattering assuming a light coming uniformly from the entire hemisphere.
+    * Returns total scattering (i.e. fraction of scattered light) assuming a light coming uniformly from the specified hemisphere.
     * The implementation uses Monte Carlo integration to estimate the total scattering value.
+    * @param i_hemisphere Defines the hemisphere of the incoming light.
+    * Value true corresponds to the hemisphere above XY plane (i.e. with positive Z coordinate) and
+    * value false corresponds to the hemisphere below XY plane (i.e. with negative Z coordinate).
     * @param i_samples 2D Samples sequence to be used for sampling the hemisphere. Should have at least one sample.
     * @return Total scattering value. Each spectrum component will be in [0;1] range.
     */
-    virtual Spectrum_d TotalScattering(SamplesSequence2D i_samples) const;
+    virtual Spectrum_d TotalScattering(bool i_hemisphere, SamplesSequence2D i_samples) const;
 
   private:
     Spectrum_d m_reflectance;
@@ -125,11 +129,13 @@ Spectrum_d SpecularReflection<Fresnel>::TotalScattering(const Vector3D_d &i_inci
   }
 
 template<typename Fresnel>
-Spectrum_d SpecularReflection<Fresnel>::TotalScattering(SamplesSequence2D i_samples) const
+Spectrum_d SpecularReflection<Fresnel>::TotalScattering(bool i_hemisphere, SamplesSequence2D i_samples) const
   {
   // Here we don't really need two samples for one integral's sample since specular reflection defines the reflected direction uniquely.
   size_t num_samples = std::distance(i_samples.m_begin, i_samples.m_end);
   ASSERT(num_samples > 0);
+
+  double Z_sign = i_hemisphere ? 1.0 : -1.0;
 
   double sum=0.0;
   SamplesSequence2D::IteratorType it=i_samples.m_begin;
@@ -140,7 +146,7 @@ Spectrum_d SpecularReflection<Fresnel>::TotalScattering(SamplesSequence2D i_samp
     Vector3D_d incident = SamplingRoutines::UniformHemisphereSampling(sample_incident);
     ASSERT(incident.IsNormalized() && incident[2]>=0.0);
 
-    double fresnel = m_fresnel(incident[2]);
+    double fresnel = m_fresnel(incident[2]*Z_sign);
     ASSERT(fresnel>=0.0 && fresnel<=1.0);
 
     sum += fresnel*incident[2];

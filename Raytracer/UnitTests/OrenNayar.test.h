@@ -100,7 +100,7 @@ class OrenNayarTestSuite : public CxxTest::TestSuite
       std::vector<Point2D_d> samples(num_samples);
       SamplingRoutines::LatinHypercubeSampling2D(samples.begin(),num_samples,true);
 
-      Spectrum_d total=bxdf->TotalScattering(SamplesSequence2D(samples.begin(), samples.end()));
+      Spectrum_d total=bxdf->TotalScattering(true, SamplesSequence2D(samples.begin(), samples.end()));
       CustomAssertDelta(total, Spectrum_d(0.8954), 0.005); // This is an empirical value.
       }
   };

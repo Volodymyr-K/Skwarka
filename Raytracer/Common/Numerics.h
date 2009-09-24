@@ -51,13 +51,13 @@ inline bool IsNaN<double>(double i_value)
 template<typename T>
 bool IsPositiveInf(T i_value)
   {
-  return i_value == std::numeric_limits<float>::infinity();
+  return i_value == std::numeric_limits<T>::infinity();
   }
 
 template<typename T>
 bool IsNegativeInf(T i_value)
   {
-  return i_value == -std::numeric_limits<float>::infinity();
+  return i_value == -std::numeric_limits<T>::infinity();
   }
 
 #endif // NUMERICS_H

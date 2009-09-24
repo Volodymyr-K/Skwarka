@@ -423,6 +423,10 @@
 						RelativePath=".\SpecularReflection.test.h"
 						>
 					</File>
+					<File
+						RelativePath=".\SpecularTransmission.test.h"
+						>
+					</File>
 				</Filter>
 				<Filter
 					Name="Textures"
@@ -611,6 +615,10 @@
 			</File>
 			<File
 				RelativePath=".\SpecularReflection.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\SpecularTransmission.test.cpp"
 				>
 			</File>
 			<File

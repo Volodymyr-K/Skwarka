@@ -208,7 +208,7 @@ class BSDFTestSuite : public CxxTest::TestSuite
       mp_bsdf->AddBxDF(&bxdf2);
       mp_bsdf->AddBxDF(&bxdf3);
 
-      Spectrum_d total = mp_bsdf->TotalScattering(10000);
+      Spectrum_d total = mp_bsdf->TotalScattering(true,10000);
 
       TS_ASSERT(total[0]<=1.0 && total[1]<=1.0 && total[2]<=1.0);
       CustomAssertDelta(total, Spectrum_d(0.8,0.8,0.8), 0.01);

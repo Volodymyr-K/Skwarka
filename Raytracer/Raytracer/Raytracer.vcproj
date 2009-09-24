@@ -365,6 +365,10 @@
 					RelativePath=".\BxDFs\OrenNayar.cpp"
 					>
 				</File>
+				<File
+					RelativePath=".\BxDFs\SpecularTransmission.cpp"
+					>
+				</File>
 			</Filter>
 		</Filter>
 		<Filter

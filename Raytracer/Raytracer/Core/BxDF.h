@@ -102,7 +102,7 @@ class BxDF
     virtual double PDF(const Vector3D_d &i_incident, const Vector3D_d &i_exitant) const;
 
     /**
-    * Returns total hemisphere scattering assuming a unit of light coming from the specified incident direction.
+    * Returns total scattering (i.e. fraction of scattered light) assuming a unit of light coming from the specified incident direction.
     * Default implementation uses Monte Carlo integration to estimate the total scattering value.
     * @param i_incident Incident direction. Should be normalized.
     * @param i_samples 2D Samples sequence to be used for sampling the hemisphere. Should have at least one sample.
@@ -111,13 +111,16 @@ class BxDF
     virtual Spectrum_d TotalScattering(const Vector3D_d &i_incident, SamplesSequence2D i_samples) const;
 
     /**
-    * Returns total hemisphere scattering assuming a light coming uniformly from the entire hemisphere.
+    * Returns total scattering (i.e. fraction of scattered light) assuming a light coming uniformly from the specified hemisphere.
     * Default implementation uses Monte Carlo integration to estimate the total scattering value.
     * Each sample of the integral requires two 2D samples so the input samples sequence should have twice the number of needed samples.
+    * @param i_hemisphere Defines the hemisphere of the incoming light.
+    * Value true corresponds to the hemisphere above XY plane (i.e. with positive Z coordinate) and
+    * value false corresponds to the hemisphere below XY plane (i.e. with negative Z coordinate).
     * @param i_samples 2D Samples sequence to be used for sampling the hemisphere. Should have at least two samples.
     * @return Total scattering value. Each spectrum component will be in [0;1] range.
     */
-    virtual Spectrum_d TotalScattering(SamplesSequence2D i_samples) const;
+    virtual Spectrum_d TotalScattering(bool i_hemisphere, SamplesSequence2D i_samples) const;
 
   protected:
     /**
