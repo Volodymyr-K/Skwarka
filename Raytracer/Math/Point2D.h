@@ -78,6 +78,8 @@ Point2D<T>::Point2D()
 template<typename T>
 Point2D<T>::Point2D(T i_x, T i_y)
   {
+  ASSERT(IsNaN(i_x)==false && IsNaN(i_y)==false);
+
   m_coordinates[0]=i_x;
   m_coordinates[1]=i_y;
   }

@@ -79,7 +79,7 @@ inline double FresnelDielectric::operator()(double i_cos_theta) const
 
   // Compute refracted sin using Snell's law.
   double sin_theta_refracted = refractive_index_outer/refractive_index_inner * sqrt(std::max(0.0, 1.0 - i_cos_theta*i_cos_theta));
-  if (sin_theta_refracted > 1.0)
+  if (sin_theta_refracted >= 1.0)
     // Handle total internal reflection.
     return 1.0;
   else

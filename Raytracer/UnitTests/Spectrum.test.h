@@ -4,6 +4,7 @@
 #include <cxxtest/TestSuite.h>
 #include "CustomValueTraits.h"
 #include <Raytracer/Core/Spectrum.h>
+#include <limits>
 
 class SpectrumTestSuite : public CxxTest::TestSuite
   {
@@ -97,17 +98,6 @@ class SpectrumTestSuite : public CxxTest::TestSuite
       TS_ASSERT_EQUALS(s_div, Spectrum_d(0.5,1.0,1.5));
       }
 
-    // Disable compiler warning since we divide by zero intentionally.
-#pragma warning( push )
-#pragma warning( disable : 4723 )
-    void test_Spectrum_DivByZero()
-      {
-      Spectrum_d s1(-1.0,2.0,3.0);
-      Spectrum_d s_div=s1/0.0;
-      TS_ASSERT_EQUALS(s_div, Spectrum_d(-DBL_INF,DBL_INF,DBL_INF));
-      }
-#pragma warning( pop )
-
     void test_Spectrum_Equal()
       {
       Spectrum_d s1(1.0,2.0,3.0);
@@ -194,6 +184,18 @@ class SpectrumTestSuite : public CxxTest::TestSuite
       Spectrum_d s1(1.8,-2.3,3.0);
       Spectrum<float> s_float=Convert<float>(s1);
       TS_ASSERT_EQUALS(s_float, Spectrum<float>(1.8f,-2.3f,3.0f));
+      }
+
+    void test_Spectrum_IsNaN()
+      {
+      Spectrum_d s;
+
+      // We can't just initialize Spectrum with NaN values because asserts will come up.
+      // We use potentially unsafe trick with the reinterpret_cast.
+      double *p_r=reinterpret_cast<double *>(&s);
+      *p_r=std::numeric_limits<double>::quiet_NaN();
+
+      TS_ASSERT(IsNaN(s));
       }
   };
 

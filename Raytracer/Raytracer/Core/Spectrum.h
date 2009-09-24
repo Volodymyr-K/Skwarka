@@ -86,6 +86,12 @@ std::basic_ostream<charT,traits>& operator << (std::basic_ostream<charT,traits>&
 template<typename T2, typename T>
 Spectrum<T2> Convert(const Spectrum<T> &i_spectrum);
 
+/**
+* Returns true if any of the spectrum components is NaN.
+*/
+template<typename T>
+bool IsNaN(const Spectrum<T> &i_value);
+
 typedef Spectrum<float> Spectrum_f;
 typedef Spectrum<double> Spectrum_d;
 
@@ -103,6 +109,8 @@ Spectrum<T>::Spectrum()
 template<typename T>
 Spectrum<T>::Spectrum(T i_value)
   {
+  ASSERT(IsNaN(i_value)==false);
+
   m_rgb[0]=i_value;
   m_rgb[1]=i_value;
   m_rgb[2]=i_value;
@@ -111,6 +119,8 @@ Spectrum<T>::Spectrum(T i_value)
 template<typename T>
 Spectrum<T>::Spectrum(T i_r, T i_g, T i_b)
   {
+  ASSERT(IsNaN(i_r)==false && IsNaN(i_g)==false && IsNaN(i_b)==false);
+
   m_rgb[0]=i_r;
   m_rgb[1]=i_g;
   m_rgb[2]=i_b;
@@ -151,6 +161,8 @@ Spectrum<T> &Spectrum<T>::operator-=(const Spectrum<T> &i_spectrum)
 template<typename T>
 Spectrum<T> Spectrum<T>::operator*(double i_value) const
   {
+  ASSERT(IsNaN(i_value)==false);
+
   return Spectrum<T>(
     (T) (m_rgb[0]*i_value), 
     (T) (m_rgb[1]*i_value), 
@@ -160,6 +172,8 @@ Spectrum<T> Spectrum<T>::operator*(double i_value) const
 template<typename T>
 Spectrum<T> &Spectrum<T>::operator*=(double i_value)
   {
+  ASSERT(IsNaN(i_value)==false);
+
   m_rgb[0]=(T)(m_rgb[0]*i_value);
   m_rgb[1]=(T)(m_rgb[1]*i_value);
   m_rgb[2]=(T)(m_rgb[2]*i_value);
@@ -169,7 +183,8 @@ Spectrum<T> &Spectrum<T>::operator*=(double i_value)
 template<typename T>
 Spectrum<T> Spectrum<T>::operator/(double i_value) const
   {
-  //Dividing by zero is considered correct. The caller code is responsible to handle resulting INF values properly.
+  ASSERT(IsNaN(i_value)==false);
+  ASSERT(i_value != 0.0);
   double inv = 1.0 / i_value;
   return (*this) * inv;
   }
@@ -177,7 +192,8 @@ Spectrum<T> Spectrum<T>::operator/(double i_value) const
 template<typename T>
 Spectrum<T> &Spectrum<T>::operator/=(double i_value)
   {
-  //Dividing by zero is considered correct. The caller code is responsible to handle resulting INF values properly.
+  ASSERT(IsNaN(i_value)==false);
+  ASSERT(i_value != 0.0);
   double inv = 1.0 / i_value;
   (*this)*=inv;
   return *this;
@@ -224,6 +240,7 @@ void Spectrum<T>::Clamp(T i_low, T i_high)
 template<typename T>
 void Spectrum<T>::AddWeighted(const Spectrum &i_spectrum, T i_weight)
   {
+  ASSERT(IsNaN(i_weight)==false);
   m_rgb[0] += i_weight * i_spectrum.m_rgb[0];
   m_rgb[1] += i_weight * i_spectrum.m_rgb[1];
   m_rgb[2] += i_weight * i_spectrum.m_rgb[2];
@@ -265,6 +282,7 @@ T Spectrum<T>::Luminance() const
 template<typename T>
 Spectrum<T> operator*(T i_value, const Spectrum<T> &i_spectrum)
   {
+  ASSERT(IsNaN(i_value)==false);
   return i_spectrum*i_value;
   }
 
@@ -291,11 +309,16 @@ std::basic_ostream<charT,traits>& operator << (std::basic_ostream<charT,traits>&
   return o_stream;
   }
 
-
 template<typename T2, typename T>
 Spectrum<T2> Convert(const Spectrum<T> &i_spectrum)
   {
   return Spectrum<T2>((T2)i_spectrum[0], (T2)i_spectrum[1], (T2)i_spectrum[2]);
+  }
+
+template<typename T>
+bool IsNaN(const Spectrum<T> &i_value)
+  {
+  return IsNaN(i_value[0]) || IsNaN(i_value[1]) || IsNaN(i_value[2]);
   }
 
 #endif // SPECTRUM_H

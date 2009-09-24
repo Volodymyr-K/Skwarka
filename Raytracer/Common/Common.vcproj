@@ -170,6 +170,10 @@
 				RelativePath=".\MemoryPool.h"
 				>
 			</File>
+			<File
+				RelativePath=".\Numerics.h"
+				>
+			</File>
 		</Filter>
 	</Files>
 	<Globals>

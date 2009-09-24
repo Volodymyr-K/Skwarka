@@ -468,6 +468,10 @@
 					RelativePath=".\MemoryPool.test.h"
 					>
 				</File>
+				<File
+					RelativePath=".\Numerics.test.h"
+					>
+				</File>
 			</Filter>
 		</Filter>
 		<Filter
@@ -547,6 +551,10 @@
 			</File>
 			<File
 				RelativePath=".\Microfacet.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Numerics.test.cpp"
 				>
 			</File>
 			<File

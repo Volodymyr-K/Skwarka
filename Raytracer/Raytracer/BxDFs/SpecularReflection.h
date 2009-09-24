@@ -5,8 +5,8 @@
 
 /**
 * Specular reflective BxDF implementation.
-* The BxDF reflects the light into a single direction and therefore is defined by a singular delta function.
-* The template parameter is a Fresnel class that is used to get the  surface reflectance value. It should define "double operator(double) const" method.
+* The BxDF reflects light along a single direction and therefore is defined by a singular delta function.
+* The template parameter is a Fresnel class that is used to get the surface reflectance value. It should define "double operator(double) const" method.
 * @sa SpecularTransmission
 */
 template<typename Fresnel>
@@ -29,12 +29,11 @@ class SpecularReflection: public BxDF
     /**
     * Samples BxDF value for the specified incident direction.
     * The sampled exitant direction will be in the same hemisphere that the incident direction is in.
-    * The MicrofacetDistribution is used to sample the exitant direction.
     * @param i_incident Incident direction. Should be normalized.
     * @param[out] o_exitant Exitant direction. The returned value should be normalized.
     * @param i_sample 2D sample. Should be in [0;1]^2 range.
-    * @param[out] o_pdf PDF value for the sampled exitant direction. The returned value should be greater or equal than zero.
-    * @return Sampled BxDF value. Always equal to 1.0.
+    * @param[out] o_pdf PDF value for the sampled exitant direction. Always equal to 1.0.
+    * @return Sampled BxDF value.
     */
     virtual Spectrum_d Sample(const Vector3D_d &i_incident, Vector3D_d &o_exitant, const Point2D_d &i_sample, double &o_pdf) const;
 

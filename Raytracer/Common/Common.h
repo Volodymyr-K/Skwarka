@@ -8,6 +8,7 @@
 #include "IntrusiveSmartPointer.h"
 #include "Assert.h"
 #include "Log.h"
+#include "Numerics.h"
 
 #include <boost/shared_ptr.hpp>
 using boost::shared_ptr;

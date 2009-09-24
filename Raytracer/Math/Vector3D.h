@@ -116,6 +116,8 @@ Vector3D<T>::Vector3D()
 template<typename T>
 Vector3D<T>::Vector3D(T i_x, T i_y, T i_z)
   {
+  ASSERT(IsNaN(i_x)==false && IsNaN(i_y)==false && IsNaN(i_z)==false);
+
   m_coordinates[0]=i_x;
   m_coordinates[1]=i_y;
   m_coordinates[2]=i_z;
