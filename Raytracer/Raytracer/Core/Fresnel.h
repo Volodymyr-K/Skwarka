@@ -2,6 +2,7 @@
 #define FRESNEL_H
 
 #include <Common/Common.h>
+#include "Spectrum.h"
 #include <Math/Constants.h>
 #include <Math/Util.h>
 #include <utility>
@@ -26,9 +27,9 @@ class FresnelDielectric
     * @param i_cos_theta Cosine of the angle between the surface normal and the incident direction.
     * If the light is coming from the outer medium into the object the value should be positive.
     * If the light is coming from within the object into the medium the value should be negative.
-    * @return Reflected light fraction. Will be in [0;1] range.
+    * @return Reflected light fraction. Each spectrum component will be in [0;1] range.
     */
-    double operator()(double i_cos_theta) const;
+    Spectrum_d operator()(double i_cos_theta) const;
 
   private:
     double m_refractive_index_inner, m_refractive_index_outer;
@@ -45,18 +46,18 @@ class FresnelConductor
     * @param i_refractive_index Refractive index of the object. Should be positive.
     * @param i_absorption Object absorption coefficient (e.g. 2.82 for gold). Should be positive.
     */
-    FresnelConductor(double i_refractive_index, double i_absorption);
+    FresnelConductor(const Spectrum_d &i_refractive_index, const Spectrum_d &i_absorption);
 
     /**
     * Returns the fraction of the incoming light that is reflected by a conductor surface.
     * Conductors do not transmit light.
     * @param i_cos_theta Cosine of the angle between the surface normal and the incident direction. Should be positive.
-    * @return Reflected light fraction. Will be in [0;1] range.
+    * @return Reflected light fraction. Each spectrum component will be in [0;1] range.
     */
-    double operator()(double i_cos_theta) const;
+    Spectrum_d operator()(double i_cos_theta) const;
 
   private:
-    double m_refractive_index, m_absorption;
+    Spectrum_d m_refractive_index, m_absorption_sqr;
   };
 
 /////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
@@ -68,7 +69,7 @@ m_refractive_index_inner(i_refractive_index_inner), m_refractive_index_outer(i_r
   ASSERT(i_refractive_index_inner>0.0 && i_refractive_index_outer>0.0);
   }
 
-inline double FresnelDielectric::operator()(double i_cos_theta) const
+inline Spectrum_d FresnelDielectric::operator()(double i_cos_theta) const
   {
   ASSERT(i_cos_theta>=-1.0-DBL_EPS && i_cos_theta<=1.0+DBL_EPS);
   i_cos_theta = MathRoutines::Clamp(i_cos_theta, -1.0, 1.0);
@@ -81,7 +82,7 @@ inline double FresnelDielectric::operator()(double i_cos_theta) const
   double sin_theta_refracted = refractive_index_outer/refractive_index_inner * sqrt(std::max(0.0, 1.0 - i_cos_theta*i_cos_theta));
   if (sin_theta_refracted >= 1.0)
     // Handle total internal reflection.
-    return 1.0;
+    return Spectrum_d(1.0);
   else
     {
     double cos_theta_refracted = sqrt(std::max(0.0, 1.0 - sin_theta_refracted*sin_theta_refracted));
@@ -94,33 +95,34 @@ inline double FresnelDielectric::operator()(double i_cos_theta) const
       ((refractive_index_outer * i_cos_theta) - (refractive_index_inner * cos_theta_refracted)) /
       ((refractive_index_outer * i_cos_theta) + (refractive_index_inner * cos_theta_refracted));
 
-    return (R_parl*R_parl + R_perp*R_perp)*0.5;
+    return Spectrum_d( (R_parl*R_parl + R_perp*R_perp)*0.5 );
     }
   }
 
-inline FresnelConductor::FresnelConductor(double i_refractive_index, double i_absorption):
-m_refractive_index(i_refractive_index), m_absorption(i_absorption)
+inline FresnelConductor::FresnelConductor(const Spectrum_d &i_refractive_index, const Spectrum_d &i_absorption):
+m_refractive_index(i_refractive_index), m_absorption_sqr(i_absorption*i_absorption)
   {
-  ASSERT(i_refractive_index>0.0 && i_absorption>=0.0);
+  ASSERT(InRange(i_refractive_index,0.0,DBL_MAX));
+  ASSERT(InRange(i_absorption,0.0,DBL_MAX));
   }
 
-inline double FresnelConductor::operator()(double i_cos_theta) const
+inline Spectrum_d FresnelConductor::operator()(double i_cos_theta) const
   {
   ASSERT(i_cos_theta>=-DBL_EPS && i_cos_theta<=1.0+DBL_EPS);
   i_cos_theta=fabs(i_cos_theta);
 
-  double tmp1 = m_refractive_index*m_refractive_index + m_absorption*m_absorption;
-  double tmp2 = tmp1 * i_cos_theta*i_cos_theta;
+  Spectrum_d tmp1 = m_refractive_index*m_refractive_index + m_absorption_sqr;
+  Spectrum_d tmp2 = tmp1 * (i_cos_theta*i_cos_theta);
 
-  double R_parl_sqr =
-    (tmp2 - (2.0 * m_refractive_index * i_cos_theta) + 1.0) /
-    (tmp2 + (2.0 * m_refractive_index * i_cos_theta) + 1.0);
+  Spectrum_d R_parl_sqr =
+    (tmp2 - (2.0 * i_cos_theta) * m_refractive_index  + Spectrum_d(1.0)) /
+    (tmp2 + (2.0 * i_cos_theta) * m_refractive_index  + Spectrum_d(1.0));
 
-  double R_perp_sqr =
-    (tmp1 - (2.0 * m_refractive_index * i_cos_theta) + i_cos_theta*i_cos_theta) /
-    (tmp1 + (2.0 * m_refractive_index * i_cos_theta) + i_cos_theta*i_cos_theta);
+  Spectrum_d R_perp_sqr =
+    (tmp1 - (2.0 * m_refractive_index * i_cos_theta) + Spectrum_d(i_cos_theta*i_cos_theta)) /
+    (tmp1 + (2.0 * m_refractive_index * i_cos_theta) + Spectrum_d(i_cos_theta*i_cos_theta));
 
-  return (R_parl_sqr + R_perp_sqr)*0.5;
+  return (R_parl_sqr + R_perp_sqr) * 0.5;
   }
 
 #endif // FRESNEL_H

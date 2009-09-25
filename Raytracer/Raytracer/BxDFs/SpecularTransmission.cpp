@@ -54,10 +54,10 @@ Spectrum_d SpecularTransmission::Sample(const Vector3D_d &i_incident, Vector3D_d
 
   o_exitant=Vector3D_d(-i_incident[0]*eta, -i_incident[1]*eta, cos_theta_exitant*Z_sign);
 
-  double fresnel = m_fresnel(i_incident[2]);
-  ASSERT(fresnel>=0.0 && fresnel<=1.0);
+  Spectrum_d fresnel = m_fresnel(i_incident[2]);
+  ASSERT(InRange(fresnel,0.0,1.0));
 
-  return (refractive_index_inner*refractive_index_inner)/(refractive_index_outer*refractive_index_outer) * (1.0-fresnel) * m_transmittance / cos_theta_exitant;
+  return ((Spectrum_d(1.0)-fresnel) * m_transmittance) * (refractive_index_inner*refractive_index_inner)/(refractive_index_outer*refractive_index_outer) / cos_theta_exitant;
   }
 
 double SpecularTransmission::PDF(const Vector3D_d &i_incident, const Vector3D_d &i_exitant) const
@@ -82,10 +82,10 @@ Spectrum_d SpecularTransmission::TotalScattering(const Vector3D_d &i_incident, S
   if (sin_theta_exitant_sqr >= 1.0)
     return Spectrum_d(0.0);
 
-  double fresnel = m_fresnel(i_incident[2]);
-  ASSERT(fresnel>=0.0 && fresnel<=1.0);
+  Spectrum_d fresnel = m_fresnel(i_incident[2]);
+  ASSERT(InRange(fresnel,0.0,1.0));
 
-  return (1.0-fresnel) * m_transmittance;
+  return (Spectrum_d(1.0)-fresnel) * m_transmittance;
   }
 
 Spectrum_d SpecularTransmission::TotalScattering(bool i_hemisphere, SamplesSequence2D i_samples) const
@@ -108,7 +108,7 @@ Spectrum_d SpecularTransmission::TotalScattering(bool i_hemisphere, SamplesSeque
 
   double eta_sqr = eta*eta;
 
-  double sum=0.0;
+  Spectrum_d ret;
   SamplesSequence2D::IteratorType it=i_samples.m_begin;
   for(size_t i=0;i<num_samples;++i)
     {
@@ -125,13 +125,13 @@ Spectrum_d SpecularTransmission::TotalScattering(bool i_hemisphere, SamplesSeque
     if (sin_theta_exitant_sqr >= 1.0)
       continue;
 
-    double fresnel = m_fresnel(incident[2]*Z_sign);
-    ASSERT(fresnel>=0.0 && fresnel<=1.0);
+    Spectrum_d fresnel = m_fresnel(incident[2]*Z_sign);
+    ASSERT(InRange(fresnel,0.0,1.0));
 
-    sum += (1.0-fresnel)*incident[2];
+    ret.AddWeighted(Spectrum_d(1.0)-fresnel, incident[2]);
     }
 
-  Spectrum_d ret = m_transmittance*(2.0*sum/num_samples);
+  ret *= m_transmittance*(2.0/num_samples);
 
   // Clamp spectrum values because a surface can not physically scatter more light than it received.
   ret[0]=MathRoutines::Clamp(ret[0],0.0,1.0);

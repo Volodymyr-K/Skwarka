@@ -24,6 +24,12 @@ class Spectrum
     Spectrum<T> operator-(const Spectrum<T> &i_spectrum) const;
     Spectrum<T> &operator-=(const Spectrum<T> &i_spectrum);
 
+    Spectrum<T> operator*(const Spectrum<T> &i_spectrum) const;
+    Spectrum<T> &operator*=(const Spectrum<T> &i_spectrum);
+
+    Spectrum<T> operator/(const Spectrum<T> &i_spectrum) const;
+    Spectrum<T> &operator/=(const Spectrum<T> &i_spectrum);
+
     Spectrum<T> operator*(double i_value) const;
     Spectrum<T> &operator*=(double i_value);
 
@@ -87,10 +93,16 @@ template<typename T2, typename T>
 Spectrum<T2> Convert(const Spectrum<T> &i_spectrum);
 
 /**
+* Returns true if all spectrum components are in the specified range (inclusive).
+*/
+template<typename T>
+bool InRange(const Spectrum<T> &i_spectrum, T i_low, T i_high);
+
+/**
 * Returns true if any of the spectrum components is NaN.
 */
 template<typename T>
-bool IsNaN(const Spectrum<T> &i_value);
+bool IsNaN(const Spectrum<T> &i_spectrum);
 
 typedef Spectrum<float> Spectrum_f;
 typedef Spectrum<double> Spectrum_d;
@@ -154,6 +166,42 @@ Spectrum<T> &Spectrum<T>::operator-=(const Spectrum<T> &i_spectrum)
   m_rgb[0]-=i_spectrum.m_rgb[0];
   m_rgb[1]-=i_spectrum.m_rgb[1];
   m_rgb[2]-=i_spectrum.m_rgb[2];
+
+  return *this;
+  }
+
+template<typename T>
+Spectrum<T> Spectrum<T>::operator*(const Spectrum<T> &i_spectrum) const
+  {
+  return Spectrum<T>(m_rgb[0]*i_spectrum.m_rgb[0], m_rgb[1]*i_spectrum.m_rgb[1], m_rgb[2]*i_spectrum.m_rgb[2]);
+  }
+
+template<typename T>
+Spectrum<T> &Spectrum<T>::operator*=(const Spectrum<T> &i_spectrum)
+  {
+  m_rgb[0]*=i_spectrum.m_rgb[0];
+  m_rgb[1]*=i_spectrum.m_rgb[1];
+  m_rgb[2]*=i_spectrum.m_rgb[2];
+
+  return *this;
+  }
+
+template<typename T>
+Spectrum<T> Spectrum<T>::operator/(const Spectrum<T> &i_spectrum) const
+  {
+  ASSERT(i_spectrum.m_rgb[0]!=0.0 && i_spectrum.m_rgb[1]!=0.0 && i_spectrum.m_rgb[2]!=0.0);
+
+  return Spectrum<T>(m_rgb[0]/i_spectrum.m_rgb[0], m_rgb[1]/i_spectrum.m_rgb[1], m_rgb[2]/i_spectrum.m_rgb[2]);
+  }
+
+template<typename T>
+Spectrum<T> &Spectrum<T>::operator/=(const Spectrum<T> &i_spectrum)
+  {
+  ASSERT(i_spectrum.m_rgb[0]!=0.0 && i_spectrum.m_rgb[1]!=0.0 && i_spectrum.m_rgb[2]!=0.0);
+
+  m_rgb[0]/=i_spectrum.m_rgb[0];
+  m_rgb[1]/=i_spectrum.m_rgb[1];
+  m_rgb[2]/=i_spectrum.m_rgb[2];
 
   return *this;
   }
@@ -316,9 +364,18 @@ Spectrum<T2> Convert(const Spectrum<T> &i_spectrum)
   }
 
 template<typename T>
-bool IsNaN(const Spectrum<T> &i_value)
+bool InRange(const Spectrum<T> &i_spectrum, T i_low, T i_high)
   {
-  return IsNaN(i_value[0]) || IsNaN(i_value[1]) || IsNaN(i_value[2]);
+  return
+    i_spectrum[0]>=i_low && i_spectrum[0]<=i_high &&
+    i_spectrum[1]>=i_low && i_spectrum[1]<=i_high &&
+    i_spectrum[2]>=i_low && i_spectrum[2]<=i_high;
+  }
+
+template<typename T>
+bool IsNaN(const Spectrum<T> &i_spectrum)
+  {
+  return IsNaN(i_spectrum[0]) || IsNaN(i_spectrum[1]) || IsNaN(i_spectrum[2]);
   }
 
 #endif // SPECTRUM_H

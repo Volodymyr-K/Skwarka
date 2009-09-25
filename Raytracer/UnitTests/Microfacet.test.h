@@ -19,7 +19,7 @@ class MicrofacetTestSuite : public CxxTest::TestSuite
     void setUp()
       {
       // These settings are for gold.
-      FresnelConductor fresnel(0.37, 2.82);
+      FresnelConductor fresnel(Spectrum_d(0.37), Spectrum_d(2.82));
       BlinnDistribution blinn(20.0);
       typedef Microfacet<FresnelConductor,BlinnDistribution> Metal;
 

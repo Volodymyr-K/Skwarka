@@ -18,7 +18,7 @@ class SpecularReflectionTestSuite : public CxxTest::TestSuite
   public:
     void test_SpecularReflection_Type()
       {
-      FresnelConductor fresnel(0.37, 2.82);
+      FresnelConductor fresnel(Spectrum_d(0.37), Spectrum_d(2.82));
       shared_ptr<BxDF> bxdf = shared_ptr<BxDF>( new SpecularMetal(Spectrum_d(1.0),fresnel) );
 
       TS_ASSERT(bxdf->GetType() == (BSDF_REFLECTION | BSDF_SPECULAR));
@@ -26,7 +26,7 @@ class SpecularReflectionTestSuite : public CxxTest::TestSuite
 
     void test_SpecularReflection_Sample()
       {
-      FresnelConductor fresnel(0.37, 2.82);
+      FresnelConductor fresnel(Spectrum_d(0.37), Spectrum_d(2.82));
       shared_ptr<BxDF> bxdf = shared_ptr<BxDF>( new SpecularMetal(Spectrum_d(1.0),fresnel) );
 
       Point2D_d sample(RandomDouble(1.0),RandomDouble(1.0));
@@ -43,7 +43,7 @@ class SpecularReflectionTestSuite : public CxxTest::TestSuite
     // Tests that PDF returns 0.0 even for the reflected direction.
     void test_SpecularReflection_PDF()
       {
-      FresnelConductor fresnel(0.37, 2.82);
+      FresnelConductor fresnel(Spectrum_d(0.37), Spectrum_d(2.82));
       shared_ptr<BxDF> bxdf = shared_ptr<BxDF>( new SpecularMetal(Spectrum_d(1.0),fresnel) );
 
       Vector3D_d incident=Vector3D_d(0.5,0.5,0.5).Normalized();
@@ -55,7 +55,7 @@ class SpecularReflectionTestSuite : public CxxTest::TestSuite
 
     void test_SpecularReflection_TotalScattering1()
       {
-      FresnelConductor fresnel(0.37, 2.82);
+      FresnelConductor fresnel(Spectrum_d(0.37), Spectrum_d(2.82));
       shared_ptr<BxDF> bxdf = shared_ptr<BxDF>( new SpecularMetal(Spectrum_d(1.0),fresnel) );
 
       size_t num_samples=10000;
@@ -68,7 +68,7 @@ class SpecularReflectionTestSuite : public CxxTest::TestSuite
 
     void test_SpecularReflection_TotalScattering2()
       {
-      FresnelConductor fresnel(0.37, 2.82);
+      FresnelConductor fresnel(Spectrum_d(0.37), Spectrum_d(2.82));
       shared_ptr<BxDF> bxdf = shared_ptr<BxDF>( new SpecularMetal(Spectrum_d(1.0),fresnel) );
 
       size_t num_samples=100000;

@@ -16,21 +16,27 @@ static FresnelTestSuite suite_FresnelTestSuite;
 static CxxTest::List Tests_FresnelTestSuite = { 0, 0 };
 CxxTest::StaticSuiteDescription suiteDescription_FresnelTestSuite( "./Fresnel.test.h", 10, "FresnelTestSuite", suite_FresnelTestSuite, Tests_FresnelTestSuite );
 
-static class TestDescription_FresnelTestSuite_test_Fresnel_DielectricRange : public CxxTest::RealTestDescription {
+static class TestDescription_FresnelTestSuite_test_FresnelDielectric_Range : public CxxTest::RealTestDescription {
 public:
- TestDescription_FresnelTestSuite_test_Fresnel_DielectricRange() : CxxTest::RealTestDescription( Tests_FresnelTestSuite, suiteDescription_FresnelTestSuite, 14, "test_Fresnel_DielectricRange" ) {}
- void runTest() { suite_FresnelTestSuite.test_Fresnel_DielectricRange(); }
-} testDescription_FresnelTestSuite_test_Fresnel_DielectricRange;
+ TestDescription_FresnelTestSuite_test_FresnelDielectric_Range() : CxxTest::RealTestDescription( Tests_FresnelTestSuite, suiteDescription_FresnelTestSuite, 14, "test_FresnelDielectric_Range" ) {}
+ void runTest() { suite_FresnelTestSuite.test_FresnelDielectric_Range(); }
+} testDescription_FresnelTestSuite_test_FresnelDielectric_Range;
 
-static class TestDescription_FresnelTestSuite_test_Fresnel_DielectricTotalInternalReflection : public CxxTest::RealTestDescription {
+static class TestDescription_FresnelTestSuite_test_FresnelDielectric_TotalInternalReflection : public CxxTest::RealTestDescription {
 public:
- TestDescription_FresnelTestSuite_test_Fresnel_DielectricTotalInternalReflection() : CxxTest::RealTestDescription( Tests_FresnelTestSuite, suiteDescription_FresnelTestSuite, 30, "test_Fresnel_DielectricTotalInternalReflection" ) {}
- void runTest() { suite_FresnelTestSuite.test_Fresnel_DielectricTotalInternalReflection(); }
-} testDescription_FresnelTestSuite_test_Fresnel_DielectricTotalInternalReflection;
+ TestDescription_FresnelTestSuite_test_FresnelDielectric_TotalInternalReflection() : CxxTest::RealTestDescription( Tests_FresnelTestSuite, suiteDescription_FresnelTestSuite, 30, "test_FresnelDielectric_TotalInternalReflection" ) {}
+ void runTest() { suite_FresnelTestSuite.test_FresnelDielectric_TotalInternalReflection(); }
+} testDescription_FresnelTestSuite_test_FresnelDielectric_TotalInternalReflection;
 
-static class TestDescription_FresnelTestSuite_test_Fresnel_ConductorRange : public CxxTest::RealTestDescription {
+static class TestDescription_FresnelTestSuite_test_FresnelConductor_Range : public CxxTest::RealTestDescription {
 public:
- TestDescription_FresnelTestSuite_test_Fresnel_ConductorRange() : CxxTest::RealTestDescription( Tests_FresnelTestSuite, suiteDescription_FresnelTestSuite, 41, "test_Fresnel_ConductorRange" ) {}
- void runTest() { suite_FresnelTestSuite.test_Fresnel_ConductorRange(); }
-} testDescription_FresnelTestSuite_test_Fresnel_ConductorRange;
+ TestDescription_FresnelTestSuite_test_FresnelConductor_Range() : CxxTest::RealTestDescription( Tests_FresnelTestSuite, suiteDescription_FresnelTestSuite, 41, "test_FresnelConductor_Range" ) {}
+ void runTest() { suite_FresnelTestSuite.test_FresnelConductor_Range(); }
+} testDescription_FresnelTestSuite_test_FresnelConductor_Range;
+
+static class TestDescription_FresnelTestSuite_test_FresnelConductor_Limit : public CxxTest::RealTestDescription {
+public:
+ TestDescription_FresnelTestSuite_test_FresnelConductor_Limit() : CxxTest::RealTestDescription( Tests_FresnelTestSuite, suiteDescription_FresnelTestSuite, 57, "test_FresnelConductor_Limit" ) {}
+ void runTest() { suite_FresnelTestSuite.test_FresnelConductor_Limit(); }
+} testDescription_FresnelTestSuite_test_FresnelConductor_Limit;
 

@@ -102,8 +102,8 @@ Spectrum_d SpecularReflection<Fresnel>::Sample(const Vector3D_d &i_incident, Vec
   o_exitant=Vector3D_d(-i_incident[0],-i_incident[1],i_incident[2]);
   o_pdf=1.0;
 
-  double fresnel = m_fresnel(i_incident[2]);
-  ASSERT(fresnel>=0.0 && fresnel<=1.0);
+  Spectrum_d fresnel = m_fresnel(i_incident[2]);
+  ASSERT(InRange(fresnel,0.0,1.0));
 
   return m_reflectance * fresnel / fabs(i_incident[2]);
   }
@@ -122,8 +122,8 @@ Spectrum_d SpecularReflection<Fresnel>::TotalScattering(const Vector3D_d &i_inci
   {
   ASSERT(i_incident.IsNormalized());
 
-  double fresnel = m_fresnel(i_incident[2]);
-  ASSERT(fresnel>=0.0 && fresnel<=1.0);
+  Spectrum_d fresnel = m_fresnel(i_incident[2]);
+  ASSERT(InRange(fresnel,0.0,1.0));
 
   return m_reflectance * fresnel;
   }
@@ -137,7 +137,7 @@ Spectrum_d SpecularReflection<Fresnel>::TotalScattering(bool i_hemisphere, Sampl
 
   double Z_sign = i_hemisphere ? 1.0 : -1.0;
 
-  double sum=0.0;
+  Spectrum_d ret;
   SamplesSequence2D::IteratorType it=i_samples.m_begin;
   for(size_t i=0;i<num_samples;++i)
     {
@@ -146,13 +146,13 @@ Spectrum_d SpecularReflection<Fresnel>::TotalScattering(bool i_hemisphere, Sampl
     Vector3D_d incident = SamplingRoutines::UniformHemisphereSampling(sample_incident);
     ASSERT(incident.IsNormalized() && incident[2]>=0.0);
 
-    double fresnel = m_fresnel(incident[2]*Z_sign);
-    ASSERT(fresnel>=0.0 && fresnel<=1.0);
+    Spectrum_d fresnel = m_fresnel(incident[2]*Z_sign);
+    ASSERT(InRange(fresnel,0.0,1.0));
 
-    sum += fresnel*incident[2];
+    ret.AddWeighted(fresnel, incident[2]);
     }
 
-  Spectrum_d ret=m_reflectance*(2.0*sum/num_samples);
+  ret *= m_reflectance*(2.0/num_samples);
 
   // Clamp spectrum values because a surface can not physically scatter more light than it received.
   ret[0]=MathRoutines::Clamp(ret[0],0.0,1.0);

@@ -63,19 +63,53 @@ class SpectrumTestSuite : public CxxTest::TestSuite
 
     void test_Spectrum_Mult()
       {
+      Spectrum_d s1(1.5,2.0, 3.0);
+      Spectrum_d s2(1.0,-10.0,2.0);
+      Spectrum_d s_mult=s1*s2;
+      TS_ASSERT_EQUALS(s_mult, Spectrum_d(1.5,-20.0,6.0));
+      }
+
+    void test_Spectrum_MultAssign()
+      {
+      Spectrum_d s1(1.5,2.0, 3.0);
+      Spectrum_d s2(1.0,10.0,2.0);
+      Spectrum_d s_mult=s1;
+      s_mult*=s2;
+      TS_ASSERT_EQUALS(s_mult, Spectrum_d(1.5,20.0,6.0));
+      }
+
+    void test_Spectrum_Div()
+      {
+      Spectrum_d s1(1.5,2.0, 3.0);
+      Spectrum_d s2(1.0,-10.0,2.0);
+      Spectrum_d s_div=s1/s2;
+      TS_ASSERT_EQUALS(s_div, Spectrum_d(1.5,-0.2,1.5));
+      }
+
+    void test_Spectrum_DivAssign()
+      {
+      Spectrum_d s1(1.5,2.0, 3.0);
+      Spectrum_d s2(1.0,10.0,2.0);
+      Spectrum_d s_div=s1;
+      s_div/=s2;
+      TS_ASSERT_EQUALS(s_div, Spectrum_d(1.5,0.2,1.5));
+      }
+
+    void test_Spectrum_MultScalar()
+      {
       Spectrum_d s1(1.0,2.0,3.0);
       Spectrum_d s_scalar=s1*1.5;
       TS_ASSERT_EQUALS(s_scalar, Spectrum_d(1.5,3.0,4.5));
       }
 
-    void test_Spectrum_PreMult()
+    void test_Spectrum_PreMultScalar()
       {
       Spectrum_d s1(1.0,2.0,3.0);
       Spectrum_d s_scalar=1.5*s1;
       TS_ASSERT_EQUALS(s_scalar, Spectrum_d(1.5,3.0,4.5));
       }
 
-    void test_Spectrum_MultAssign()
+    void test_Spectrum_MultScalarAssign()
       {
       Spectrum_d s1(1.0,2.0,3.0);
       Spectrum_d s_scalar=s1;
@@ -83,14 +117,14 @@ class SpectrumTestSuite : public CxxTest::TestSuite
       TS_ASSERT_EQUALS(s_scalar, Spectrum_d(1.5,3.0,4.5));
       }
 
-    void test_Spectrum_Div()
+    void test_Spectrum_DivScalar()
       {
       Spectrum_d s1(1.0,2.0,3.0);
       Spectrum_d s_div=s1/2.0;
       TS_ASSERT_EQUALS(s_div, Spectrum_d(0.5,1.0,1.5));
       }
 
-    void test_Spectrum_DivAssign()
+    void test_Spectrum_DivScalarAssign()
       {
       Spectrum_d s1(1.0,2.0,3.0);
       Spectrum_d s_div=s1;
@@ -184,6 +218,16 @@ class SpectrumTestSuite : public CxxTest::TestSuite
       Spectrum_d s1(1.8,-2.3,3.0);
       Spectrum<float> s_float=Convert<float>(s1);
       TS_ASSERT_EQUALS(s_float, Spectrum<float>(1.8f,-2.3f,3.0f));
+      }
+
+    void test_Spectrum_InRange()
+      {
+      Spectrum_d s1(0.0,0.2,1.0);
+      Spectrum_d s2(-1.0,5.2,0.0);
+
+      TS_ASSERT(InRange(s1,0.0,1.0));
+      TS_ASSERT(InRange(s2,0.0,10.0)==false);
+      TS_ASSERT(InRange(s2,-10.0,4.0)==false);
       }
 
     void test_Spectrum_IsNaN()

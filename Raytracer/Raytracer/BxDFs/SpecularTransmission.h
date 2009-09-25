@@ -6,7 +6,7 @@
 
 /**
 * Specular transparent BxDF implementation.
-* The BxDF transmits light along a single direction and therefore is defined by a singular delta function.\
+* The BxDF transmits light along a single direction and therefore is defined by a singular delta function.
 * the transmitted direction is defined by the Snell's law.
 * @sa SpecularReflection
 */
