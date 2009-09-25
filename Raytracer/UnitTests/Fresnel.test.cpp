@@ -40,3 +40,9 @@ public:
  void runTest() { suite_FresnelTestSuite.test_FresnelConductor_Limit(); }
 } testDescription_FresnelTestSuite_test_FresnelConductor_Limit;
 
+static class TestDescription_FresnelTestSuite_test_ApproximateFresnelParameters : public CxxTest::RealTestDescription {
+public:
+ TestDescription_FresnelTestSuite_test_ApproximateFresnelParameters() : CxxTest::RealTestDescription( Tests_FresnelTestSuite, suiteDescription_FresnelTestSuite, 65, "test_ApproximateFresnelParameters" ) {}
+ void runTest() { suite_FresnelTestSuite.test_ApproximateFresnelParameters(); }
+} testDescription_FresnelTestSuite_test_ApproximateFresnelParameters;
+

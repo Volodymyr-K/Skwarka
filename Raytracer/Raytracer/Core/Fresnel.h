@@ -60,6 +60,16 @@ class FresnelConductor
     Spectrum_d m_refractive_index, m_absorption_sqr;
   };
 
+/**
+* Approximates the refractive index and absorption coefficient for a conductor material with the specified reflectance.
+* The specified reflectance value is the reflectance of the material for a normal incident direction (i.e. when the theta angle is zero).
+* The method uses value 2.0 as the first guess for the of the abosrption coefficient. This works well for most of the conductor materials.
+* @param i_reflection Reflectance of the material for a normal incident direction (i.e. when the theta angle is zero). Each spectrum component should be in [0;1] range.
+* @param[out] o_refractive_index Refractive index of the object. Each spectrum component will be positive.
+* @param[out] o_absorption Object absorption coefficient. Each spectrum component will be positive.
+*/
+void ApproximateFresnelParameters(const Spectrum_d &i_reflection, Spectrum_d &o_refractive_index, Spectrum_d &o_absorption);
+
 /////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -123,6 +133,49 @@ inline Spectrum_d FresnelConductor::operator()(double i_cos_theta) const
     (tmp1 + (2.0 * m_refractive_index * i_cos_theta) + Spectrum_d(i_cos_theta*i_cos_theta));
 
   return (R_parl_sqr + R_perp_sqr) * 0.5;
+  }
+
+inline void ApproximateFresnelParameters(const Spectrum_d &i_reflection, Spectrum_d &o_refractive_index, Spectrum_d &o_absorption)
+  {
+  ASSERT(InRange(i_reflection,0.0,1.0));
+
+  for(unsigned char i=0;i<3;++i)
+    {
+    // We use value 2.0 as the first guess for the absorption coefficient value.
+    // It works pretty well for most of the conductor materials.
+    double k=2.0;
+
+    if (i_reflection[i]>=1.0)
+      {
+      o_refractive_index[i] = 0.0;
+      o_absorption[i] = k;
+      }
+    else
+      if (i_reflection[i]<=0.0)
+        {
+        o_refractive_index[i] = 1.0;
+        o_absorption[i] = 0.0;
+        }
+      else
+        {
+        double discriminant = 4.0*(1+i_reflection[i])*(1+i_reflection[i])-4.0*(1-i_reflection[i])*(1-i_reflection[i])*(1.0+k*k);
+
+        if (discriminant >= 0.0)
+          {
+          o_refractive_index[i] = (2.0*(1+i_reflection[i])-sqrt(discriminant)) / (2.0*(1-i_reflection[i]));
+          o_absorption[i] = k;
+          }
+        else
+          {
+          // If the discriminant is less than zero we find the value of absorption coefficient which makes the discriminant zero.
+          o_refractive_index[i] = (1+i_reflection[i]) / (1-i_reflection[i]);
+          o_absorption[i] = 2.0*sqrt(i_reflection[i]) / (1-i_reflection[i]);
+          }
+        }
+    } // for
+
+  ASSERT(InRange(o_refractive_index,0.0,DBL_MAX));
+  ASSERT(InRange(o_absorption,0.0,DBL_MAX));
   }
 
 #endif // FRESNEL_H

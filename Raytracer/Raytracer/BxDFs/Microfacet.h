@@ -19,7 +19,7 @@ class Microfacet: public BxDF
     * Creates Microfacet instance with the specified reflectance, Fresnel and MicrofacetDistribution instances.
     * @param i_reflectance The reflectance(color) of the surface. Each spectrum component should be in [0;1] range.
     * @param i_fresnel Fresnel implementation.
-    * @param i_fresnel MicrofacetDistribution implementation.
+    * @param i_distribution MicrofacetDistribution implementation.
     */
     Microfacet(Spectrum_d i_reflectance, const Fresnel &i_fresnel, const MicrofacetDistribution &i_distribution);
 

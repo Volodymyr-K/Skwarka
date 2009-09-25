@@ -16,7 +16,8 @@ class SpecularTransmission: public BxDF
     /**
     * Creates SpecularTransmission instance with the specified reflectance and Fresnel instance.
     * @param i_transmittance The transmittance(color) of the surface. Each spectrum component should be in [0;1] range.
-    * @param i_fresnel Fresnel implementation.
+    * @param i_refractive_index_inner Refractive index of the object. Should be positive.
+    * @param i_refractive_index_outer Refractive index of the medium. Should be positive.
     */
     SpecularTransmission(Spectrum_d i_transmittance, double i_refractive_index_inner, double i_refractive_index_outer);
 

@@ -61,6 +61,21 @@ class FresnelTestSuite : public CxxTest::TestSuite
       Spectrum_d R = fresnel(0.0);
       TS_ASSERT_EQUALS(R, Spectrum_d(1.0));
       }
+
+    // Tests that fresnel with approximated parameters generates the same reflectance value that was used for estimating.
+    void test_ApproximateFresnelParameters()
+      {
+      Spectrum_d refractive_index(0.17,0.44,1.41), absorption(3.97,2.26,1.5);
+      Spectrum_d color = FresnelConductor(refractive_index, absorption)(1.0);
+
+      Spectrum_d refractive_index2, absorption2;
+      ApproximateFresnelParameters(color, refractive_index2, absorption2);
+
+      Spectrum_d color2 = FresnelConductor(refractive_index2, absorption2)(1.0);
+
+      CustomAssertDelta(color, color2,(1e-10));
+      }
+
   };
 
 #endif // FRESNEL_TEST_H
