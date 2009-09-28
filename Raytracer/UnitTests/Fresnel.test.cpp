@@ -42,7 +42,7 @@ public:
 
 static class TestDescription_FresnelTestSuite_test_ApproximateFresnelParameters : public CxxTest::RealTestDescription {
 public:
- TestDescription_FresnelTestSuite_test_ApproximateFresnelParameters() : CxxTest::RealTestDescription( Tests_FresnelTestSuite, suiteDescription_FresnelTestSuite, 65, "test_ApproximateFresnelParameters" ) {}
+ TestDescription_FresnelTestSuite_test_ApproximateFresnelParameters() : CxxTest::RealTestDescription( Tests_FresnelTestSuite, suiteDescription_FresnelTestSuite, 66, "test_ApproximateFresnelParameters" ) {}
  void runTest() { suite_FresnelTestSuite.test_ApproximateFresnelParameters(); }
 } testDescription_FresnelTestSuite_test_ApproximateFresnelParameters;
 

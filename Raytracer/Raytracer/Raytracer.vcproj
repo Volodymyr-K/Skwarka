@@ -381,12 +381,20 @@
 					RelativePath=".\Materials\Matte.h"
 					>
 				</File>
+				<File
+					RelativePath=".\Materials\Transparent.h"
+					>
+				</File>
 			</Filter>
 			<Filter
 				Name="Source Files"
 				>
 				<File
 					RelativePath=".\Materials\Matte.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Materials\Transparent.cpp"
 					>
 				</File>
 			</Filter>

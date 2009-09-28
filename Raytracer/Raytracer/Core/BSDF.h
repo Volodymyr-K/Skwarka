@@ -40,6 +40,7 @@ class BSDF
 
     /**
     * Returns refractive index of the object.
+    * The refractive index is assumed to be wavelength-independent (which makes it suitable for specular refraction only).
     */
     double GetRefractiveIndex() const;
 

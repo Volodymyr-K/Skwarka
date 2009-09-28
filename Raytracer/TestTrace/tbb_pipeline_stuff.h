@@ -17,17 +17,19 @@
 
 class TestTracer;
 
+#define CHUNK_SAMPLES 16
+
 struct SampleChunk
   {
-  intrusive_ptr<Sample> mp_sample;
-  Spectrum_f m_spectrum;
-  float m_alfa;
+  intrusive_ptr<Sample> mp_sample[CHUNK_SAMPLES];
+  Spectrum_f m_spectrum[CHUNK_SAMPLES];
+  float m_alfa[CHUNK_SAMPLES];
   MemoryPool pool;
 
-  size_t chunk_index;
+  size_t chunk_index,samples;
   };
 
-static const size_t n_chunks = 8;
+static const size_t n_chunks = 16;
 SampleChunk m_chunks[n_chunks];
 bool chunks_free[n_chunks];
 
@@ -57,15 +59,27 @@ void* MyInputFilter::operator()(void*)
   chunks_free[m_next_chunk]=false;
 
   SampleChunk &chunk = m_chunks[m_next_chunk];
-  if (chunk.mp_sample.get()==NULL)
-    chunk.mp_sample=mp_sampler->CreateSample();
+  for(size_t i=0;i<CHUNK_SAMPLES;++i)
+    {
+    if (chunk.mp_sample[i].get()==NULL)
+      chunk.mp_sample[i]=mp_sampler->CreateSample();
+    }
 
   chunk.chunk_index=m_next_chunk;
 
   m_next_chunk = (m_next_chunk+1) % n_chunks;
 
-  bool f = mp_sampler->GetNextSample(chunk.mp_sample);
-  if (f==false)
+  chunk.samples=0;
+  for(int i=0;i<CHUNK_SAMPLES;++i)
+    {
+    bool f = mp_sampler->GetNextSample(chunk.mp_sample[i]);
+    if (f)
+      ++chunk.samples;
+    else
+      break;
+    }
+
+  if (chunk.samples==0)
     return NULL;
   else
     return &chunk;
@@ -89,48 +103,56 @@ MyTransformFilter::MyTransformFilter(Camera *ip_camera, TriangleTree *ip_tree): 
   {
   SampleChunk &chunk = *static_cast<SampleChunk*>(item);
 
-  Ray ray,rx,ry;
-  mp_camera->GenerateRay(chunk.mp_sample->GetImagePoint(), chunk.mp_sample->GetLensUV(), ray);
-  mp_camera->GenerateRay(chunk.mp_sample->GetImagePoint()+Point2D_d(1,0), chunk.mp_sample->GetLensUV(), rx);
-  mp_camera->GenerateRay(chunk.mp_sample->GetImagePoint()+Point2D_d(0,1), chunk.mp_sample->GetLensUV(), ry);
-
-  RayDifferential rd;
-  rd.m_has_differentials=true;
-  rd.m_base_ray=ray;
-  rd.m_origin_dx=rx.m_origin;
-  rd.m_origin_dy=ry.m_origin;
-  rd.m_direction_dx=rx.m_direction;
-  rd.m_direction_dy=ry.m_direction;
-
-  Intersection isect = mp_tree->Intersect(rd);
-
-  if (isect.m_intersection_exists==false)
+  for(int i=0;i<chunk.samples;++i)
     {
-    chunk.m_spectrum=Spectrum_f(0.f, 0.f, 255.f);
-    chunk.m_alfa=0.f;
+    Ray ray,rx,ry;
+    mp_camera->GenerateRay(chunk.mp_sample[i]->GetImagePoint(), chunk.mp_sample[i]->GetLensUV(), ray);
+    mp_camera->GenerateRay(chunk.mp_sample[i]->GetImagePoint()+Point2D_d(1,0), chunk.mp_sample[i]->GetLensUV(), rx);
+    mp_camera->GenerateRay(chunk.mp_sample[i]->GetImagePoint()+Point2D_d(0,1), chunk.mp_sample[i]->GetLensUV(), ry);
+
+    RayDifferential rd;
+    rd.m_has_differentials=true;
+    rd.m_base_ray=ray;
+    rd.m_origin_dx=rx.m_origin;
+    rd.m_origin_dy=ry.m_origin;
+    rd.m_direction_dx=rx.m_direction;
+    rd.m_direction_dy=ry.m_direction;
+
+    Intersection isect = mp_tree->Intersect(rd);
+
+    if (isect.m_intersection_exists==false)
+      {
+      chunk.m_spectrum[i]=Spectrum_f(0.f, 0.f, 255.f);
+      chunk.m_alfa[i]=0.f;
+      }
+    else
+      { 
+      BSDF *p_bsdf=isect.mp_primitive->GetBSDF(isect.m_dg, isect.m_triangle_index, chunk.pool);
+
+      //BSDF *p_bsdf = new ( chunk.pool.Alloc(sizeof(BSDF)) ) BSDF(isect.m_dg);
+
+      Spectrum_d gold_color = Spectrum_d(212,175,55)/255.0;
+      Spectrum_d refractive_index, absorption;
+      ApproximateFresnelParameters(gold_color, refractive_index, absorption);
+
+      FresnelConductor fresnel(refractive_index, absorption);
+      BlinnDistribution blinn(100.0);
+      typedef Microfacet<FresnelConductor,BlinnDistribution> Metal;
+      BxDF *p_bxdf = new ( chunk.pool.Alloc(sizeof(Metal)) ) Metal(Spectrum_d(0.2), fresnel, blinn);
+
+      p_bsdf->AddBxDF(p_bxdf);
+
+      Vector3D_d view_direction = Vector3D_d(0,-0.5,-1).Normalized();
+      Vector3D_d light_direction = Vector3D_d(0,-0.2,-1).Normalized();
+      Spectrum_d color = p_bsdf->Evaluate(light_direction,view_direction)* (p_bsdf->GetShadingNormal()*light_direction)*(-3.0);
+      //color.Clamp(0.0,DBL_INF);
+      chunk.m_spectrum[i]=Spectrum_f(color[0]*255.f, color[1]*255.f, color[2]*255.f);
+      chunk.m_alfa[i]=1.f;
+      }
+
+    chunk.pool.FreeAll();
     }
-  else
-    { 
-    BSDF *p_bsdf=isect.mp_primitive->GetBSDF(isect.m_dg, isect.m_triangle_index, chunk.pool);
 
-    //BSDF *p_bsdf = new ( chunk.pool.Alloc(sizeof(BSDF)) ) BSDF(isect.m_dg);
-
-    FresnelConductor fresnel(Spectrum_d(0.37), Spectrum_d(2.82));
-    BlinnDistribution blinn(400.0);
-    typedef Microfacet<FresnelConductor,BlinnDistribution> Metal;
-    BxDF *p_bxdf = new ( chunk.pool.Alloc(sizeof(Metal)) ) Metal(Spectrum_d(212,175,55)/255.0*0.08, fresnel, blinn);
-
-    p_bsdf->AddBxDF(p_bxdf);
-
-    Vector3D_d view_direction = Vector3D_d(0,-0.5,-1).Normalized();
-    Vector3D_d light_direction = Vector3D_d(0,-0.2,-1).Normalized();
-    Spectrum_d color = p_bsdf->Evaluate(light_direction,view_direction)* (p_bsdf->GetShadingNormal()*light_direction)*(-3.0);
-    //color.Clamp(0.0,DBL_INF);
-    chunk.m_spectrum=Spectrum_f(color[0]*255.f, color[1]*255.f, color[2]*255.f);
-    chunk.m_alfa=1.f;
-    }
-
-  chunk.pool.FreeAll();
   return &chunk;
   }
 
@@ -157,9 +179,12 @@ extern int pixel_counter;
 void* MyOutputFilter::operator()( void* item )
   {
   SampleChunk &chunk = *static_cast<SampleChunk*>(item);
-  mp_film->AddSample(chunk.mp_sample->GetImagePoint(), chunk.m_spectrum, chunk.m_alfa);
-
+  for(int i=0;i<chunk.samples;++i)
+    {
+  mp_film->AddSample(chunk.mp_sample[i]->GetImagePoint(), chunk.m_spectrum[i], chunk.m_alfa[i]);
+    }
   chunks_free[chunk.chunk_index]=true;
+    
 /*
   ++pixel_counter;
   if ((pixel_counter%2000)!=0) return NULL;

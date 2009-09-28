@@ -443,6 +443,10 @@
 						RelativePath=".\Matte.test.h"
 						>
 					</File>
+					<File
+						RelativePath=".\Transparent.test.h"
+						>
+					</File>
 				</Filter>
 				<Filter
 					Name="MicrofacetDistributions"
@@ -635,6 +639,10 @@
 			</File>
 			<File
 				RelativePath=".\Transform.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Transparent.test.cpp"
 				>
 			</File>
 			<File

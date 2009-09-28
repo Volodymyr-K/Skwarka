@@ -8,6 +8,8 @@
 Matte::Matte(intrusive_ptr<Texture<Spectrum_d> > ip_reflectance, intrusive_ptr<Texture<double> > ip_sigma):
 Material(), mp_reflectance(ip_reflectance), mp_sigma(ip_sigma)
   {
+  ASSERT(ip_reflectance);
+  ASSERT(ip_sigma);
   }
 
 BSDF *Matte::GetBSDF(const DifferentialGeometry &i_dg, size_t i_triangle_index, MemoryPool &i_pool) const
