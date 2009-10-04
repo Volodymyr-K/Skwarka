@@ -89,6 +89,7 @@ Spectrum_d AreaLightSource::Power() const
 
 Spectrum_d AreaLightSource::SampleLighting(const Point3D_d &i_point, double i_triangle_sample, const Point2D_d &i_sample, Vector3D_d &o_lighting_vector, double &o_pdf) const
   {
+  // Check for an empty mesh.
   if (m_area_CDF.empty())
     {
     o_pdf=0.0;
@@ -102,6 +103,7 @@ Spectrum_d AreaLightSource::SampleLighting(const Point3D_d &i_point, double i_tr
 
   o_lighting_vector=Vector3D_d(sampled_point-i_point);
 
+  // Convert PDF from area-based to solid angle-based.
   double length_sqr=Vector3D_d(sampled_point-i_point).LengthSqr();
   o_pdf = length_sqr / (m_area * fabs(o_lighting_vector.Normalized()*light_normal));
   ASSERT(o_pdf>=0.0);
@@ -128,6 +130,7 @@ Spectrum_d AreaLightSource::SamplePhoton(double i_triangle_sample, const Point2D
   {
   ASSERT(i_direction_sample[0]>=0.0 && i_direction_sample[0]<1.0 && i_direction_sample[1]>=0.0 && i_direction_sample[1]<1.0);
 
+  // Check for an empty mesh.
   if (m_area_CDF.empty())
     {
     o_pdf=0.0;
@@ -156,6 +159,7 @@ void AreaLightSource::_SampleArea(double i_triangle_sample, const Point2D_d &i_s
   ASSERT(i_sample[0]>=0.0 && i_sample[0]<1.0 && i_sample[1]>=0.0 && i_sample[1]<1.0);
   ASSERT(m_area_CDF.empty() == false);
 
+  // Binary search for the sampled triangle.
   size_t l=0, r=m_area_CDF.size()-1;
   while(l<r)
     {

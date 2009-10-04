@@ -460,6 +460,14 @@
 						>
 					</File>
 				</Filter>
+				<Filter
+					Name="LightSources"
+					>
+					<File
+						RelativePath=".\PointLight.test.h"
+						>
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="Shapes"
@@ -587,6 +595,10 @@
 			</File>
 			<File
 				RelativePath=".\Point3D.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\PointLight.test.cpp"
 				>
 			</File>
 			<File

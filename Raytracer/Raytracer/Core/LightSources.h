@@ -30,10 +30,10 @@ class DeltaLightSource: public ReferenceCounted
     /**
     * Returns the light source radiance at the specified point.
     * @param i_point Lighted point.
-    * @param[out] o_lighting_direction Direction to the light source from the specified point. The vector is normalized.
+    * @param[out] o_lighting_ray Ray to the light source from the specified point. Can point to an infinity (e.g. in case of a parallel light sources).
     * @return Radiance value.
     */
-    virtual Spectrum_d Lighting(const Point3D_d &i_point, Vector3D_d &o_lighting_direction) const = 0;
+    virtual Spectrum_d Lighting(const Point3D_d &i_point, Ray &o_lighting_ray) const = 0;
 
     /**
     * Samples outgoing light ray.

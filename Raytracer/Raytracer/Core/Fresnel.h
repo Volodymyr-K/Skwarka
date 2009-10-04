@@ -112,8 +112,8 @@ inline Spectrum_d FresnelDielectric::operator()(double i_cos_theta) const
 inline FresnelConductor::FresnelConductor(const Spectrum_d &i_refractive_index, const Spectrum_d &i_absorption):
 m_refractive_index(i_refractive_index), m_absorption_sqr(i_absorption*i_absorption)
   {
-  ASSERT(InRange(i_refractive_index,0.0,DBL_MAX));
-  ASSERT(InRange(i_absorption,0.0,DBL_MAX));
+  ASSERT(InRange(i_refractive_index,0.0,DBL_INF));
+  ASSERT(InRange(i_absorption,0.0,DBL_INF));
   }
 
 inline Spectrum_d FresnelConductor::operator()(double i_cos_theta) const
@@ -174,8 +174,8 @@ inline void ApproximateFresnelParameters(const Spectrum_d &i_reflection, Spectru
         }
     } // for
 
-  ASSERT(InRange(o_refractive_index,0.0,DBL_MAX));
-  ASSERT(InRange(o_absorption,0.0,DBL_MAX));
+  ASSERT(InRange(o_refractive_index,0.0,DBL_INF));
+  ASSERT(InRange(o_absorption,0.0,DBL_INF));
   }
 
 #endif // FRESNEL_H

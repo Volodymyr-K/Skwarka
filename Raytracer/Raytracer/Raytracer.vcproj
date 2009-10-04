@@ -487,6 +487,26 @@
 				>
 			</Filter>
 		</Filter>
+		<Filter
+			Name="LightSources"
+			>
+			<Filter
+				Name="Header Files"
+				>
+				<File
+					RelativePath=".\LightSources\PointLight.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Source Files"
+				>
+				<File
+					RelativePath=".\LightSources\PointLight.cpp"
+					>
+				</File>
+			</Filter>
+		</Filter>
 	</Files>
 	<Globals>
 	</Globals>

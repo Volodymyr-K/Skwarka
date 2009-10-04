@@ -54,7 +54,7 @@ class SamplingRoutinesTestSuite : public CxxTest::TestSuite
         double theta = 2.0*M_PI*point[1];
         Point2D_d test_point(radius*cos(theta), radius*sin(theta));
         
-        double min_dist=DBL_MAX;
+        double min_dist=DBL_INF;
         for(size_t j=0;j<samples.size();++j)
           {
           double dist_sqr = Vector2D_d(test_point-samples[j]).LengthSqr();
@@ -180,7 +180,7 @@ class SamplingRoutinesTestSuite : public CxxTest::TestSuite
       {
       const size_t num_samples = 5000;
 
-      double mn=DBL_MAX,mx=-DBL_MAX;
+      double mn=DBL_INF,mx=-DBL_INF;
       std::vector<double> samples(num_samples);
       SamplingRoutines::StratifiedSampling1D(samples.begin(),num_samples,true);
       for(size_t i=0;i<samples.size();++i)
@@ -207,7 +207,7 @@ class SamplingRoutinesTestSuite : public CxxTest::TestSuite
       {
       const int x_samples = 60, y_samples=70;
 
-      Point2D_d mn=Point2D_d(DBL_MAX,DBL_MAX),mx=Point2D_d(-DBL_MAX,-DBL_MAX);
+      Point2D_d mn=Point2D_d(DBL_INF,DBL_INF),mx=Point2D_d(-DBL_INF,-DBL_INF);
       std::vector<Point2D_d> samples(x_samples*y_samples);
       SamplingRoutines::StratifiedSampling2D(samples.begin(),x_samples,y_samples,true);
       for(size_t i=0;i<samples.size();++i)
@@ -240,7 +240,7 @@ class SamplingRoutinesTestSuite : public CxxTest::TestSuite
       {
       const size_t num_samples = 5000;
 
-      Point2D_d mn=Point2D_d(DBL_MAX,DBL_MAX),mx=Point2D_d(-DBL_MAX,-DBL_MAX);
+      Point2D_d mn=Point2D_d(DBL_INF,DBL_INF),mx=Point2D_d(-DBL_INF,-DBL_INF);
       std::vector<Point2D_d> samples(num_samples);
       SamplingRoutines::LatinHypercubeSampling2D(samples.begin(),num_samples,true);
       for(size_t i=0;i<samples.size();++i)
