@@ -188,6 +188,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\Core\LightSources.h"
+					>
+				</File>
+				<File
 					RelativePath=".\Core\Material.h"
 					>
 				</File>
@@ -201,6 +205,10 @@
 				</File>
 				<File
 					RelativePath=".\Core\Sampler.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Core\Scene.h"
 					>
 				</File>
 				<File
@@ -239,6 +247,10 @@
 				</File>
 				<File
 					RelativePath=".\Core\FilmFilter.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Core\LightSources.cpp"
 					>
 				</File>
 				<File

@@ -75,8 +75,8 @@ class BSDF
     * directly from the sampled BxDFs.
     * @param i_incident Incident direction. Should be normalized.
     * @param[out] o_exitant Exitant direction. The returned value should be normalized.
-    * @param i_sample 2D sample used to sample the selected BxDFs. Should be in [0;1]^2 range.
-    * @param i_component_sample A sample value used to select a BxDF component. Should be in [0;1] range.
+    * @param i_sample 2D sample used to sample the selected BxDFs. Should be in [0;1)^2 range.
+    * @param i_component_sample A sample value used to select a BxDF component. Should be in [0;1) range.
     * @param[out] o_pdf PDF value for the sampled exitant direction. The returned value should be greater or equal than zero.
     * @param[out] o_sampled_type BxDFType of the sampled component.
     * @param i_flags Specifies the subset of BxDF components to be sampled.

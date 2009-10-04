@@ -4,9 +4,7 @@
 Lambertian::Lambertian(Spectrum_d i_reflectance):
 BxDF(BxDFType(BSDF_REFLECTION | BSDF_DIFFUSE)), m_reflectance(i_reflectance), m_reflectance_inv_pi(i_reflectance*INV_PI)
   {
-  ASSERT(i_reflectance[0]>=0.0 && i_reflectance[0]<=1.0);
-  ASSERT(i_reflectance[1]>=0.0 && i_reflectance[1]<=1.0);
-  ASSERT(i_reflectance[2]>=0.0 && i_reflectance[2]<=1.0);
+  ASSERT(InRange(i_reflectance,0.0,1.0));
   }
 
 // The method does not check if the vectors are in the same hemisphere and returns constant value everywhere.

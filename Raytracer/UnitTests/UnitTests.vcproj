@@ -336,6 +336,10 @@
 						>
 					</File>
 					<File
+						RelativePath=".\LightSources.test.h"
+						>
+					</File>
+					<File
 						RelativePath=".\Primitive.test.h"
 						>
 					</File>
@@ -539,6 +543,10 @@
 			</File>
 			<File
 				RelativePath=".\Lambertian.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\LightSources.test.cpp"
 				>
 			</File>
 			<File

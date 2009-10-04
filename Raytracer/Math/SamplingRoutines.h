@@ -35,6 +35,20 @@ namespace SamplingRoutines
   double UniformHemispherePDF();
 
   /**
+  * Maps 2D sample in [0;1]^2 to a sphere point uniformly.
+  * The sphere is considered to be centered at origin.
+  * @param i_sample Input 2D sample in [0;1]^2.
+  * @return Resulting 3D vector pointing to a point on the sphere surface.
+  */
+  Vector3D_d UniformSphereSampling(const Point2D_d i_sample);
+
+  /**
+  * Returns PDF value for sphere uniform sampling.
+  * The returned value is constant over the sphere.
+  */
+  double UniformSpherePDF();
+
+  /**
   * Maps 2D sample in [0;1]^2 to a hemisphere point with theta cosine distribution.
   * The hemisphere is considered to be centered at origin above the XY plane.
   * @param i_sample Input 2D sample in [0;1]^2.
@@ -47,6 +61,15 @@ namespace SamplingRoutines
   * @param i_cos_theta Cosine of the theta angle. Should be in [0;1] range.
   */
   double CosineHemispherePDF(double i_cos_theta);
+
+  /**
+  * Maps 2D sample in [0;1]^2 to a triangle point uniformly.
+  * The method returns three barycentric coordinates so it does not actually depend on the vertices coordinates.
+  * @param i_sample Input 2D sample in [0;1]^2.
+  * @param[out] o_b1 First barycentric coordinates.
+  * @param[out] o_b2 Second barycentric coordinates.
+  */
+  void UniformTriangleSampling(const Point2D_d i_sample, double &o_b1, double &o_b2);
 
   /**
   * Fills the specified range with stratified 1D values in [0;1] range. ValueIterator is a random-access iterator type.
@@ -156,8 +179,27 @@ namespace SamplingRoutines
     return INV_2PI;
     }
 
+  inline Vector3D_d UniformSphereSampling(const Point2D_d i_sample)
+    {
+    ASSERT(i_sample[0]>=0.0 && i_sample[0]<1.0 && i_sample[1]>=0.0 && i_sample[1]<1.0);
+
+    double z = 1.0 - 2.0*i_sample[0];
+    double r = sqrt(std::max(0.0, 1.0 - z*z));
+    double phi = 2.0 * M_PI * i_sample[1];
+    double x = r * cos(phi);
+    double y = r * sin(phi);
+    return Vector3D_d(x, y, z);
+    }
+
+  inline double UniformSpherePDF()
+    {
+    return 1.0 / (4.0*M_PI);
+    }
+
   inline Vector3D_d CosineHemisphereSampling(const Point2D_d i_sample)
     {
+    ASSERT(i_sample[0]>=0.0 && i_sample[0]<1.0 && i_sample[1]>=0.0 && i_sample[1]<1.0);
+
     // The simplest way to cosine sample the hemisphere is to sample the disk uniformly and then project the point onto the hemisphere.
     Point2D_d disk_point = ConcentricDiskSampling(i_sample);
 
@@ -170,6 +212,14 @@ namespace SamplingRoutines
     ASSERT(i_cos_theta>=0.0 && i_cos_theta<=1.0);
 
     return i_cos_theta * INV_PI;
+    }
+
+  inline void UniformTriangleSampling(const Point2D_d i_sample, double &o_b1, double &o_b2)
+    {
+    ASSERT(i_sample[0]>=0.0 && i_sample[0]<1.0 && i_sample[1]>=0.0 && i_sample[1]<1.0);
+    double tmp = sqrt(i_sample[0]);
+    o_b1 = 1.0 - tmp;
+    o_b2 = i_sample[1] * tmp;
     }
 
   template<typename ValueIterator>

@@ -85,7 +85,7 @@ class BxDF
     * Default implementation uses cosine hemisphere sampling for the exitant direction.
     * @param i_incident Incident direction. Should be normalized.
     * @param[out] o_exitant Exitant direction in the correct hemisphere. The returned value should be normalized.
-    * @param i_sample 2D sample. Should be in [0;1]^2 range.
+    * @param i_sample 2D sample. Should be in [0;1)^2 range.
     * @param[out] o_pdf PDF value for the sampled exitant direction. The returned value should be greater or equal than zero.
     * @return Sampled BxDF value.
     */

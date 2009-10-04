@@ -94,7 +94,30 @@ class SamplingRoutinesTestSuite : public CxxTest::TestSuite
     void test_UniformHemispherePDF()
       {
       double pdf = SamplingRoutines::UniformHemispherePDF();
-      TS_ASSERT(fabs(pdf-INV_2PI)<DBL_EPS);
+      TS_ASSERT_EQUALS(pdf, INV_2PI);
+      }
+
+    void test_UniformSphereSampling_Range()
+      {
+      const size_t num_samples = 1000;
+
+      for(size_t i=0;i<num_samples;++i)
+        {
+        Point2D_d point(RandomDouble(1.0),RandomDouble(1.0));
+        Vector3D_d sampled = SamplingRoutines::UniformSphereSampling(point);
+        double radius = sqrt(sampled[0]*sampled[0]+sampled[1]*sampled[1]+sampled[2]*sampled[2]);
+        if (fabs(radius-1.0)>DBL_EPS)
+          {
+          TS_FAIL("Direction vector is not normalized.");
+          break;
+          }
+        }
+      }
+
+    void test_UniformSpherePDF()
+      {
+      double pdf = SamplingRoutines::UniformSpherePDF();
+      TS_ASSERT_EQUALS(pdf, 1.0/(4.0*M_PI));
       }
 
     void test_CosineHemisphereSampling_Range()
@@ -130,6 +153,23 @@ class SamplingRoutinesTestSuite : public CxxTest::TestSuite
         if (fabs(pdf-cos_theta*INV_PI)>DBL_EPS)
           {
           TS_FAIL("PDF is incorrect.");
+          break;
+          }
+        }
+      }
+
+    void test_UniformTriangleSampling_Range()
+      {
+      const size_t num_samples = 1000;
+
+      for(size_t i=0;i<num_samples;++i)
+        {
+        Point2D_d point(RandomDouble(1.0),RandomDouble(1.0));
+        double b1,b2;
+        SamplingRoutines::UniformTriangleSampling(point,b1,b2);
+        if (b1<0.0 || b2<0.0 || b1+b2>1.0)
+          {
+          TS_FAIL("Barycentric coordinates are out of range.");
           break;
           }
         }

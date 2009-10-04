@@ -3,9 +3,7 @@
 OrenNayar::OrenNayar(Spectrum_d i_reflectance, double i_sigma):
 BxDF(BxDFType(BSDF_REFLECTION | BSDF_DIFFUSE)), m_reflectance(i_reflectance)
   {
-  ASSERT(i_reflectance[0]>=0.0 && i_reflectance[0]<=1.0);
-  ASSERT(i_reflectance[1]>=0.0 && i_reflectance[1]<=1.0);
-  ASSERT(i_reflectance[2]>=0.0 && i_reflectance[2]<=1.0);
+  ASSERT(InRange(i_reflectance,0.0,1.0));
   ASSERT(i_sigma>=0.0 && i_sigma<=1.0);
 
   double sigma_sqr = i_sigma*i_sigma;

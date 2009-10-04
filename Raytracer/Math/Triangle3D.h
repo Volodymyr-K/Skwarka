@@ -22,12 +22,12 @@ class Triangle3D
     * Returns triangle's normal. The orientation depends on the order of triangle's vertices.
     * The method does not cache the normal value so it is computed each time the method is called.
     */
-    Vector3D_d GetNormal() const;
+    Vector3D<T> GetNormal() const;
 
     /**
     * Computes triangle's area.
     */
-    double GetArea() const;
+    T GetArea() const;
 
     const Point3D<T> &operator[](unsigned char i_index) const;
     Point3D<T> &operator[](unsigned char i_index);
@@ -56,18 +56,18 @@ Triangle3D<T>::Triangle3D(const Point3D<T> &i_vertex1, const Point3D<T> &i_verte
   }
 
 template<typename T>
-Vector3D_d Triangle3D<T>::GetNormal() const
+Vector3D<T> Triangle3D<T>::GetNormal() const
   {
-  Vector3D_d normal = Vector3D_d(m_vertices[1]-m_vertices[0])^Vector3D_d(m_vertices[2]-m_vertices[0]);
+  Vector3D<T> normal = Vector3D<T>(m_vertices[1]-m_vertices[0])^Vector3D<T>(m_vertices[2]-m_vertices[0]);
   normal.Normalize();
   return normal;
   }
 
 template<typename T>
-double Triangle3D<T>::GetArea() const
+T Triangle3D<T>::GetArea() const
   {
-  Vector3D_d cross = Vector3D_d(m_vertices[1]-m_vertices[0]) ^ Vector3D_d(m_vertices[2]-m_vertices[0]);
-  return 0.5*cross.Length();
+  Vector3D<T> cross = Vector3D<T>(m_vertices[1]-m_vertices[0]) ^ Vector3D<T>(m_vertices[2]-m_vertices[0]);
+  return ((T)0.5) * cross.Length();
   }
 
 template<typename T>

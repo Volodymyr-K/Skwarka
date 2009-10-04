@@ -78,9 +78,7 @@ template<typename Fresnel>
 SpecularReflection<Fresnel>::SpecularReflection(Spectrum_d i_reflectance, const Fresnel &i_fresnel):
 BxDF(BxDFType(BSDF_REFLECTION | BSDF_SPECULAR)), m_reflectance(i_reflectance), m_fresnel(i_fresnel)
   {
-  ASSERT(i_reflectance[0]>=0.0 && i_reflectance[0]<=1.0);
-  ASSERT(i_reflectance[1]>=0.0 && i_reflectance[1]<=1.0);
-  ASSERT(i_reflectance[2]>=0.0 && i_reflectance[2]<=1.0);
+  ASSERT(InRange(i_reflectance,0.0,1.0));
   }
 
 template<typename Fresnel>

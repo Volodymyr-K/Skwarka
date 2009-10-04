@@ -7,9 +7,7 @@ BxDF(BxDFType(BSDF_TRANSMISSION | BSDF_SPECULAR)), m_transmittance(i_transmittan
 m_refractive_index_inner(i_refractive_index_inner), m_refractive_index_outer(i_refractive_index_outer),
 m_fresnel(i_refractive_index_inner, i_refractive_index_outer)
   {
-  ASSERT(i_transmittance[0]>=0.0 && i_transmittance[0]<=1.0);
-  ASSERT(i_transmittance[1]>=0.0 && i_transmittance[1]<=1.0);
-  ASSERT(i_transmittance[2]>=0.0 && i_transmittance[2]<=1.0);
+  ASSERT(InRange(i_transmittance,0.0,1.0));
 
   ASSERT(i_refractive_index_inner>0.0 && i_refractive_index_outer>0.0);
   }
