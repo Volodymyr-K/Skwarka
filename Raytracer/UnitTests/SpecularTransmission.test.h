@@ -34,6 +34,7 @@ class SpecularTransmissionTestSuite : public CxxTest::TestSuite
       Spectrum_d sp = bxdf->Sample(incident, exitant, sample, pdf);
 
       TS_ASSERT(exitant[2]<0.0);
+      TS_ASSERT(exitant.IsNormalized());
       TS_ASSERT_DELTA( sqrt(1.0-incident[2]*incident[2])*1.0, sqrt(1.0-exitant[2]*exitant[2])*1.5, (1e-10));
       TS_ASSERT_EQUALS(pdf,1.0);
       }
@@ -51,6 +52,7 @@ class SpecularTransmissionTestSuite : public CxxTest::TestSuite
 
       TS_ASSERT_EQUALS(sp, Spectrum_d(0.0));
       TS_ASSERT(exitant[2]<0.0);
+      TS_ASSERT(exitant.IsNormalized());
       TS_ASSERT_EQUALS(exitant, Vector3D_d(-incident[0],-incident[1],incident[2]));
       TS_ASSERT_EQUALS(pdf,1.0);
       }

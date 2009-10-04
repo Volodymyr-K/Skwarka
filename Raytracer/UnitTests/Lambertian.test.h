@@ -35,10 +35,17 @@ class LambertianTestSuite : public CxxTest::TestSuite
         Spectrum_d sp = bxdf->Sample(Vector3D_d(0.5,0.5,0.5).Normalized(), exitant, sample, pdf);
 
         if (sp!=Spectrum_d(INV_PI))
-          correct=false;
-        }
+          {
+          TS_FAIL("Wrong Lambertian value");
+          break;
+          }
 
-      TS_ASSERT(correct);
+        if (exitant.IsNormalized() == false)
+          {
+          TS_FAIL("Sampled direction is not normalized");
+          break;
+          }
+        }
       }
 
     void test_Lambertian_TotalScattering1()

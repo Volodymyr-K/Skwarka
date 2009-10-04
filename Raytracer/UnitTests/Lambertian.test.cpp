@@ -31,13 +31,13 @@ public:
 
 static class TestDescription_LambertianTestSuite_test_Lambertian_TotalScattering1 : public CxxTest::RealTestDescription {
 public:
- TestDescription_LambertianTestSuite_test_Lambertian_TotalScattering1() : CxxTest::RealTestDescription( Tests_LambertianTestSuite, suiteDescription_LambertianTestSuite, 44, "test_Lambertian_TotalScattering1" ) {}
+ TestDescription_LambertianTestSuite_test_Lambertian_TotalScattering1() : CxxTest::RealTestDescription( Tests_LambertianTestSuite, suiteDescription_LambertianTestSuite, 51, "test_Lambertian_TotalScattering1" ) {}
  void runTest() { suite_LambertianTestSuite.test_Lambertian_TotalScattering1(); }
 } testDescription_LambertianTestSuite_test_Lambertian_TotalScattering1;
 
 static class TestDescription_LambertianTestSuite_test_Lambertian_TotalScattering2 : public CxxTest::RealTestDescription {
 public:
- TestDescription_LambertianTestSuite_test_Lambertian_TotalScattering2() : CxxTest::RealTestDescription( Tests_LambertianTestSuite, suiteDescription_LambertianTestSuite, 56, "test_Lambertian_TotalScattering2" ) {}
+ TestDescription_LambertianTestSuite_test_Lambertian_TotalScattering2() : CxxTest::RealTestDescription( Tests_LambertianTestSuite, suiteDescription_LambertianTestSuite, 63, "test_Lambertian_TotalScattering2" ) {}
  void runTest() { suite_LambertianTestSuite.test_Lambertian_TotalScattering2(); }
 } testDescription_LambertianTestSuite_test_Lambertian_TotalScattering2;
 

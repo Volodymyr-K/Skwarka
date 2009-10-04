@@ -73,6 +73,7 @@ class InfiniteLightSource: public ReferenceCounted
     /**
     * Returns the light source radiance for the specified camera ray.
     * @param i_ray The ray pointing to the light source.
+    * @return Light radiance.
     */
     virtual Spectrum_d Radiance(const RayDifferential &i_ray) const = 0;
 
@@ -162,6 +163,7 @@ class AreaLightSource: public ReferenceCounted
     * Returns the light source radiance for the specified outgoing direction.
     * @param i_light_direction Direction of the light. Should be normalized.
     * @param i_light_normal Surface normal at the lighting point. Should be normalized.
+    * @return Light radiance.
     */
     Spectrum_d Radiance(const Vector3D_d &i_light_direction, const Vector3D_d &i_light_normal) const;
 
