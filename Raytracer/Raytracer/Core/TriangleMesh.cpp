@@ -143,6 +143,22 @@ m_use_shading_normals(i_use_shading_normals)
     m_triangles.erase(it,m_triangles.end());
     }
 
+  // Compute the bounding box.
+  if (m_triangles.empty())
+    m_bbox.m_min=m_bbox.m_max=Point3D_f(0.f,0.f,0.f);
+  else
+    {
+    m_bbox.m_min=Point3D_f(FLT_INF,FLT_INF,FLT_INF);
+    m_bbox.m_max=Point3D_f(-FLT_INF,-FLT_INF,-FLT_INF);
+    for(size_t i=0;i<m_triangles.size();++i)
+      {
+      const MeshTriangle &triangle = m_triangles[i];
+      m_bbox = Union(m_bbox, GetVertex(triangle.m_vertices[0]));
+      m_bbox = Union(m_bbox, GetVertex(triangle.m_vertices[1]));
+      m_bbox = Union(m_bbox, GetVertex(triangle.m_vertices[2]));
+      }
+    }
+
   // We don't store the connectivity info as a data member because it is takes a lot of memory and is not used once the mesh is constructed.
   // Instead, it is passed by a reference to all the methods that need it.
   ConnectivityData connectivity;
@@ -300,8 +316,8 @@ void TriangleMesh::_ComputeTopologyInfo(const ConnectivityData &i_connectivity)
 bool TriangleMesh::_ConsistentlyOriented(size_t i_triangle_index1, size_t i_triangle_index2) const
   {
   ASSERT(i_triangle_index1 != i_triangle_index2);
-  const MeshTriangle &tr1 = GetTriangle(i_triangle_index1);
-  const MeshTriangle &tr2 = GetTriangle(i_triangle_index2);
+  const MeshTriangle &tr1 = m_triangles[i_triangle_index1];
+  const MeshTriangle &tr2 = m_triangles[i_triangle_index2];
 
   for(unsigned char i=0;i<3;++i)
     {
@@ -360,7 +376,8 @@ bool TriangleMesh::_ComputeIntersectionPoint(const Point3D_d i_vertices[3], cons
 
 void TriangleMesh::ComputeDifferentialGeometry(size_t i_triangle_index, const RayDifferential &i_ray, DifferentialGeometry &o_dg) const
   {
-  const MeshTriangle &triangle = GetTriangle(i_triangle_index);
+  ASSERT(i_triangle_index < m_triangles.size());
+  const MeshTriangle &triangle = m_triangles[i_triangle_index];
 
   Point3D_d vertices[3] = {
     Convert<double>(m_vertices[triangle.m_vertices[0]]),

@@ -1,5 +1,5 @@
-#ifndef SAMPLING_TEST_ROUTINES_H
-#define SAMPLING_TEST_ROUTINES_H
+#ifndef SAMPLING_TEST_HELPER_H
+#define SAMPLING_TEST_HELPER_H
 
 /*
 This file contains various helper functions that test that a given 1D or 2D samples sequence has a certain distribution.
@@ -13,7 +13,7 @@ These functions are called from different test suites testing that a samples seq
 #include <vector>
 #include <algorithm>
 
-namespace SamplingTestRoutines
+namespace SamplingTestHelper
   {
   /*
   This method checks that the given 1D distribution of sample values has the same mean and variance as the truly uniform would have.
@@ -67,7 +67,7 @@ namespace SamplingTestRoutines
 /////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-namespace SamplingTestRoutines
+namespace SamplingTestHelper
   {
 
   template<typename T>
@@ -216,4 +216,4 @@ namespace SamplingTestRoutines
 
   };
 
-#endif // SAMPLING_TEST_ROUTINES_H
+#endif // SAMPLING_TEST_HELPER_H

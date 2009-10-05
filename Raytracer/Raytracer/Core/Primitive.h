@@ -24,8 +24,9 @@ class Primitive: public ReferenceCounted
     * ip_bump_map parameter can be NULL; in that case the bump mapping is not used.
     * @param ip_mesh TriangleMesh describing shape of the primitive. Should not be null.
     * @param ip_material Material describing scattering properties of the primitive. Should not be null.
-    * @param ip_mesh AreaLightSource describing light emitting properties of the primitive. Can be null (in this case the primitive does not emit any light by itself).
-    * @param ip_bump_map Bump map.
+    * @param ip_area_light_source AreaLightSource describing light emitting properties of the primitive.
+    * Can be null (in this case the primitive does not emit any light by itself).
+    * @param ip_bump_map Bump map. Can be null.
     */
     Primitive(intrusive_ptr<TriangleMesh> ip_mesh, intrusive_ptr<Material> ip_material,
       intrusive_ptr<AreaLightSource> ip_area_light_source = NULL, intrusive_ptr<Texture<double> > ip_bump_map = NULL);

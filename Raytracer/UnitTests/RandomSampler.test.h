@@ -5,7 +5,7 @@
 #include "CustomValueTraits.h"
 #include <Raytracer/Core/Sampler.h>
 #include <Raytracer/Samplers/RandomSampler.h>
-#include "SamplingTestRoutines.h"
+#include "SamplingTestHelper.h"
 #include <vector>
 
 class RandomSamplerTestSuite : public CxxTest::TestSuite
@@ -33,7 +33,7 @@ class RandomSamplerTestSuite : public CxxTest::TestSuite
         if (point[0]<0.0 || point[0]>=image_size_x || point[1]<0.0 || point[1]>=image_size_y) out_of_range=true;
         }
 
-      bool uniform = SamplingTestRoutines::TestUniformDistribution2D(points, Point2D_d(0.0,0.0), Point2D_d(image_size_x,image_size_y));
+      bool uniform = SamplingTestHelper::TestUniformDistribution2D(points, Point2D_d(0.0,0.0), Point2D_d(image_size_x,image_size_y));
       TS_ASSERT(uniform);
       TS_ASSERT(out_of_range==false);
       }
@@ -59,7 +59,7 @@ class RandomSamplerTestSuite : public CxxTest::TestSuite
         // so that first group of samples is for the first pixel, the next group is all for the other pixel and so on.
         if (UVs.size()==20)
           {
-          uniform = uniform && SamplingTestRoutines::TestUniformDistribution2D(UVs, Point2D_d(0.0,0.0), Point2D_d(1.0,1.0));
+          uniform = uniform && SamplingTestHelper::TestUniformDistribution2D(UVs, Point2D_d(0.0,0.0), Point2D_d(1.0,1.0));
           UVs.clear();
           }
         }
@@ -91,7 +91,7 @@ class RandomSamplerTestSuite : public CxxTest::TestSuite
           values.push_back(value);
           }
         
-        uniform = uniform && SamplingTestRoutines::TestUniformDistribution1D(values, 0.0, 1.0);
+        uniform = uniform && SamplingTestHelper::TestUniformDistribution1D(values, 0.0, 1.0);
         if (uniform==false) break;
         }
 
@@ -122,7 +122,7 @@ class RandomSamplerTestSuite : public CxxTest::TestSuite
           values.push_back(value);
           }
 
-        uniform = uniform && SamplingTestRoutines::TestUniformDistribution2D(values, Point2D_d(0.0,0.0), Point2D_d(1.0,1.0));
+        uniform = uniform && SamplingTestHelper::TestUniformDistribution2D(values, Point2D_d(0.0,0.0), Point2D_d(1.0,1.0));
         if (uniform==false) break;
         }
 

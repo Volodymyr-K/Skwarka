@@ -4,7 +4,7 @@
 #include <cxxtest/TestSuite.h>
 #include "CustomValueTraits.h"
 #include <Math/RandomGenerator.h>
-#include "SamplingTestRoutines.h"
+#include "SamplingTestHelper.h"
 #include <vector>
 
 class RandomGeneratorTestSuite : public CxxTest::TestSuite
@@ -52,7 +52,7 @@ class RandomGeneratorTestSuite : public CxxTest::TestSuite
       for(size_t i=0;i<1000;++i)
         values.push_back( (*mp_gen)(1.0,2.0) );
 
-      bool uniform=SamplingTestRoutines::TestUniformDistribution1D(values, 1.0, 2.0);
+      bool uniform=SamplingTestHelper::TestUniformDistribution1D(values, 1.0, 2.0);
       TS_ASSERT(uniform);
       }
 

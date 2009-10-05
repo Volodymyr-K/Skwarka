@@ -6,6 +6,7 @@
 #include <Raytracer/Core/LightSources.h>
 #include <Raytracer/Core/TriangleMesh.h>
 #include <Math/SamplingRoutines.h>
+#include "TriangleMeshTestHelper.h"
 #include <vector>
 
 class LightSourcesTestSuite : public CxxTest::TestSuite
@@ -13,22 +14,7 @@ class LightSourcesTestSuite : public CxxTest::TestSuite
   public:
     void setUp()
       {
-      // Construct tetrahedron mesh.
-      std::vector<Point3D_f> vertices(4);
-      std::vector<MeshTriangle> triangles(4);
-
-      double base_radius = sqrt(8.0)/3.0;
-      vertices[0]=Point3D_f(0.f, 0.f, 1.f);
-      vertices[1]=Point3D_f((float) base_radius,  0.f, -1.f/3.f);
-      vertices[2]=Point3D_f((float) (base_radius*cos(2.0*M_PI_3)), (float) ( base_radius*sin(2.0*M_PI_3)), -1.f/3.f);
-      vertices[3]=Point3D_f((float) (base_radius*cos(2.0*M_PI_3)), (float) (-base_radius*sin(2.0*M_PI_3)), -1.f/3.f);
-
-      triangles[0]=MeshTriangle(1,3,2);
-      triangles[1]=MeshTriangle(1,0,3);
-      triangles[2]=MeshTriangle(1,2,0);
-      triangles[3]=MeshTriangle(0,2,3);
-
-      mp_mesh.reset(new TriangleMesh(vertices,triangles));
+      mp_mesh=TriangleMeshHelper::ConstructTetrahedron();
 
       mp_area_light.reset(new AreaLightSource(Spectrum_d(1.0), mp_mesh));
       }

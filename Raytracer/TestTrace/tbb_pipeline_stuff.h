@@ -103,7 +103,7 @@ MyTransformFilter::MyTransformFilter(Camera *ip_camera, TriangleTree *ip_tree): 
   {
   SampleChunk &chunk = *static_cast<SampleChunk*>(item);
 
-  for(int i=0;i<chunk.samples;++i)
+  for(size_t i=0;i<chunk.samples;++i)
     {
     Ray ray,rx,ry;
     mp_camera->GenerateRay(chunk.mp_sample[i]->GetImagePoint(), chunk.mp_sample[i]->GetLensUV(), ray);
@@ -118,9 +118,8 @@ MyTransformFilter::MyTransformFilter(Camera *ip_camera, TriangleTree *ip_tree): 
     rd.m_direction_dx=rx.m_direction;
     rd.m_direction_dy=ry.m_direction;
 
-    Intersection isect = mp_tree->Intersect(rd);
-
-    if (isect.m_intersection_exists==false)
+    Intersection isect;
+    if (mp_tree->Intersect(rd, isect)==false)
       {
       chunk.m_spectrum[i]=Spectrum_f(0.f, 0.f, 255.f);
       chunk.m_alfa[i]=0.f;
@@ -146,7 +145,7 @@ MyTransformFilter::MyTransformFilter(Camera *ip_camera, TriangleTree *ip_tree): 
       Vector3D_d light_direction = Vector3D_d(0,-0.2,-1).Normalized();
       Spectrum_d color = p_bsdf->Evaluate(light_direction,view_direction)* (p_bsdf->GetShadingNormal()*light_direction)*(-3.0);
       //color.Clamp(0.0,DBL_INF);
-      chunk.m_spectrum[i]=Spectrum_f(color[0]*255.f, color[1]*255.f, color[2]*255.f);
+      chunk.m_spectrum[i]=Spectrum_f((float)color[0]*255.f, (float)color[1]*255.f, (float)color[2]*255.f);
       chunk.m_alfa[i]=1.f;
       }
 
@@ -179,7 +178,7 @@ extern int pixel_counter;
 void* MyOutputFilter::operator()( void* item )
   {
   SampleChunk &chunk = *static_cast<SampleChunk*>(item);
-  for(int i=0;i<chunk.samples;++i)
+  for(size_t i=0;i<chunk.samples;++i)
     {
   mp_film->AddSample(chunk.mp_sample[i]->GetImagePoint(), chunk.m_spectrum[i], chunk.m_alfa[i]);
     }

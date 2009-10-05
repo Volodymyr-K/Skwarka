@@ -187,6 +187,77 @@ class BBox3DTestSuite : public CxxTest::TestSuite
       TS_ASSERT(m_bbox.Intersect(ray)==false);
       }
 
+    void test_BBox3D_UnionWithPoint1()
+      {
+      BBox3D_d bbox(Point3D_d(-1,-1,-1), Point3D_d(1,1,1));
+      Point3D_d point(2,2,2);
+      BBox3D_d united = Union(bbox, point);
+
+      TS_ASSERT_EQUALS(united.m_min, Point3D_d(-1,-1,-1));
+      TS_ASSERT_EQUALS(united.m_max, Point3D_d(2,2,2));
+      }
+
+    void test_BBox3D_UnionWithPoint2()
+      {
+      BBox3D_d bbox(Point3D_d(-1,-1,-1), Point3D_d(1,1,1));
+      Point3D_d point(0.5,0.5,0.5);
+      BBox3D_d united = Union(bbox, point);
+
+      TS_ASSERT_EQUALS(united.m_min, Point3D_d(-1,-1,-1));
+      TS_ASSERT_EQUALS(united.m_max, Point3D_d(1,1,1));
+      }
+
+    // Tests an important way of how the Union() method can be used to find a union of a set of points.
+    // If the bbox was initialized with infinity values it should collapse to a point with the first call.
+    void test_BBox3D_UnionWithPoint_InfinityValues()
+      {
+      BBox3D_d bbox(Point3D_d(DBL_INF,DBL_INF,DBL_INF), Point3D_d(-DBL_INF,-DBL_INF,-DBL_INF));
+      Point3D_d point(0.5,0.5,0.5);
+      BBox3D_d united = Union(bbox, point);
+
+      TS_ASSERT_EQUALS(united.m_min, point);
+      TS_ASSERT_EQUALS(united.m_max, point);
+      }
+
+    void test_BBox3D_UnionWithBox1()
+      {
+      BBox3D_d bbox1(Point3D_d(-1,-1,-1), Point3D_d(1,1,1));
+      BBox3D_d bbox2(Point3D_d(0,0,0), Point3D_d(2,2,2));
+      BBox3D_d united = Union(bbox1, bbox2);
+
+      TS_ASSERT_EQUALS(united.m_min, Point3D_d(-1,-1,-1));
+      TS_ASSERT_EQUALS(united.m_max, Point3D_d(2,2,2));
+      }
+
+    void test_BBox3D_UnionWithBox2()
+      {
+      BBox3D_d bbox1(Point3D_d(-1,-1,-1), Point3D_d(2,2,2));
+      BBox3D_d bbox2(Point3D_d(0,0,0), Point3D_d(1,1,1));
+      BBox3D_d united = Union(bbox1, bbox2);
+
+      TS_ASSERT_EQUALS(united.m_min, Point3D_d(-1,-1,-1));
+      TS_ASSERT_EQUALS(united.m_max, Point3D_d(2,2,2));
+      }
+
+    // Tests an important way of how the Union() method can be used to find a union of a set of bounding boxes.
+    // If the bbox was initialized with infinity values it should collapse to a finite bounding box with the first call.
+    void test_BBox3D_UnionWithBox_InfinityValues()
+      {
+      BBox3D_d bbox1(Point3D_d(DBL_INF,DBL_INF,DBL_INF), Point3D_d(-DBL_INF,-DBL_INF,-DBL_INF));
+      BBox3D_d bbox2(Point3D_d(0,0,0), Point3D_d(1,1,1));
+      BBox3D_d united = Union(bbox1, bbox2);
+
+      TS_ASSERT_EQUALS(united.m_min, bbox2.m_min);
+      TS_ASSERT_EQUALS(united.m_max, bbox2.m_max);
+      }
+
+    void test_BBox3D_Conversion()
+      {
+      BBox3D<int> bbox_int = Convert<int>(m_bbox);
+      TS_ASSERT_EQUALS(bbox_int.m_min, Point3D<int>(-1,-2,-3));
+      TS_ASSERT_EQUALS(bbox_int.m_max, Point3D<int>(1,2,3));
+      }
+
     private:
       BBox3D_d m_bbox;
   };

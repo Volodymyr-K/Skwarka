@@ -5,7 +5,7 @@
 #include "CustomValueTraits.h"
 #include <Raytracer/Core/Sampler.h>
 #include <Raytracer/Samplers/StratifiedSampler.h>
-#include "SamplingTestRoutines.h"
+#include "SamplingTestHelper.h"
 #include <vector>
 
 class StratifiedSamplerTestSuite : public CxxTest::TestSuite
@@ -34,8 +34,8 @@ class StratifiedSamplerTestSuite : public CxxTest::TestSuite
         }
 
       // Stratified points should be uniformly distributed and should not clump at the same time.
-      bool uniform = SamplingTestRoutines::TestUniformDistribution2D(points, Point2D_d(0.0,0.0), Point2D_d(image_size_x,image_size_y));
-      bool not_clumped = SamplingTestRoutines::TestSamplesClumping2D(points, Point2D_d(0.0,0.0), Point2D_d(image_size_x,image_size_y), image_size_x*11, image_size_y*15);
+      bool uniform = SamplingTestHelper::TestUniformDistribution2D(points, Point2D_d(0.0,0.0), Point2D_d(image_size_x,image_size_y));
+      bool not_clumped = SamplingTestHelper::TestSamplesClumping2D(points, Point2D_d(0.0,0.0), Point2D_d(image_size_x,image_size_y), image_size_x*11, image_size_y*15);
       TS_ASSERT(uniform);
       TS_ASSERT(not_clumped);
       TS_ASSERT(out_of_range==false);
@@ -62,8 +62,8 @@ class StratifiedSamplerTestSuite : public CxxTest::TestSuite
         // so that first group of samples is for the first pixel, the next group is all for the other pixel and so on.
         if (UVs.size()==11*15)
           {
-          uniform = uniform && SamplingTestRoutines::TestUniformDistribution2D(UVs, Point2D_d(0.0,0.0), Point2D_d(1.0,1.0));
-          not_clumped = not_clumped && SamplingTestRoutines::TestSamplesClumping2D(UVs, Point2D_d(0.0,0.0), Point2D_d(1.0,1.0), 11, 15);
+          uniform = uniform && SamplingTestHelper::TestUniformDistribution2D(UVs, Point2D_d(0.0,0.0), Point2D_d(1.0,1.0));
+          not_clumped = not_clumped && SamplingTestHelper::TestSamplesClumping2D(UVs, Point2D_d(0.0,0.0), Point2D_d(1.0,1.0), 11, 15);
           UVs.clear();
           }
         }
@@ -97,8 +97,8 @@ class StratifiedSamplerTestSuite : public CxxTest::TestSuite
           values.push_back(value);
           }
 
-        uniform = uniform && SamplingTestRoutines::TestUniformDistribution1D(values, 0.0, 1.0);
-        not_clumped = not_clumped && SamplingTestRoutines::TestSamplesClumping1D(values, 0.0, 1.0);
+        uniform = uniform && SamplingTestHelper::TestUniformDistribution1D(values, 0.0, 1.0);
+        not_clumped = not_clumped && SamplingTestHelper::TestSamplesClumping1D(values, 0.0, 1.0);
         if (uniform==false || not_clumped==false) break;
         }
 
@@ -130,8 +130,8 @@ class StratifiedSamplerTestSuite : public CxxTest::TestSuite
           values.push_back(value);
           }
 
-        uniform = uniform && SamplingTestRoutines::TestUniformDistribution2D(values, Point2D_d(0.0,0.0), Point2D_d(1.0,1.0));
-        not_clumped = not_clumped && SamplingTestRoutines::TestLatinHypercubeDistribution2D(values, Point2D_d(0.0,0.0), Point2D_d(1.0,1.0));
+        uniform = uniform && SamplingTestHelper::TestUniformDistribution2D(values, Point2D_d(0.0,0.0), Point2D_d(1.0,1.0));
+        not_clumped = not_clumped && SamplingTestHelper::TestLatinHypercubeDistribution2D(values, Point2D_d(0.0,0.0), Point2D_d(1.0,1.0));
         if (uniform==false || not_clumped==false) break;
         }
 

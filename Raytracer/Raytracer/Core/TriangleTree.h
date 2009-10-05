@@ -25,25 +25,17 @@ class TriangleTree
 
     ////////////////////////////////////////////////// PUBLIC INTERFACE /////////////////////////////////////////////////////
   public:
-    TriangleTree();
+    TriangleTree(std::vector<intrusive_ptr<Primitive> > i_primitives);
     ~TriangleTree();
-
-    // Call this method to set the container (Wrapper). This method destroys the tree if has already been constructed for some another Wrapper.
-    void AddPrimitive(intrusive_ptr<Primitive> ip_primitive);
-
-    /*
-    Build the tree.
-    If the tree is already built this method forces its rebuilding (it can be needed if the mesh was changed after the last construction).
-    The container (Wrapper) should be set before this method is called.
-    */
-    void BuildTree();
 
     ////////////////////////////////////////////////////// QUERIES  /////////////////////////////////////////////////////////
 
     // Search for the triangle nearest to the i_point along the i_direction.
-    Intersection Intersect(const RayDifferential &i_ray) const;
+    bool Intersect(const RayDifferential &i_ray, Intersection &o_intersection) const;
 
     bool IntersectTest(const Ray &i_ray) const;
+
+    BBox3D_d GetWorldBounds() const;
 
   private:
     TriangleTree(TriangleTree &);
@@ -51,6 +43,13 @@ class TriangleTree
 
     // Destroy the tree (if it is built).
     void _DestroyTree();
+
+    /*
+    Build the tree.
+    If the tree is already built this method forces its rebuilding (it can be needed if the mesh was changed after the last construction).
+    The container (Wrapper) should be set before this method is called.
+    */
+    void _BuildTree();
 
     BBox3D_f _ConstructBBox(size_t i_begin, size_t i_end) const;
     void _SwapTriangles(size_t i_index1, size_t i_index2);

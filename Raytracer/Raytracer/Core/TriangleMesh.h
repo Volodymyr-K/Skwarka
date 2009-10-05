@@ -77,9 +77,9 @@ class TriangleMesh: public ReferenceCounted
 
     size_t GetNumberOfTriangles() const;
 
-    const Point3D_f &GetVertex(size_t i_vertex_index) const;
+    Point3D_f GetVertex(size_t i_vertex_index) const;
 
-    const MeshTriangle &GetTriangle(size_t i_triangle_index) const;
+    MeshTriangle GetTriangle(size_t i_triangle_index) const;
 
     Vector3D_f GetTriangleNormal(size_t i_triangle_index) const;
 
@@ -87,6 +87,8 @@ class TriangleMesh: public ReferenceCounted
     * Populates the DifferentialGeometry assuming that the specified ray intersects the specified triangle.
     */
     void ComputeDifferentialGeometry(size_t i_triangle_index, const RayDifferential &i_ray, DifferentialGeometry &o_dg) const;
+
+    BBox3D_f GetBounds() const;
 
     TopologyInfo GetTopologyInfo() const;
 
@@ -118,6 +120,7 @@ class TriangleMesh: public ReferenceCounted
 
     bool m_use_shading_normals;
 
+    BBox3D_f m_bbox;
     TopologyInfo m_topology_info;
   };
 
@@ -134,13 +137,13 @@ inline size_t TriangleMesh::GetNumberOfTriangles() const
   return m_triangles.size();
   }
 
-inline const Point3D_f &TriangleMesh::GetVertex(size_t i_vertex_index) const
+inline Point3D_f TriangleMesh::GetVertex(size_t i_vertex_index) const
   {
   ASSERT(i_vertex_index < m_vertices.size());
   return m_vertices[i_vertex_index];
   }
 
-inline const MeshTriangle &TriangleMesh::GetTriangle(size_t i_triangle_index) const
+inline MeshTriangle TriangleMesh::GetTriangle(size_t i_triangle_index) const
   {
   ASSERT(i_triangle_index < m_triangles.size());
   return m_triangles[i_triangle_index];
@@ -156,6 +159,11 @@ inline Vector3D_f TriangleMesh::GetTriangleNormal(size_t i_triangle_index) const
     m_vertices[triangle.m_vertices[2]]};
 
   return (Vector3D_f(vertices[1]-vertices[0])^Vector3D_f(vertices[2]-vertices[0])).Normalized();
+  }
+
+inline BBox3D_f TriangleMesh::GetBounds() const
+  {
+  return m_bbox;
   }
 
 inline TopologyInfo TriangleMesh::GetTopologyInfo() const

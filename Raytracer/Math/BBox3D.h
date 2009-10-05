@@ -47,6 +47,24 @@ class BBox3D
     Point3D<T> m_min, m_max;
   };
 
+/**
+* Returns BBox3D uniting the specified bounding box and 3D point.
+*/
+template<typename T>
+BBox3D<T> Union(const BBox3D<T> &i_bbox1, const Point3D<T> &i_point);
+
+/**
+* Returns BBox3D uniting two specified bounding boxes.
+*/
+template<typename T>
+BBox3D<T> Union(const BBox3D<T> &i_bbox1, const BBox3D<T> &i_bbox2);
+
+/**
+* Converts BBox3D instance to a BBox3D parameterized by a specified type.
+*/
+template<typename T2, typename T>
+BBox3D<T2> Convert(const BBox3D<T> &i_bbox);
+
 typedef BBox3D<float> BBox3D_f;
 typedef BBox3D<double> BBox3D_d;
 
@@ -102,6 +120,40 @@ template<typename T>
 bool BBox3D<T>::Inside(const Triangle3D<T> &i_triangle) const
   {
   return Inside(i_triangle[0]) && Inside(i_triangle[1]) && Inside(i_triangle[2]);
+  }
+
+template<typename T>
+BBox3D<T> Union(const BBox3D<T> &i_bbox1, const Point3D<T> &i_point)
+  {
+  BBox3D<T> ret;
+  ret.m_min[0] = std::min(i_bbox1.m_min[0], i_point[0]);
+  ret.m_min[1] = std::min(i_bbox1.m_min[1], i_point[1]);
+  ret.m_min[2] = std::min(i_bbox1.m_min[2], i_point[2]);
+  ret.m_max[0] = std::max(i_bbox1.m_max[0], i_point[0]);
+  ret.m_max[1] = std::max(i_bbox1.m_max[1], i_point[1]);
+  ret.m_max[2] = std::max(i_bbox1.m_max[2], i_point[2]);
+
+  return ret;
+  }
+
+template<typename T>
+BBox3D<T> Union(const BBox3D<T> &i_bbox1, const BBox3D<T> &i_bbox2)
+  {
+  BBox3D<T> ret;
+  ret.m_min[0] = std::min(i_bbox1.m_min[0], i_bbox2.m_min[0]);
+  ret.m_min[1] = std::min(i_bbox1.m_min[1], i_bbox2.m_min[1]);
+  ret.m_min[2] = std::min(i_bbox1.m_min[2], i_bbox2.m_min[2]);
+  ret.m_max[0] = std::max(i_bbox1.m_max[0], i_bbox2.m_max[0]);
+  ret.m_max[1] = std::max(i_bbox1.m_max[1], i_bbox2.m_max[1]);
+  ret.m_max[2] = std::max(i_bbox1.m_max[2], i_bbox2.m_max[2]);
+
+  return ret;
+  }
+
+template<typename T2, typename T>
+BBox3D<T2> Convert(const BBox3D<T> &i_bbox)
+  {
+  return BBox3D<T2>(Convert<T2>(i_bbox.m_min), Convert<T2>(i_bbox.m_max));
   }
 
 #endif // BBOX3D_H

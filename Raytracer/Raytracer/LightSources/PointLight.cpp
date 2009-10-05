@@ -8,7 +8,7 @@ m_position(i_position), m_intensity(i_intensity)
   ASSERT(InRange(i_intensity,0.0,DBL_INF));
   }
 
-void PointLight::Initialize(intrusive_ptr<Scene> ip_scene)
+void PointLight::SetWorldBounds(const BBox3D_d &i_world_bounds)
   {
   // Nothing to do for a point light.
   }

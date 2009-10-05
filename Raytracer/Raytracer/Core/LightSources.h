@@ -5,7 +5,6 @@
 #include <Math/Geometry.h>
 #include "TriangleMesh.h"
 #include "Spectrum.h"
-#include "Scene.h"
 
 /**
 * An abstract base class defining the contract for all delta light sources.
@@ -16,10 +15,10 @@ class DeltaLightSource: public ReferenceCounted
   { 
   public:
     /**
-    * Initializes the light source for the given scene. This method will be called after the scene is constructed and before using the light source.
-    * Depending on the implementation this method can precompute the light source power or cache other things like world bounding box.
+    * Initializes the light source with specified world bounds. This method will be called after the scene is constructed and before using the light source.
+    * Depending on the implementation the worlds bounds may be needed to estimate the source power (i.e. flux) or sample light rays.
     */
-    virtual void Initialize(intrusive_ptr<Scene> ip_scene) = 0;
+    virtual void SetWorldBounds(const BBox3D_d &i_world_bounds) = 0;
 
     /**
     * Returns the total power of the light source, i.e. the light flux.
@@ -65,10 +64,10 @@ class InfiniteLightSource: public ReferenceCounted
   { 
   public:
     /**
-    * Initializes the light source for the given scene. This method will be called after the scene is constructed and before using the light source.
-    * Depending on the implementation this method can precompute the light source power or cache other things like world bounding box.
+    * Initializes the light source with specified world bounds. This method will be called after the scene is constructed and before using the light source.
+    * Depending on the implementation the worlds bounds may be needed to estimate the source power (i.e. flux) or sample light rays.
     */
-    virtual void Initialize(intrusive_ptr<Scene> ip_scene) = 0;
+    virtual void SetWorldBounds(const BBox3D_d &i_world_bounds) = 0;
 
     /**
     * Returns the light source radiance for the specified camera ray.
@@ -230,6 +229,18 @@ class AreaLightSource: public ReferenceCounted
     * Cumulative density function used to sample surface points on the triangle mesh uniformly with respect to the surface area.
     */
     std::vector<double> m_area_CDF;
+  };
+
+/**
+* A convenient structure encapsulating all light sources in the scene.
+*/
+struct LightSources
+  {
+  std::vector<intrusive_ptr<DeltaLightSource> > m_delta_light_sources;
+
+  std::vector<intrusive_ptr<InfiniteLightSource> > m_infinitiy_light_sources;
+
+  std::vector<intrusive_ptr<AreaLightSource> > m_area_light_sources;
   };
 
 #endif // LIGHT_SOURCES_H

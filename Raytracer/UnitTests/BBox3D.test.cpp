@@ -130,3 +130,45 @@ public:
  void runTest() { suite_BBox3DTestSuite.test_BBox3D_RayNotIntersect3(); }
 } testDescription_BBox3DTestSuite_test_BBox3D_RayNotIntersect3;
 
+static class TestDescription_BBox3DTestSuite_test_BBox3D_UnionWithPoint1 : public CxxTest::RealTestDescription {
+public:
+ TestDescription_BBox3DTestSuite_test_BBox3D_UnionWithPoint1() : CxxTest::RealTestDescription( Tests_BBox3DTestSuite, suiteDescription_BBox3DTestSuite, 190, "test_BBox3D_UnionWithPoint1" ) {}
+ void runTest() { suite_BBox3DTestSuite.test_BBox3D_UnionWithPoint1(); }
+} testDescription_BBox3DTestSuite_test_BBox3D_UnionWithPoint1;
+
+static class TestDescription_BBox3DTestSuite_test_BBox3D_UnionWithPoint2 : public CxxTest::RealTestDescription {
+public:
+ TestDescription_BBox3DTestSuite_test_BBox3D_UnionWithPoint2() : CxxTest::RealTestDescription( Tests_BBox3DTestSuite, suiteDescription_BBox3DTestSuite, 200, "test_BBox3D_UnionWithPoint2" ) {}
+ void runTest() { suite_BBox3DTestSuite.test_BBox3D_UnionWithPoint2(); }
+} testDescription_BBox3DTestSuite_test_BBox3D_UnionWithPoint2;
+
+static class TestDescription_BBox3DTestSuite_test_BBox3D_UnionWithPoint_InfinityValues : public CxxTest::RealTestDescription {
+public:
+ TestDescription_BBox3DTestSuite_test_BBox3D_UnionWithPoint_InfinityValues() : CxxTest::RealTestDescription( Tests_BBox3DTestSuite, suiteDescription_BBox3DTestSuite, 212, "test_BBox3D_UnionWithPoint_InfinityValues" ) {}
+ void runTest() { suite_BBox3DTestSuite.test_BBox3D_UnionWithPoint_InfinityValues(); }
+} testDescription_BBox3DTestSuite_test_BBox3D_UnionWithPoint_InfinityValues;
+
+static class TestDescription_BBox3DTestSuite_test_BBox3D_UnionWithBox1 : public CxxTest::RealTestDescription {
+public:
+ TestDescription_BBox3DTestSuite_test_BBox3D_UnionWithBox1() : CxxTest::RealTestDescription( Tests_BBox3DTestSuite, suiteDescription_BBox3DTestSuite, 222, "test_BBox3D_UnionWithBox1" ) {}
+ void runTest() { suite_BBox3DTestSuite.test_BBox3D_UnionWithBox1(); }
+} testDescription_BBox3DTestSuite_test_BBox3D_UnionWithBox1;
+
+static class TestDescription_BBox3DTestSuite_test_BBox3D_UnionWithBox2 : public CxxTest::RealTestDescription {
+public:
+ TestDescription_BBox3DTestSuite_test_BBox3D_UnionWithBox2() : CxxTest::RealTestDescription( Tests_BBox3DTestSuite, suiteDescription_BBox3DTestSuite, 232, "test_BBox3D_UnionWithBox2" ) {}
+ void runTest() { suite_BBox3DTestSuite.test_BBox3D_UnionWithBox2(); }
+} testDescription_BBox3DTestSuite_test_BBox3D_UnionWithBox2;
+
+static class TestDescription_BBox3DTestSuite_test_BBox3D_UnionWithBox_InfinityValues : public CxxTest::RealTestDescription {
+public:
+ TestDescription_BBox3DTestSuite_test_BBox3D_UnionWithBox_InfinityValues() : CxxTest::RealTestDescription( Tests_BBox3DTestSuite, suiteDescription_BBox3DTestSuite, 244, "test_BBox3D_UnionWithBox_InfinityValues" ) {}
+ void runTest() { suite_BBox3DTestSuite.test_BBox3D_UnionWithBox_InfinityValues(); }
+} testDescription_BBox3DTestSuite_test_BBox3D_UnionWithBox_InfinityValues;
+
+static class TestDescription_BBox3DTestSuite_test_BBox3D_Conversion : public CxxTest::RealTestDescription {
+public:
+ TestDescription_BBox3DTestSuite_test_BBox3D_Conversion() : CxxTest::RealTestDescription( Tests_BBox3DTestSuite, suiteDescription_BBox3DTestSuite, 254, "test_BBox3D_Conversion" ) {}
+ void runTest() { suite_BBox3DTestSuite.test_BBox3D_Conversion(); }
+} testDescription_BBox3DTestSuite_test_BBox3D_Conversion;
+

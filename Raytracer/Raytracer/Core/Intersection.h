@@ -12,11 +12,6 @@
 struct Intersection
   {
   /**
-  * True if the intersection exists and false if there's no intersection.
-  */
-  bool m_intersection_exists;
-
-  /**
   * Pointer to the intersected primitive.
   */
   intrusive_ptr<Primitive> mp_primitive;

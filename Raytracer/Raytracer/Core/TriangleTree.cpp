@@ -1,10 +1,11 @@
 #include "TriangleTree.h"
 
-TriangleTree::TriangleTree():
-mp_root(NULL),
+TriangleTree::TriangleTree(std::vector<intrusive_ptr<Primitive> > i_primitives):
+mp_root(NULL), m_primitives(i_primitives),
 m_NodePool(sizeof(TriangleTree::Node), NODES_TO_ALLOCATE),
 m_LeafPool(sizeof(TriangleTree::Leaf), NODES_TO_ALLOCATE)
   {
+  _BuildTree();
   }
 
 TriangleTree::~TriangleTree()
@@ -12,18 +13,9 @@ TriangleTree::~TriangleTree()
   _DestroyTree();
   }
 
-void TriangleTree::AddPrimitive(intrusive_ptr<Primitive> ip_primitive)
+BBox3D_d TriangleTree::GetWorldBounds() const
   {
-  ASSERT(ip_primitive!=NULL);
-
-  for(size_t i=0;i<m_primitives.size();++i)
-    if (m_primitives[i]->GetTriangleMesh()==ip_primitive->GetTriangleMesh())
-      {
-      Log::Warning("The same mesh added twice to the triangle tree. Skipping.");
-      return;
-      }
-
-  m_primitives.push_back(ip_primitive);
+  return Convert<double>(mp_root->m_bbox);
   }
 
 /*
@@ -32,7 +24,7 @@ If the tree is already built this method forces its rebuilding (it can be needed
 The container (Wrapper) should be set before this method is called.
 */
 
-void TriangleTree::BuildTree()
+void TriangleTree::_BuildTree()
   {
   if (mp_root != NULL)
     {
@@ -137,25 +129,22 @@ void TriangleTree::_SwapTriangles(size_t i_index1, size_t i_index2)
 Search for the triangle nearest to the i_point along the i_direction.
 */
 
-Intersection TriangleTree::Intersect(const RayDifferential &i_ray) const
+bool TriangleTree::Intersect(const RayDifferential &i_ray, Intersection &o_intersection) const
   {
   ASSERT(mp_root && "Intersect operation is called for not built tree.");
-
-  Intersection ret;
-  ret.m_intersection_exists=false;
 
   Ray ray(i_ray.m_base_ray);
   size_t triangle_index = mp_root->m_end;
   mp_root->Intersect(ray, triangle_index);
   if (triangle_index != mp_root->m_end)
     {
-    ret.m_intersection_exists=true;
-    ret.mp_primitive = m_primitives[m_primitive_indices[triangle_index]];
-    ret.m_triangle_index = m_triangle_indices[triangle_index];
-    ret.mp_primitive->GetTriangleMesh()->ComputeDifferentialGeometry(ret.m_triangle_index, i_ray,ret.m_dg);
+    o_intersection.mp_primitive = m_primitives[m_primitive_indices[triangle_index]];
+    o_intersection.m_triangle_index = m_triangle_indices[triangle_index];
+    o_intersection.mp_primitive->GetTriangleMesh()->ComputeDifferentialGeometry(o_intersection.m_triangle_index, i_ray, o_intersection.m_dg);
+    return true;
     }
 
-  return ret;
+  return false;
   }
 
 bool TriangleTree::IntersectTest(const Ray &i_ray) const

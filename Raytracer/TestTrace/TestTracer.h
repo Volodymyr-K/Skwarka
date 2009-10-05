@@ -132,9 +132,7 @@ inline void TestTracer::LoadMesh()
 
   intrusive_ptr<Primitive> p_primitive(new Primitive(mp_mesh, p_material));
 
-  mp_tree = new TriangleTree();
-  mp_tree->AddPrimitive(p_primitive);
-  mp_tree->BuildTree();
+  mp_tree = new TriangleTree(std::vector<intrusive_ptr<Primitive> >(1,p_primitive));
   }
 
 // 73 291

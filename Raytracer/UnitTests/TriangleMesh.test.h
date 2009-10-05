@@ -5,6 +5,7 @@
 #include "CustomValueTraits.h"
 #include <Raytracer/Core/TriangleMesh.h>
 #include <Raytracer/Core/DifferentialGeometry.h>
+#include "TriangleMeshTestHelper.h"
 #include <vector>
 
 class TriangleMeshTestSuite : public CxxTest::TestSuite
@@ -12,7 +13,7 @@ class TriangleMeshTestSuite : public CxxTest::TestSuite
   public:
     void test_TriangleMesh_Constr()
       {
-      intrusive_ptr<TriangleMesh> p_mesh=_ConstructTetrahedron();
+      intrusive_ptr<TriangleMesh> p_mesh=TriangleMeshHelper::ConstructTetrahedron();
 
       TS_ASSERT_EQUALS(p_mesh->GetNumberOfVertices(),4);
       TS_ASSERT_EQUALS(p_mesh->GetNumberOfTriangles(),4);
@@ -26,12 +27,27 @@ class TriangleMeshTestSuite : public CxxTest::TestSuite
       TS_ASSERT_EQUALS(p_mesh->GetNumberOfVertices(),0);
       TS_ASSERT_EQUALS(p_mesh->GetNumberOfTriangles(),0);
       TS_ASSERT(info.m_manifold && info.m_number_of_patches==0 && info.m_solid);
+
+      TS_ASSERT_EQUALS(p_mesh->GetBounds().m_min, Point3D_f(0.f,0.f,0.f));
+      TS_ASSERT_EQUALS(p_mesh->GetBounds().m_max, Point3D_f(0.f,0.f,0.f));
+      }
+
+    void test_TriangleMesh_GetBounds()
+      {
+      intrusive_ptr<TriangleMesh> p_mesh=TriangleMeshHelper::ConstructTetrahedron();
+
+      BBox3D_f bbox(p_mesh->GetVertex(0), p_mesh->GetVertex(0));
+      for(size_t i=0;i<p_mesh->GetNumberOfVertices();++i)
+        bbox = Union(bbox, p_mesh->GetVertex(i));
+
+      TS_ASSERT_EQUALS(p_mesh->GetBounds().m_min, bbox.m_min);
+      TS_ASSERT_EQUALS(p_mesh->GetBounds().m_max, bbox.m_max);
       }
 
     // Tests a case when the mesh is solid.
     void test_TriangleMesh_SolidTopologyInfo()
       {
-      intrusive_ptr<TriangleMesh> p_mesh=_ConstructTetrahedron();
+      intrusive_ptr<TriangleMesh> p_mesh( TriangleMeshHelper::ConstructTetrahedron() );
       TopologyInfo info = p_mesh->GetTopologyInfo();
 
       TS_ASSERT(info.m_manifold && info.m_number_of_patches==1 && info.m_solid);
@@ -78,7 +94,7 @@ class TriangleMeshTestSuite : public CxxTest::TestSuite
     // Tests that geometric normals (not shaded ones) are correct.
     void test_TriangleMesh_TriangleNormals()
       {
-      intrusive_ptr<TriangleMesh> p_mesh=_ConstructTetrahedron();
+      intrusive_ptr<TriangleMesh> p_mesh( TriangleMeshHelper::ConstructTetrahedron() );
       bool normals_correct=true;
 
       for(size_t i=0;i<p_mesh->GetNumberOfTriangles();++i)
@@ -99,7 +115,7 @@ class TriangleMeshTestSuite : public CxxTest::TestSuite
     // Tests DifferentialGeometry() method for a case when UV parameterization is not set, shading normals are not used and the ray has no differentials.
     void test_TriangleMesh_DifferentialGeometry1()
       {
-      intrusive_ptr<TriangleMesh> p_mesh=_ConstructTetrahedron();
+      intrusive_ptr<TriangleMesh> p_mesh( TriangleMeshHelper::ConstructTetrahedron() );
       p_mesh->SetUseShadingNormals(false);
       
       Point3D_d origin(0.5,-0.5,-10.0);
@@ -129,7 +145,7 @@ class TriangleMeshTestSuite : public CxxTest::TestSuite
     // Tests DifferentialGeometry() method for a case when UV parameterization is not set, shading normals are used and the ray has no differentials.
     void test_TriangleMesh_DifferentialGeometry2()
       {
-      intrusive_ptr<TriangleMesh> p_mesh=_ConstructTetrahedron();
+      intrusive_ptr<TriangleMesh> p_mesh( TriangleMeshHelper::ConstructTetrahedron() );
       p_mesh->SetUseShadingNormals(true);
 
       Point3D_d origin(0.5,-0.5,-10.0);
@@ -156,7 +172,7 @@ class TriangleMeshTestSuite : public CxxTest::TestSuite
     // Tests DifferentialGeometry() method for a case when UV parameterization is not set, shading normals are used and the ray has differentials.
     void test_TriangleMesh_DifferentialGeometry3()
       {
-      intrusive_ptr<TriangleMesh> p_mesh=_ConstructTetrahedron();
+      intrusive_ptr<TriangleMesh> p_mesh( TriangleMeshHelper::ConstructTetrahedron() );
       p_mesh->SetUseShadingNormals(true);
 
       Point3D_d origin(0.5,-0.5,-10.0);
@@ -190,7 +206,7 @@ class TriangleMeshTestSuite : public CxxTest::TestSuite
     // Tests shading normal by evaluating DifferentialGeometry at a triangle's vertex.
     void test_TriangleMesh_ShadingNormal()
       {
-      intrusive_ptr<TriangleMesh> p_mesh=_ConstructTetrahedron();
+      intrusive_ptr<TriangleMesh> p_mesh( TriangleMeshHelper::ConstructTetrahedron() );
       p_mesh->SetUseShadingNormals(true);
 
       Point3D_d origin(0.5,-0.5,-10.0);
@@ -205,26 +221,6 @@ class TriangleMeshTestSuite : public CxxTest::TestSuite
       theoretical_shading_normal.Normalize();
       
       CustomAssertDelta(dg.m_shading_normal, theoretical_shading_normal, (1e-6));
-      }
-
-  private:
-    intrusive_ptr<TriangleMesh> _ConstructTetrahedron()
-      {
-      std::vector<Point3D_f> vertices(4);
-      std::vector<MeshTriangle> triangles(4);
-
-      double base_radius = sqrt(8.0)/3.0;
-      vertices[0]=Point3D_f(0.f, 0.f, 1.f);
-      vertices[1]=Point3D_f((float) base_radius,  0.f, -1.f/3.f);
-      vertices[2]=Point3D_f((float) (base_radius*cos(2.0*M_PI_3)), (float) ( base_radius*sin(2.0*M_PI_3)), -1.f/3.f);
-      vertices[3]=Point3D_f((float) (base_radius*cos(2.0*M_PI_3)), (float) (-base_radius*sin(2.0*M_PI_3)), -1.f/3.f);
-
-      triangles[0]=MeshTriangle(1,3,2);
-      triangles[1]=MeshTriangle(1,0,3);
-      triangles[2]=MeshTriangle(1,2,0);
-      triangles[3]=MeshTriangle(0,2,3);
-
-      return intrusive_ptr<TriangleMesh>(new TriangleMesh(vertices,triangles));
       }
   };
 

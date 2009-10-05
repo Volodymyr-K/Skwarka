@@ -232,7 +232,25 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\SamplingTestRoutines.h"
+				RelativePath=".\SamplingTestHelper.h"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\TriangleMeshTestHelper.h"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -349,6 +367,10 @@
 					</File>
 					<File
 						RelativePath=".\Sampler.test.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Scene.test.h"
 						>
 					</File>
 					<File
@@ -627,6 +649,10 @@
 			</File>
 			<File
 				RelativePath=".\SamplingRoutines.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Scene.test.cpp"
 				>
 			</File>
 			<File
