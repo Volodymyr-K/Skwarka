@@ -26,7 +26,22 @@ class PerspectiveCameraTestSuite : public CxxTest::TestSuite
       // Nothing to clear.
       }
 
-    // Tests that center image point spawns the the same direction as the "look at" direction and the origin of the ray is the camera's position.
+    void test_PerspectiveCamera_RayBounds()
+      {
+      double lens_radius = 1.0;
+      double focal_distance = 10.0;
+      PerspectiveCamera cam(m_transformation, mp_film, 0.0, 0.0, m_x_view_angle);
+
+      double x_res = cam.GetFilm()->GetXResolution();
+      double y_res = cam.GetFilm()->GetYResolution();
+
+      Ray ray;
+      ray.m_min_t=ray.m_max_t=-10.0;
+      cam.GenerateRay(Point2D_d(RandomDouble(x_res),RandomDouble(y_res)),Point2D_d(RandomDouble(1.0),RandomDouble(1.0)),ray);
+      TS_ASSERT(ray.m_direction.Length()>0.0 && IsPositiveInf(ray.m_max_t));
+      }
+
+    // Tests that center image point spawns the same direction as the "look at" direction and the origin of the ray is the camera's position.
     void test_PerspectiveCamera_PinHoleCameraTransformation()
       {
       PerspectiveCamera cam(m_transformation, mp_film, 0.0, 0.0, m_x_view_angle);
@@ -36,7 +51,7 @@ class PerspectiveCameraTestSuite : public CxxTest::TestSuite
       Ray ray;
       cam.GenerateRay(Point2D_d(x_res/2.0,y_res/2.0),Point2D_d(0.0,0.0),ray);
       TS_ASSERT_EQUALS(ray.m_direction,m_direction);
-      TS_ASSERT_EQUALS(ray.m_origin,m_origin);
+      TS_ASSERT_EQUALS(ray(ray.m_min_t),m_origin);
       }
 
     // Tests the range of rays directions for pinhole camera (the camera with zero lens radius).

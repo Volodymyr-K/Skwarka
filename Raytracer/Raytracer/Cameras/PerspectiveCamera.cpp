@@ -24,6 +24,8 @@ double PerspectiveCamera::GenerateRay(const Point2D_d &i_image_point, const Poin
   ASSERT(i_lens_uv[0]>=0.0 && i_lens_uv[0]<1.0 && i_lens_uv[1]>=0.0 && i_lens_uv[1]<1.0);
 
   o_ray.m_origin=Point3D_d();
+  o_ray.m_min_t = 0.0;
+  o_ray.m_max_t = DBL_INF;
 
   double x = 2.0 * m_x_tan * (i_image_point[0]-m_film_x_resolution*0.5)/m_film_x_resolution;
   double y = 2.0 * m_y_tan * (i_image_point[1]-m_film_y_resolution*0.5)/m_film_y_resolution;
