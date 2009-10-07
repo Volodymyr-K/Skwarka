@@ -8,11 +8,6 @@ m_position(i_position), m_intensity(i_intensity)
   ASSERT(InRange(i_intensity,0.0,DBL_INF));
   }
 
-void PointLight::SetWorldBounds(const BBox3D_d &i_world_bounds)
-  {
-  // Nothing to do for a point light.
-  }
-
 Spectrum_d PointLight::Power() const
   {
   return 4.0*M_PI*m_intensity;

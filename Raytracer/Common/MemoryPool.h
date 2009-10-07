@@ -41,6 +41,11 @@ class MemoryPool
     bool ReleaseMemory();
 
   private:
+    // Not implemented, not a value type.
+    MemoryPool(const MemoryPool&);
+    MemoryPool &operator=(const MemoryPool&);
+
+  private:
     size_t m_current_block_pos, m_block_size;
     char *m_current_block;
 

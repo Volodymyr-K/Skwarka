@@ -17,12 +17,6 @@ class PointLight: public DeltaLightSource
     PointLight(const Point3D_d &i_position, const Spectrum_d &i_intensity);
 
     /**
-    * Initializes the light source with specified world bounds. This method will be called after the scene is constructed and before using the light source.
-    * This implementation does nothing.
-    */
-    virtual void SetWorldBounds(const BBox3D_d &i_world_bounds);
-
-    /**
     * Returns the total power of the light source, i.e. the light flux.
     */
     virtual Spectrum_d Power() const;

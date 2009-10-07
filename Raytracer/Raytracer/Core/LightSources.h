@@ -15,12 +15,6 @@ class DeltaLightSource: public ReferenceCounted
   { 
   public:
     /**
-    * Initializes the light source with specified world bounds. This method will be called after the scene is constructed and before using the light source.
-    * Depending on the implementation the worlds bounds may be needed to estimate the source power (i.e. flux) or sample light rays.
-    */
-    virtual void SetWorldBounds(const BBox3D_d &i_world_bounds) = 0;
-
-    /**
     * Returns the total power of the light source, i.e. the light flux.
     * The method can return approximation of the real flux rather than the exact value.
     */
@@ -63,12 +57,6 @@ class DeltaLightSource: public ReferenceCounted
 class InfiniteLightSource: public ReferenceCounted
   { 
   public:
-    /**
-    * Initializes the light source with specified world bounds. This method will be called after the scene is constructed and before using the light source.
-    * Depending on the implementation the worlds bounds may be needed to estimate the source power (i.e. flux) or sample light rays.
-    */
-    virtual void SetWorldBounds(const BBox3D_d &i_world_bounds) = 0;
-
     /**
     * Returns the light source radiance for the specified camera ray.
     * @param i_ray The ray pointing to the light source.

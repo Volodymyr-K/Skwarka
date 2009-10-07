@@ -13,7 +13,7 @@
 /**
 * Describes the geometrical, scattering and lighting properties of the scene to be rendered.
 * The class encapsulates all primitives, volume regions and lights in the scene.
-* It also constructs accelerating structure for primitives and volume regions and provides methods to compute ray intersections and media transmittance.
+* It also constructs accelerating structure for primitives and volume regions and provides methods to compute ray intersections.
 */
 class Scene: public ReferenceCounted
   {
@@ -57,12 +57,6 @@ class Scene: public ReferenceCounted
     * @return true if the specified ray intersects any primitive in the scene and false otherwise.
     */
     bool IntersectTest(const Ray &i_ray) const;
-    
-    /**
-    * Computes scene transmittance for the specified ray.
-    * This method accounts for the media transmittance only and does not account for primitives intersected by the ray.
-    */
-    Spectrum_d Transmittance(const Ray &i_ray) const;
 
   private:
     std::vector<intrusive_ptr<Primitive> > m_primitives;
@@ -75,41 +69,35 @@ class Scene: public ReferenceCounted
 /////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-Scene::Scene(const std::vector<intrusive_ptr<Primitive> > &i_primitives, const LightSources &i_light_sources):
+inline Scene::Scene(const std::vector<intrusive_ptr<Primitive> > &i_primitives, const LightSources &i_light_sources):
 m_primitives(i_primitives), m_light_sources(i_light_sources), m_tree(i_primitives)
   {
   }
 
-const std::vector<intrusive_ptr<Primitive> > &Scene::GetPrimitives() const
+inline const std::vector<intrusive_ptr<Primitive> > &Scene::GetPrimitives() const
   {
   return m_primitives;
   }
 
-const LightSources &Scene::GetLightSources() const
+inline const LightSources &Scene::GetLightSources() const
   {
   return m_light_sources;
   }
 
-BBox3D_d Scene::GetWorldBounds() const
+inline BBox3D_d Scene::GetWorldBounds() const
   {
   // TBD: union with volume regions
   return m_tree.GetWorldBounds();
   }
 
-bool Scene::Intersect(const RayDifferential &i_ray, Intersection &o_intersection) const
+inline bool Scene::Intersect(const RayDifferential &i_ray, Intersection &o_intersection) const
   {
   return m_tree.Intersect(i_ray, o_intersection);
   }
 
-bool Scene::IntersectTest(const Ray &i_ray) const
+inline bool Scene::IntersectTest(const Ray &i_ray) const
   {
   return m_tree.IntersectTest(i_ray);
-  }
-
-Spectrum_d Scene::Transmittance(const Ray &i_ray) const
-  {
-  // TBD
-  return Spectrum_d(1.0);
   }
 
 #endif // SCENE_H
