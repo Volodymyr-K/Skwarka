@@ -27,7 +27,7 @@ class ImageFilm: public Film
     /**
     * Adds sample value to the film.
     */
-    virtual void AddSample(const Point2D_d &i_image_point, const Spectrum_f &i_spectrum, float i_alpha);
+    virtual void AddSample(const Point2D_d &i_image_point, const Spectrum_f &i_spectrum);
 
     /**
     * Clears the film.
@@ -36,15 +36,14 @@ class ImageFilm: public Film
     virtual void ClearFilm();
 
     /**
-    * Gets the Spectrum and alpha values for the specified pixel.
+    * Gets the Spectrum value for the specified pixel.
     * The method returns true on success and false if no samples contribute to the specified pixel or if the specified pixel is out of the cropping window.
     * @param i_image_point Coordinates of the pixel.
     * @param[out] o_spectrum Spectrum value of the pixel.
-    * @param[out] o_alpha Alpha value of the pixel.
-    * @param i_clamp_values If true, the Spectrum and alpha values will be clamped before returning.
-    * @return true if the spectrum and alpha values were computed successfully and false if there is no samples contributing to the pixel.
+    * @param i_clamp_values If true, the Spectrum value will be clamped before returning.
+    * @return true if the spectrum value were computed successfully and false if there is no samples contributing to the pixel.
     */
-    virtual bool GetPixel(const Point2D_i &i_image_point, Spectrum_f &o_spectrum, float &o_alpha, bool i_clamp_values = true) const;
+    virtual bool GetPixel(const Point2D_i &i_image_point, Spectrum_f &o_spectrum, bool i_clamp_values = true) const;
 
     /**
     * Returns the window in the image plane where samples need to be generated.
@@ -83,12 +82,11 @@ struct ImageFilm::ImageFilmPixel
   {
   ImageFilmPixel(): m_spectrum()
     {
-    m_alpha = 0.f;
     m_weight_sum = 0.f;
     }
 
   Spectrum_f m_spectrum;
-  float m_alpha, m_weight_sum;
+  float m_weight_sum;
   };
 
 #endif // IMAGE_FILM_H

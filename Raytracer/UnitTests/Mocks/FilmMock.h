@@ -7,7 +7,7 @@
 
 /*
 Film mock implementation.
-Always generates the same Spectrum and alpha values for all pixels.
+Always generates the same Spectrum value for all pixels.
 */
 class FilmMock: public Film
   {
@@ -16,7 +16,7 @@ class FilmMock: public Film
       {
       }
 
-    virtual void AddSample(const Point2D_d &i_image_point, const Spectrum_f &i_spectrum, float i_alpha)
+    virtual void AddSample(const Point2D_d &i_image_point, const Spectrum_f &i_spectrum)
       {
       }
 
@@ -24,10 +24,9 @@ class FilmMock: public Film
       {
       }
 
-    virtual bool GetPixel(const Point2D_i &i_image_point, Spectrum_f &o_spectrum, float &o_alpha, bool i_clamp_values = true) const
+    virtual bool GetPixel(const Point2D_i &i_image_point, Spectrum_f &o_spectrum, bool i_clamp_values = true) const
       {
       o_spectrum=Spectrum_f(1.0,1.0,1.0);
-      o_alpha=0.5;
       return true;
       }
 

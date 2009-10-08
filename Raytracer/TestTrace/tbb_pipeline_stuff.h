@@ -23,7 +23,6 @@ struct SampleChunk
   {
   intrusive_ptr<Sample> mp_sample[CHUNK_SAMPLES];
   Spectrum_f m_spectrum[CHUNK_SAMPLES];
-  float m_alfa[CHUNK_SAMPLES];
   MemoryPool pool;
 
   size_t chunk_index,samples;
@@ -120,10 +119,7 @@ MyTransformFilter::MyTransformFilter(Camera *ip_camera, TriangleTree *ip_tree): 
 
     Intersection isect;
     if (mp_tree->Intersect(rd, isect)==false)
-      {
       chunk.m_spectrum[i]=Spectrum_f(0.f, 0.f, 255.f);
-      chunk.m_alfa[i]=0.f;
-      }
     else
       { 
       BSDF *p_bsdf=isect.mp_primitive->GetBSDF(isect.m_dg, isect.m_triangle_index, chunk.pool);
@@ -146,7 +142,6 @@ MyTransformFilter::MyTransformFilter(Camera *ip_camera, TriangleTree *ip_tree): 
       Spectrum_d color = p_bsdf->Evaluate(light_direction,view_direction)* (p_bsdf->GetShadingNormal()*light_direction)*(-3.0);
       //color.Clamp(0.0,DBL_INF);
       chunk.m_spectrum[i]=Spectrum_f((float)color[0]*255.f, (float)color[1]*255.f, (float)color[2]*255.f);
-      chunk.m_alfa[i]=1.f;
       }
 
     chunk.pool.FreeAll();
@@ -180,7 +175,7 @@ void* MyOutputFilter::operator()( void* item )
   SampleChunk &chunk = *static_cast<SampleChunk*>(item);
   for(size_t i=0;i<chunk.samples;++i)
     {
-  mp_film->AddSample(chunk.mp_sample[i]->GetImagePoint(), chunk.m_spectrum[i], chunk.m_alfa[i]);
+  mp_film->AddSample(chunk.mp_sample[i]->GetImagePoint(), chunk.m_spectrum[i]);
     }
   chunks_free[chunk.chunk_index]=true;
     
@@ -191,9 +186,8 @@ void* MyOutputFilter::operator()( void* item )
   for(int y=0;y<p_tracer->GetImageHeight();++y)
     for(int x=0;x<p_tracer->GetImageWidth();++x)
       {
-      float alfa;
       Spectrum_f sp;
-      mp_film->GetPixel(Point2D_i(x,y),sp,alfa);
+      mp_film->GetPixel(Point2D_i(x,y),sp);
 
       unsigned int pixel_index = (y*p_tracer->GetImageWidth()+x)*4;
       Byte* pixel = p_tracer->m_image;

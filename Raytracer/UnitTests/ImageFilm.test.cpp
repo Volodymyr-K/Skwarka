@@ -36,13 +36,13 @@ public:
 
 static class TestDescription_ImageFilmTestSuite_test_ImageFilm_Clear : public CxxTest::RealTestDescription {
 public:
- TestDescription_ImageFilmTestSuite_test_ImageFilm_Clear() : CxxTest::RealTestDescription( Tests_ImageFilmTestSuite, suiteDescription_ImageFilmTestSuite, 78, "test_ImageFilm_Clear" ) {}
+ TestDescription_ImageFilmTestSuite_test_ImageFilm_Clear() : CxxTest::RealTestDescription( Tests_ImageFilmTestSuite, suiteDescription_ImageFilmTestSuite, 72, "test_ImageFilm_Clear" ) {}
  void runTest() { suite_ImageFilmTestSuite.test_ImageFilm_Clear(); }
 } testDescription_ImageFilmTestSuite_test_ImageFilm_Clear;
 
 static class TestDescription_ImageFilmTestSuite_test_ImageFilm_CropWindowPixels : public CxxTest::RealTestDescription {
 public:
- TestDescription_ImageFilmTestSuite_test_ImageFilm_CropWindowPixels() : CxxTest::RealTestDescription( Tests_ImageFilmTestSuite, suiteDescription_ImageFilmTestSuite, 108, "test_ImageFilm_CropWindowPixels" ) {}
+ TestDescription_ImageFilmTestSuite_test_ImageFilm_CropWindowPixels() : CxxTest::RealTestDescription( Tests_ImageFilmTestSuite, suiteDescription_ImageFilmTestSuite, 100, "test_ImageFilm_CropWindowPixels" ) {}
  void runTest() { suite_ImageFilmTestSuite.test_ImageFilm_CropWindowPixels(); }
 } testDescription_ImageFilmTestSuite_test_ImageFilm_CropWindowPixels;
 

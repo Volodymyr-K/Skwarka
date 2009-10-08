@@ -36,19 +36,19 @@ public:
 
 static class TestDescription_InteractiveFilmTestSuite_test_InteractiveFilm_Clear : public CxxTest::RealTestDescription {
 public:
- TestDescription_InteractiveFilmTestSuite_test_InteractiveFilm_Clear() : CxxTest::RealTestDescription( Tests_InteractiveFilmTestSuite, suiteDescription_InteractiveFilmTestSuite, 79, "test_InteractiveFilm_Clear" ) {}
+ TestDescription_InteractiveFilmTestSuite_test_InteractiveFilm_Clear() : CxxTest::RealTestDescription( Tests_InteractiveFilmTestSuite, suiteDescription_InteractiveFilmTestSuite, 73, "test_InteractiveFilm_Clear" ) {}
  void runTest() { suite_InteractiveFilmTestSuite.test_InteractiveFilm_Clear(); }
 } testDescription_InteractiveFilmTestSuite_test_InteractiveFilm_Clear;
 
 static class TestDescription_InteractiveFilmTestSuite_test_InteractiveFilm_CropWindowPixels : public CxxTest::RealTestDescription {
 public:
- TestDescription_InteractiveFilmTestSuite_test_InteractiveFilm_CropWindowPixels() : CxxTest::RealTestDescription( Tests_InteractiveFilmTestSuite, suiteDescription_InteractiveFilmTestSuite, 109, "test_InteractiveFilm_CropWindowPixels" ) {}
+ TestDescription_InteractiveFilmTestSuite_test_InteractiveFilm_CropWindowPixels() : CxxTest::RealTestDescription( Tests_InteractiveFilmTestSuite, suiteDescription_InteractiveFilmTestSuite, 101, "test_InteractiveFilm_CropWindowPixels" ) {}
  void runTest() { suite_InteractiveFilmTestSuite.test_InteractiveFilm_CropWindowPixels(); }
 } testDescription_InteractiveFilmTestSuite_test_InteractiveFilm_CropWindowPixels;
 
 static class TestDescription_InteractiveFilmTestSuite_test_InteractiveFilm_Approximation : public CxxTest::RealTestDescription {
 public:
- TestDescription_InteractiveFilmTestSuite_test_InteractiveFilm_Approximation() : CxxTest::RealTestDescription( Tests_InteractiveFilmTestSuite, suiteDescription_InteractiveFilmTestSuite, 141, "test_InteractiveFilm_Approximation" ) {}
+ TestDescription_InteractiveFilmTestSuite_test_InteractiveFilm_Approximation() : CxxTest::RealTestDescription( Tests_InteractiveFilmTestSuite, suiteDescription_InteractiveFilmTestSuite, 131, "test_InteractiveFilm_Approximation" ) {}
  void runTest() { suite_InteractiveFilmTestSuite.test_InteractiveFilm_Approximation(); }
 } testDescription_InteractiveFilmTestSuite_test_InteractiveFilm_Approximation;
 

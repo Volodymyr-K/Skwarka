@@ -47,7 +47,6 @@ class ImageFilmTestSuite : public CxxTest::TestSuite
       {
       Point2D_i test_point(15,15);
       Spectrum_f spectrum_acc;
-      float alpha_acc=0.f;
       float weight_acc=0.f;
 
       for(size_t x=10;x<=20;++x)
@@ -55,24 +54,19 @@ class ImageFilmTestSuite : public CxxTest::TestSuite
           {
           Point2D_d image_point=Point2D_d(y+RandomDouble(1.0),x+RandomDouble(1.0));
           Spectrum_f sp((float)RandomDouble(1.0),(float)RandomDouble(1.0),(float)RandomDouble(1.0));
-          float alpha = (float)RandomDouble(1.0);
-          mp_film->AddSample(image_point,sp,alpha);
+          mp_film->AddSample(image_point,sp);
 
           float weight = (float) mp_filter->Evaluate(0.5+test_point[0]-image_point[0], 0.5+test_point[1]-image_point[1]);
           spectrum_acc+=sp*weight;
-          alpha_acc+=alpha*weight;
           weight_acc+=weight;
           }
 
       spectrum_acc/=weight_acc;
-      alpha_acc/=weight_acc;
 
       Spectrum_f spectrum_res;
-      float alpha_res;
-      TS_ASSERT( mp_film->GetPixel(test_point, spectrum_res, alpha_res, false) );
+      TS_ASSERT( mp_film->GetPixel(test_point, spectrum_res, false) );
 
       CustomAssertDelta(spectrum_res, spectrum_acc, (1e-6f));
-      TS_ASSERT_DELTA(alpha_res, alpha_acc, (1e-6f));
       }
 
     void test_ImageFilm_Clear()
@@ -82,8 +76,7 @@ class ImageFilmTestSuite : public CxxTest::TestSuite
           {
           Point2D_d image_point=Point2D_d(y+RandomDouble(1.0),x+RandomDouble(1.0));
           Spectrum_f sp((float)RandomDouble(1.0),(float)RandomDouble(1.0),(float)RandomDouble(1.0));
-          float alpha = (float)RandomDouble(1.0);
-          mp_film->AddSample(image_point,sp,alpha);
+          mp_film->AddSample(image_point,sp);
           }
 
       mp_film->ClearFilm();
@@ -93,8 +86,7 @@ class ImageFilmTestSuite : public CxxTest::TestSuite
         for(size_t y=0;y<50;++y)
           {
           Spectrum_f spectrum_res;
-          float alpha_res;
-          if (mp_film->GetPixel(Point2D_i(x,y), spectrum_res, alpha_res, false))
+          if (mp_film->GetPixel(Point2D_i(x,y), spectrum_res, false))
             {
             cleared=false;
             break;
@@ -116,8 +108,7 @@ class ImageFilmTestSuite : public CxxTest::TestSuite
             x=x;
           Point2D_d image_point=Point2D_d(x+RandomDouble(1.0),y+RandomDouble(1.0));
           Spectrum_f sp((float)RandomDouble(1.0),(float)RandomDouble(1.0),(float)RandomDouble(1.0));
-          float alpha = (float)RandomDouble(1.0);
-          mp_film->AddSample(image_point,sp,alpha);
+          mp_film->AddSample(image_point,sp);
           }
 
       bool correct=true;
@@ -125,8 +116,7 @@ class ImageFilmTestSuite : public CxxTest::TestSuite
         for(size_t y=0;y<50;++y)
           {
           Spectrum_f spectrum_res;
-          float alpha_res;
-          bool pixel_read = mp_film->GetPixel(Point2D_i(x,y), spectrum_res, alpha_res, false);
+          bool pixel_read = mp_film->GetPixel(Point2D_i(x,y), spectrum_res, false);
 
           bool inside_crop_window = (x>=20 && x<80 && y>=10 && y<40);
           if (inside_crop_window != pixel_read)

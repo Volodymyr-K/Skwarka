@@ -214,9 +214,8 @@ inline void TestTracer::RenderImage(HWND &g_hWnd, HDC &g_memDC)
   for(int y=0;y<GetImageHeight();++y)
     for(int x=0;x<GetImageWidth();++x)
       {
-      float alfa;
       Spectrum_f sp;
-      cam->GetFilm()->GetPixel(Point2D_i(x,y),sp,alfa);
+      cam->GetFilm()->GetPixel(Point2D_i(x,y),sp);
 
       unsigned int pixel_index = (y*GetImageWidth()+x)*4;
       Byte* pixel = m_image;

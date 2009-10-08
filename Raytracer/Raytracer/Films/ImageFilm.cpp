@@ -17,7 +17,7 @@ Film(i_x_resolution, i_y_resolution), m_x_resolution(i_x_resolution), m_y_resolu
   m_pixels.assign(m_y_resolution*m_x_resolution, ImageFilmPixel());
   }
 
-void ImageFilm::AddSample(const Point2D_d &i_image_point, const Spectrum_f &i_spectrum, float i_alpha)
+void ImageFilm::AddSample(const Point2D_d &i_image_point, const Spectrum_f &i_spectrum)
   {
   double image_x = i_image_point[0] - 0.5;
   double image_y = i_image_point[1] - 0.5;
@@ -42,7 +42,6 @@ void ImageFilm::AddSample(const Point2D_d &i_image_point, const Spectrum_f &i_sp
       float filter_weight = (float)mp_filter->Evaluate(x-image_x, y-image_y);
 
       pixel.m_spectrum.AddWeighted(i_spectrum, filter_weight);
-      pixel.m_alpha += i_alpha * filter_weight;
       pixel.m_weight_sum += filter_weight;
       }
   }
@@ -52,7 +51,7 @@ void ImageFilm::ClearFilm()
   m_pixels.assign(m_y_resolution*m_x_resolution, ImageFilmPixel());
   }
 
-bool ImageFilm::GetPixel(const Point2D_i &i_image_point, Spectrum_f &o_spectrum, float &o_alpha, bool i_clamp_values) const
+bool ImageFilm::GetPixel(const Point2D_i &i_image_point, Spectrum_f &o_spectrum, bool i_clamp_values) const
   {
   ASSERT(i_image_point[0]>=0 && i_image_point[1]>=0 && i_image_point[0]<(int)m_x_resolution && i_image_point[1]<(int)m_y_resolution);
 
@@ -66,12 +65,8 @@ bool ImageFilm::GetPixel(const Point2D_i &i_image_point, Spectrum_f &o_spectrum,
     {
     float invWt = 1.f / pixel.m_weight_sum;
     o_spectrum=pixel.m_spectrum*invWt;
-    o_alpha=pixel.m_alpha*invWt;
     if (i_clamp_values)
-      {
       o_spectrum.Clamp(0.f, FLT_INF);
-      o_alpha=MathRoutines::Clamp(o_alpha, 0.f, 1.f);
-      }
     return true;
     }
   else

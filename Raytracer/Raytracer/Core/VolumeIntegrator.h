@@ -11,8 +11,8 @@
 
 /**
 * An abstract class defining the contract for volume integrator implementations.
-* A volume integrator is an algorithm for numerical evaluation of the light transport equation taking into account only volume interaction (i.e. no primitives).
-* @sa SurfaceIntegrator
+* A volume integrator is an algorithm for numerical evaluation of the light transport equation taking into account only volume scattering (i.e. no primitives).
+* @sa SurfaceIntegrator, SceneIntegrator
 */
 class VolumeIntegrator: public ReferenceCounted
   {
@@ -26,7 +26,7 @@ class VolumeIntegrator: public ReferenceCounted
     virtual Spectrum_d Radiance(const RayDifferential &i_ray, const Sample *ip_sample) const = 0;
 
     /**
-    * Computes scene transmittance for the specified ray.
+    * Computes media transmittance for the specified ray.
     * This method accounts for the media transmittance only and does not account for primitives intersected by the ray.
     * @param i_ray Ray for which the transmittance is to be computed.
     * @param ip_sample Sample instance containing requested samples sequences.
@@ -36,14 +36,14 @@ class VolumeIntegrator: public ReferenceCounted
 
     /**
     * Precomputes light distribution in the scene (e.g. tracing photons etc.).
-    * This method will be called before the Radiance() method is called.
+    * This method should be called before the Radiance() method is called.
     * Default implementation does nothing.
     */
     virtual void Preprocess();
 
     /**
     * Requests 1D and 2D samples sequences needed for the volume integrator.
-    * This method will be called before the Radiance() method is called.
+    * This method should be called before the Radiance() method is called.
     * Default implementation does nothing.
     */
     virtual void RequestSamples(intrusive_ptr<Sampler> ip_sampler);
