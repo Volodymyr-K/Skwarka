@@ -42,6 +42,12 @@ size_t Sampler::AddSamplesSequence2D(size_t i_size)
   return m_sequences_2D_size.size()-1;
   }
 
+void Sampler::ClearSamplesSequences()
+  {
+  m_sequences_1D_size.clear();
+  m_sequences_2D_size.clear();
+  }
+
 intrusive_ptr<Sample> Sampler::CreateSample() const
   {
   return intrusive_ptr<Sample>( new Sample(m_sequences_1D_size, m_sequences_2D_size) );
@@ -68,6 +74,16 @@ bool Sampler::GetNextSample(intrusive_ptr<Sample> op_sample)
 
   ++m_pixel_sample_index;
   return true;
+  }
+
+void Sampler::Reset()
+  {
+  mp_pixels_order->Reset();
+
+  if (mp_pixels_order->GetNextPixel(m_current_pixel))
+    m_pixel_sample_index=0;
+  else
+    m_pixel_sample_index=m_samples_per_pixel;
   }
 
 size_t Sampler::GetTotalSamplesNum() const

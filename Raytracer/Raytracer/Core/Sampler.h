@@ -62,7 +62,7 @@ class Sampler: public ReferenceCounted
     /**
     * Integrators should call this method to request a 1D samples sequence.
     * The method should only be called before GetNextSample() method is called.
-    * @warning The actual size of samples sequence may be bigger than the one requested. This depends on the Sampler implementation.
+    * @warning The actual size of samples sequence may be larger than what was actually requested. This depends on the Sampler implementation.
     * @param i_size Size of the requested samples sequence.
     * @return An identifier the integrators should use to retrieve the samples sequence from the Sample.
     */
@@ -71,11 +71,16 @@ class Sampler: public ReferenceCounted
     /**
     * Integrators should call this method to request a 2D samples sequence.
     * The method should only be called before GetNextSample() method is called.
-    * @warning The actual size of samples sequence may be bigger than the one requested. This depends on the Sampler implementation.
+    * @warning The actual size of samples sequence may be larger than what was actually requested. This depends on the Sampler implementation.
     * @param i_size Size of the requested samples sequence.
     * @return An identifier the integrators should use to retrieve the samples sequence from the Sample.
     */
     size_t AddSamplesSequence2D(size_t i_size);
+
+    /**
+    * Clears all 1D and 2D samples sequences added so far.
+    */
+    void ClearSamplesSequences();
 
     /**
     * Creates empty Sample instance with no real data but with all the required storages allocated.
@@ -89,6 +94,12 @@ class Sampler: public ReferenceCounted
     * return true if sample was successfully populated and false if there's no more samples.
     */
     bool GetNextSample(intrusive_ptr<Sample> op_sample);
+
+    /**
+    * Resets the sampler.
+    * The method resets the sampler's internal pixel cursor making the sampler generate the samples from the beginning.
+    */
+    void Reset();
 
     /**
     * Returns total number of samples the Sampler produces.

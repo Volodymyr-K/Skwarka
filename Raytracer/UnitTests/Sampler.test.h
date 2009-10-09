@@ -41,10 +41,51 @@ class SamplerTestSuite : public CxxTest::TestSuite
       TS_ASSERT_EQUALS(lengths[2],35);
       }
 
+    void test_Sampler_ClearSamplesSequences()
+      {
+      SamplerMock sampler(Point2D_i(0,0),Point2D_i(100,100),10);
+
+      size_t indices[3];
+      indices[0]=sampler.AddSamplesSequence1D(15);
+      indices[1]=sampler.AddSamplesSequence2D(25);
+
+      // Clear the sequences.
+      sampler.ClearSamplesSequences();
+
+      indices[2]=sampler.AddSamplesSequence1D(35);
+
+      intrusive_ptr<Sample> sample = sampler.CreateSample();
+
+      TS_ASSERT_EQUALS(sample->GetNumberOfSamplesSequences1D(),1);
+      TS_ASSERT_EQUALS(sample->GetNumberOfSamplesSequences2D(),0);
+
+      size_t lengths[3];
+      lengths[0]=std::distance(sample->GetSamplesSequence1D(indices[0]).m_begin, sample->GetSamplesSequence1D(indices[0]).m_end);
+
+      TS_ASSERT_EQUALS(lengths[0],35);
+      }
+
     void test_Sampler_GeneratedSamplesCount()
       {
       SamplerMock sampler(Point2D_i(0,0),Point2D_i(100,100),10);
       intrusive_ptr<Sample> sample = sampler.CreateSample();
+
+      size_t count=0;
+      while(sampler.GetNextSample(sample))
+        ++count;
+
+      TS_ASSERT_EQUALS(count, sampler.GetTotalSamplesNum());
+      }
+
+    void test_Sampler_Reset()
+      {
+      SamplerMock sampler(Point2D_i(0,0),Point2D_i(100,100),10);
+      intrusive_ptr<Sample> sample = sampler.CreateSample();
+
+      for(size_t i=0;i<1003;++i) sampler.GetNextSample(sample);
+      
+      //Reset the sampler.
+      sampler.Reset();
 
       size_t count=0;
       while(sampler.GetNextSample(sample))

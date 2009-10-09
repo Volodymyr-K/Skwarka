@@ -29,9 +29,21 @@ public:
  void runTest() { suite_SamplerTestSuite.test_Sampler_CreateSample(); }
 } testDescription_SamplerTestSuite_test_Sampler_CreateSample;
 
+static class TestDescription_SamplerTestSuite_test_Sampler_ClearSamplesSequences : public CxxTest::RealTestDescription {
+public:
+ TestDescription_SamplerTestSuite_test_Sampler_ClearSamplesSequences() : CxxTest::RealTestDescription( Tests_SamplerTestSuite, suiteDescription_SamplerTestSuite, 44, "test_Sampler_ClearSamplesSequences" ) {}
+ void runTest() { suite_SamplerTestSuite.test_Sampler_ClearSamplesSequences(); }
+} testDescription_SamplerTestSuite_test_Sampler_ClearSamplesSequences;
+
 static class TestDescription_SamplerTestSuite_test_Sampler_GeneratedSamplesCount : public CxxTest::RealTestDescription {
 public:
- TestDescription_SamplerTestSuite_test_Sampler_GeneratedSamplesCount() : CxxTest::RealTestDescription( Tests_SamplerTestSuite, suiteDescription_SamplerTestSuite, 44, "test_Sampler_GeneratedSamplesCount" ) {}
+ TestDescription_SamplerTestSuite_test_Sampler_GeneratedSamplesCount() : CxxTest::RealTestDescription( Tests_SamplerTestSuite, suiteDescription_SamplerTestSuite, 68, "test_Sampler_GeneratedSamplesCount" ) {}
  void runTest() { suite_SamplerTestSuite.test_Sampler_GeneratedSamplesCount(); }
 } testDescription_SamplerTestSuite_test_Sampler_GeneratedSamplesCount;
+
+static class TestDescription_SamplerTestSuite_test_Sampler_Reset : public CxxTest::RealTestDescription {
+public:
+ TestDescription_SamplerTestSuite_test_Sampler_Reset() : CxxTest::RealTestDescription( Tests_SamplerTestSuite, suiteDescription_SamplerTestSuite, 80, "test_Sampler_Reset" ) {}
+ void runTest() { suite_SamplerTestSuite.test_Sampler_Reset(); }
+} testDescription_SamplerTestSuite_test_Sampler_Reset;
 
