@@ -8,7 +8,7 @@
 #include <Raytracer/Core/Primitive.h>
 #include <Raytracer/Core/TriangleMesh.h>
 #include <Raytracer/Core/BSDF.h>
-#include <Raytracer/Core/LightSources.h>
+#include <Raytracer/LightSources/DiffuseAreaLightSource.h>
 #include "Mocks/TextureMock.h"
 #include "Mocks/MaterialMock.h"
 #include <vector>
@@ -20,7 +20,7 @@ class PrimitiveTestSuite : public CxxTest::TestSuite
       {
       intrusive_ptr<TriangleMesh> p_mesh( new TriangleMesh(std::vector<Point3D_f>(), std::vector<MeshTriangle>()) );
       intrusive_ptr<Material> p_material( new MaterialMock() );
-      intrusive_ptr<AreaLightSource> p_area_light( new AreaLightSource(Spectrum_d(1.0), p_mesh) );
+      intrusive_ptr<AreaLightSource> p_area_light( new DiffuseAreaLightSource(Spectrum_d(1.0), p_mesh) );
 
       intrusive_ptr<Primitive> p_primitive( new Primitive(p_mesh, p_material, p_area_light, NULL) );
 
@@ -53,7 +53,7 @@ class PrimitiveTestSuite : public CxxTest::TestSuite
       {
       intrusive_ptr<TriangleMesh> p_mesh( new TriangleMesh(std::vector<Point3D_f>(), std::vector<MeshTriangle>()) );
       intrusive_ptr<Material> p_material( new MaterialMock() );
-      intrusive_ptr<AreaLightSource> p_area_light( new AreaLightSource(Spectrum_d(1.0), p_mesh) );
+      intrusive_ptr<AreaLightSource> p_area_light( new DiffuseAreaLightSource(Spectrum_d(1.0), p_mesh) );
 
       intrusive_ptr<Primitive> p_primitive( new Primitive(p_mesh, p_material, p_area_light, NULL) );
 
@@ -62,8 +62,8 @@ class PrimitiveTestSuite : public CxxTest::TestSuite
       dg.m_point_dx=Point3D_d(1,0,0);
       dg.m_point_dy=Point3D_d(0,1,0);
 
-      Spectrum_d em1 = p_primitive->SelfEmittance(Vector3D_d(0.5,0.5,0.5).Normalized(), dg);
-      Spectrum_d em2 = p_primitive->SelfEmittance(Vector3D_d(0.5,0.5,-0.5).Normalized(), dg);
+      Spectrum_d em1 = p_primitive->SelfEmittance(dg, 0, Vector3D_d(0.5,0.5,0.5).Normalized());
+      Spectrum_d em2 = p_primitive->SelfEmittance(dg, 0, Vector3D_d(0.5,0.5,-0.5).Normalized());
 
       TS_ASSERT_EQUALS(em1, Spectrum_d(1.0));
       TS_ASSERT_EQUALS(em2, Spectrum_d(0.0));

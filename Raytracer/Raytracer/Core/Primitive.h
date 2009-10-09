@@ -50,11 +50,12 @@ class Primitive: public ReferenceCounted
 
     /**
     * Returns self-emittance of the primitive at the specified surface point.
-    * @param i_light_direction Light direction. Should be normalized.
-    * @param i_dg DifferentialGeometry instance defining the surface point.
+    * @param i_dg DifferentialGeometry object defining the surface point.
+    * @param i_triangle_index Index of the mesh triangle for which the light radiance is to be computed.
+    * @param i_light_direction Direction of the light. Should be normalized.
     * @return Light radiance.
     */
-    Spectrum_d SelfEmittance(const Vector3D_d &i_light_direction, const DifferentialGeometry &i_dg) const;
+    Spectrum_d SelfEmittance(const DifferentialGeometry &i_dg, size_t i_triangle_index, const Vector3D_d &i_light_direction) const;
 
   private:
     // Not implemented, not a value type.
@@ -116,12 +117,12 @@ inline BSDF *Primitive::GetBSDF(const DifferentialGeometry &i_dg, size_t i_trian
     return mp_material->GetBSDF(i_dg, i_triangle_index, i_pool);
   }
 
-inline Spectrum_d Primitive::SelfEmittance(const Vector3D_d &i_light_direction, const DifferentialGeometry &i_dg) const
+inline Spectrum_d Primitive::SelfEmittance(const DifferentialGeometry &i_dg, size_t i_triangle_index, const Vector3D_d &i_light_direction) const
   {
   ASSERT(i_light_direction.IsNormalized());
 
   if (mp_area_light_source)
-    return mp_area_light_source->Radiance(i_light_direction, i_dg.m_geometric_normal);
+    return mp_area_light_source->Radiance(i_dg, i_triangle_index, i_light_direction);
   else
     return Spectrum_d(0.0);
   }

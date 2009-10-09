@@ -1,22 +1,22 @@
-#ifndef LIGHT_SOURCES_TEST_H
-#define LIGHT_SOURCES_TEST_H
+#ifndef DIFFUSE_AREA_LIGHT_TEST_H
+#define DIFFUSE_AREA_LIGHT_TEST_H
 
 #include <cxxtest/TestSuite.h>
 #include "CustomValueTraits.h"
-#include <Raytracer/Core/LightSources.h>
+#include <Raytracer/LightSources/DiffuseAreaLightSource.h>
 #include <Raytracer/Core/TriangleMesh.h>
 #include <Math/SamplingRoutines.h>
 #include "TriangleMeshTestHelper.h"
 #include <vector>
 
-class LightSourcesTestSuite : public CxxTest::TestSuite
+class DiffuseAreaLightSourceTestSuite : public CxxTest::TestSuite
   {
   public:
     void setUp()
       {
       mp_mesh=TriangleMeshHelper::ConstructTetrahedron();
 
-      mp_area_light.reset(new AreaLightSource(Spectrum_d(1.0), mp_mesh));
+      mp_area_light.reset(new DiffuseAreaLightSource(Spectrum_d(1.0), mp_mesh));
       }
 
     void tearDown()
@@ -24,13 +24,17 @@ class LightSourcesTestSuite : public CxxTest::TestSuite
       // Nothing to clear.
       }
 
-    void test_AreaLightSource_Radiance()
+    void test_DiffuseAreaLightSource_Radiance()
       {
-      TS_ASSERT_EQUALS(mp_area_light->Radiance(Vector3D_d(0,0,1),Vector3D_d(0,0,1)), Spectrum_d(1.0));
-      TS_ASSERT_EQUALS(mp_area_light->Radiance(Vector3D_d(0,0,1),Vector3D_d(0,0,-1)), Spectrum_d(0.0));
+      DifferentialGeometry dg;
+      dg.m_geometric_normal=Vector3D_d(0,0,1);
+      TS_ASSERT_EQUALS(mp_area_light->Radiance(dg,0,Vector3D_d(0,0,1)), Spectrum_d(1.0));
+
+      dg.m_geometric_normal=Vector3D_d(0,0,-1);
+      TS_ASSERT_EQUALS(mp_area_light->Radiance(dg,0,Vector3D_d(0,0,1)), Spectrum_d(0.0));
       }
 
-    void test_AreaLightSource_Power()
+    void test_DiffuseAreaLightSource_Power()
       {
       // This is the tetrahedron's area.
       double area=4*2.0/sqrt(3.0);
@@ -40,7 +44,7 @@ class LightSourcesTestSuite : public CxxTest::TestSuite
       }
 
     // Tests that SampleLighting() method samples points on the mesh surface, that the returned PDF is not negative and that returned radiance is correct.
-    void test_AreaLightSource_SampleLighting()
+    void test_DiffuseAreaLightSource_SampleLighting()
       {
       size_t num_samples=1000;
       Point3D_d point(3.0,4.0,5.0);
@@ -78,7 +82,7 @@ class LightSourcesTestSuite : public CxxTest::TestSuite
       }
 
     // Tests that LightingPDF() method returns the same PDF as SampleLighting() method does.
-    void test_AreaLightSource_LightingPDF()
+    void test_DiffuseAreaLightSource_LightingPDF()
       {
       size_t num_samples=1000;
       Point3D_d point(3.0,4.0,5.0);
@@ -104,7 +108,7 @@ class LightSourcesTestSuite : public CxxTest::TestSuite
       }
 
     // Tests that PDF values integrate to one.
-    void test_AreaLightSource_LightingPDFSum()
+    void test_DiffuseAreaLightSource_LightingPDFSum()
       {
       size_t num_samples_x=300;
       size_t num_samples_y=300;
@@ -133,7 +137,7 @@ class LightSourcesTestSuite : public CxxTest::TestSuite
       TS_ASSERT_DELTA(sum, 1.0, 0.02);
       }
 
-    void test_AreaLightSource_SamplePhoton()
+    void test_DiffuseAreaLightSource_SamplePhoton()
       {
       size_t num_samples=10000;
 
@@ -248,4 +252,4 @@ class LightSourcesTestSuite : public CxxTest::TestSuite
     intrusive_ptr<TriangleMesh> mp_mesh;
   };
 
-#endif // LIGHT_SOURCES_TEST_H
+#endif // DIFFUSE_AREA_LIGHT_TEST_H

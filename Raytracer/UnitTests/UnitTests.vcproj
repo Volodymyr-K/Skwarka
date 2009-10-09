@@ -354,10 +354,6 @@
 						>
 					</File>
 					<File
-						RelativePath=".\LightSources.test.h"
-						>
-					</File>
-					<File
 						RelativePath=".\Primitive.test.h"
 						>
 					</File>
@@ -486,6 +482,10 @@
 					Name="LightSources"
 					>
 					<File
+						RelativePath=".\DiffuseAreaLightSource.test.h"
+						>
+					</File>
+					<File
 						RelativePath=".\PointLight.test.h"
 						>
 					</File>
@@ -552,6 +552,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\DiffuseAreaLightSource.test.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Film.test.cpp"
 				>
 			</File>
@@ -573,10 +577,6 @@
 			</File>
 			<File
 				RelativePath=".\Lambertian.test.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\LightSources.test.cpp"
 				>
 			</File>
 			<File

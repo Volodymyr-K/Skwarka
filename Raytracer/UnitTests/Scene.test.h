@@ -6,9 +6,9 @@
 #include <Raytracer/Core/Scene.h>
 #include <Raytracer/Core/Primitive.h>
 #include <Raytracer/Core/TriangleMesh.h>
-#include <Raytracer/Core/LightSources.h>
 #include <Raytracer/Core/Intersection.h>
 #include <Raytracer/LightSources/PointLight.h>
+#include <Raytracer/LightSources/DiffuseAreaLightSource.h>
 #include "Mocks/MaterialMock.h"
 #include "TriangleMeshTestHelper.h"
 #include <vector>
@@ -92,7 +92,7 @@ class SceneTestSuite : public CxxTest::TestSuite
       {
       intrusive_ptr<TriangleMesh> p_mesh( TriangleMeshHelper::ConstructTetrahedron(i_origin) );
       intrusive_ptr<Material> p_material( new MaterialMock() );
-      intrusive_ptr<AreaLightSource> p_area_light( new AreaLightSource(Spectrum_d(1.0), p_mesh) );
+      intrusive_ptr<AreaLightSource> p_area_light( new DiffuseAreaLightSource(Spectrum_d(1.0), p_mesh) );
 
       return intrusive_ptr<Primitive>( new Primitive(p_mesh, p_material, p_area_light, NULL) );
       }
