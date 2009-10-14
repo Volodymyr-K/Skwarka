@@ -45,6 +45,7 @@
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
+				EnableEnhancedInstructionSet="2"
 				WarningLevel="3"
 				DebugInformationFormat="4"
 			/>
@@ -110,6 +111,7 @@
 				PreprocessorDefinitions="NDEBUG;NOMINMAX"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
+				EnableEnhancedInstructionSet="2"
 				FloatingPointModel="0"
 				ProgramDataBaseFileName="$(IntDir)\vc90.pdb"
 				WarningLevel="3"
