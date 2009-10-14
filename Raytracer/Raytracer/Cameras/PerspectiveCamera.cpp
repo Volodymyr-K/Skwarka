@@ -44,8 +44,8 @@ double PerspectiveCamera::GenerateRay(const Point2D_d &i_image_point, const Poin
     o_ray.m_direction = Vector3D_d(focus_point - o_ray.m_origin);
     }
 
+  _TransformRay(o_ray, o_ray);
   o_ray.m_direction.Normalize();
 
-  _TransformRay(o_ray, o_ray);
   return 1.0;
   }

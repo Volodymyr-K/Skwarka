@@ -26,10 +26,20 @@ class PerspectiveCameraTestSuite : public CxxTest::TestSuite
       // Nothing to clear.
       }
 
+    void test_PerspectiveCamera_RayDirectionNormalization()
+      {
+      PerspectiveCamera cam(m_transformation, mp_film, 0.0, 0.0, m_x_view_angle);
+
+      double x_res = cam.GetFilm()->GetXResolution();
+      double y_res = cam.GetFilm()->GetYResolution();
+
+      Ray ray;
+      cam.GenerateRay(Point2D_d(RandomDouble(x_res),RandomDouble(y_res)),Point2D_d(RandomDouble(1.0),RandomDouble(1.0)),ray);
+      TS_ASSERT(ray.m_direction.IsNormalized());
+      }
+
     void test_PerspectiveCamera_RayBounds()
       {
-      double lens_radius = 1.0;
-      double focal_distance = 10.0;
       PerspectiveCamera cam(m_transformation, mp_film, 0.0, 0.0, m_x_view_angle);
 
       double x_res = cam.GetFilm()->GetXResolution();

@@ -30,7 +30,7 @@ public:
 
 static class TestDescription_PointLightTestSuite_test_PointLight_SamplePhoton : public CxxTest::RealTestDescription {
 public:
- TestDescription_PointLightTestSuite_test_PointLight_SamplePhoton() : CxxTest::RealTestDescription( Tests_PointLightTestSuite, suiteDescription_PointLightTestSuite, 38, "test_PointLight_SamplePhoton" ) {}
+ TestDescription_PointLightTestSuite_test_PointLight_SamplePhoton() : CxxTest::RealTestDescription( Tests_PointLightTestSuite, suiteDescription_PointLightTestSuite, 40, "test_PointLight_SamplePhoton" ) {}
  void runTest() { suite_PointLightTestSuite.test_PointLight_SamplePhoton(); }
 } testDescription_PointLightTestSuite_test_PointLight_SamplePhoton;
 

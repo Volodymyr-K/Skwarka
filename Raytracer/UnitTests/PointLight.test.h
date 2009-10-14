@@ -28,11 +28,13 @@ class PointLightTestSuite : public CxxTest::TestSuite
       Ray lighting_ray;
       Spectrum_d lighting = p_light->Lighting(point, lighting_ray);
 
-      TS_ASSERT_EQUALS(lighting_ray(lighting_ray.m_min_t), point);
-      TS_ASSERT_EQUALS(lighting_ray(lighting_ray.m_max_t), light_pos);
+      TS_ASSERT(lighting_ray.m_direction.IsNormalized());
+
+      CustomAssertDelta(lighting_ray(lighting_ray.m_min_t), point, 1e-10);
+      CustomAssertDelta(lighting_ray(lighting_ray.m_max_t), light_pos, 1e-10);
 
       double dist_sqr = Vector3D_d(lighting_ray(lighting_ray.m_max_t)-lighting_ray(lighting_ray.m_min_t)).LengthSqr();
-      TS_ASSERT_EQUALS(lighting, intensity/dist_sqr);
+      CustomAssertDelta(lighting, intensity/dist_sqr, 1e-10);
       }
 
     void test_PointLight_SamplePhoton()
@@ -52,6 +54,12 @@ class PointLightTestSuite : public CxxTest::TestSuite
         if (radiance != intensity)
           {
           TS_FAIL("Wrong radiance value.");
+          break;
+          }
+
+        if (photon_ray.m_direction.IsNormalized() == false)
+          {
+          TS_FAIL("The photon ray direction is not normalized.");
           break;
           }
 

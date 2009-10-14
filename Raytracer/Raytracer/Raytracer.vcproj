@@ -200,6 +200,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\Core\Renderer.h"
+					>
+				</File>
+				<File
 					RelativePath=".\Core\Sample.h"
 					>
 				</File>
@@ -519,6 +523,26 @@
 				</File>
 				<File
 					RelativePath=".\LightSources\PointLight.cpp"
+					>
+				</File>
+			</Filter>
+		</Filter>
+		<Filter
+			Name="Renderers"
+			>
+			<Filter
+				Name="Header Files"
+				>
+				<File
+					RelativePath=".\Renderers\SamplerBasedRenderer.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Source Files"
+				>
+				<File
+					RelativePath=".\Renderers\SamplerBasedRenderer.cpp"
 					>
 				</File>
 			</Filter>

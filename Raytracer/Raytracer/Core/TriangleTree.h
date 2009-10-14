@@ -15,6 +15,12 @@ It is also not covered by the unit tests yet.
 #include <boost\pool\object_pool.hpp>
 #include <vector>
 
+struct RayInv
+  {
+  Ray m_ray;
+  double m_invs[3];
+  };
+
 class TriangleTree
   {
   //////////////////////////////////////////////////// INTERNAL TYPES ///////////////////////////////////////////////////////
@@ -31,7 +37,7 @@ class TriangleTree
     ////////////////////////////////////////////////////// QUERIES  /////////////////////////////////////////////////////////
 
     // Search for the triangle nearest to the i_point along the i_direction.
-    bool Intersect(const RayDifferential &i_ray, Intersection &o_intersection) const;
+    bool Intersect(const RayDifferential &i_ray, Intersection &o_intersection, double *o_t = NULL) const;
 
     bool IntersectTest(const Ray &i_ray) const;
 
@@ -73,7 +79,7 @@ class TriangleTree
     // This constant value defines the number of elements to be allocated by boost allocator when the pool runs out.
     static const size_t NODES_TO_ALLOCATE = 1024;
 
-    static const size_t TRIANGLES_IN_LEAF = 10;
+    static const size_t TRIANGLES_IN_LEAF = 8;
   };
 
 /////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
@@ -97,9 +103,9 @@ struct TriangleTree::BaseNode
   INVALID_TRIANGLE is returned if no triangle is found.
   io_max_dist is set to the distance to the nearest triangle along the specified direction.
   */
-  virtual void Intersect(Ray &i_ray, size_t &o_triangle_index) const = 0;
+  virtual void Intersect(RayInv &i_ray, size_t &o_triangle_index) const = 0;
 
-  virtual bool IntersectTest(const Ray &i_ray) const = 0;
+  virtual bool IntersectTest(const RayInv &i_ray) const = 0;
   };
 
 /*
@@ -122,9 +128,9 @@ struct TriangleTree::Node : public TriangleTree::BaseNode
   virtual ~Node() {}
 
   // The method below is implementation of pure virtual method defined in the base class. Please refer there for the details.
-  virtual void Intersect(Ray &i_ray, size_t &o_triangle_index) const;
+  virtual void Intersect(RayInv &i_ray, size_t &o_triangle_index) const;
 
-  virtual bool IntersectTest(const Ray &i_ray) const;
+  virtual bool IntersectTest(const RayInv &i_ray) const;
   };
 
 /*
@@ -138,9 +144,9 @@ struct TriangleTree::Leaf : public TriangleTree::BaseNode
   virtual ~Leaf() {}
 
   // The method below is implementation of pure virtual method defined in the base class. Please refer there for the details.
-  virtual void Intersect(Ray &i_ray, size_t &o_triangle_index) const;
+  virtual void Intersect(RayInv &i_ray, size_t &o_triangle_index) const;
 
-  virtual bool IntersectTest(const Ray &i_ray) const;
+  virtual bool IntersectTest(const RayInv &i_ray) const;
   };
 
 #endif // TRIANGLE_TREE_H

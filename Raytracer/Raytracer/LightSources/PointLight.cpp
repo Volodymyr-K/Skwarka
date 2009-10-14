@@ -15,12 +15,17 @@ Spectrum_d PointLight::Power() const
 
 Spectrum_d PointLight::Lighting(const Point3D_d &i_point, Ray &o_lighting_ray) const
   {
-  o_lighting_ray.m_origin = i_point;
-  o_lighting_ray.m_direction = Vector3D_d(m_position-i_point);
-  o_lighting_ray.m_min_t = 0.0;
-  o_lighting_ray.m_max_t = 1.0;
+  Vector3D_d lighting_vector(m_position-i_point);
+  double distance = lighting_vector.Length();
+  double inv_distance = 1.0 / distance;
 
-  return m_intensity / o_lighting_ray.m_direction.LengthSqr();
+  o_lighting_ray.m_origin = i_point;
+  o_lighting_ray.m_direction = lighting_vector * inv_distance;
+
+  o_lighting_ray.m_min_t = 0.0;
+  o_lighting_ray.m_max_t = distance;
+
+  return m_intensity * (inv_distance*inv_distance);
   }
 
 Spectrum_d PointLight::SamplePhoton(const Point2D_d &i_sample, Ray &o_photon_ray, double &o_pdf) const

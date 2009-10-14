@@ -1,5 +1,24 @@
 #include "TriangleTree.h"
 
+template<typename T>
+bool Intersect(const BBox3D<T> &i_bbox, const RayInv &i_ray)
+  {
+  double t0 = i_ray.m_ray.m_min_t, t1 = i_ray.m_ray.m_max_t;
+  for (int i = 0; i < 3; ++i)
+    {
+    // Update interval for i-th bounding box slab.
+    // No need to check for zero i_ray.m_direction[i] due to the way INF values behave.
+    double tNear = (i_bbox.m_min[i] - i_ray.m_ray.m_origin[i]) * i_ray.m_invs[i];
+    double tFar  = (i_bbox.m_max[i] - i_ray.m_ray.m_origin[i]) * i_ray.m_invs[i];
+
+    if (tNear > tFar) std::swap(tNear, tFar);
+    t0 = tNear > t0 ? tNear : t0;
+    t1 = tFar  < t1 ? tFar  : t1;
+    if (t0 > t1) return false;
+    }
+  return true;
+  }
+
 TriangleTree::TriangleTree(std::vector<intrusive_ptr<Primitive> > i_primitives):
 mp_root(NULL), m_primitives(i_primitives),
 m_NodePool(sizeof(TriangleTree::Node), NODES_TO_ALLOCATE),
@@ -129,21 +148,30 @@ void TriangleTree::_SwapTriangles(size_t i_index1, size_t i_index2)
 Search for the triangle nearest to the i_point along the i_direction.
 */
 
-bool TriangleTree::Intersect(const RayDifferential &i_ray, Intersection &o_intersection) const
+bool TriangleTree::Intersect(const RayDifferential &i_ray, Intersection &o_intersection, double *o_t) const
   {
   ASSERT(mp_root && "Intersect operation is called for not built tree.");
 
   Ray ray(i_ray.m_base_ray);
   size_t triangle_index = mp_root->m_end;
-  mp_root->Intersect(ray, triangle_index);
+
+  RayInv ray_inv;
+  ray_inv.m_ray=ray;
+  ray_inv.m_invs[0]=1.0/ray.m_direction[0];
+  ray_inv.m_invs[1]=1.0/ray.m_direction[1];
+  ray_inv.m_invs[2]=1.0/ray.m_direction[2];
+
+  mp_root->Intersect(ray_inv, triangle_index);
   if (triangle_index != mp_root->m_end)
     {
+    if (o_t) *o_t=ray_inv.m_ray.m_max_t;
     o_intersection.mp_primitive = m_primitives[m_primitive_indices[triangle_index]];
     o_intersection.m_triangle_index = m_triangle_indices[triangle_index];
     o_intersection.mp_primitive->GetTriangleMesh()->ComputeDifferentialGeometry(o_intersection.m_triangle_index, i_ray, o_intersection.m_dg);
     return true;
     }
 
+  if (o_t) *o_t=DBL_INF;
   return false;
   }
 
@@ -151,7 +179,13 @@ bool TriangleTree::IntersectTest(const Ray &i_ray) const
   {
   ASSERT(mp_root && "IntersectTest operation is called for not built tree.");
 
-  return mp_root->IntersectTest(i_ray);
+  RayInv ray_inv;
+  ray_inv.m_ray=i_ray;
+  ray_inv.m_invs[0]=1.0/i_ray.m_direction[0];
+  ray_inv.m_invs[1]=1.0/i_ray.m_direction[1];
+  ray_inv.m_invs[2]=1.0/i_ray.m_direction[2];
+
+  return mp_root->IntersectTest(ray_inv);
   }
 
 ///////////////////////////////////////////////////////// BASE NODE ////////////////////////////////////////////////////
@@ -311,9 +345,9 @@ INVALID_TRIANGLE is returned if no triangle is found.
 io_max_dist is set to the distance to the nearest triangle along the specified direction.
 */
 
-void TriangleTree::Node::Intersect(Ray &i_ray, size_t &o_triangle_index) const
+void TriangleTree::Node::Intersect(RayInv &i_ray, size_t &o_triangle_index) const
   {
-  if (m_bbox.Intersect(i_ray)==false)
+  if (::Intersect(m_bbox,i_ray)==false)
     return;
 
   for(unsigned char i=0;i<3;++i)
@@ -321,9 +355,9 @@ void TriangleTree::Node::Intersect(Ray &i_ray, size_t &o_triangle_index) const
       m_children[i]->Intersect(i_ray, o_triangle_index);
   }
 
-bool TriangleTree::Node::IntersectTest(const Ray &i_ray) const
+bool TriangleTree::Node::IntersectTest(const RayInv &i_ray) const
   {
-  if (m_bbox.Intersect(i_ray)==false)
+  if (::Intersect(m_bbox,i_ray)==false)
     return false;
 
   for(unsigned char i=0;i<3;++i)
@@ -353,8 +387,11 @@ The method simply iterates over all triangles of this leaf and checks for each o
 no greater than io_max_dist. If there are such triangles the closest is returned and the io_max_dist is updated.
 */
 
-void TriangleTree::Leaf::Intersect(Ray &i_ray, size_t &o_triangle_index) const
+void TriangleTree::Leaf::Intersect(RayInv &i_ray, size_t &o_triangle_index) const
   {
+  if (::Intersect(m_bbox,i_ray)==false)
+    return;
+
   for(size_t i=m_begin;i!=m_end;++i)
     {
     const Triangle3D_f &triangle = m_tree.m_triangles[i];
@@ -365,36 +402,39 @@ void TriangleTree::Leaf::Intersect(Ray &i_ray, size_t &o_triangle_index) const
 
     Vector3D_d e1 = Vector3D_d(v1-v0);
     Vector3D_d e2 = Vector3D_d(v2-v0);
-    Vector3D_d s1 = i_ray.m_direction^e2;
+    Vector3D_d s1 = i_ray.m_ray.m_direction^e2;
     double divisor = s1*e1;
     if (divisor == 0.0)
       continue;
     double invDivisor = 1.0 / divisor;
 
     // Compute first barycentric coordinate
-    Vector3D_d d = Vector3D_d(i_ray.m_origin - v0);
+    Vector3D_d d = Vector3D_d(i_ray.m_ray.m_origin - v0);
     double b1 = (d*s1) * invDivisor;
     if(b1 < -DBL_EPS || b1 > 1.0+DBL_EPS)
       continue;
 
     // Compute second barycentric coordinate
     Vector3D_d s2 = d^e1;
-    double b2 = (i_ray.m_direction*s2) * invDivisor;
+    double b2 = (i_ray.m_ray.m_direction*s2) * invDivisor;
     if(b2 < -DBL_EPS || b1 + b2 > 1.0+DBL_EPS)
       continue;
 
     // Compute t to intersection point
     double t = (e2*s2) * invDivisor;
-    if (t >= i_ray.m_min_t && t <= i_ray.m_max_t)
+    if (t >= i_ray.m_ray.m_min_t && t <= i_ray.m_ray.m_max_t)
       {
-      i_ray.m_max_t = t;
+      i_ray.m_ray.m_max_t = t;
       o_triangle_index=i;
       }
     } // for(size_t i=m_begin;i!=m_end;++i)
   }
 
-bool TriangleTree::Leaf::IntersectTest(const Ray &i_ray) const
+bool TriangleTree::Leaf::IntersectTest(const RayInv &i_ray) const
   {
+  if (::Intersect(m_bbox,i_ray)==false)
+    return false;
+
   for(size_t i=m_begin;i!=m_end;++i)
     {
     const Triangle3D_f &triangle = m_tree.m_triangles[i];
@@ -405,27 +445,27 @@ bool TriangleTree::Leaf::IntersectTest(const Ray &i_ray) const
 
     Vector3D_d e1 = Vector3D_d(v1-v0);
     Vector3D_d e2 = Vector3D_d(v2-v0);
-    Vector3D_d s1 = i_ray.m_direction^e2;
+    Vector3D_d s1 = i_ray.m_ray.m_direction^e2;
     double divisor = s1*e1;
     if (divisor == 0.0)
       continue;
     double invDivisor = 1.0 / divisor;
 
     // Compute first barycentric coordinate
-    Vector3D_d d = Vector3D_d(i_ray.m_origin - v0);
+    Vector3D_d d = Vector3D_d(i_ray.m_ray.m_origin - v0);
     double b1 = (d*s1) * invDivisor;
     if(b1 < -DBL_EPS || b1 > 1.0+DBL_EPS)
       continue;
 
     // Compute second barycentric coordinate
     Vector3D_d s2 = d^e1;
-    double b2 = (i_ray.m_direction*s2) * invDivisor;
+    double b2 = (i_ray.m_ray.m_direction*s2) * invDivisor;
     if(b2 < -DBL_EPS || b1 + b2 > 1.0+DBL_EPS)
       continue;
 
     // Compute t to intersection point
     double t = (e2*s2) * invDivisor;
-    if (t >= i_ray.m_min_t && t <= i_ray.m_max_t)
+    if (t >= i_ray.m_ray.m_min_t && t <= i_ray.m_ray.m_max_t)
       return true;
     } // for(size_t i=m_begin;i!=m_end;++i)
   return false;

@@ -46,9 +46,11 @@ class Scene: public ReferenceCounted
     * Computes the intersection of the specified ray with the nearest primitive in the scene.
     * @param i_ray Intersecting ray.
     * @param[out] o_intersection Resulting intersection object.
+    * @param[out] o_t If not null, it will be set to the ray t parameter corresponding to the intersection point.
+    * If the ray does not intersect any primitive in the scene it will be set to infinity.
     * @return true if the specified ray intersects any primitive in the scene and false otherwise.
     */
-    bool Intersect(const RayDifferential &i_ray, Intersection &o_intersection) const;
+    bool Intersect(const RayDifferential &i_ray, Intersection &o_intersection, double *o_t=NULL) const;
 
     /**
     * Returns true if the specified ray intersects any primitive in the scene.
@@ -57,6 +59,11 @@ class Scene: public ReferenceCounted
     * @return true if the specified ray intersects any primitive in the scene and false otherwise.
     */
     bool IntersectTest(const Ray &i_ray) const;
+
+  private:
+    // Not implemented, not a value type.
+    Scene(const Scene&);
+    Scene &operator=(const Scene&);
 
   private:
     std::vector<intrusive_ptr<Primitive> > m_primitives;
@@ -90,9 +97,9 @@ inline BBox3D_d Scene::GetWorldBounds() const
   return m_tree.GetWorldBounds();
   }
 
-inline bool Scene::Intersect(const RayDifferential &i_ray, Intersection &o_intersection) const
+inline bool Scene::Intersect(const RayDifferential &i_ray, Intersection &o_intersection, double *o_t) const
   {
-  return m_tree.Intersect(i_ray, o_intersection);
+  return m_tree.Intersect(i_ray, o_intersection, o_t);
   }
 
 inline bool Scene::IntersectTest(const Ray &i_ray) const

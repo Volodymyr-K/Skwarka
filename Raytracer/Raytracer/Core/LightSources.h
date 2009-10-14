@@ -23,7 +23,8 @@ class DeltaLightSource: public ReferenceCounted
     /**
     * Returns the light source radiance at the specified point.
     * @param i_point Lighted point.
-    * @param[out] o_lighting_ray Ray to the light source from the specified point. Can point to an infinity (e.g. in case of a parallel light sources).
+    * @param[out] o_lighting_ray Ray to the light source from the specified point.
+    * Can point to an infinity (e.g. in case of a parallel light sources). The direction component of the ray should be normalized.
     * @return Radiance value.
     */
     virtual Spectrum_d Lighting(const Point3D_d &i_point, Ray &o_lighting_ray) const = 0;
@@ -31,7 +32,7 @@ class DeltaLightSource: public ReferenceCounted
     /**
     * Samples outgoing light ray.
     * @param i_sample 2D sample. Should be in [0;1)^2 range.
-    * @param[out] o_photon_ray Sampled ray.
+    * @param[out] o_photon_ray Sampled ray. The direction component of the ray should be normalized.
     * @param[out] o_pdf PDF value for the sampled light ray. The returned value should be greater or equal than zero.
     * @return Radiance value.
     */
@@ -116,7 +117,7 @@ class InfiniteLightSource: public ReferenceCounted
     * Samples outgoing light ray.
     * @param i_position_sample 2D sample used to sample photon ray origin. Should be in [0;1)^2 range.
     * @param i_direction_sample 2D sample used to sample photon ray direction. Should be in [0;1)^2 range.
-    * @param[out] o_photon_ray Sampled ray.
+    * @param[out] o_photon_ray Sampled ray. The direction component of the ray should be normalized.
     * @param[out] o_pdf PDF value for the sampled light ray. The returned value should be greater or equal than zero.
     * @return Radiance value.
     */
@@ -180,7 +181,7 @@ class AreaLightSource: public ReferenceCounted
     * @param i_triangle_sample 1D sample value used to select the light source triangle. Should be in [0;1) range.
     * @param i_position_sample 2D sample used to sample photon ray origin. Should be in [0;1)^2 range.
     * @param i_direction_sample 2D sample used to sample photon ray direction. Should be in [0;1)^2 range.
-    * @param[out] o_photon_ray Sampled ray.
+    * @param[out] o_photon_ray Sampled ray. The direction component of the ray should be normalized.
     * @param[out] o_pdf PDF value for the sampled light ray. The returned value should be greater or equal than zero.
     * @return Radiance value.
     */

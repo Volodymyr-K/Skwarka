@@ -66,7 +66,7 @@ class SamplingRoutinesTestSuite : public CxxTest::TestSuite
         }
 
       max_dist=sqrt(max_dist);
-      TS_ASSERT(max_dist<0.05); // Empirical threshold for the given number of samples.
+      TS_ASSERT(max_dist<0.06); // Empirical threshold for the given number of samples.
       }
 
     void test_UniformHemisphereSampling_Range()

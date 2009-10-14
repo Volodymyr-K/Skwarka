@@ -490,6 +490,14 @@
 						>
 					</File>
 				</Filter>
+				<Filter
+					Name="Renderers"
+					>
+					<File
+						RelativePath=".\SamplerBasedRenderer.test.h"
+						>
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="Shapes"
@@ -648,6 +656,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\SamplerBasedRenderer.test.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\SamplingRoutines.test.cpp"
 				>
 			</File>
@@ -792,6 +804,24 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\Mocks\InfiniteLightSourceMock.h"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
 				RelativePath=".\Mocks\MaterialMock.h"
 				>
 				<FileConfiguration
@@ -846,7 +876,43 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\Mocks\SurfaceIntegratorMock.h"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
 				RelativePath=".\Mocks\TextureMock.h"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\Mocks\VolumeIntegratorMock.h"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"

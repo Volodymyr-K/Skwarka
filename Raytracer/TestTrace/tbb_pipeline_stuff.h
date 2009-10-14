@@ -28,7 +28,7 @@ struct SampleChunk
   size_t chunk_index,samples;
   };
 
-static const size_t n_chunks = 16;
+static const size_t n_chunks = 20;
 SampleChunk m_chunks[n_chunks];
 bool chunks_free[n_chunks];
 

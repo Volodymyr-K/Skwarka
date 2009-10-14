@@ -38,9 +38,11 @@ class ReferenceCounted
 /////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-inline ReferenceCounted::ReferenceCounted():
-  m_references()
+// For some reason TBB does not initialize m_references with 0 if it is listed in the constructor's initializer list.
+// So, we have to initialize it manually by assigning 0 to it.
+inline ReferenceCounted::ReferenceCounted()//: m_references()
   {
+  m_references=0;
   }
 
 inline size_t ReferenceCounted::IncRef()
