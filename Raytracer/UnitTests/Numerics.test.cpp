@@ -67,25 +67,49 @@ public:
 
 static class TestDescription_NumericsTestSuite_test_IsNegativeInf1 : public CxxTest::RealTestDescription {
 public:
- TestDescription_NumericsTestSuite_test_IsNegativeInf1() : CxxTest::RealTestDescription( Tests_NumericsTestSuite, suiteDescription_NumericsTestSuite, 68, "test_IsNegativeInf1" ) {}
+ TestDescription_NumericsTestSuite_test_IsNegativeInf1() : CxxTest::RealTestDescription( Tests_NumericsTestSuite, suiteDescription_NumericsTestSuite, 69, "test_IsNegativeInf1" ) {}
  void runTest() { suite_NumericsTestSuite.test_IsNegativeInf1(); }
 } testDescription_NumericsTestSuite_test_IsNegativeInf1;
 
 static class TestDescription_NumericsTestSuite_test_IsNegativeInf2 : public CxxTest::RealTestDescription {
 public:
- TestDescription_NumericsTestSuite_test_IsNegativeInf2() : CxxTest::RealTestDescription( Tests_NumericsTestSuite, suiteDescription_NumericsTestSuite, 74, "test_IsNegativeInf2" ) {}
+ TestDescription_NumericsTestSuite_test_IsNegativeInf2() : CxxTest::RealTestDescription( Tests_NumericsTestSuite, suiteDescription_NumericsTestSuite, 75, "test_IsNegativeInf2" ) {}
  void runTest() { suite_NumericsTestSuite.test_IsNegativeInf2(); }
 } testDescription_NumericsTestSuite_test_IsNegativeInf2;
 
 static class TestDescription_NumericsTestSuite_test_IsNegativeInf3 : public CxxTest::RealTestDescription {
 public:
- TestDescription_NumericsTestSuite_test_IsNegativeInf3() : CxxTest::RealTestDescription( Tests_NumericsTestSuite, suiteDescription_NumericsTestSuite, 80, "test_IsNegativeInf3" ) {}
+ TestDescription_NumericsTestSuite_test_IsNegativeInf3() : CxxTest::RealTestDescription( Tests_NumericsTestSuite, suiteDescription_NumericsTestSuite, 81, "test_IsNegativeInf3" ) {}
  void runTest() { suite_NumericsTestSuite.test_IsNegativeInf3(); }
 } testDescription_NumericsTestSuite_test_IsNegativeInf3;
 
 static class TestDescription_NumericsTestSuite_test_IsNegativeInf4 : public CxxTest::RealTestDescription {
 public:
- TestDescription_NumericsTestSuite_test_IsNegativeInf4() : CxxTest::RealTestDescription( Tests_NumericsTestSuite, suiteDescription_NumericsTestSuite, 87, "test_IsNegativeInf4" ) {}
+ TestDescription_NumericsTestSuite_test_IsNegativeInf4() : CxxTest::RealTestDescription( Tests_NumericsTestSuite, suiteDescription_NumericsTestSuite, 88, "test_IsNegativeInf4" ) {}
  void runTest() { suite_NumericsTestSuite.test_IsNegativeInf4(); }
 } testDescription_NumericsTestSuite_test_IsNegativeInf4;
+
+static class TestDescription_NumericsTestSuite_test_IsInf1 : public CxxTest::RealTestDescription {
+public:
+ TestDescription_NumericsTestSuite_test_IsInf1() : CxxTest::RealTestDescription( Tests_NumericsTestSuite, suiteDescription_NumericsTestSuite, 96, "test_IsInf1" ) {}
+ void runTest() { suite_NumericsTestSuite.test_IsInf1(); }
+} testDescription_NumericsTestSuite_test_IsInf1;
+
+static class TestDescription_NumericsTestSuite_test_IsInf2 : public CxxTest::RealTestDescription {
+public:
+ TestDescription_NumericsTestSuite_test_IsInf2() : CxxTest::RealTestDescription( Tests_NumericsTestSuite, suiteDescription_NumericsTestSuite, 102, "test_IsInf2" ) {}
+ void runTest() { suite_NumericsTestSuite.test_IsInf2(); }
+} testDescription_NumericsTestSuite_test_IsInf2;
+
+static class TestDescription_NumericsTestSuite_test_IsInf3 : public CxxTest::RealTestDescription {
+public:
+ TestDescription_NumericsTestSuite_test_IsInf3() : CxxTest::RealTestDescription( Tests_NumericsTestSuite, suiteDescription_NumericsTestSuite, 108, "test_IsInf3" ) {}
+ void runTest() { suite_NumericsTestSuite.test_IsInf3(); }
+} testDescription_NumericsTestSuite_test_IsInf3;
+
+static class TestDescription_NumericsTestSuite_test_IsInf4 : public CxxTest::RealTestDescription {
+public:
+ TestDescription_NumericsTestSuite_test_IsInf4() : CxxTest::RealTestDescription( Tests_NumericsTestSuite, suiteDescription_NumericsTestSuite, 115, "test_IsInf4" ) {}
+ void runTest() { suite_NumericsTestSuite.test_IsInf4(); }
+} testDescription_NumericsTestSuite_test_IsInf4;
 

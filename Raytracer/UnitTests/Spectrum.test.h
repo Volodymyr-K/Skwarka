@@ -241,6 +241,20 @@ class SpectrumTestSuite : public CxxTest::TestSuite
 
       TS_ASSERT(IsNaN(s));
       }
+
+    void test_Spectrum_IsInf1()
+      {
+      Spectrum_d s(0,1,2);
+
+      TS_ASSERT(IsInf(s)==false);
+      }
+
+    void test_Spectrum_IsInf2()
+      {
+      Spectrum_d s(0,DBL_INF,2);
+
+      TS_ASSERT(IsInf(s));
+      }
   };
 
 #endif // SPECTRUM_TEST_H

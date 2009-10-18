@@ -65,6 +65,7 @@ class NumericsTestSuite : public CxxTest::TestSuite
       TS_ASSERT(IsPositiveInf(x));
       }
 
+
     void test_IsNegativeInf1()
       {
       double x=0.1;
@@ -89,6 +90,33 @@ class NumericsTestSuite : public CxxTest::TestSuite
       double x=-0.2;
       x/=0.0;
       TS_ASSERT(IsNegativeInf(x));
+      }
+
+
+    void test_IsInf1()
+      {
+      double x=0.1;
+      TS_ASSERT(IsInf(x)==false);
+      }
+
+    void test_IsInf2()
+      {
+      double x=std::numeric_limits<double>::quiet_NaN();
+      TS_ASSERT(IsInf(x)==false);
+      }
+
+    void test_IsInf3()
+      {
+      double x=0.2;
+      x/=0.0;
+      TS_ASSERT(IsInf(x));
+      }
+
+    void test_IsInf4()
+      {
+      double x=-0.2;
+      x/=0.0;
+      TS_ASSERT(IsInf(x));
       }
 
   };

@@ -104,6 +104,12 @@ bool InRange(const Spectrum<T> &i_spectrum, T i_low, T i_high);
 template<typename T>
 bool IsNaN(const Spectrum<T> &i_spectrum);
 
+/**
+* Returns true if any of the spectrum components is a positive or a negative infinity.
+*/
+template<typename T>
+bool IsInf(const Spectrum<T> &i_spectrum);
+
 typedef Spectrum<float> Spectrum_f;
 typedef Spectrum<double> Spectrum_d;
 
@@ -376,6 +382,12 @@ template<typename T>
 bool IsNaN(const Spectrum<T> &i_spectrum)
   {
   return IsNaN(i_spectrum[0]) || IsNaN(i_spectrum[1]) || IsNaN(i_spectrum[2]);
+  }
+
+template<typename T>
+bool IsInf(const Spectrum<T> &i_spectrum)
+  {
+  return IsInf(i_spectrum[0]) || IsInf(i_spectrum[1]) || IsInf(i_spectrum[2]);
   }
 
 #endif // SPECTRUM_H

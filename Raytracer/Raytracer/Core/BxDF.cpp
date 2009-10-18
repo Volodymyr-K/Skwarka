@@ -50,9 +50,7 @@ Spectrum_d BxDF::TotalScattering(const Vector3D_d &i_incident, SamplesSequence2D
   ret/=num_samples;
 
   // Clamp spectrum values because a surface can not physically scatter more light than it received.
-  ret[0]=MathRoutines::Clamp(ret[0],0.0,1.0);
-  ret[1]=MathRoutines::Clamp(ret[1],0.0,1.0);
-  ret[2]=MathRoutines::Clamp(ret[2],0.0,1.0);
+  ret.Clamp(0.0,1.0);
   return ret;
   }
 
@@ -89,8 +87,6 @@ Spectrum_d BxDF::TotalScattering(bool i_hemisphere, SamplesSequence2D i_samples)
   ret*=2.0/num_sample_pairs;
 
   // Clamp spectrum values because a surface can not physically scatter more light than it received.
-  ret[0]=MathRoutines::Clamp(ret[0],0.0,1.0);
-  ret[1]=MathRoutines::Clamp(ret[1],0.0,1.0);
-  ret[2]=MathRoutines::Clamp(ret[2],0.0,1.0);
+  ret.Clamp(0.0,1.0);
   return ret;
   }

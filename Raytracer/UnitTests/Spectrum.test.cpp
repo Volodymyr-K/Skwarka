@@ -191,3 +191,15 @@ public:
  void runTest() { suite_SpectrumTestSuite.test_Spectrum_IsNaN(); }
 } testDescription_SpectrumTestSuite_test_Spectrum_IsNaN;
 
+static class TestDescription_SpectrumTestSuite_test_Spectrum_IsInf1 : public CxxTest::RealTestDescription {
+public:
+ TestDescription_SpectrumTestSuite_test_Spectrum_IsInf1() : CxxTest::RealTestDescription( Tests_SpectrumTestSuite, suiteDescription_SpectrumTestSuite, 245, "test_Spectrum_IsInf1" ) {}
+ void runTest() { suite_SpectrumTestSuite.test_Spectrum_IsInf1(); }
+} testDescription_SpectrumTestSuite_test_Spectrum_IsInf1;
+
+static class TestDescription_SpectrumTestSuite_test_Spectrum_IsInf2 : public CxxTest::RealTestDescription {
+public:
+ TestDescription_SpectrumTestSuite_test_Spectrum_IsInf2() : CxxTest::RealTestDescription( Tests_SpectrumTestSuite, suiteDescription_SpectrumTestSuite, 252, "test_Spectrum_IsInf2" ) {}
+ void runTest() { suite_SpectrumTestSuite.test_Spectrum_IsInf2(); }
+} testDescription_SpectrumTestSuite_test_Spectrum_IsInf2;
+

@@ -20,6 +20,14 @@ namespace MathRoutines
   T Clamp(T i_value, T i_low, T i_high);
 
   /**
+  * Linearly interpolates the value in the specified range.
+  * If i_weight parameter is 0 the method returns i_low, if it is 1 the method returns i_high.
+  * i_weight can be less than 0.0 or greater than 1.0, the method will still interpolate the values accordingly.
+  */
+  template<typename T>
+  T LinearInterpolate(T i_weight, T i_low, T i_high);
+
+  /**
   * Returns true if the integer is a power of 2.
   * false is returned if i_value is 0.
   */
@@ -74,6 +82,12 @@ namespace MathRoutines
       return i_high;
     else
       return i_value;
+    }
+
+  template<typename T>
+  T LinearInterpolate(T i_weight, T i_low, T i_high)
+    {
+    return (T) ( (1.0 - i_weight) * i_low + i_weight * i_high );
     }
 
   inline bool IsPowerOf2(unsigned int i_value)

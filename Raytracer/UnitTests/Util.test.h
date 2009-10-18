@@ -55,6 +55,24 @@ class UtilTestSuite : public CxxTest::TestSuite
       TS_ASSERT(clamped==2.2);
       }
 
+    void test_LinearInterpolate1()
+      {
+      double interpolated = MathRoutines::LinearInterpolate(0.0, 1.0, 2.0);
+      TS_ASSERT(interpolated==1.0);
+      }
+
+    void test_LinearInterpolate2()
+      {
+      double interpolated = MathRoutines::LinearInterpolate(0.5, 1.0, -2.0);
+      TS_ASSERT(interpolated==-0.5);
+      }
+
+    void test_LinearInterpolate3()
+      {
+      double interpolated = MathRoutines::LinearInterpolate(-1.0, 1.0, 3.0);
+      TS_ASSERT(interpolated==-1.0);
+      }
+
     // Tests for a special case when 0 is passed.
     void test_IsPowerOf2_ZeroCase()
       {

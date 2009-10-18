@@ -46,75 +46,93 @@ public:
  void runTest() { suite_UtilTestSuite.test_Clamp3(); }
 } testDescription_UtilTestSuite_test_Clamp3;
 
+static class TestDescription_UtilTestSuite_test_LinearInterpolate1 : public CxxTest::RealTestDescription {
+public:
+ TestDescription_UtilTestSuite_test_LinearInterpolate1() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 58, "test_LinearInterpolate1" ) {}
+ void runTest() { suite_UtilTestSuite.test_LinearInterpolate1(); }
+} testDescription_UtilTestSuite_test_LinearInterpolate1;
+
+static class TestDescription_UtilTestSuite_test_LinearInterpolate2 : public CxxTest::RealTestDescription {
+public:
+ TestDescription_UtilTestSuite_test_LinearInterpolate2() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 64, "test_LinearInterpolate2" ) {}
+ void runTest() { suite_UtilTestSuite.test_LinearInterpolate2(); }
+} testDescription_UtilTestSuite_test_LinearInterpolate2;
+
+static class TestDescription_UtilTestSuite_test_LinearInterpolate3 : public CxxTest::RealTestDescription {
+public:
+ TestDescription_UtilTestSuite_test_LinearInterpolate3() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 70, "test_LinearInterpolate3" ) {}
+ void runTest() { suite_UtilTestSuite.test_LinearInterpolate3(); }
+} testDescription_UtilTestSuite_test_LinearInterpolate3;
+
 static class TestDescription_UtilTestSuite_test_IsPowerOf2_ZeroCase : public CxxTest::RealTestDescription {
 public:
- TestDescription_UtilTestSuite_test_IsPowerOf2_ZeroCase() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 59, "test_IsPowerOf2_ZeroCase" ) {}
+ TestDescription_UtilTestSuite_test_IsPowerOf2_ZeroCase() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 77, "test_IsPowerOf2_ZeroCase" ) {}
  void runTest() { suite_UtilTestSuite.test_IsPowerOf2_ZeroCase(); }
 } testDescription_UtilTestSuite_test_IsPowerOf2_ZeroCase;
 
 static class TestDescription_UtilTestSuite_test_IsPowerOf2_PowerOf2Case : public CxxTest::RealTestDescription {
 public:
- TestDescription_UtilTestSuite_test_IsPowerOf2_PowerOf2Case() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 64, "test_IsPowerOf2_PowerOf2Case" ) {}
+ TestDescription_UtilTestSuite_test_IsPowerOf2_PowerOf2Case() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 82, "test_IsPowerOf2_PowerOf2Case" ) {}
  void runTest() { suite_UtilTestSuite.test_IsPowerOf2_PowerOf2Case(); }
 } testDescription_UtilTestSuite_test_IsPowerOf2_PowerOf2Case;
 
 static class TestDescription_UtilTestSuite_test_IsPowerOf2_NotPowerOf2Case : public CxxTest::RealTestDescription {
 public:
- TestDescription_UtilTestSuite_test_IsPowerOf2_NotPowerOf2Case() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 69, "test_IsPowerOf2_NotPowerOf2Case" ) {}
+ TestDescription_UtilTestSuite_test_IsPowerOf2_NotPowerOf2Case() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 87, "test_IsPowerOf2_NotPowerOf2Case" ) {}
  void runTest() { suite_UtilTestSuite.test_IsPowerOf2_NotPowerOf2Case(); }
 } testDescription_UtilTestSuite_test_IsPowerOf2_NotPowerOf2Case;
 
 static class TestDescription_UtilTestSuite_test_FloorLog2_ZeroCase : public CxxTest::RealTestDescription {
 public:
- TestDescription_UtilTestSuite_test_FloorLog2_ZeroCase() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 75, "test_FloorLog2_ZeroCase" ) {}
+ TestDescription_UtilTestSuite_test_FloorLog2_ZeroCase() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 93, "test_FloorLog2_ZeroCase" ) {}
  void runTest() { suite_UtilTestSuite.test_FloorLog2_ZeroCase(); }
 } testDescription_UtilTestSuite_test_FloorLog2_ZeroCase;
 
 static class TestDescription_UtilTestSuite_test_FloorLog2_OneCase : public CxxTest::RealTestDescription {
 public:
- TestDescription_UtilTestSuite_test_FloorLog2_OneCase() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 80, "test_FloorLog2_OneCase" ) {}
+ TestDescription_UtilTestSuite_test_FloorLog2_OneCase() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 98, "test_FloorLog2_OneCase" ) {}
  void runTest() { suite_UtilTestSuite.test_FloorLog2_OneCase(); }
 } testDescription_UtilTestSuite_test_FloorLog2_OneCase;
 
 static class TestDescription_UtilTestSuite_test_FloorLog2_PowerOf2Case : public CxxTest::RealTestDescription {
 public:
- TestDescription_UtilTestSuite_test_FloorLog2_PowerOf2Case() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 85, "test_FloorLog2_PowerOf2Case" ) {}
+ TestDescription_UtilTestSuite_test_FloorLog2_PowerOf2Case() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 103, "test_FloorLog2_PowerOf2Case" ) {}
  void runTest() { suite_UtilTestSuite.test_FloorLog2_PowerOf2Case(); }
 } testDescription_UtilTestSuite_test_FloorLog2_PowerOf2Case;
 
 static class TestDescription_UtilTestSuite_test_FloorLog2_NotPowerOf2Case : public CxxTest::RealTestDescription {
 public:
- TestDescription_UtilTestSuite_test_FloorLog2_NotPowerOf2Case() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 90, "test_FloorLog2_NotPowerOf2Case" ) {}
+ TestDescription_UtilTestSuite_test_FloorLog2_NotPowerOf2Case() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 108, "test_FloorLog2_NotPowerOf2Case" ) {}
  void runTest() { suite_UtilTestSuite.test_FloorLog2_NotPowerOf2Case(); }
 } testDescription_UtilTestSuite_test_FloorLog2_NotPowerOf2Case;
 
 static class TestDescription_UtilTestSuite_test_CeilLog2_ZeroCase : public CxxTest::RealTestDescription {
 public:
- TestDescription_UtilTestSuite_test_CeilLog2_ZeroCase() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 96, "test_CeilLog2_ZeroCase" ) {}
+ TestDescription_UtilTestSuite_test_CeilLog2_ZeroCase() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 114, "test_CeilLog2_ZeroCase" ) {}
  void runTest() { suite_UtilTestSuite.test_CeilLog2_ZeroCase(); }
 } testDescription_UtilTestSuite_test_CeilLog2_ZeroCase;
 
 static class TestDescription_UtilTestSuite_test_CeilLog2_OneCase : public CxxTest::RealTestDescription {
 public:
- TestDescription_UtilTestSuite_test_CeilLog2_OneCase() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 101, "test_CeilLog2_OneCase" ) {}
+ TestDescription_UtilTestSuite_test_CeilLog2_OneCase() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 119, "test_CeilLog2_OneCase" ) {}
  void runTest() { suite_UtilTestSuite.test_CeilLog2_OneCase(); }
 } testDescription_UtilTestSuite_test_CeilLog2_OneCase;
 
 static class TestDescription_UtilTestSuite_test_CeilLog2_PowerOf2Case : public CxxTest::RealTestDescription {
 public:
- TestDescription_UtilTestSuite_test_CeilLog2_PowerOf2Case() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 106, "test_CeilLog2_PowerOf2Case" ) {}
+ TestDescription_UtilTestSuite_test_CeilLog2_PowerOf2Case() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 124, "test_CeilLog2_PowerOf2Case" ) {}
  void runTest() { suite_UtilTestSuite.test_CeilLog2_PowerOf2Case(); }
 } testDescription_UtilTestSuite_test_CeilLog2_PowerOf2Case;
 
 static class TestDescription_UtilTestSuite_test_CeilLog2_NotPowerOf2Case : public CxxTest::RealTestDescription {
 public:
- TestDescription_UtilTestSuite_test_CeilLog2_NotPowerOf2Case() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 111, "test_CeilLog2_NotPowerOf2Case" ) {}
+ TestDescription_UtilTestSuite_test_CeilLog2_NotPowerOf2Case() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 129, "test_CeilLog2_NotPowerOf2Case" ) {}
  void runTest() { suite_UtilTestSuite.test_CeilLog2_NotPowerOf2Case(); }
 } testDescription_UtilTestSuite_test_CeilLog2_NotPowerOf2Case;
 
 static class TestDescription_UtilTestSuite_test_CoordinateSystem : public CxxTest::RealTestDescription {
 public:
- TestDescription_UtilTestSuite_test_CoordinateSystem() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 116, "test_CoordinateSystem" ) {}
+ TestDescription_UtilTestSuite_test_CoordinateSystem() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 134, "test_CoordinateSystem" ) {}
  void runTest() { suite_UtilTestSuite.test_CoordinateSystem(); }
 } testDescription_UtilTestSuite_test_CoordinateSystem;
 

@@ -153,9 +153,7 @@ Spectrum_d SpecularReflection<Fresnel>::TotalScattering(bool i_hemisphere, Sampl
   ret *= m_reflectance*(2.0/num_samples);
 
   // Clamp spectrum values because a surface can not physically scatter more light than it received.
-  ret[0]=MathRoutines::Clamp(ret[0],0.0,1.0);
-  ret[1]=MathRoutines::Clamp(ret[1],0.0,1.0);
-  ret[2]=MathRoutines::Clamp(ret[2],0.0,1.0);
+  ret.Clamp(0.0,1.0);
   return ret;
   }
 

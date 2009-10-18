@@ -26,6 +26,12 @@ bool IsPositiveInf(T i_value);
 template<typename T>
 bool IsNegativeInf(T i_value);
 
+/**
+* Returns true if the specified value represents negative or positive infinity.
+*/
+template<typename T>
+bool IsInf(T i_value);
+
 /////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -58,6 +64,12 @@ template<typename T>
 bool IsNegativeInf(T i_value)
   {
   return i_value == -std::numeric_limits<T>::infinity();
+  }
+
+template<typename T>
+bool IsInf(T i_value)
+  {
+  return i_value == std::numeric_limits<T>::infinity() || i_value == -std::numeric_limits<T>::infinity();
   }
 
 #endif // NUMERICS_H
