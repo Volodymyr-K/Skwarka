@@ -24,9 +24,9 @@ class SamplerBasedRenderer: public Renderer
   {
   public:
     /**
-    * Creates SamplerBasedRenderer instance for the specified scene.
+    * Creates SamplerBasedRenderer instance for the specified scene. The logger implementation must be thread-safe.
     */
-    SamplerBasedRenderer(intrusive_ptr<Scene> ip_scene, intrusive_ptr<Sampler> ip_sampler);
+    SamplerBasedRenderer(intrusive_ptr<Scene> ip_scene, intrusive_ptr<Sampler> ip_sampler, intrusive_ptr<Log> ip_log = NULL);
 
     /**
     * Sets surface integrator to be used for computing surface scattering.
@@ -87,6 +87,8 @@ class SamplerBasedRenderer: public Renderer
     intrusive_ptr<SurfaceIntegrator> mp_surface_integrator;
 
     intrusive_ptr<VolumeIntegrator> mp_volume_integrator;
+
+    intrusive_ptr<Log> mp_log;
 
     // Defines the maximum number of tokens the TBB pipeline can run concurrently.
     // This is also the upper bound on the number of threads the pipeline can utilize at the same time.

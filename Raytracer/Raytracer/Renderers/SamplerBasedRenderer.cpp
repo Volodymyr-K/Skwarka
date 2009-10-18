@@ -1,4 +1,5 @@
 #include "SamplerBasedRenderer.h"
+#include <Math/Constants.h>
 #include <tbb/pipeline.h>
 #include <vector>
 
@@ -123,7 +124,7 @@ class SamplerBasedRenderer::SamplesGeneratorFilter: public tbb::filter
 class SamplerBasedRenderer::IntegratorFilter: public tbb::filter
   {
   public:
-    IntegratorFilter(const SamplerBasedRenderer *ip_renderer, intrusive_ptr<Camera> ip_camera);
+    IntegratorFilter(const SamplerBasedRenderer *ip_renderer, intrusive_ptr<Camera> ip_camera, intrusive_ptr<Log> ip_log);
 
     void* operator()(void* ip_chunk);
 
@@ -131,6 +132,7 @@ class SamplerBasedRenderer::IntegratorFilter: public tbb::filter
     const SamplerBasedRenderer *mp_renderer;
 
     intrusive_ptr<Camera> mp_camera;
+    intrusive_ptr<Log> mp_log;
   };
 
 /**
@@ -154,8 +156,8 @@ class SamplerBasedRenderer::FilmWriterFilter: public tbb::filter
 //////////////////////////////////////// SamplerBasedRenderer /////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-SamplerBasedRenderer::SamplerBasedRenderer(intrusive_ptr<Scene> ip_scene, intrusive_ptr<Sampler> ip_sampler): Renderer(ip_scene),
-mp_scene(ip_scene), mp_sampler(ip_sampler), mp_surface_integrator(NULL), mp_volume_integrator(NULL)
+SamplerBasedRenderer::SamplerBasedRenderer(intrusive_ptr<Scene> ip_scene, intrusive_ptr<Sampler> ip_sampler, intrusive_ptr<Log> ip_log): Renderer(ip_scene),
+mp_scene(ip_scene), mp_sampler(ip_sampler), mp_log(ip_log), mp_surface_integrator(NULL), mp_volume_integrator(NULL)
   {
   ASSERT(ip_scene);
   ASSERT(ip_sampler);
@@ -243,7 +245,7 @@ void SamplerBasedRenderer::Render(intrusive_ptr<Camera> ip_camera) const
   Currently, these values are hardcoded as MAX_PIPELINE_TOKENS_NUM and SAMPLES_PER_CHUNK constants.
   */
   SamplesGeneratorFilter samples_generator(mp_sampler, MAX_PIPELINE_TOKENS_NUM, SAMPLES_PER_CHUNK);
-  IntegratorFilter integrator(this, ip_camera);
+  IntegratorFilter integrator(this, ip_camera, mp_log);
   FilmWriterFilter film_writer(ip_camera->GetFilm());
 
   tbb::pipeline pipeline;
@@ -381,8 +383,8 @@ void* SamplerBasedRenderer::SamplesGeneratorFilter::operator()(void*)
 ////////////////////////////////////////// IntegratorFilter ///////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-SamplerBasedRenderer::IntegratorFilter::IntegratorFilter(const SamplerBasedRenderer *ip_renderer, intrusive_ptr<Camera> ip_camera): tbb::filter(parallel),
-mp_renderer(ip_renderer), mp_camera(ip_camera)
+SamplerBasedRenderer::IntegratorFilter::IntegratorFilter(const SamplerBasedRenderer *ip_renderer, intrusive_ptr<Camera> ip_camera, intrusive_ptr<Log> ip_log): tbb::filter(parallel),
+mp_renderer(ip_renderer), mp_camera(ip_camera), mp_log(ip_log)
   {
   ASSERT(ip_renderer);
   ASSERT(ip_camera);
@@ -414,15 +416,33 @@ void* SamplerBasedRenderer::IntegratorFilter::operator()(void* ip_chunk)
     ray.m_direction_dx=r_dx.m_direction;
     ray.m_direction_dy=r_dy.m_direction;
 
+    Spectrum_d radiance=Spectrum_d(0.0);
     if (weight != 0.0)
+      radiance = mp_renderer->Radiance(ray, p_sample, *p_pool);
+
+    // Log unexpected radiance values.
+    if (IsNaN(radiance))
       {
-      Spectrum_d radiance = mp_renderer->Radiance(ray, p_sample, *p_pool);
-      p_chunk->SetRadiance(i, radiance * weight);
+      if (mp_log)
+        mp_log->LogMessage(Log::WARNING_LEVEL, "Not-a-number radiance value returned for image sample. Setting to black.");
+      radiance = Spectrum_d(0.0);
       }
     else
-      p_chunk->SetRadiance(i, Spectrum_d(0.0));
+      if (radiance.Luminance() < -DBL_EPS)
+        {
+        if (mp_log)
+          mp_log->LogMessage(Log::WARNING_LEVEL, "Negative luminance value returned for image sample. Setting to black.");
+        radiance = Spectrum_d(0.0);
+        }
+      else
+        if (IsInf(radiance))
+          {
+          if (mp_log)
+            mp_log->LogMessage(Log::WARNING_LEVEL, "Infinite spectrum value returned for image sample. Setting to black.");
+          radiance = Spectrum_d(0.0);
+          }
 
-    // TBD: Add checks for NaNs, INFs and negative spectrums and log that.
+    p_chunk->SetRadiance(i, radiance * weight);
 
     // Free all allocated objects since we don't need them anymore at this point.
     p_pool->FreeAll();

@@ -54,7 +54,8 @@ class SamplerBasedRendererTestSuite : public CxxTest::TestSuite
       p_film->GetSamplingExtent(window_begin, window_end);
       intrusive_ptr<Sampler> p_sampler( new StratifiedSampler(window_begin, window_end, 2, 2, true) );
 
-      mp_renderer.reset( new SamplerBasedRenderer(mp_scene, p_sampler) );
+      mp_log.reset( new StreamLog() );
+      mp_renderer.reset( new SamplerBasedRenderer(mp_scene, p_sampler, mp_log) );
       mp_surf_int.reset( new SurfaceIntegratorMock(mp_renderer) );
       mp_volume_int.reset( new VolumeIntegratorMock(mp_renderer) );
       }
@@ -153,6 +154,7 @@ class SamplerBasedRendererTestSuite : public CxxTest::TestSuite
     intrusive_ptr<VolumeIntegrator> mp_volume_int;
     intrusive_ptr<SamplerBasedRenderer> mp_renderer;
     intrusive_ptr<Camera> mp_camera;
+    intrusive_ptr<Log> mp_log;
   };
 
 #endif // SAMPLER_BASED_RENDERER_TEST_H

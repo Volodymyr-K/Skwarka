@@ -517,6 +517,10 @@
 				Name="Common"
 				>
 				<File
+					RelativePath=".\Log.test.h"
+					>
+				</File>
+				<File
 					RelativePath=".\MemoryPool.test.h"
 					>
 				</File>
@@ -587,6 +591,10 @@
 			</File>
 			<File
 				RelativePath=".\Lambertian.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Log.test.cpp"
 				>
 			</File>
 			<File

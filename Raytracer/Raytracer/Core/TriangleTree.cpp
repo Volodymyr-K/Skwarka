@@ -47,7 +47,7 @@ void TriangleTree::_BuildTree()
   {
   if (mp_root != NULL)
     {
-    Log::Warning("Trying to build a triangle tree that is already built. Skipping.");
+    //Log::Warning("Trying to build a triangle tree that is already built. Skipping.");
     return;
     }
 
@@ -57,7 +57,7 @@ void TriangleTree::_BuildTree()
 
   if (number_of_triangles==0)
     {
-    Log::Warning("Trying to build an empty tree. Skipping.");
+    //Log::Warning("Trying to build an empty tree. Skipping.");
     return;
     }
 

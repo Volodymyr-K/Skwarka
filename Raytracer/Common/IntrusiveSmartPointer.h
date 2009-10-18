@@ -26,6 +26,8 @@ class ReferenceCounted
     */
     size_t DecRef();
 
+    virtual ~ReferenceCounted();
+
   private:
     tbb::atomic<size_t> m_references;
     //size_t m_references;
@@ -43,6 +45,10 @@ class ReferenceCounted
 inline ReferenceCounted::ReferenceCounted()//: m_references()
   {
   m_references=0;
+  }
+
+inline ReferenceCounted::~ReferenceCounted()
+  {
   }
 
 inline size_t ReferenceCounted::IncRef()
