@@ -23,24 +23,23 @@ class InfiniteLightSourceMock: public InfiniteLightSource
 
   private:
     Spectrum_d m_radiance;
-    intrusive_ptr<Renderer> mp_renderer;
     BBox3D_d m_world_bounds;
   };
 
 /////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-InfiniteLightSourceMock::InfiniteLightSourceMock(Spectrum_d i_radiance, const BBox3D_d &i_world_bounds):
+inline InfiniteLightSourceMock::InfiniteLightSourceMock(Spectrum_d i_radiance, const BBox3D_d &i_world_bounds):
   m_radiance(i_radiance), m_world_bounds(i_world_bounds)
   {
   }
 
-Spectrum_d InfiniteLightSourceMock::Radiance(const RayDifferential &i_ray) const
+inline Spectrum_d InfiniteLightSourceMock::Radiance(const RayDifferential &i_ray) const
   {
   return m_radiance;
   }
 
-Spectrum_d InfiniteLightSourceMock::Power() const
+inline Spectrum_d InfiniteLightSourceMock::Power() const
   {
   double x = fabs(m_world_bounds.m_max[0]-m_world_bounds.m_min[0]);
   double y = fabs(m_world_bounds.m_max[1]-m_world_bounds.m_min[1]);
@@ -49,19 +48,19 @@ Spectrum_d InfiniteLightSourceMock::Power() const
   return 2.0*M_PI*m_radiance*area;
   }
 
-Spectrum_d InfiniteLightSourceMock::SampleLighting(const Point3D_d &i_point, const Point2D_d &i_sample, Vector3D_d &o_lighting_direction, double &o_pdf) const
+inline Spectrum_d InfiniteLightSourceMock::SampleLighting(const Point3D_d &i_point, const Point2D_d &i_sample, Vector3D_d &o_lighting_direction, double &o_pdf) const
   {
   o_lighting_direction=SamplingRoutines::UniformSphereSampling(i_sample);
   o_pdf=SamplingRoutines::UniformSpherePDF();
   return m_radiance;
   }
 
-double InfiniteLightSourceMock::LightingPDF(const Point3D_d &i_point, const Vector3D_d &i_lighting_direction) const
+inline double InfiniteLightSourceMock::LightingPDF(const Point3D_d &i_point, const Vector3D_d &i_lighting_direction) const
   {
   return SamplingRoutines::UniformSpherePDF();
   }
 
-Spectrum_d InfiniteLightSourceMock::SamplePhoton(const Point2D_d &i_position_sample, const Point2D_d &i_direction_sample, Ray &o_photon_ray, double &o_pdf) const
+inline Spectrum_d InfiniteLightSourceMock::SamplePhoton(const Point2D_d &i_position_sample, const Point2D_d &i_direction_sample, Ray &o_photon_ray, double &o_pdf) const
   {
   double x = fabs(m_world_bounds.m_max[0]-m_world_bounds.m_min[0]);
   double y = fabs(m_world_bounds.m_max[1]-m_world_bounds.m_min[1]);

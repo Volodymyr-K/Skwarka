@@ -108,7 +108,7 @@ Spectrum_d SurfaceIntegratorMock::Radiance(const RayDifferential &i_ray, const I
 
     if (pdf>0.0)
       {
-      double cs = fabs(exitant * isect.m_dg.m_shading_normal);
+      double cs = fabs(exitant * i_intersection.m_dg.m_shading_normal);
       Intersection isect2;
       if (mp_scene->Intersect(RayDifferential(Ray(i_intersection.m_dg.m_point, exitant, 1e-5, DBL_INF)), isect2) && isect2.mp_primitive->GetAreaLightSource())
         {

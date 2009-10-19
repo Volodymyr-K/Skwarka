@@ -7,6 +7,7 @@
 #include "Spectrum.h"
 #include "Sample.h"
 #include "Sampler.h"
+#include "Intersection.h"
 
 /**
 * An abstract class defining the contract for surface integrator implementations.

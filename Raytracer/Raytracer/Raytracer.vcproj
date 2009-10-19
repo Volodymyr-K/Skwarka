@@ -194,6 +194,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\Core\LightsSamplingStrategy.h"
+					>
+				</File>
+				<File
 					RelativePath=".\Core\Material.h"
 					>
 				</File>
@@ -545,6 +549,46 @@
 				>
 				<File
 					RelativePath=".\Renderers\SamplerBasedRenderer.cpp"
+					>
+				</File>
+			</Filter>
+		</Filter>
+		<Filter
+			Name="SurfaceIntegrators"
+			>
+			<Filter
+				Name="Header Files"
+				>
+				<File
+					RelativePath=".\SurfaceIntegrators\DirectLightingSurfaceIntegrator.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Source Files"
+				>
+				<File
+					RelativePath=".\SurfaceIntegrators\DirectLightingSurfaceIntegrator.cpp"
+					>
+				</File>
+			</Filter>
+		</Filter>
+		<Filter
+			Name="LightsSamplingStrategies"
+			>
+			<Filter
+				Name="Header Files"
+				>
+				<File
+					RelativePath=".\LightsSamplingStrategies\PowerLightsSampling.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Source Files"
+				>
+				<File
+					RelativePath=".\LightsSamplingStrategies\PowerLightsSampling.cpp"
 					>
 				</File>
 			</Filter>

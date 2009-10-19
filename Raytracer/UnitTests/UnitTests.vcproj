@@ -500,6 +500,14 @@
 						>
 					</File>
 				</Filter>
+				<Filter
+					Name="LightsSamplingStrategies"
+					>
+					<File
+						RelativePath=".\PowerLightsSampling.test.h"
+						>
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="Shapes"
@@ -639,6 +647,10 @@
 			</File>
 			<File
 				RelativePath=".\PointLight.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\PowerLightsSampling.test.cpp"
 				>
 			</File>
 			<File
