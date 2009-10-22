@@ -50,14 +50,14 @@ PowerLightsSampling::~PowerLightsSampling()
   delete[] mp_lights_CDF;
   }
 
-void PowerLightsSampling::GetLightsCDF(const Point3D_d &i_point, double *o_lights_CDF)
+void PowerLightsSampling::GetLightsCDF(const Point3D_d &i_point, double *o_lights_CDF) const
   {
   ASSERT(o_lights_CDF);
 
   memcpy(o_lights_CDF, mp_lights_CDF, m_lights_num*sizeof(double));
   }
 
-void PowerLightsSampling::GetLightsCDF(const Point3D_d &i_point, const Vector3D_d &i_normal, double *o_lights_CDF)
+void PowerLightsSampling::GetLightsCDF(const Point3D_d &i_point, const Vector3D_d &i_normal, double *o_lights_CDF) const
   {
   ASSERT(o_lights_CDF);
   ASSERT(i_normal.IsNormalized());

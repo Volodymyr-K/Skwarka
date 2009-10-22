@@ -17,7 +17,7 @@ class InfiniteLightSourceMock: public InfiniteLightSource
 
     virtual Spectrum_d Radiance(const RayDifferential &i_ray) const;
     virtual Spectrum_d Power() const;
-    virtual Spectrum_d SampleLighting(const Point3D_d &i_point, const Point2D_d &i_sample, Vector3D_d &o_lighting_direction, double &o_pdf) const;
+    virtual Spectrum_d SampleLighting(const Point3D_d &i_point, const Point2D_d &i_sample, Ray &o_lighting_ray, double &o_pdf) const;
     virtual double LightingPDF(const Point3D_d &i_point, const Vector3D_d &i_lighting_direction) const;
     virtual Spectrum_d SamplePhoton(const Point2D_d &i_position_sample, const Point2D_d &i_direction_sample, Ray &o_photon_ray, double &o_pdf) const;
 
@@ -48,9 +48,9 @@ inline Spectrum_d InfiniteLightSourceMock::Power() const
   return 2.0*M_PI*m_radiance*area;
   }
 
-inline Spectrum_d InfiniteLightSourceMock::SampleLighting(const Point3D_d &i_point, const Point2D_d &i_sample, Vector3D_d &o_lighting_direction, double &o_pdf) const
+inline Spectrum_d InfiniteLightSourceMock::SampleLighting(const Point3D_d &i_point, const Point2D_d &i_sample, Ray &o_lighting_ray, double &o_pdf) const
   {
-  o_lighting_direction=SamplingRoutines::UniformSphereSampling(i_sample);
+  o_lighting_ray=Ray(i_point,SamplingRoutines::UniformSphereSampling(i_sample));
   o_pdf=SamplingRoutines::UniformSpherePDF();
   return m_radiance;
   }

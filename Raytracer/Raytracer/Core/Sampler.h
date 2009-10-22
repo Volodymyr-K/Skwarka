@@ -64,18 +64,20 @@ class Sampler: public ReferenceCounted
     * The method should only be called before GetNextSample() method is called.
     * @warning The actual size of samples sequence may be larger than what was actually requested. This depends on the Sampler implementation.
     * @param i_size Size of the requested samples sequence.
+    * @param[out] op_actual_size Pointer to where the actual samples sequence size will be written to. Can be NULL.
     * @return An identifier the integrators should use to retrieve the samples sequence from the Sample.
     */
-    size_t AddSamplesSequence1D(size_t i_size);
+    size_t AddSamplesSequence1D(size_t i_size, size_t *op_actual_size=NULL);
 
     /**
     * Integrators should call this method to request a 2D samples sequence.
     * The method should only be called before GetNextSample() method is called.
     * @warning The actual size of samples sequence may be larger than what was actually requested. This depends on the Sampler implementation.
     * @param i_size Size of the requested samples sequence.
+    * @param[out] op_actual_size Pointer to where the actual samples sequence size will be written to. Can be NULL.
     * @return An identifier the integrators should use to retrieve the samples sequence from the Sample.
     */
-    size_t AddSamplesSequence2D(size_t i_size);
+    size_t AddSamplesSequence2D(size_t i_size, size_t *op_actual_size=NULL);
 
     /**
     * Clears all 1D and 2D samples sequences added so far.

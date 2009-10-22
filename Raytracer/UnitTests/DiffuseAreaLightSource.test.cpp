@@ -37,19 +37,19 @@ public:
 
 static class TestDescription_DiffuseAreaLightSourceTestSuite_test_DiffuseAreaLightSource_LightingPDF : public CxxTest::RealTestDescription {
 public:
- TestDescription_DiffuseAreaLightSourceTestSuite_test_DiffuseAreaLightSource_LightingPDF() : CxxTest::RealTestDescription( Tests_DiffuseAreaLightSourceTestSuite, suiteDescription_DiffuseAreaLightSourceTestSuite, 85, "test_DiffuseAreaLightSource_LightingPDF" ) {}
+ TestDescription_DiffuseAreaLightSourceTestSuite_test_DiffuseAreaLightSource_LightingPDF() : CxxTest::RealTestDescription( Tests_DiffuseAreaLightSourceTestSuite, suiteDescription_DiffuseAreaLightSourceTestSuite, 91, "test_DiffuseAreaLightSource_LightingPDF" ) {}
  void runTest() { suite_DiffuseAreaLightSourceTestSuite.test_DiffuseAreaLightSource_LightingPDF(); }
 } testDescription_DiffuseAreaLightSourceTestSuite_test_DiffuseAreaLightSource_LightingPDF;
 
 static class TestDescription_DiffuseAreaLightSourceTestSuite_test_DiffuseAreaLightSource_LightingPDFSum : public CxxTest::RealTestDescription {
 public:
- TestDescription_DiffuseAreaLightSourceTestSuite_test_DiffuseAreaLightSource_LightingPDFSum() : CxxTest::RealTestDescription( Tests_DiffuseAreaLightSourceTestSuite, suiteDescription_DiffuseAreaLightSourceTestSuite, 111, "test_DiffuseAreaLightSource_LightingPDFSum" ) {}
+ TestDescription_DiffuseAreaLightSourceTestSuite_test_DiffuseAreaLightSource_LightingPDFSum() : CxxTest::RealTestDescription( Tests_DiffuseAreaLightSourceTestSuite, suiteDescription_DiffuseAreaLightSourceTestSuite, 117, "test_DiffuseAreaLightSource_LightingPDFSum" ) {}
  void runTest() { suite_DiffuseAreaLightSourceTestSuite.test_DiffuseAreaLightSource_LightingPDFSum(); }
 } testDescription_DiffuseAreaLightSourceTestSuite_test_DiffuseAreaLightSource_LightingPDFSum;
 
 static class TestDescription_DiffuseAreaLightSourceTestSuite_test_DiffuseAreaLightSource_SamplePhoton : public CxxTest::RealTestDescription {
 public:
- TestDescription_DiffuseAreaLightSourceTestSuite_test_DiffuseAreaLightSource_SamplePhoton() : CxxTest::RealTestDescription( Tests_DiffuseAreaLightSourceTestSuite, suiteDescription_DiffuseAreaLightSourceTestSuite, 140, "test_DiffuseAreaLightSource_SamplePhoton" ) {}
+ TestDescription_DiffuseAreaLightSourceTestSuite_test_DiffuseAreaLightSource_SamplePhoton() : CxxTest::RealTestDescription( Tests_DiffuseAreaLightSourceTestSuite, suiteDescription_DiffuseAreaLightSourceTestSuite, 147, "test_DiffuseAreaLightSource_SamplePhoton" ) {}
  void runTest() { suite_DiffuseAreaLightSourceTestSuite.test_DiffuseAreaLightSource_SamplePhoton(); }
 } testDescription_DiffuseAreaLightSourceTestSuite_test_DiffuseAreaLightSource_SamplePhoton;
 

@@ -1,6 +1,7 @@
 #include "DiffuseAreaLightSource.h"
 #include <Math/Constants.h>
 #include <Math/SamplingRoutines.h>
+#include <Math/Util.h>
 
 DiffuseAreaLightSource::DiffuseAreaLightSource(const Spectrum_d &i_radiance, intrusive_ptr<TriangleMesh> ip_mesh): AreaLightSource(),
 m_radiance(i_radiance), mp_mesh(ip_mesh)
@@ -52,13 +53,13 @@ Spectrum_d DiffuseAreaLightSource::Power() const
   return (M_PI*m_area)*m_radiance;
   }
 
-Spectrum_d DiffuseAreaLightSource::SampleLighting(const Point3D_d &i_point, double i_triangle_sample, const Point2D_d &i_sample, Vector3D_d &o_lighting_vector, double &o_pdf) const
+Spectrum_d DiffuseAreaLightSource::SampleLighting(const Point3D_d &i_point, double i_triangle_sample, const Point2D_d &i_sample, Ray &o_lighting_ray, double &o_pdf) const
   {
   // Check for an empty mesh.
   if (m_area_CDF.empty())
     {
     o_pdf=0.0;
-    o_lighting_vector=Vector3D_d();
+    o_lighting_ray=Ray();
     return Spectrum_d(0.0);
     }
 
@@ -66,11 +67,13 @@ Spectrum_d DiffuseAreaLightSource::SampleLighting(const Point3D_d &i_point, doub
   Vector3D_d light_normal;
   _SampleArea(i_triangle_sample, i_sample, sampled_point, light_normal);
 
-  o_lighting_vector=Vector3D_d(sampled_point-i_point);
+  Vector3D_d lighting_vector(sampled_point-i_point);
+  double length = lighting_vector.Length();
+  Vector3D_d lighting_direction = lighting_vector / length;
+  o_lighting_ray = Ray(i_point, lighting_direction, 0.0, length);
 
   // Convert PDF from area-based to solid angle-based.
-  double length_sqr=Vector3D_d(sampled_point-i_point).LengthSqr();
-  o_pdf = length_sqr / (m_area * fabs(o_lighting_vector.Normalized()*light_normal));
+  o_pdf = (length*length) / (m_area * fabs(lighting_direction*light_normal));
   ASSERT(o_pdf>=0.0);
 
   // Check if the input point is on the lighting side of the triangle.
@@ -80,12 +83,14 @@ Spectrum_d DiffuseAreaLightSource::SampleLighting(const Point3D_d &i_point, doub
     return Spectrum_d(0.0);
   }
 
-double DiffuseAreaLightSource::LightingPDF(const Vector3D_d &i_lighting_vector, size_t i_triangle_index) const
+double DiffuseAreaLightSource::LightingPDF(const Ray &i_lighting_ray, size_t i_triangle_index) const
   {
+  ASSERT(i_lighting_ray.m_direction.IsNormalized());
   ASSERT(i_triangle_index < mp_mesh->GetNumberOfTriangles());
   Vector3D_d light_normal = Convert<double>(mp_mesh->GetTriangleNormal(i_triangle_index) );
 
-  double pdf = i_lighting_vector.LengthSqr() / (m_area * fabs(i_lighting_vector.Normalized()*light_normal));
+  double distance = i_lighting_ray.m_max_t-i_lighting_ray.m_min_t;
+  double pdf = (distance*distance) / (m_area * fabs(i_lighting_ray.m_direction*light_normal));
   ASSERT(pdf>=0.0);
 
   return pdf;
@@ -125,19 +130,11 @@ void DiffuseAreaLightSource::_SampleArea(double i_triangle_sample, const Point2D
   ASSERT(m_area_CDF.empty() == false);
 
   // Binary search for the sampled triangle.
-  size_t l=0, r=m_area_CDF.size()-1;
-  while(l<r)
-    {
-    size_t m = (l+r)/2;
-    if (m_area_CDF[m]<i_triangle_sample)
-      l=m+1;
-    else
-      r=m;
-    }
+  size_t sampled_index = MathRoutines::BinarySearchCDF(m_area_CDF.begin(), m_area_CDF.end(), i_triangle_sample) - m_area_CDF.begin();
 
-  o_geometric_normal = Convert<double>(mp_mesh->GetTriangleNormal(l) );
+  o_geometric_normal = Convert<double>(mp_mesh->GetTriangleNormal(sampled_index) );
 
-  MeshTriangle mesh_triangle = mp_mesh->GetTriangle(l);
+  MeshTriangle mesh_triangle = mp_mesh->GetTriangle(sampled_index);
   Point3D_d vertices[3] = {
     Convert<double>( mp_mesh->GetVertex(mesh_triangle.m_vertices[0]) ), 
     Convert<double>( mp_mesh->GetVertex(mesh_triangle.m_vertices[1]) ),

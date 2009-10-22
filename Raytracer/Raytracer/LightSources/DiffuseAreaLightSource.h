@@ -39,20 +39,20 @@ class DiffuseAreaLightSource: public AreaLightSource
     * @param i_point Lighted point.
     * @param i_triangle_sample 1D sample value used to select the light source triangle. Should be in [0;1) range.
     * @param i_sample 2D sample. Should be in [0;1)^2 range.
-    * @param[out] o_lighting_vector Vector to the sampled light source point from the specified lighted point.
+    * @param[out] o_lighting_ray Ray to the sampled light source point from the specified lighted point. The direction component of the ray should be normalized.
     * @param[out] o_pdf PDF value with respect to the solid angle. The returned value should be greater or equal than zero.
     * @return Radiance value.
     */
-    virtual Spectrum_d SampleLighting(const Point3D_d &i_point, double i_triangle_sample, const Point2D_d &i_sample, Vector3D_d &o_lighting_vector, double &o_pdf) const;
+    virtual Spectrum_d SampleLighting(const Point3D_d &i_point, double i_triangle_sample, const Point2D_d &i_sample, Ray &o_lighting_ray, double &o_pdf) const;
 
     /**
-    * Returns PDF value for the lighting vector.
+    * Returns PDF value for the lighting ray.
     * The PDF value is given with respect to the solid angle subtended by the area light at the lighted point.
-    * @param i_lighting_vector Vector to the sampled light source point from the lighted point.
+    * @param i_lighting_ray Ray to the sampled light source point from the lighted point. The direction component of the ray should be normalized.
     * @param i_triangle_index The index of the light source triangle.
     * @return PDF value. The returned value should be greater or equal than zero.
     */
-    virtual double LightingPDF(const Vector3D_d &i_lighting_vector, size_t i_triangle_index) const;
+    virtual double LightingPDF(const Ray &i_lighting_ray, size_t i_triangle_index) const;
 
     /**
     * Samples outgoing light ray.

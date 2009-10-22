@@ -79,7 +79,9 @@ class StratifiedSamplerTestSuite : public CxxTest::TestSuite
       const int image_size_x=2, image_size_y=2;
       StratifiedSampler sampler(Point2D_i(0,0), Point2D_i(image_size_x,image_size_y), 2, 3);
 
-      size_t index=sampler.AddSamplesSequence1D(1000);
+      size_t actual_size;
+      size_t index=sampler.AddSamplesSequence1D(1000, &actual_size);
+      TS_ASSERT(actual_size == 1000); // Random sampler does not change the size.
 
       bool out_of_range=false;
       bool not_clumped=true, uniform=true;
@@ -112,7 +114,9 @@ class StratifiedSamplerTestSuite : public CxxTest::TestSuite
       const int image_size_x=2, image_size_y=2;
       StratifiedSampler sampler(Point2D_i(0,0), Point2D_i(image_size_x,image_size_y), 2, 3);
 
-      size_t index=sampler.AddSamplesSequence2D(1000);
+      size_t actual_size;
+      size_t index=sampler.AddSamplesSequence2D(1000, &actual_size);
+      TS_ASSERT(actual_size == 1000); // Random sampler does not change the size.
 
       bool out_of_range=false;
       bool not_clumped=true, uniform=true;

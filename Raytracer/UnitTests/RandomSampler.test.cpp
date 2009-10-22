@@ -43,7 +43,7 @@ public:
 
 static class TestDescription_RandomSamplerTestSuite_test_RandomSampler_2DSequences : public CxxTest::RealTestDescription {
 public:
- TestDescription_RandomSamplerTestSuite_test_RandomSampler_2DSequences() : CxxTest::RealTestDescription( Tests_RandomSamplerTestSuite, suiteDescription_RandomSamplerTestSuite, 102, "test_RandomSampler_2DSequences" ) {}
+ TestDescription_RandomSamplerTestSuite_test_RandomSampler_2DSequences() : CxxTest::RealTestDescription( Tests_RandomSamplerTestSuite, suiteDescription_RandomSamplerTestSuite, 104, "test_RandomSampler_2DSequences" ) {}
  void runTest() { suite_RandomSamplerTestSuite.test_RandomSampler_2DSequences(); }
 } testDescription_RandomSamplerTestSuite_test_RandomSampler_2DSequences;
 

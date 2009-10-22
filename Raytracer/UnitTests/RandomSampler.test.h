@@ -73,7 +73,9 @@ class RandomSamplerTestSuite : public CxxTest::TestSuite
       const int image_size_x=5, image_size_y=5;
       RandomSampler sampler(Point2D_i(0,0), Point2D_i(image_size_x,image_size_y), 2);
 
-      size_t index=sampler.AddSamplesSequence1D(5000);
+      size_t actual_size;
+      size_t index=sampler.AddSamplesSequence1D(5000, &actual_size);
+      TS_ASSERT(actual_size == 5000); // Random sampler does not change the size.
 
       bool out_of_range=false;
       bool uniform=true;
@@ -104,7 +106,9 @@ class RandomSamplerTestSuite : public CxxTest::TestSuite
       const int image_size_x=5, image_size_y=5;
       RandomSampler sampler(Point2D_i(0,0), Point2D_i(image_size_x,image_size_y), 2);
 
-      size_t index=sampler.AddSamplesSequence2D(5000);
+      size_t actual_size;
+      size_t index=sampler.AddSamplesSequence2D(5000, &actual_size);
+      TS_ASSERT(actual_size == 5000); // Random sampler does not change the size.
 
       bool out_of_range=false;
       bool uniform=true;

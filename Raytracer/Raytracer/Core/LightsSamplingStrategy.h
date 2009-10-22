@@ -22,7 +22,7 @@ class LightsSamplingStrategy: public ReferenceCounted
     * @param[out] o_lights_CDF Output array where the CDF values will be written to. Should have enough space to fit as many values as there are infinity and area lights in the scene.
     * The CDF values will be in non-descending order and will all be in [0;1] range.
     */
-    virtual void GetLightsCDF(const Point3D_d &i_point, double *o_lights_CDF) = 0;
+    virtual void GetLightsCDF(const Point3D_d &i_point, double *o_lights_CDF) const = 0;
 
     /**
     * Returns CDF for the infinity and area lights at the specified 3D point being shaded and for the specified surface normal.
@@ -35,7 +35,7 @@ class LightsSamplingStrategy: public ReferenceCounted
     * @param[out] o_lights_CDF Output array where the CDF values will be written to. Should have enough space to fit as many values as there are infinity and area lights in the scene.
     * The CDF values will be in non-descending order and will all be in [0;1] range.
     */
-    virtual void GetLightsCDF(const Point3D_d &i_point, const Vector3D_d &i_normal, double *o_lights_CDF);
+    virtual void GetLightsCDF(const Point3D_d &i_point, const Vector3D_d &i_normal, double *o_lights_CDF) const;
 
     virtual ~LightsSamplingStrategy();
  
@@ -59,7 +59,7 @@ inline LightsSamplingStrategy::~LightsSamplingStrategy()
   {
   }
 
-inline void LightsSamplingStrategy::GetLightsCDF(const Point3D_d &i_point, const Vector3D_d &i_normal, double *o_lights_CDF)
+inline void LightsSamplingStrategy::GetLightsCDF(const Point3D_d &i_point, const Vector3D_d &i_normal, double *o_lights_CDF) const
   {
   ASSERT(i_normal.IsNormalized());
   GetLightsCDF(i_point, o_lights_CDF);

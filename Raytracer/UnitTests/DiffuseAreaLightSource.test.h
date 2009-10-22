@@ -51,9 +51,15 @@ class DiffuseAreaLightSourceTestSuite : public CxxTest::TestSuite
 
       for(size_t i=0;i<num_samples;++i)
         {
-        Vector3D_d lighting_vector;
+        Ray lighting_ray;
         double pdf;
-        Spectrum_d sampled_radiance = mp_area_light->SampleLighting(point, RandomDouble(1.0), Point2D_d(RandomDouble(1.0), RandomDouble(1.0)), lighting_vector, pdf);
+        Spectrum_d sampled_radiance = mp_area_light->SampleLighting(point, RandomDouble(1.0), Point2D_d(RandomDouble(1.0), RandomDouble(1.0)), lighting_ray, pdf);
+        
+        if (lighting_ray.m_direction.IsNormalized()==false)
+          {
+          TS_FAIL("Ray direction is not normalized.");
+          break;
+          }
 
         if (pdf<0.0)
           {
@@ -61,7 +67,7 @@ class DiffuseAreaLightSourceTestSuite : public CxxTest::TestSuite
           break;
           }
 
-        Point3D_d sampled_point = point+lighting_vector;
+        Point3D_d sampled_point = lighting_ray(lighting_ray.m_max_t);
         size_t triangle_index;
         if (_IsPointOnMeshSurface(sampled_point, triangle_index) == false)
           {
@@ -70,7 +76,7 @@ class DiffuseAreaLightSourceTestSuite : public CxxTest::TestSuite
           }
 
         Vector3D_d normal = Convert<double>(mp_mesh->GetTriangleNormal(triangle_index));
-        Spectrum_d correct_radiance = normal*lighting_vector<0.0 ? Spectrum_d(1.0) : Spectrum_d(0.0);
+        Spectrum_d correct_radiance = normal*lighting_ray.m_direction<0.0 ? Spectrum_d(1.0) : Spectrum_d(0.0);
 
         if (sampled_radiance != correct_radiance)
           {
@@ -89,15 +95,15 @@ class DiffuseAreaLightSourceTestSuite : public CxxTest::TestSuite
 
       for(size_t i=0;i<num_samples;++i)
         {
-        Vector3D_d lighting_vector;
+        Ray lighting_ray;
         double pdf;
-        mp_area_light->SampleLighting(point, RandomDouble(1.0), Point2D_d(RandomDouble(1.0), RandomDouble(1.0)), lighting_vector, pdf);
+        mp_area_light->SampleLighting(point, RandomDouble(1.0), Point2D_d(RandomDouble(1.0), RandomDouble(1.0)), lighting_ray, pdf);
 
-        Point3D_d sampled_point = point+lighting_vector;
+        Point3D_d sampled_point = lighting_ray(lighting_ray.m_max_t);
         size_t triangle_index;
         _IsPointOnMeshSurface(sampled_point, triangle_index);
 
-        double pdf2 = mp_area_light->LightingPDF(lighting_vector, triangle_index);
+        double pdf2 = mp_area_light->LightingPDF(lighting_ray, triangle_index);
 
         if (fabs(pdf-pdf2)>(1e-10))
           {
@@ -129,7 +135,8 @@ class DiffuseAreaLightSourceTestSuite : public CxxTest::TestSuite
           if (_ComputeIntersectionPoint(point, direction, triangle_index, intersection)==false)
             continue;
 
-          double pdf = mp_area_light->LightingPDF(Vector3D_d(intersection-point), triangle_index);
+          Ray lighting_ray = Ray(point, Vector3D_d(intersection-point).Normalized(), 0.0, Vector3D_d(intersection-point).Length());
+          double pdf = mp_area_light->LightingPDF(lighting_ray, triangle_index);
           sum += pdf * (4.0*M_PI)/(num_samples_x*num_samples_y);
           }
         }

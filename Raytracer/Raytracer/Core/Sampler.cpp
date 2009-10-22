@@ -30,15 +30,23 @@ m_samples_per_pixel(i_samples_per_pixel), mp_pixels_order(ip_pixels_order)
     m_pixel_sample_index=m_samples_per_pixel;
   }
 
-size_t Sampler::AddSamplesSequence1D(size_t i_size)
+size_t Sampler::AddSamplesSequence1D(size_t i_size, size_t *op_actual_size)
   {
-  m_sequences_1D_size.push_back( _RoundSamplesNumber(i_size) );
+  size_t actual_size = _RoundSamplesNumber(i_size);
+  m_sequences_1D_size.push_back(actual_size);
+
+  if (op_actual_size) *op_actual_size = actual_size;
+
   return m_sequences_1D_size.size()-1;
   }
 
-size_t Sampler::AddSamplesSequence2D(size_t i_size)
+size_t Sampler::AddSamplesSequence2D(size_t i_size, size_t *op_actual_size)
   {
-  m_sequences_2D_size.push_back( _RoundSamplesNumber(i_size) );
+  size_t actual_size = _RoundSamplesNumber(i_size);
+  m_sequences_2D_size.push_back(actual_size);
+
+  if (op_actual_size) *op_actual_size = actual_size;
+
   return m_sequences_2D_size.size()-1;
   }
 
