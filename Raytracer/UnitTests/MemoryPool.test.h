@@ -4,6 +4,7 @@
 #include <cxxtest/TestSuite.h>
 #include "CustomValueTraits.h"
 #include <Common/MemoryPool.h>
+#include <vector>
 
 class MemoryPoolTestSuite : public CxxTest::TestSuite
   {
@@ -110,6 +111,23 @@ class MemoryPoolTestSuite : public CxxTest::TestSuite
       pool.FreeAll();
 
       TS_ASSERT( pool.ReleaseMemory() );
+      }
+
+    void test_MemoryPoolAllocator()
+      {
+      MemoryPool pool;
+      MemoryPoolAllocator<double> alloc(pool);
+
+      std::vector<double, MemoryPoolAllocator<double> > v(alloc);
+      for(size_t i=0;i<1234;++i)
+        v.push_back(i);
+
+      for(size_t i=0;i<1234;++i)
+        if (v[i]!=i)
+          {
+          TS_FAIL("Verification failed");
+          break;
+          }
       }
   };
 

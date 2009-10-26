@@ -56,7 +56,7 @@ class LambertianTestSuite : public CxxTest::TestSuite
       std::vector<Point2D_d> samples(num_samples);
       SamplingRoutines::LatinHypercubeSampling2D(samples.begin(),num_samples,true);
 
-      Spectrum_d total=bxdf->TotalScattering(Vector3D_d(0.5,0.5,0.5).Normalized(), SamplesSequence2D(samples.begin(), samples.end()));
+      Spectrum_d total=bxdf->TotalScattering(Vector3D_d(0.5,0.5,0.5).Normalized(), SamplesSequence2D(&samples[0], (&samples[0]) + samples.size()));
       TS_ASSERT_EQUALS(total, Spectrum_d(0.9));
       }
 
@@ -68,7 +68,7 @@ class LambertianTestSuite : public CxxTest::TestSuite
       std::vector<Point2D_d> samples(num_samples);
       SamplingRoutines::LatinHypercubeSampling2D(samples.begin(),num_samples,true);
 
-      Spectrum_d total=bxdf->TotalScattering(true, SamplesSequence2D(samples.begin(), samples.end()));
+      Spectrum_d total=bxdf->TotalScattering(true, SamplesSequence2D(&samples[0], (&samples[0]) + samples.size()));
       TS_ASSERT_EQUALS(total, Spectrum_d(0.9));
       }
   };

@@ -24,14 +24,14 @@ void RandomSampler::_GetSample(const Point2D_i &i_current_pixel, size_t i_pixel_
   for(size_t i=0;i<op_sample->GetNumberOfSamplesSequences1D();++i)
     {
     SamplesSequence1D sequence = op_sample->GetSamplesSequence1D(i);
-    for(SamplesSequence1D::IteratorType it = sequence.m_begin; it != sequence.m_end; ++it)
+    for(SamplesSequence1D::Iterator it = sequence.m_begin; it != sequence.m_end; ++it)
       *it=RandomDouble(1.0);
     }
 
   for(size_t i=0;i<op_sample->GetNumberOfSamplesSequences2D();++i)
     {
     SamplesSequence2D sequence = op_sample->GetSamplesSequence2D(i);
-    for(SamplesSequence2D::IteratorType it = sequence.m_begin; it != sequence.m_end; ++it)
+    for(SamplesSequence2D::Iterator it = sequence.m_begin; it != sequence.m_end; ++it)
       *it=Point2D_d(RandomDouble(1.0), RandomDouble(1.0));
     }
   }

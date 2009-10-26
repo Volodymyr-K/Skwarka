@@ -142,7 +142,7 @@ Spectrum_d BSDF::TotalScattering(const Vector3D_d &i_incident, size_t i_samples_
   ASSERT(incident_local.IsNormalized());
 
   std::vector<Point2D_d> samples(i_samples_num);
-  SamplesSequence2D sequence(samples.begin(), samples.end());
+  SamplesSequence2D sequence(&samples[0], (&samples[0]) + samples.size());
 
   Spectrum_d ret;
   for(size_t i=0;i<m_BxDFs_num;++i)
@@ -164,7 +164,7 @@ Spectrum_d BSDF::TotalScattering(bool i_hemisphere, size_t i_samples_num, BxDFTy
   // Twice the number of samples needed for this version of TotalScattering() method because two 2D samples are needed for one sample of the integral.
   // For the details refer to BxDF::TotalScattering(SamplesSequence2D) method.
   std::vector<Point2D_d> samples(2*i_samples_num);
-  SamplesSequence2D sequence(samples.begin(), samples.end());
+  SamplesSequence2D sequence(&samples[0], (&samples[0]) + samples.size());
 
   Spectrum_d ret;
   for(size_t i=0;i<m_BxDFs_num;++i)

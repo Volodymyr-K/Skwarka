@@ -107,7 +107,7 @@ Spectrum_d SpecularTransmission::TotalScattering(bool i_hemisphere, SamplesSeque
   double eta_sqr = eta*eta;
 
   Spectrum_d ret;
-  SamplesSequence2D::IteratorType it=i_samples.m_begin;
+  SamplesSequence2D::Iterator it=i_samples.m_begin;
   for(size_t i=0;i<num_samples;++i)
     {
     Point2D_d sample_incident = *(it++);

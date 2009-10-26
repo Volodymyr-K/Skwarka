@@ -60,7 +60,7 @@ class BxDFTestSuite : public CxxTest::TestSuite
       std::vector<Point2D_d> samples(num_samples);
       SamplingRoutines::LatinHypercubeSampling2D(samples.begin(),num_samples,true);
 
-      Spectrum_d total=bxdf->TotalScattering(Vector3D_d(0.5,0.5,0.5).Normalized(), SamplesSequence2D(samples.begin(), samples.end()));
+      Spectrum_d total=bxdf->TotalScattering(Vector3D_d(0.5,0.5,0.5).Normalized(), SamplesSequence2D(&samples[0], (&samples[0]) + samples.size()));
 
       TS_ASSERT(total[0]<=1.0 && total[1]<=1.0 && total[2]<=1.0);
       CustomAssertDelta(total, Spectrum_d(1.0,1.0,1.0), 0.03);
@@ -74,7 +74,7 @@ class BxDFTestSuite : public CxxTest::TestSuite
       std::vector<Point2D_d> samples(num_samples);
       SamplingRoutines::LatinHypercubeSampling2D(samples.begin(),num_samples,true);
 
-      Spectrum_d total=bxdf->TotalScattering(true, SamplesSequence2D(samples.begin(), samples.end()));
+      Spectrum_d total=bxdf->TotalScattering(true, SamplesSequence2D(&samples[0], (&samples[0]) + samples.size()));
 
       TS_ASSERT(total[0]<=1.0 && total[1]<=1.0 && total[2]<=1.0);
       CustomAssertDelta(total, Spectrum_d(1.0,1.0,1.0), 0.03);

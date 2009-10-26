@@ -120,7 +120,7 @@ class MicrofacetTestSuite : public CxxTest::TestSuite
       std::vector<Point2D_d> samples(num_samples);
       SamplingRoutines::LatinHypercubeSampling2D(samples.begin(),num_samples,true);
 
-      Spectrum_d total=mp_bxdf->TotalScattering(Vector3D_d(0.5,0.5,0.5).Normalized(), SamplesSequence2D(samples.begin(), samples.end()));
+      Spectrum_d total=mp_bxdf->TotalScattering(Vector3D_d(0.5,0.5,0.5).Normalized(), SamplesSequence2D(&samples[0], (&samples[0]) + samples.size()));
       CustomAssertDelta(total, Spectrum_d(0.7551), 0.005); // This is an empirical value.
       }
 
@@ -130,7 +130,7 @@ class MicrofacetTestSuite : public CxxTest::TestSuite
       std::vector<Point2D_d> samples(num_samples);
       SamplingRoutines::LatinHypercubeSampling2D(samples.begin(),num_samples,true);
 
-      Spectrum_d total=mp_bxdf->TotalScattering(true, SamplesSequence2D(samples.begin(), samples.end()));
+      Spectrum_d total=mp_bxdf->TotalScattering(true, SamplesSequence2D(&samples[0], (&samples[0]) + samples.size()));
       CustomAssertDelta(total, Spectrum_d(0.7744), 0.007); // This is an empirical value.
       }
 

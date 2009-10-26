@@ -12,12 +12,13 @@
 */
 struct SamplesSequence1D 
   {
-  typedef std::vector<double>::iterator IteratorType;
+  typedef double *Iterator;
 
   SamplesSequence1D();
-  SamplesSequence1D(IteratorType i_begin, IteratorType i_end);
 
-  IteratorType m_begin, m_end;
+  SamplesSequence1D(Iterator i_begin, Iterator i_end);
+
+  Iterator m_begin, m_end;
   };
 
 /**
@@ -27,12 +28,13 @@ struct SamplesSequence1D
 */
 struct SamplesSequence2D 
   {
-  typedef std::vector<Point2D_d>::iterator IteratorType;
+  typedef Point2D_d *Iterator;
 
   SamplesSequence2D();
-  SamplesSequence2D(IteratorType i_begin, IteratorType i_end);
 
-  IteratorType m_begin, m_end;
+  SamplesSequence2D(Iterator i_begin, Iterator i_end);
+
+  Iterator m_begin, m_end;
   };
 
 /**
@@ -91,7 +93,7 @@ inline SamplesSequence1D::SamplesSequence1D()
   {
   }
 
-inline SamplesSequence1D::SamplesSequence1D(SamplesSequence1D::IteratorType i_begin, SamplesSequence1D::IteratorType i_end):
+inline SamplesSequence1D::SamplesSequence1D(SamplesSequence1D::Iterator i_begin, SamplesSequence1D::Iterator i_end):
 m_begin(i_begin), m_end(i_end)
   {
   }
@@ -100,7 +102,7 @@ inline SamplesSequence2D::SamplesSequence2D()
   {
   }
 
-inline SamplesSequence2D::SamplesSequence2D(SamplesSequence2D::IteratorType i_begin, SamplesSequence2D::IteratorType i_end):
+inline SamplesSequence2D::SamplesSequence2D(SamplesSequence2D::Iterator i_begin, SamplesSequence2D::Iterator i_end):
 m_begin(i_begin), m_end(i_end)
   {
   }
@@ -117,7 +119,7 @@ inline Sample::Sample(const std::vector<size_t> &i_sequences_1D_size, const std:
   total_1D_samples=0;
   for(size_t i=0;i<i_sequences_1D_size.size();++i)
     {
-    m_sample_sequences_1D.push_back( SamplesSequence1D(m_1D_samples.begin()+total_1D_samples, m_1D_samples.begin()+total_1D_samples+i_sequences_1D_size[i]) );
+    m_sample_sequences_1D.push_back( SamplesSequence1D( (&m_1D_samples[0])+total_1D_samples, (&m_1D_samples[0])+total_1D_samples+i_sequences_1D_size[i]) );
     total_1D_samples+=i_sequences_1D_size[i];
     }
 
@@ -131,7 +133,7 @@ inline Sample::Sample(const std::vector<size_t> &i_sequences_1D_size, const std:
   total_2D_samples=0;
   for(size_t i=0;i<i_sequences_2D_size.size();++i)
     {
-    m_sample_sequences_2D.push_back( SamplesSequence2D(m_2D_samples.begin()+total_2D_samples, m_2D_samples.begin()+total_2D_samples+i_sequences_2D_size[i]) );
+    m_sample_sequences_2D.push_back( SamplesSequence2D( (&m_2D_samples[0])+total_2D_samples, (&m_2D_samples[0])+total_2D_samples+i_sequences_2D_size[i]) );
     total_2D_samples+=i_sequences_2D_size[i];
     }
   }

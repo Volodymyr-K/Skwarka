@@ -82,7 +82,7 @@ class SpecularTransmissionTestSuite : public CxxTest::TestSuite
       std::vector<Point2D_d> samples(num_samples);
       SamplingRoutines::LatinHypercubeSampling2D(samples.begin(),num_samples,true);
 
-      Spectrum_d total=bxdf->TotalScattering(Vector3D_d(0.5,0.5,0.5).Normalized(), SamplesSequence2D(samples.begin(), samples.end()));
+      Spectrum_d total=bxdf->TotalScattering(Vector3D_d(0.5,0.5,0.5).Normalized(), SamplesSequence2D(&samples[0], (&samples[0]) + samples.size()));
       CustomAssertDelta(total, Spectrum_d(0.931067), (1e-6)); // This is an empirical value.
       }
 
@@ -94,7 +94,7 @@ class SpecularTransmissionTestSuite : public CxxTest::TestSuite
       std::vector<Point2D_d> samples(num_samples);
       SamplingRoutines::LatinHypercubeSampling2D(samples.begin(),num_samples,true);
 
-      Spectrum_d total=bxdf->TotalScattering(true, SamplesSequence2D(samples.begin(), samples.end()));
+      Spectrum_d total=bxdf->TotalScattering(true, SamplesSequence2D(&samples[0], (&samples[0]) + samples.size()));
       CustomAssertDelta(total, Spectrum_d(0.908222), (1e-6)); // This is an empirical value.
       }
 
@@ -107,7 +107,7 @@ class SpecularTransmissionTestSuite : public CxxTest::TestSuite
       std::vector<Point2D_d> samples(num_samples);
       SamplingRoutines::LatinHypercubeSampling2D(samples.begin(),num_samples,true);
 
-      Spectrum_d total=bxdf->TotalScattering(false, SamplesSequence2D(samples.begin(), samples.end()));
+      Spectrum_d total=bxdf->TotalScattering(false, SamplesSequence2D(&samples[0], (&samples[0]) + samples.size()));
       CustomAssertDelta(total, Spectrum_d(0.403654), (1e-6)); // This is an empirical value.
       }
 
@@ -124,8 +124,8 @@ class SpecularTransmissionTestSuite : public CxxTest::TestSuite
       std::vector<Point2D_d> samples(num_samples);
       SamplingRoutines::LatinHypercubeSampling2D(samples.begin(),num_samples,true);
 
-      Spectrum_d total_1=transmittance->TotalScattering(false, SamplesSequence2D(samples.begin(), samples.end()));
-      Spectrum_d total_2=reflectance->TotalScattering(false, SamplesSequence2D(samples.begin(), samples.end()));
+      Spectrum_d total_1=transmittance->TotalScattering(false, SamplesSequence2D(&samples[0], (&samples[0]) + samples.size()));
+      Spectrum_d total_2=reflectance->TotalScattering(false, SamplesSequence2D(&samples[0], (&samples[0]) + samples.size()));
       CustomAssertDelta(total_1+total_2, Spectrum_d(1.0), (1e-6)); // This is an empirical value.
       }
 

@@ -50,7 +50,7 @@ class SampleTestSuite : public CxxTest::TestSuite
         // Verify size of the sequence.
         TS_ASSERT_EQUALS(std::distance(sequence.m_begin,sequence.m_end), sequences_1D_size[i]);
 
-        for(SamplesSequence1D::IteratorType it=sequence.m_begin;it!=sequence.m_end;++it)
+        for(SamplesSequence1D::Iterator it=sequence.m_begin;it!=sequence.m_end;++it)
           {
           (*it)=counter;
           counter+=0.3;
@@ -65,7 +65,7 @@ class SampleTestSuite : public CxxTest::TestSuite
         // Verify size of the sequence.
         TS_ASSERT_EQUALS(std::distance(sequence.m_begin,sequence.m_end), sequences_2D_size[i]);
 
-        for(SamplesSequence2D::IteratorType it=sequence.m_begin;it!=sequence.m_end;++it)
+        for(SamplesSequence2D::Iterator it=sequence.m_begin;it!=sequence.m_end;++it)
           {
           (*it)=Point2D_d(counter,counter+0.3);
           counter+=0.6;
@@ -79,7 +79,7 @@ class SampleTestSuite : public CxxTest::TestSuite
       for(size_t i=0;i<sample.GetNumberOfSamplesSequences1D();++i)
         {
         SamplesSequence1D sequence = sample.GetSamplesSequence1D(i);
-        for(SamplesSequence1D::IteratorType it=sequence.m_begin;it!=sequence.m_end;++it)
+        for(SamplesSequence1D::Iterator it=sequence.m_begin;it!=sequence.m_end;++it)
           {
           if ((*it)!=counter) coincide=false;
           counter+=0.3;
@@ -90,7 +90,7 @@ class SampleTestSuite : public CxxTest::TestSuite
       for(size_t i=0;i<sample.GetNumberOfSamplesSequences2D();++i)
         {
         SamplesSequence2D sequence = sample.GetSamplesSequence2D(i);
-        for(SamplesSequence2D::IteratorType it=sequence.m_begin;it!=sequence.m_end;++it)
+        for(SamplesSequence2D::Iterator it=sequence.m_begin;it!=sequence.m_end;++it)
           {
           if ((*it)!=Point2D_d(counter,counter+0.3)) coincide=false;
           counter+=0.6;

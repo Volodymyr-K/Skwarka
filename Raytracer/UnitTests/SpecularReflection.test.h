@@ -62,7 +62,7 @@ class SpecularReflectionTestSuite : public CxxTest::TestSuite
       std::vector<Point2D_d> samples(num_samples);
       SamplingRoutines::LatinHypercubeSampling2D(samples.begin(),num_samples,true);
 
-      Spectrum_d total=bxdf->TotalScattering(Vector3D_d(0.5,0.5,0.5).Normalized(), SamplesSequence2D(samples.begin(), samples.end()));
+      Spectrum_d total=bxdf->TotalScattering(Vector3D_d(0.5,0.5,0.5).Normalized(), SamplesSequence2D(&samples[0], (&samples[0]) + samples.size()));
       CustomAssertDelta(total, Spectrum_d(0.848117), (1e-6)); // This is an empirical value.
       }
 
@@ -75,7 +75,7 @@ class SpecularReflectionTestSuite : public CxxTest::TestSuite
       std::vector<Point2D_d> samples(num_samples);
       SamplingRoutines::LatinHypercubeSampling2D(samples.begin(),num_samples,true);
 
-      Spectrum_d total=bxdf->TotalScattering(true, SamplesSequence2D(samples.begin(), samples.end()));
+      Spectrum_d total=bxdf->TotalScattering(true, SamplesSequence2D(&samples[0], (&samples[0]) + samples.size()));
       CustomAssertDelta(total, Spectrum_d(0.852811), (1e-6)); // This is an empirical value.
       }
 

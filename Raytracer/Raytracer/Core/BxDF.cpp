@@ -33,7 +33,7 @@ Spectrum_d BxDF::TotalScattering(const Vector3D_d &i_incident, SamplesSequence2D
   ASSERT(i_incident.IsNormalized());
 
   Spectrum_d ret;
-  for(SamplesSequence2D::IteratorType it=i_samples.m_begin;it!=i_samples.m_end;++it)
+  for(SamplesSequence2D::Iterator it=i_samples.m_begin;it!=i_samples.m_end;++it)
     {
     Point2D_d sample = *it;
 
@@ -62,7 +62,7 @@ Spectrum_d BxDF::TotalScattering(bool i_hemisphere, SamplesSequence2D i_samples)
   double Z_sign = i_hemisphere ? 1.0 : -1.0;
 
   Spectrum_d ret;
-  SamplesSequence2D::IteratorType it=i_samples.m_begin;
+  SamplesSequence2D::Iterator it=i_samples.m_begin;
   for(size_t i=0;i<num_sample_pairs;++i)
     {
     Point2D_d sample_incident = *(it++);

@@ -2,6 +2,7 @@
 #define MEMORY_POOL_H
 
 #include <vector>
+#include <numeric>
 
 /**
 * Memory pool implementation that is used for fast memory allocation for small objects of unfixed size.
@@ -52,8 +53,53 @@ class MemoryPool
     std::vector<char *> m_used_blocks, m_available_blocks;
   };
 
+/**
+* Custom allocator for STL containers based on MemoryPool.
+* Just like the MemoryPool, the allocator can only allocate objects, it can not deallocate them (the corresponding method is empty).
+* Although the allocator has state (memory pool object), it is not a problem because the memory pool is never used for deallocation.
+*/
+template<class T>
+class MemoryPoolAllocator
+  {
+  public:
+    typedef size_t    size_type;
+    typedef ptrdiff_t difference_type;
+    typedef T*        pointer;
+    typedef const T*  const_pointer;
+    typedef T&        reference;
+    typedef const T&  const_reference;
+    typedef T         value_type;
+    template <class U>
+    struct rebind { typedef MemoryPoolAllocator<U> other; };
+
+    MemoryPoolAllocator(MemoryPool &i_pool);
+    MemoryPoolAllocator(const MemoryPoolAllocator &i_allocator);
+
+    template <class U> MemoryPoolAllocator(const MemoryPoolAllocator<U> &i_allocator);
+    ~MemoryPoolAllocator();
+
+    pointer address(reference i_ref) const;
+    const_pointer address(const_reference i_ref) const;
+    pointer allocate(size_type i_count);
+    void deallocate(pointer i_p, size_type i_n);
+    size_type max_size() const;
+    void construct(pointer i_p, const T& i_val);
+    void destroy(pointer i_p);
+
+  private:
+    MemoryPool &m_pool;
+  };
+
+template<class T, class Other>
+bool operator==(const MemoryPoolAllocator<T>&, const MemoryPoolAllocator<Other>&);
+
+template<class T, class Other>
+bool operator!=(const MemoryPoolAllocator<T>&, const MemoryPoolAllocator<Other>&);
+
 /////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////// MemoryPool //////////////////////////////////////////////////
 
 inline MemoryPool::MemoryPool(size_t i_block_size):
   m_block_size(i_block_size), m_current_block_pos(0)
@@ -112,6 +158,92 @@ inline bool MemoryPool::ReleaseMemory()
 
   m_available_blocks.clear();
   return available_blocks_size != 0;
+  }
+
+///////////////////////////////////////// MemoryPoolAllocator /////////////////////////////////////////////
+
+template<class T>
+MemoryPoolAllocator<T>::MemoryPoolAllocator(MemoryPool &i_pool): m_pool(i_pool)
+  {
+  }
+
+template<class T>
+MemoryPoolAllocator<T>::MemoryPoolAllocator(const MemoryPoolAllocator &i_allocator): m_pool(i_allocator.m_pool)
+  {
+  }
+
+template<class T>
+template <class U> MemoryPoolAllocator<T>::MemoryPoolAllocator(const MemoryPoolAllocator<U> &i_allocator): m_pool(i_allocator.m_pool)
+  {
+  }
+
+template<class T>
+MemoryPoolAllocator<T>::~MemoryPoolAllocator()
+  {
+  }
+
+template<class T>
+typename MemoryPoolAllocator<T>::pointer MemoryPoolAllocator<T>::address(typename MemoryPoolAllocator<T>::reference i_ref) const
+  {
+  return (&i_ref);
+  }
+
+template<class T>
+typename MemoryPoolAllocator<T>::const_pointer MemoryPoolAllocator<T>::address(typename MemoryPoolAllocator<T>::const_reference i_ref) const
+  {
+  return (&i_ref);
+  }
+
+template<class T>
+typename MemoryPoolAllocator<T>::pointer MemoryPoolAllocator<T>::allocate(typename MemoryPoolAllocator<T>::size_type i_count)
+  {
+  return (T*)m_pool.Alloc(i_count*sizeof(T));
+  }
+
+template<class T>
+void MemoryPoolAllocator<T>::deallocate(typename MemoryPoolAllocator<T>::pointer i_p, typename MemoryPoolAllocator<T>::size_type i_n)
+  {
+  // Do nothing.
+  }
+
+template<class T>
+typename MemoryPoolAllocator<T>::size_type MemoryPoolAllocator<T>::max_size() const
+  {
+  size_t count = std::numeric_limits<size_t>::max() / sizeof (size_t);
+  return count > 0 ? count : 1;
+  }
+
+template<class T>
+void MemoryPoolAllocator<T>::construct(typename MemoryPoolAllocator<T>::pointer i_p, const T& i_val)
+  {
+  ASSERT(i_p);
+  void *void_ptr = i_p;
+  ::new (void_ptr) T(i_val);
+  }
+
+template<class T>
+void MemoryPoolAllocator<T>::destroy(typename MemoryPoolAllocator<T>::pointer i_p)
+  {
+  ASSERT(i_p);
+  i_p->~T();
+  }
+
+/**
+* As the STL conventions require, the == operator always returns true.
+*/
+template<class T, class Other>
+bool operator==(const MemoryPoolAllocator<T>&, const MemoryPoolAllocator<Other>&)
+  {
+  return true;
+  }
+
+/**
+* As the STL conventions require, the != operator always returns false.
+*/
+template<class T, class Other>
+bool operator!=(const MemoryPoolAllocator<T>&, const MemoryPoolAllocator<Other>&)
+  {
+  return false;
   }
 
 #endif // MEMORY_POOL_H

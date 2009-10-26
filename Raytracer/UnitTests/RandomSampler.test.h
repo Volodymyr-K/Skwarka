@@ -86,7 +86,7 @@ class RandomSamplerTestSuite : public CxxTest::TestSuite
         std::vector<double> values;
 
         SamplesSequence1D sequence = sample->GetSamplesSequence1D(index);
-        for(SamplesSequence1D::IteratorType it = sequence.m_begin;it!=sequence.m_end;++it)
+        for(SamplesSequence1D::Iterator it = sequence.m_begin;it!=sequence.m_end;++it)
           {
           double value=*it;
           if (value<0.0 || value>1.0) out_of_range=true;
@@ -119,7 +119,7 @@ class RandomSamplerTestSuite : public CxxTest::TestSuite
         std::vector<Point2D_d> values;
 
         SamplesSequence2D sequence = sample->GetSamplesSequence2D(index);
-        for(SamplesSequence2D::IteratorType it = sequence.m_begin;it!=sequence.m_end;++it)
+        for(SamplesSequence2D::Iterator it = sequence.m_begin;it!=sequence.m_end;++it)
           {
           Point2D_d value=*it;
           if (value[0]<0.0 || value[0]>1.0 || value[1]<0.0 || value[1]>1.0) out_of_range=true;
