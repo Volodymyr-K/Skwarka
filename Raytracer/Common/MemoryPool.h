@@ -78,6 +78,8 @@ class MemoryPoolAllocator
     template <class U> MemoryPoolAllocator(const MemoryPoolAllocator<U> &i_allocator);
     ~MemoryPoolAllocator();
 
+    MemoryPool &GetMemoryPool() const;
+
     pointer address(reference i_ref) const;
     const_pointer address(const_reference i_ref) const;
     pointer allocate(size_type i_count);
@@ -173,13 +175,19 @@ MemoryPoolAllocator<T>::MemoryPoolAllocator(const MemoryPoolAllocator &i_allocat
   }
 
 template<class T>
-template <class U> MemoryPoolAllocator<T>::MemoryPoolAllocator(const MemoryPoolAllocator<U> &i_allocator): m_pool(i_allocator.m_pool)
+template <class U> MemoryPoolAllocator<T>::MemoryPoolAllocator(const MemoryPoolAllocator<U> &i_allocator): m_pool(i_allocator.GetMemoryPool())
   {
   }
 
 template<class T>
 MemoryPoolAllocator<T>::~MemoryPoolAllocator()
   {
+  }
+
+template<class T>
+MemoryPool &MemoryPoolAllocator<T>::GetMemoryPool() const
+  {
+  return m_pool;
   }
 
 template<class T>
