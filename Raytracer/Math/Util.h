@@ -28,6 +28,14 @@ namespace MathRoutines
   T LinearInterpolate(T i_weight, T i_low, T i_high);
 
   /**
+  * Given the CDF and a sample value the method finds the sampled item.
+  * The CDF is given by the range specified by the two random-access iterators.
+  * The specified range can be a sub-range of an original CDF but the sample value needs to be in the specified range. 
+  */
+  template<typename IteratorType>
+  IteratorType BinarySearchCDF(IteratorType i_begin, IteratorType i_end, double i_sample);
+
+  /**
   * Returns true if the integer is a power of 2.
   * false is returned if i_value is 0.
   */
@@ -88,6 +96,26 @@ namespace MathRoutines
   T LinearInterpolate(T i_weight, T i_low, T i_high)
     {
     return (T) ( (1.0 - i_weight) * i_low + i_weight * i_high );
+    }
+
+  template<typename IteratorType>
+  IteratorType BinarySearchCDF(IteratorType i_begin, IteratorType i_end, double i_sample)
+    {
+    ASSERT(i_begin<i_end);
+    ASSERT(i_sample>=0 && i_sample<1.0);
+
+    --i_end;
+    while(i_begin<i_end)
+      {
+      ASSERT((*i_begin) <= (*i_end) && i_sample < (*i_end));
+
+      IteratorType medium = i_begin + std::distance(i_begin,i_end)/2;
+      if ((*medium) <= i_sample)
+        i_begin = medium+1;
+      else
+        i_end = medium;
+      }
+    return i_begin;
     }
 
   inline bool IsPowerOf2(unsigned int i_value)

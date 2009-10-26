@@ -4,6 +4,7 @@
 #include <cxxtest/TestSuite.h>
 #include "CustomValueTraits.h"
 #include <Math/Util.h>
+#include <vector>
 
 class UtilTestSuite : public CxxTest::TestSuite
   {
@@ -71,6 +72,24 @@ class UtilTestSuite : public CxxTest::TestSuite
       {
       double interpolated = MathRoutines::LinearInterpolate(-1.0, 1.0, 3.0);
       TS_ASSERT(interpolated==-1.0);
+      }
+
+    void test_BinarySearchCDF1()
+      {
+      std::vector<double> cdf;
+      cdf.push_back(1.0);
+
+      TS_ASSERT_EQUALS(MathRoutines::BinarySearchCDF(cdf.begin(), cdf.end(), 0.4), cdf.begin()+0);
+      }
+
+    void test_BinarySearchCDF2()
+      {
+      std::vector<double> cdf;
+      cdf.push_back(0.25);cdf.push_back(0.5);cdf.push_back(0.75);cdf.push_back(1.0);
+
+      TS_ASSERT_EQUALS(MathRoutines::BinarySearchCDF(cdf.begin(), cdf.end(), 0.0), cdf.begin()+0);
+      TS_ASSERT_EQUALS(MathRoutines::BinarySearchCDF(cdf.begin(), cdf.end(), 0.25), cdf.begin()+1);
+      TS_ASSERT_EQUALS(MathRoutines::BinarySearchCDF(cdf.begin(), cdf.end(), 0.8), cdf.begin()+3);
       }
 
     // Tests for a special case when 0 is passed.

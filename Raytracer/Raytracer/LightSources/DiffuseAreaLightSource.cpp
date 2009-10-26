@@ -73,7 +73,8 @@ Spectrum_d DiffuseAreaLightSource::SampleLighting(const Point3D_d &i_point, doub
   o_lighting_ray = Ray(i_point, lighting_direction, 0.0, length);
 
   // Convert PDF from area-based to solid angle-based.
-  o_pdf = (length*length) / (m_area * fabs(lighting_direction*light_normal));
+  double angle_cos = fabs(lighting_direction*light_normal);
+  o_pdf = angle_cos>DBL_EPS ? (length*length) / (m_area * fabs(lighting_direction*light_normal)) : 0.0;
   ASSERT(o_pdf>=0.0);
 
   // Check if the input point is on the lighting side of the triangle.
@@ -90,7 +91,8 @@ double DiffuseAreaLightSource::LightingPDF(const Ray &i_lighting_ray, size_t i_t
   Vector3D_d light_normal = Convert<double>(mp_mesh->GetTriangleNormal(i_triangle_index) );
 
   double distance = i_lighting_ray.m_max_t-i_lighting_ray.m_min_t;
-  double pdf = (distance*distance) / (m_area * fabs(i_lighting_ray.m_direction*light_normal));
+  double angle_cos = fabs(i_lighting_ray.m_direction*light_normal);
+  double pdf = angle_cos>DBL_EPS ? (distance*distance) / (m_area * fabs(i_lighting_ray.m_direction*light_normal)) : 0.0;
   ASSERT(pdf>=0.0);
 
   return pdf;

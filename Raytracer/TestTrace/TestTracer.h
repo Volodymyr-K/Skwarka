@@ -35,6 +35,7 @@
 #include <Raytracer/LightSources/PointLight.h>
 #include <Raytracer/LightSources/DiffuseAreaLightSource.h>
 #include <Raytracer/SurfaceIntegrators/DirectLightingSurfaceIntegrator.h>
+#include <UnitTests/Mocks/InfiniteLightSourceMock.h>
 #include <UnitTests/Mocks/VolumeIntegratorMock.h>
 
 class TestTracer
@@ -222,20 +223,46 @@ inline void TestTracer::LoadMesh()
   primitives.push_back(p_primitive);
 
   LightSources lights;
-/*
+  
+    {
   Sphere s;
   s.SetParameter("Center","900 -1800 3000");
-  s.SetParameter("Radius","100");
+  s.SetParameter("Radius","150");
   s.SetParameter("Subdivisions","3");
   intrusive_ptr<TriangleMesh> p_sphere( s.BuildMesh() );
-  intrusive_ptr<AreaLightSource> p_area_light( new DiffuseAreaLightSource(Spectrum_d(200000.0), mp_mesh) );
+  intrusive_ptr<AreaLightSource> p_area_light( new DiffuseAreaLightSource(Spectrum_d(40000.0,40000.0,40000.0), p_sphere) );
   intrusive_ptr<Primitive> p_sphere_primitive(new Primitive(p_sphere, p_material, p_area_light));
 
   primitives.push_back(p_sphere_primitive);
   lights.m_area_light_sources.push_back(p_area_light);
-*/
-  intrusive_ptr<DeltaLightSource> p_source( new PointLight(Point3D_d(900, -1800, 3000), Spectrum_d(10000000000.0)) );
+    }
+    {
+  Sphere s;
+  s.SetParameter("Center","-900 -1800 3000");
+  s.SetParameter("Radius","150");
+  s.SetParameter("Subdivisions","3");
+  intrusive_ptr<TriangleMesh> p_sphere( s.BuildMesh() );
+  intrusive_ptr<AreaLightSource> p_area_light( new DiffuseAreaLightSource(Spectrum_d(30000.0,40000.0,10000.0), p_sphere) );
+  intrusive_ptr<Primitive> p_sphere_primitive(new Primitive(p_sphere, p_material, p_area_light));
+
+  primitives.push_back(p_sphere_primitive);
+  lights.m_area_light_sources.push_back(p_area_light);
+    }
+
+
+  intrusive_ptr<InfiniteLightSource> p_inf_light( new InfiniteLightSourceMock(Spectrum_d(200.0,200.0,300.0), BBox3D_d(Point3D_d(-1000,-1000,0),Point3D_d(2000,2000,50) ) ) );
+  lights.m_infinitiy_light_sources.push_back(p_inf_light);
+
+/*
+    {
+  intrusive_ptr<DeltaLightSource> p_source( new PointLight(Point3D_d(900, -1800, 3000), Spectrum_d(5000000000.0)) );
   lights.m_delta_light_sources.push_back(p_source);
+    }
+    {
+  intrusive_ptr<DeltaLightSource> p_source( new PointLight(Point3D_d(-900, -1800, 3000), Spectrum_d(5000000000.0)) );
+  lights.m_delta_light_sources.push_back(p_source);
+    }
+*/
   mp_scene.reset(new Scene(primitives, lights));
   }
 
@@ -258,10 +285,12 @@ inline void TestTracer::RenderImage(HWND &g_hWnd, HDC &g_memDC)
 
   intrusive_ptr<ImagePixelsOrder> pixel_order(new UniformImagePixelsOrder);
 
-  intrusive_ptr<Sampler> p_sampler( new StratifiedSampler(window_begin, window_end, 2, 2, pixel_order, true) );
+  intrusive_ptr<Sampler> p_sampler( new StratifiedSampler(window_begin, window_end, 1, 1, pixel_order, true) );
 
   intrusive_ptr<SamplerBasedRenderer> p_renderer( new SamplerBasedRenderer(mp_scene, p_sampler) );
-  intrusive_ptr<SurfaceIntegrator> surf_int( new DirectLightingSurfaceIntegrator(p_renderer) );
+
+  intrusive_ptr<DirectLightingIntegrator> p_direct_int( new DirectLightingIntegrator(p_renderer, 64, 64) );
+  intrusive_ptr<SurfaceIntegrator> surf_int( new DirectLightingSurfaceIntegrator(p_renderer, p_direct_int) );
   intrusive_ptr<VolumeIntegrator> volume_int( new VolumeIntegratorMock(p_renderer) );
   p_renderer->SetSurfaceIntegrator(surf_int);
   //p_renderer->SetVolumeIntegrator(volume_int);

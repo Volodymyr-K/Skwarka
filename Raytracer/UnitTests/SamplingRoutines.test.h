@@ -294,6 +294,19 @@ class SamplingRoutinesTestSuite : public CxxTest::TestSuite
       TS_ASSERT(samples==shuffled); // Make sure that shuffle does not change values, only permutes them.
       }
 
+    void test_BalanceHeuristic()
+      {
+      TS_ASSERT_EQUALS(SamplingRoutines::BalanceHeuristic(10,0.2,0,0.8), 1.0);
+      TS_ASSERT_EQUALS(SamplingRoutines::BalanceHeuristic(0,0.2,10,0.8), 0.0);
+      TS_ASSERT_EQUALS(SamplingRoutines::BalanceHeuristic(10,0.2,10,0.8), 0.2);
+      }
+
+    void test_PowerHeuristic()
+      {
+      TS_ASSERT_EQUALS(SamplingRoutines::PowerHeuristic(10,0.2,0,0.8), 1.0);
+      TS_ASSERT_EQUALS(SamplingRoutines::PowerHeuristic(0,0.2,10,0.8), 0.0);
+      TS_ASSERT_EQUALS(SamplingRoutines::PowerHeuristic(10,0.2,10,0.8), 0.2*0.2/(0.2*0.2+0.8*0.8));
+      }
   };
 
 #endif // SAMPLING_ROUTINES_TEST_H

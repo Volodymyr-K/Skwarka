@@ -113,3 +113,15 @@ public:
  void runTest() { suite_SamplingRoutinesTestSuite.test_Shuffle(); }
 } testDescription_SamplingRoutinesTestSuite_test_Shuffle;
 
+static class TestDescription_SamplingRoutinesTestSuite_test_BalanceHeuristic : public CxxTest::RealTestDescription {
+public:
+ TestDescription_SamplingRoutinesTestSuite_test_BalanceHeuristic() : CxxTest::RealTestDescription( Tests_SamplingRoutinesTestSuite, suiteDescription_SamplingRoutinesTestSuite, 297, "test_BalanceHeuristic" ) {}
+ void runTest() { suite_SamplingRoutinesTestSuite.test_BalanceHeuristic(); }
+} testDescription_SamplingRoutinesTestSuite_test_BalanceHeuristic;
+
+static class TestDescription_SamplingRoutinesTestSuite_test_PowerHeuristic : public CxxTest::RealTestDescription {
+public:
+ TestDescription_SamplingRoutinesTestSuite_test_PowerHeuristic() : CxxTest::RealTestDescription( Tests_SamplingRoutinesTestSuite, suiteDescription_SamplingRoutinesTestSuite, 304, "test_PowerHeuristic" ) {}
+ void runTest() { suite_SamplingRoutinesTestSuite.test_PowerHeuristic(); }
+} testDescription_SamplingRoutinesTestSuite_test_PowerHeuristic;
+

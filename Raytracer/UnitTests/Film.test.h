@@ -4,7 +4,7 @@
 #include <cxxtest/TestSuite.h>
 #include "CustomValueTraits.h"
 #include <Raytracer/Core/Film.h>
-#include <UnitTests/Mocks/FilmMock.h>
+#include "Mocks/FilmMock.h"
 
 class FilmTestSuite : public CxxTest::TestSuite
   {

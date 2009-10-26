@@ -344,6 +344,10 @@
 						>
 					</File>
 					<File
+						RelativePath=".\DirectLightingIntegrator.test.h"
+						>
+					</File>
+					<File
 						RelativePath=".\Film.test.h"
 						>
 					</File>
@@ -575,6 +579,10 @@
 			</File>
 			<File
 				RelativePath=".\DiffuseAreaLightSource.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\DirectLightingIntegrator.test.cpp"
 				>
 			</File>
 			<File
@@ -845,6 +853,24 @@
 			</File>
 			<File
 				RelativePath=".\Mocks\MaterialMock.h"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\Mocks\RendererMock.h"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"

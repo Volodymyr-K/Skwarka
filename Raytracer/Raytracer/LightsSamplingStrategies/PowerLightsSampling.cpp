@@ -18,7 +18,7 @@ PowerLightsSampling::PowerLightsSampling(const LightSources &i_light_sources): L
   for(size_t i=0;i<infinity_lights_num;++i)
     {
     mp_lights_CDF[i] = i_light_sources.m_infinitiy_light_sources[i]->Power().Luminance();
-    ASSERT(mp_lights_CDF[i] > 0.0);
+    ASSERT(mp_lights_CDF[i] >= 0.0);
     if (i>0)
       mp_lights_CDF[i] += mp_lights_CDF[i-1];
     }
@@ -27,7 +27,7 @@ PowerLightsSampling::PowerLightsSampling(const LightSources &i_light_sources): L
     {
     size_t j=infinity_lights_num+i;
     mp_lights_CDF[j] = i_light_sources.m_area_light_sources[i]->Power().Luminance();
-    ASSERT(mp_lights_CDF[j] > 0.0);
+    ASSERT(mp_lights_CDF[j] >= 0.0);
 
     if (j>0)
       mp_lights_CDF[j] += mp_lights_CDF[j-1];

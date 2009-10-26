@@ -14,6 +14,7 @@ struct SamplesSequence1D
   {
   typedef std::vector<double>::iterator IteratorType;
 
+  SamplesSequence1D();
   SamplesSequence1D(IteratorType i_begin, IteratorType i_end);
 
   IteratorType m_begin, m_end;
@@ -28,6 +29,7 @@ struct SamplesSequence2D
   {
   typedef std::vector<Point2D_d>::iterator IteratorType;
 
+  SamplesSequence2D();
   SamplesSequence2D(IteratorType i_begin, IteratorType i_end);
 
   IteratorType m_begin, m_end;
@@ -85,8 +87,16 @@ class Sample: public ReferenceCounted
 /////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+inline SamplesSequence1D::SamplesSequence1D()
+  {
+  }
+
 inline SamplesSequence1D::SamplesSequence1D(SamplesSequence1D::IteratorType i_begin, SamplesSequence1D::IteratorType i_end):
 m_begin(i_begin), m_end(i_end)
+  {
+  }
+
+inline SamplesSequence2D::SamplesSequence2D()
   {
   }
 

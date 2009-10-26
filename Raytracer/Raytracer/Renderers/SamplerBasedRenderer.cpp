@@ -1,4 +1,5 @@
 #include "SamplerBasedRenderer.h"
+#include <Common/Numerics.h>
 #include <Math/Constants.h>
 #include <tbb/pipeline.h>
 #include <vector>
@@ -190,12 +191,13 @@ Spectrum_d SamplerBasedRenderer::Radiance(const RayDifferential &i_ray, const Sa
     intersection_ray.m_base_ray.m_max_t=intersection_t;
     }
   else
-    {
-    // Add contribution of infinite light sources for a ray that does not intersect any primitive.
-    const LightSources &lights = mp_scene->GetLightSources();
-    for (size_t i = 0; i < lights.m_infinitiy_light_sources.size(); ++i)
-      radiance += lights.m_infinitiy_light_sources[i]->Radiance(i_ray);
-    }
+    if (IsInf(i_ray.m_base_ray.m_max_t)) // Check if the ray is unbounded.
+      {
+      // Add contribution of infinite light sources for an unbounded ray that does not intersect any primitive.
+      const LightSources &lights = mp_scene->GetLightSources();
+      for (size_t i = 0; i < lights.m_infinitiy_light_sources.size(); ++i)
+        radiance += lights.m_infinitiy_light_sources[i]->Radiance(i_ray);
+      }
 
   if (mp_volume_integrator)
     {

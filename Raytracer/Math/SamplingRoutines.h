@@ -104,6 +104,16 @@ namespace SamplingRoutines
   */
   template<typename T>
   void Shuffle(std::vector<T> &io_values);
+
+  /**
+  * Computes weighting coefficient for multiple importance sampling with two PDFs.
+  */
+  double BalanceHeuristic(size_t i_samples_num1, double i_pdf1, size_t i_samples_num2, double i_pdf2);
+
+  /**
+  * Computes weighting coefficient for multiple importance sampling with two PDFs. The exponent value is hard-coded as 2 (as recommended by Veach).
+  */
+  double PowerHeuristic(size_t i_samples_num1, double i_pdf1, size_t i_samples_num2, double i_pdf2);
   };
 
 /////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
@@ -230,11 +240,13 @@ namespace SamplingRoutines
 
     ValueIterator it = i_begin;
     double inv_samples_num = 1.0/i_samples_num;
-    for (size_t i = 0; i < i_samples_num; ++i)
-      {
-      double jitter = i_jitter_samples ? RandomDouble(1.0) : 0.5;
-      *(it++) = (i + jitter) * inv_samples_num;
-      }
+
+    if (i_jitter_samples)
+      for (size_t i = 0; i < i_samples_num; ++i)
+        *(it++) = (i + RandomDouble(1.0)) * inv_samples_num;
+    else
+      for (size_t i = 0; i < i_samples_num; ++i)
+        *(it++) = (i + 0.5) * inv_samples_num;
     }
 
   template<typename Point2DIterator>
@@ -246,13 +258,15 @@ namespace SamplingRoutines
     Point2DIterator it = i_begin;
     double inv_x_samples_num = 1.0/i_x_samples_num;
     double inv_y_samples_num = 1.0/i_y_samples_num;
-    for (size_t y = 0; y < i_y_samples_num; ++y)
-      for (size_t x = 0; x < i_x_samples_num; ++x)
-        {
-        double jx = i_jitter_samples ? RandomDouble(1.0) : 0.5;
-        double jy = i_jitter_samples ? RandomDouble(1.0) : 0.5;
-        *(it++) = Point2D_d((x + jx) * inv_x_samples_num, (y + jy) * inv_y_samples_num);
-        }
+
+    if (i_jitter_samples)
+      for (size_t y = 0; y < i_y_samples_num; ++y)
+        for (size_t x = 0; x < i_x_samples_num; ++x)
+          *(it++) = Point2D_d((x + RandomDouble(1.0)) * inv_x_samples_num, (y + RandomDouble(1.0)) * inv_y_samples_num);
+    else
+      for (size_t y = 0; y < i_y_samples_num; ++y)
+        for (size_t x = 0; x < i_x_samples_num; ++x)
+          *(it++) = Point2D_d((x + 0.5) * inv_x_samples_num, (y + 0.5) * inv_y_samples_num);
     }
 
   template<typename Point2DIterator>
@@ -263,12 +277,12 @@ namespace SamplingRoutines
 
     // Generate LHS samples along diagonal.
     double delta = 1.0 / i_samples_num;
-    for (size_t i = 0; i < i_samples_num; ++i)
-      {
-      double jx = i_jitter_samples ? RandomDouble(1.0) : 0.5;
-      double jy = i_jitter_samples ? RandomDouble(1.0) : 0.5;
-      *(i_begin+i) = Point2D_d( (i + jx) * delta, (i + jy) * delta );
-      }
+    if (i_jitter_samples)
+      for (size_t i = 0; i < i_samples_num; ++i)
+        *(i_begin+i) = Point2D_d( (i + RandomDouble(1.0)) * delta, (i + RandomDouble(1.0)) * delta );
+    else
+      for (size_t i = 0; i < i_samples_num; ++i)
+        *(i_begin+i) = Point2D_d( (i + 0.5) * delta, (i + 0.5) * delta );
 
     // Permute LHS samples in X dimension.
     for (size_t j = 0; j < i_samples_num; ++j)
@@ -295,7 +309,21 @@ namespace SamplingRoutines
       }
     }
 
-  };
+  inline double BalanceHeuristic(size_t i_samples_num1, double i_pdf1, size_t i_samples_num2, double i_pdf2)
+    {
+    ASSERT(i_samples_num1>=0 && i_pdf1>=0.0);
+    ASSERT(i_samples_num2>=0 && i_pdf2>=0.0);
+    return (i_samples_num1 * i_pdf1) / (i_samples_num1 * i_pdf1 + i_samples_num2 * i_pdf2);
+    }
 
+  inline double PowerHeuristic(size_t i_samples_num1, double i_pdf1, size_t i_samples_num2, double i_pdf2)
+    {
+    ASSERT(i_samples_num1>=0 && i_pdf1>=0.0);
+    ASSERT(i_samples_num2>=0 && i_pdf2>=0.0);
+    double f = i_samples_num1 * i_pdf1, g = i_samples_num2 * i_pdf2;
+    return (f*f) / (f*f + g*g);
+    }
+
+  };
 
 #endif // SAMPLING_ROUTINES_H
