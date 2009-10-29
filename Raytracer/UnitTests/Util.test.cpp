@@ -149,3 +149,33 @@ public:
  void runTest() { suite_UtilTestSuite.test_CoordinateSystem(); }
 } testDescription_UtilTestSuite_test_CoordinateSystem;
 
+static class TestDescription_UtilTestSuite_test_SubtendedSolidAngle_PointInside : public CxxTest::RealTestDescription {
+public:
+ TestDescription_UtilTestSuite_test_SubtendedSolidAngle_PointInside() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 173, "test_SubtendedSolidAngle_PointInside" ) {}
+ void runTest() { suite_UtilTestSuite.test_SubtendedSolidAngle_PointInside(); }
+} testDescription_UtilTestSuite_test_SubtendedSolidAngle_PointInside;
+
+static class TestDescription_UtilTestSuite_test_SubtendedSolidAngle_PointOnTheBoundaries : public CxxTest::RealTestDescription {
+public:
+ TestDescription_UtilTestSuite_test_SubtendedSolidAngle_PointOnTheBoundaries() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 181, "test_SubtendedSolidAngle_PointOnTheBoundaries" ) {}
+ void runTest() { suite_UtilTestSuite.test_SubtendedSolidAngle_PointOnTheBoundaries(); }
+} testDescription_UtilTestSuite_test_SubtendedSolidAngle_PointOnTheBoundaries;
+
+static class TestDescription_UtilTestSuite_test_SubtendedSolidAngle_PointOutside1 : public CxxTest::RealTestDescription {
+public:
+ TestDescription_UtilTestSuite_test_SubtendedSolidAngle_PointOutside1() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 189, "test_SubtendedSolidAngle_PointOutside1" ) {}
+ void runTest() { suite_UtilTestSuite.test_SubtendedSolidAngle_PointOutside1(); }
+} testDescription_UtilTestSuite_test_SubtendedSolidAngle_PointOutside1;
+
+static class TestDescription_UtilTestSuite_test_SubtendedSolidAngle_PointOutside2 : public CxxTest::RealTestDescription {
+public:
+ TestDescription_UtilTestSuite_test_SubtendedSolidAngle_PointOutside2() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 199, "test_SubtendedSolidAngle_PointOutside2" ) {}
+ void runTest() { suite_UtilTestSuite.test_SubtendedSolidAngle_PointOutside2(); }
+} testDescription_UtilTestSuite_test_SubtendedSolidAngle_PointOutside2;
+
+static class TestDescription_UtilTestSuite_test_SubtendedSolidAngle_PointOutside3 : public CxxTest::RealTestDescription {
+public:
+ TestDescription_UtilTestSuite_test_SubtendedSolidAngle_PointOutside3() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 209, "test_SubtendedSolidAngle_PointOutside3" ) {}
+ void runTest() { suite_UtilTestSuite.test_SubtendedSolidAngle_PointOutside3(); }
+} testDescription_UtilTestSuite_test_SubtendedSolidAngle_PointOutside3;
+

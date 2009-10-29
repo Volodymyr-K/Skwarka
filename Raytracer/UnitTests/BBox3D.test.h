@@ -55,6 +55,13 @@ class BBox3DTestSuite : public CxxTest::TestSuite
       TS_ASSERT_EQUALS(volume, -2.0*4.5*6.5);
       }
 
+    void test_BBox3D_Area()
+      {
+      double volume = m_bbox.Area();
+      double dx=m_bbox.m_max[0]-m_bbox.m_min[0], dy=m_bbox.m_max[1]-m_bbox.m_min[1], dz=m_bbox.m_max[2]-m_bbox.m_min[2];
+      TS_ASSERT_EQUALS(volume, 2.0*(dx*dy+dx*dz+dy*dz));
+      }
+
     void test_BBox3D_PointInsideCompletely()
       {
       Point3D_d p_test(0.1,0.2,0.3);

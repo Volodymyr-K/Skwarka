@@ -1,7 +1,7 @@
 #ifndef UTIL_H
 #define UTIL_H
 
-#include "Vector3D.h"
+#include "Geometry.h"
 
 /**
 * This namespace contains helper routines for various math operations that are commonly used.
@@ -59,7 +59,16 @@ namespace MathRoutines
   * @param[out] o_e2 Second base vector. Will be normalized and perpendicular to the other two base vectors.
   * @param[out] o_e3 Third base vector. Will be normalized and perpendicular to the other two base vectors.
   */
-  void CoordinateSystem(const Vector3D_d &i_e1, Vector3D_d &o_e2, Vector3D_d &o_e3);
+  template<typename T>
+  void CoordinateSystem(const Vector3D<T> &i_e1, Vector3D<T> &o_e2, Vector3D<T> &o_e3);
+
+  /**
+  * Returns solid angle subtended by the specified (axis-aligned) box from the specified point.
+  * If the point is inside (or on the boundaries of) the box the method returns full solid angle, i.e. 4*PI.
+  */
+  template<typename T>
+  T SubtendedSolidAngle(const Point3D<T> &i_point, BBox3D<T> i_bbox);
+
   };
 
 /////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
@@ -150,21 +159,100 @@ namespace MathRoutines
     return ((i_value == 0) ? (-1) : pos);
     }
 
-  inline void CoordinateSystem(const Vector3D_d &i_e1, Vector3D_d &o_e2, Vector3D_d &o_e3)
+  template<typename T>
+  void CoordinateSystem(const Vector3D<T> &i_e1, Vector3D<T> &o_e2, Vector3D<T> &o_e3)
     {
     ASSERT(i_e1.IsNormalized());
 
     if (fabs(i_e1[0]) > fabs(i_e1[1]))
       {
       double invLen = 1.0 / sqrt(i_e1[0]*i_e1[0] + i_e1[2]*i_e1[2]);
-      o_e2 = Vector3D_d(-i_e1[2] * invLen, 0.0, i_e1[0] * invLen);
+      o_e2 = Vector3D<T>((T)(-i_e1[2]*invLen), (T)0.0, (T)(i_e1[0]*invLen));
       }
     else
       {
       double invLen = 1.0 / sqrt(i_e1[1]*i_e1[1] + i_e1[2]*i_e1[2]);
-      o_e2 = Vector3D_d(0.0, i_e1[2] * invLen, -i_e1[1] * invLen);
+      o_e2 = Vector3D<T>((T)0.0, (T)(i_e1[2]*invLen), (T)(-i_e1[1]*invLen));
       }
     o_e3 = i_e1^o_e2;
+    }
+
+  /**
+  * This is a helper method that computes solid angle subtended by a triangle from a point.
+  * The triangle is specified by three directions to its vertices from the point.
+  * The authors of the algorithm are Oosterom and Strackee.
+  * This method is used in the SubtendedSolidAngle() method.
+  */
+  template<typename T>
+  T _SubtendedSolidAngle(const Vector3D<T> &i_dir1, const Vector3D<T> &i_dir2, const Vector3D<T> &i_dir3)
+    {
+    double determinant = i_dir1*(i_dir2^i_dir3);
+    double denom =  1+(i_dir1*i_dir2)+(i_dir1*i_dir3)+(i_dir2*i_dir3);
+
+    if (denom>0.0)
+      return fabs(atan(determinant / denom)*2.0);
+    else if (denom<0.0)
+      return 2.0*(M_PI-fabs(atan(determinant / denom)));
+    else
+      return 2.0*M_PI;
+    }
+
+  template<typename T>
+  T SubtendedSolidAngle(const Point3D<T> &i_point, BBox3D<T> i_bbox)
+    {
+    ASSERT(i_bbox.m_min[0]<=i_bbox.m_max[0]);
+    ASSERT(i_bbox.m_min[1]<=i_bbox.m_max[1]);
+    ASSERT(i_bbox.m_min[2]<=i_bbox.m_max[2]);
+
+    Vector3D<T> dirs[8];
+    for(unsigned char i=0;i<8;++i)
+      {
+      Point3D<T> vertex((i&1)==0 ? i_bbox.m_min[0] : i_bbox.m_max[0], (i&2)==0 ? i_bbox.m_min[1] : i_bbox.m_max[1], (i&4)==0 ? i_bbox.m_min[2] : i_bbox.m_max[2]);
+      dirs[i] = Vector3D<T>(vertex-i_point).Normalized();
+      }
+
+    bool inside = true;
+    double sum = 0.0;
+
+    if (i_point[0]<i_bbox.m_min[0]-DBL_EPS)
+      {
+      sum += _SubtendedSolidAngle(dirs[0],dirs[2],dirs[6]) + _SubtendedSolidAngle(dirs[0],dirs[4],dirs[6]);
+      inside=false;
+      }
+    else if (i_point[0]>i_bbox.m_max[0]+DBL_EPS)
+      {
+      sum += _SubtendedSolidAngle(dirs[1],dirs[3],dirs[7]) + _SubtendedSolidAngle(dirs[1],dirs[5],dirs[7]);
+      inside=false;
+      }
+
+    if (i_point[1]<i_bbox.m_min[1]-DBL_EPS)
+      {
+      sum += _SubtendedSolidAngle(dirs[0],dirs[1],dirs[5]) + _SubtendedSolidAngle(dirs[0],dirs[4],dirs[5]);
+      inside=false;
+      }
+    else if (i_point[1]>i_bbox.m_max[1]+DBL_EPS)
+      {
+      sum += _SubtendedSolidAngle(dirs[2],dirs[3],dirs[7]) + _SubtendedSolidAngle(dirs[2],dirs[6],dirs[7]);
+      inside=false;
+      }
+
+    if (i_point[2]<i_bbox.m_min[2]-DBL_EPS)
+      {
+      sum += _SubtendedSolidAngle(dirs[0],dirs[1],dirs[3]) + _SubtendedSolidAngle(dirs[0],dirs[2],dirs[3]);
+      inside=false;
+      }
+    else if (i_point[2]>i_bbox.m_max[2]+DBL_EPS)
+      {
+      sum += _SubtendedSolidAngle(dirs[4],dirs[5],dirs[7]) + _SubtendedSolidAngle(dirs[4],dirs[6],dirs[7]);
+      inside=false;
+      }
+
+    ASSERT(sum>=0.0 && sum<=4.0*M_PI);
+
+    if (inside)
+      return 4.0*M_PI;
+    else
+      return sum;
     }
 
   }

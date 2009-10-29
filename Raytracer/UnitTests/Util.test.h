@@ -169,6 +169,102 @@ class UtilTestSuite : public CxxTest::TestSuite
       TS_ASSERT_DELTA((e2^e3)[1],e1[1],(1e-10));
       TS_ASSERT_DELTA((e2^e3)[2],e1[2],(1e-10));
       }
+
+    void test_SubtendedSolidAngle_PointInside()
+      {
+      BBox3D_d box(Point3D_d(1,2,3), Point3D_d(10,9,8));
+      Point3D_d point(2,3,4);
+      double angle = MathRoutines::SubtendedSolidAngle(point,box);
+      TS_ASSERT_DELTA(angle, 4.0*M_PI, 1e-10);
+      }
+
+    void test_SubtendedSolidAngle_PointOnTheBoundaries()
+      {
+      BBox3D_d box(Point3D_d(1,2,3), Point3D_d(10,9,8));
+      Point3D_d point(2,2,4);
+      double angle = MathRoutines::SubtendedSolidAngle(point,box);
+      TS_ASSERT_DELTA(angle, 4.0*M_PI, 1e-10);
+      }
+
+    void test_SubtendedSolidAngle_PointOutside1()
+      {
+      BBox3D_d box(Point3D_d(1,2,3), Point3D_d(10,9,8));
+      Point3D_d point(-5,4,5);
+      double angle = MathRoutines::SubtendedSolidAngle(point,box);
+
+      double estimated = _EstimateSubtendedSolidAngle(point,box);
+      TS_ASSERT_DELTA(angle, estimated, 1e-5)
+      }
+
+    void test_SubtendedSolidAngle_PointOutside2()
+      {
+      BBox3D_d box(Point3D_d(1,2,3), Point3D_d(10,9,8));
+      Point3D_d point(-5,20,5);
+      double angle = MathRoutines::SubtendedSolidAngle(point,box);
+
+      double estimated = _EstimateSubtendedSolidAngle(point,box);
+      TS_ASSERT_DELTA(angle, estimated, 1e-5)
+      }
+
+    void test_SubtendedSolidAngle_PointOutside3()
+      {
+      BBox3D_d box(Point3D_d(1,2,3), Point3D_d(10,9,8));
+      Point3D_d point(-5,20,-2);
+      double angle = MathRoutines::SubtendedSolidAngle(point,box);
+
+      double estimated = _EstimateSubtendedSolidAngle(point,box);
+      TS_ASSERT_DELTA(angle, estimated, 1e-5)
+      }
+
+  private:
+    double _EstimateSubtendedSolidAngle(const Point3D_d &i_point, BBox3D_d i_bbox) const
+      {
+      double sum=0.0;
+
+      size_t N=500;
+
+      double dx=i_bbox.m_max[0]-i_bbox.m_min[0], dy=i_bbox.m_max[1]-i_bbox.m_min[1], dz=i_bbox.m_max[2]-i_bbox.m_min[2];
+      double ds_xy = dx*dy/N/N, ds_xz = dx*dz/N/N, ds_yz = dy*dz/N/N;
+
+      for(size_t i=0;i<N;++i)
+        for(size_t j=0;j<N;++j)
+          {
+          Vector3D_d dir1 = Vector3D_d(i_bbox.m_min[0],i_bbox.m_min[1],i_bbox.m_min[2])+dy*(i+0.5)/N*Vector3D_d(0,1,0)+dz*(j+0.5)/N*Vector3D_d(0,0,1)-Vector3D_d(i_point);
+          Vector3D_d dir2 = Vector3D_d(i_bbox.m_max[0],i_bbox.m_min[1],i_bbox.m_min[2])+dy*(i+0.5)/N*Vector3D_d(0,1,0)+dz*(j+0.5)/N*Vector3D_d(0,0,1)-Vector3D_d(i_point);
+
+          double dist1_sqr = dir1.LengthSqr();
+          double dist2_sqr = dir2.LengthSqr();
+
+          sum += (fabs(dir1.Normalized()[0])/dist1_sqr + fabs(dir2.Normalized()[0])/dist2_sqr)*ds_yz;
+          }
+
+      for(size_t i=0;i<N;++i)
+        for(size_t j=0;j<N;++j)
+          {
+          Vector3D_d dir1 = Vector3D_d(i_bbox.m_min[0],i_bbox.m_min[1],i_bbox.m_min[2])+dx*(i+0.5)/N*Vector3D_d(1,0,0)+dz*(j+0.5)/N*Vector3D_d(0,0,1)-Vector3D_d(i_point);
+          Vector3D_d dir2 = Vector3D_d(i_bbox.m_min[0],i_bbox.m_max[1],i_bbox.m_min[2])+dx*(i+0.5)/N*Vector3D_d(1,0,0)+dz*(j+0.5)/N*Vector3D_d(0,0,1)-Vector3D_d(i_point);
+
+          double dist1_sqr = dir1.LengthSqr();
+          double dist2_sqr = dir2.LengthSqr();
+
+          sum += (fabs(dir1.Normalized()[1])/dist1_sqr + fabs(dir2.Normalized()[1])/dist2_sqr)*ds_xz;
+          }
+
+      for(size_t i=0;i<N;++i)
+        for(size_t j=0;j<N;++j)
+          {
+          Vector3D_d dir1 = Vector3D_d(i_bbox.m_min[0],i_bbox.m_min[1],i_bbox.m_min[2])+dx*(i+0.5)/N*Vector3D_d(1,0,0)+dy*(j+0.5)/N*Vector3D_d(0,1,0)-Vector3D_d(i_point);
+          Vector3D_d dir2 = Vector3D_d(i_bbox.m_min[0],i_bbox.m_min[1],i_bbox.m_max[2])+dx*(i+0.5)/N*Vector3D_d(1,0,0)+dy*(j+0.5)/N*Vector3D_d(0,1,0)-Vector3D_d(i_point);
+
+          double dist1_sqr = dir1.LengthSqr();
+          double dist2_sqr = dir2.LengthSqr();
+
+          sum += (fabs(dir1.Normalized()[2])/dist1_sqr + fabs(dir2.Normalized()[2])/dist2_sqr)*ds_xy;
+          }
+
+      return sum/2.0;
+      }
+
   };
 
 #endif // UTIL_TEST_H

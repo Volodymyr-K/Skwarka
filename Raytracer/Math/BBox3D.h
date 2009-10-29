@@ -26,6 +26,12 @@ class BBox3D
     T Volume() const;
 
     /**
+    * Returns surface area of the box.
+    * @return Surface area of the box. Greater or equal than zero.
+    */
+    T Area() const;
+
+    /**
     * Checks if the specified ray intersects the box.
     */
     bool Intersect(const Ray &i_ray) const;
@@ -87,6 +93,15 @@ T BBox3D<T>::Volume() const
   {
   Point3D<T> diagonal = m_max-m_min;
   return diagonal[0]*diagonal[1]*diagonal[2];
+  }
+
+template<typename T>
+T BBox3D<T>::Area() const
+  {
+  T x = (T)fabs(m_max[0]-m_min[0]);
+  T y = (T)fabs(m_max[1]-m_min[1]);
+  T z = (T)fabs(m_max[2]-m_min[2]);
+  return (T) 2.0*(x*y+x*z+y*z);
   }
 
 template<typename T>
