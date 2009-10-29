@@ -27,12 +27,12 @@ class DirectLightingIntegrator: public ReferenceCounted
   public:
     /**
     * Creates DirectLightingIntegrator instance with the specified number of lights and BSDF samples and the specified light sampling strategy.
-    * The strategy defines the probability for each light to be sampled. If NULL, the default power-based implementation will be used.
+    * The strategy defines the probability for each light to be sampled. If NULL, the default irradiance-based implementation will be used.
     * Depending on the sampler, the actual number of lights and BSDF samples can be greater then the ones requested.
     * @param ip_renderer Renderer instance. Used to get the scene and compute media transmittance.
     * @param i_lights_samples_num Number of lights samples. Should be equal or greater than zero.
     * @param i_bsdf_samples_num Number of BSDF samples. Should be equal or greater than zero.
-    * @param ip_lights_sampling_strategy Light sampling strategy implementation. If null, the default power-based implementation will be used.
+    * @param ip_lights_sampling_strategy Light sampling strategy implementation. If null, the default irradiance-based implementation will be used.
     */
     DirectLightingIntegrator(intrusive_ptr<Renderer> ip_renderer, size_t i_lights_samples_num, size_t i_bsdf_samples_num, intrusive_ptr<LightsSamplingStrategy> ip_lights_sampling_strategy = NULL);
 

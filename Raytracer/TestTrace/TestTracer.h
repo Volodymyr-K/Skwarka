@@ -37,6 +37,7 @@
 #include <Raytracer/SurfaceIntegrators/DirectLightingSurfaceIntegrator.h>
 #include <UnitTests/Mocks/InfiniteLightSourceMock.h>
 #include <UnitTests/Mocks/VolumeIntegratorMock.h>
+#include <Raytracer/LightsSamplingStrategies/IrradianceLightsSampling.h>
 
 class TestTracer
   {
@@ -223,7 +224,7 @@ inline void TestTracer::LoadMesh()
   primitives.push_back(p_primitive);
 
   LightSources lights;
-  
+ 
     {
   Sphere s;
   s.SetParameter("Center","900 -1800 3000");
@@ -250,7 +251,7 @@ inline void TestTracer::LoadMesh()
     }
 
 
-  intrusive_ptr<InfiniteLightSource> p_inf_light( new InfiniteLightSourceMock(Spectrum_d(200.0,200.0,300.0), BBox3D_d(Point3D_d(-1000,-1000,0),Point3D_d(2000,2000,50) ) ) );
+  intrusive_ptr<InfiniteLightSource> p_inf_light( new InfiniteLightSourceMock(Spectrum_d(200.0,200.0,300.0), BBox3D_d(Point3D_d(-20000,-20000,0),Point3D_d(20000,20000,1000) ) ) );
   lights.m_infinitiy_light_sources.push_back(p_inf_light);
 
 /*
@@ -289,7 +290,8 @@ inline void TestTracer::RenderImage(HWND &g_hWnd, HDC &g_memDC)
 
   intrusive_ptr<SamplerBasedRenderer> p_renderer( new SamplerBasedRenderer(mp_scene, p_sampler) );
 
-  intrusive_ptr<DirectLightingIntegrator> p_direct_int( new DirectLightingIntegrator(p_renderer, 64, 64) );
+  intrusive_ptr<LightsSamplingStrategy> p_sampling_strategy( new IrradianceLightsSampling(mp_scene->GetLightSources()) );
+  intrusive_ptr<DirectLightingIntegrator> p_direct_int( new DirectLightingIntegrator(p_renderer, 128, 32, p_sampling_strategy) );
   intrusive_ptr<SurfaceIntegrator> surf_int( new DirectLightingSurfaceIntegrator(p_renderer, p_direct_int) );
   intrusive_ptr<VolumeIntegrator> volume_int( new VolumeIntegratorMock(p_renderer) );
   p_renderer->SetSurfaceIntegrator(surf_int);

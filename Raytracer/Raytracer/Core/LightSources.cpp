@@ -35,10 +35,16 @@ double InfiniteLightSource::LightingPDF(const Point3D_d &i_point, const Vector3D
 ////////////////////////////////////////// AreaLightSource ////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-AreaLightSource::AreaLightSource()
+AreaLightSource::AreaLightSource(intrusive_ptr<TriangleMesh> ip_mesh): mp_mesh(ip_mesh)
   {
+  ASSERT(ip_mesh);
   }
 
 AreaLightSource::~AreaLightSource()
   {
+  }
+
+intrusive_ptr<TriangleMesh> AreaLightSource::GetTriangleMesh() const
+  {
+  return mp_mesh;
   }

@@ -3,7 +3,7 @@
 #include <Math/SamplingRoutines.h>
 #include <Math/Util.h>
 
-DiffuseAreaLightSource::DiffuseAreaLightSource(const Spectrum_d &i_radiance, intrusive_ptr<TriangleMesh> ip_mesh): AreaLightSource(),
+DiffuseAreaLightSource::DiffuseAreaLightSource(const Spectrum_d &i_radiance, intrusive_ptr<TriangleMesh> ip_mesh): AreaLightSource(ip_mesh),
 m_radiance(i_radiance), mp_mesh(ip_mesh)
   {
   ASSERT(InRange(i_radiance,0.0,DBL_INF));
@@ -72,9 +72,9 @@ Spectrum_d DiffuseAreaLightSource::SampleLighting(const Point3D_d &i_point, doub
   Vector3D_d lighting_direction = lighting_vector / length;
   o_lighting_ray = Ray(i_point, lighting_direction, 0.0, length);
 
-  // Convert PDF from area-based to solid angle-based.
+  // Convert PDF from area-based to a solid angle-based one.
   double angle_cos = fabs(lighting_direction*light_normal);
-  o_pdf = angle_cos>DBL_EPS ? (length*length) / (m_area * fabs(lighting_direction*light_normal)) : 0.0;
+  o_pdf = angle_cos>DBL_EPS ? (length*length) / (m_area * angle_cos) : 0.0;
   ASSERT(o_pdf>=0.0);
 
   // Check if the input point is on the lighting side of the triangle.
@@ -92,7 +92,7 @@ double DiffuseAreaLightSource::LightingPDF(const Ray &i_lighting_ray, size_t i_t
 
   double distance = i_lighting_ray.m_max_t-i_lighting_ray.m_min_t;
   double angle_cos = fabs(i_lighting_ray.m_direction*light_normal);
-  double pdf = angle_cos>DBL_EPS ? (distance*distance) / (m_area * fabs(i_lighting_ray.m_direction*light_normal)) : 0.0;
+  double pdf = angle_cos>DBL_EPS ? (distance*distance) / (m_area * angle_cos) : 0.0;
   ASSERT(pdf>=0.0);
 
   return pdf;

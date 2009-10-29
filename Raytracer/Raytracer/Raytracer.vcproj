@@ -588,6 +588,10 @@
 				Name="Header Files"
 				>
 				<File
+					RelativePath=".\LightsSamplingStrategies\IrradianceLightsSampling.h"
+					>
+				</File>
+				<File
 					RelativePath=".\LightsSamplingStrategies\PowerLightsSampling.h"
 					>
 				</File>
@@ -595,6 +599,10 @@
 			<Filter
 				Name="Source Files"
 				>
+				<File
+					RelativePath=".\LightsSamplingStrategies\IrradianceLightsSampling.cpp"
+					>
+				</File>
 				<File
 					RelativePath=".\LightsSamplingStrategies\PowerLightsSampling.cpp"
 					>

@@ -123,6 +123,24 @@ class InfiniteLightSource: public ReferenceCounted
     */
     virtual Spectrum_d SamplePhoton(const Point2D_d &i_position_sample, const Point2D_d &i_direction_sample, Ray &o_photon_ray, double &o_pdf) const = 0;
 
+    /**
+    * Returns irradiance value at a surface point with the specified normal assuming there's no objects in the scene blocking the light.
+    * Only light comping from the positive hemisphere (with respect to the specified normal) is considered.
+    * The method can return an approximation rather than the exact value.
+    * @param i_normal Surface normal. Should be normalized.
+    * @return Irradiance value.
+    */
+    virtual Spectrum_d Irradiance(const Vector3D_d &i_normal) const = 0;
+
+    /**
+    * Returns irradiance value at a point assuming there's no objects in the scene blocking the light.
+    * The method does not take the surface normal so it accounts for the light coming from the entire sphere.
+    * Strictly speaking, the returned value is not an irradiance because it is not multiplied by the cosine factor.
+    * The method can return an approximation rather than the exact value.
+    * @return Irradiance value.
+    */
+    virtual Spectrum_d Irradiance() const = 0;
+
     virtual ~InfiniteLightSource();
 
   protected:
@@ -140,6 +158,11 @@ class InfiniteLightSource: public ReferenceCounted
 class AreaLightSource: public ReferenceCounted
   { 
   public:
+    /**
+    * Returns the triangle mesh associated the area light is associated with.
+    */
+    intrusive_ptr<TriangleMesh> GetTriangleMesh() const;
+
     /**
     * Returns the light source radiance for the specified point on a mesh and specified outgoing direction.
     * @param i_dg DifferentialGeometry object defining the surface point.
@@ -190,12 +213,18 @@ class AreaLightSource: public ReferenceCounted
     virtual ~AreaLightSource();
 
   protected:
-    AreaLightSource();
+    /**
+    * Creates AreaLightSource instance with the specified triangle mesh.
+    */
+    AreaLightSource(intrusive_ptr<TriangleMesh> ip_mesh);
 
   private:
     // Not implemented, not a value type.
     AreaLightSource(const AreaLightSource&);
     AreaLightSource &operator=(const AreaLightSource&);
+
+  private:
+    intrusive_ptr<TriangleMesh> mp_mesh;
   };
 
 /**

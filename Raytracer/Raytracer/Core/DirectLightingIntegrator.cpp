@@ -1,5 +1,5 @@
 #include "DirectLightingIntegrator.h"
-#include <Raytracer/LightsSamplingStrategies/PowerLightsSampling.h>
+#include <Raytracer/LightsSamplingStrategies/IrradianceLightsSampling.h>
 #include <Math/SamplingRoutines.h>
 
 DirectLightingIntegrator::DirectLightingIntegrator(intrusive_ptr<Renderer> ip_renderer, size_t i_lights_samples_num, size_t i_bsdf_samples_num,
@@ -22,7 +22,7 @@ mp_renderer(ip_renderer), mp_scene(ip_renderer->GetScene()), m_lights_samples_nu
   if (ip_lights_sampling_strategy)
     mp_lights_sampling_strategy = ip_lights_sampling_strategy;
   else
-    mp_lights_sampling_strategy.reset( new PowerLightsSampling(mp_scene->GetLightSources()) );
+    mp_lights_sampling_strategy.reset( new IrradianceLightsSampling(mp_scene->GetLightSources()) );
 
   
   // Sort and cache area lights. This is needed for a quick search of the area light's index by a pointer.
@@ -54,6 +54,11 @@ Spectrum_d DirectLightingIntegrator::ComputeDirectLighting(const Intersection &i
   ASSERT(i_view_direction.IsNormalized());
   ASSERT(m_samples_requested || ip_sample==NULL);
 
+  size_t reflection_components_num = ip_bsdf->GetComponentsNum( BxDFType(BSDF_DIFFUSE | BSDF_GLOSSY | BSDF_REFLECTION) );
+  size_t transmission_components_num = ip_bsdf->GetComponentsNum( BxDFType(BSDF_DIFFUSE | BSDF_GLOSSY | BSDF_TRANSMISSION) );
+  if (reflection_components_num + transmission_components_num == 0)
+    return Spectrum_d(0.0);
+
   Spectrum_d radiance;
   const LightSources &light_sources = mp_scene->GetLightSources();
   size_t delta_light_sources_num = light_sources.m_delta_light_sources.size();
@@ -79,7 +84,22 @@ Spectrum_d DirectLightingIntegrator::ComputeDirectLighting(const Intersection &i
     }
 
   double *lights_CDF = static_cast<double*>(i_pool.Alloc( (infinity_light_sources_num + area_light_sources_num)*sizeof(double) ));
-  mp_lights_sampling_strategy->GetLightsCDF(i_intersection.m_dg.m_point, i_intersection.m_dg.m_shading_normal, lights_CDF);
+
+  if (reflection_components_num==0)
+    {
+    // The BSDF has only transmission components, so need to sample only lights in the opposite hemisphere.
+    Vector3D_d normal = (i_view_direction*i_intersection.m_dg.m_shading_normal <= 0.0) ? i_intersection.m_dg.m_shading_normal : i_intersection.m_dg.m_shading_normal*(-1.0);
+    mp_lights_sampling_strategy->GetLightsCDF(i_intersection.m_dg.m_point, normal, lights_CDF);
+    }
+  else if (transmission_components_num==0)
+    {
+    // The BSDF has only reflection components, so need to sample only lights in the same hemisphere.
+    Vector3D_d normal = (i_view_direction*i_intersection.m_dg.m_shading_normal >= 0.0) ? i_intersection.m_dg.m_shading_normal : i_intersection.m_dg.m_shading_normal*(-1.0);
+    mp_lights_sampling_strategy->GetLightsCDF(i_intersection.m_dg.m_point, normal, lights_CDF);
+    }
+  else
+    // The BSDF has reflection and transmission components, so need to sample lights in both hemispheres.
+    mp_lights_sampling_strategy->GetLightsCDF(i_intersection.m_dg.m_point, lights_CDF);
 
   if (ip_sample)
     {

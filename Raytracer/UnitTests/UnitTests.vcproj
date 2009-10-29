@@ -508,6 +508,10 @@
 					Name="LightsSamplingStrategies"
 					>
 					<File
+						RelativePath=".\IrradianceLightsSampling.test.h"
+						>
+					</File>
+					<File
 						RelativePath=".\PowerLightsSampling.test.h"
 						>
 					</File>
@@ -603,6 +607,10 @@
 			</File>
 			<File
 				RelativePath=".\InteractiveFilm.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\IrradianceLightsSampling.test.cpp"
 				>
 			</File>
 			<File
