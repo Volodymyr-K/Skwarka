@@ -241,10 +241,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\tbb_pipeline_stuff.h"
-				>
-			</File>
-			<File
 				RelativePath=".\TestTracer.h"
 				>
 			</File>

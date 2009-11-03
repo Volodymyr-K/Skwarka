@@ -4,6 +4,7 @@
 #include <vector>
 #include <Math/Geometry.h>
 #include <Math/Constants.h>
+#include <Math/RandomGenerator.h>
 #include <Math/ThreadSafeRandom.h>
 
 /**
@@ -76,9 +77,10 @@ namespace SamplingRoutines
   * @param i_begin Begin iterator of the range to be filled with the values.
   * @param i_samples_num Number of samples.
   * @param i_jitter_samples If true the samples will be randomly moved inside their stratas.
+  * @param ip_rng Random number generator. If NULL, thread-safe global implementation will be used.
   */
   template<typename ValueIterator>
-  void StratifiedSampling1D(ValueIterator i_begin, size_t i_samples_num, bool i_jitter_samples);
+  void StratifiedSampling1D(ValueIterator i_begin, size_t i_samples_num, bool i_jitter_samples, RandomGenerator<double> *ip_rng = NULL);
 
   /**
   * Fills the specified range with stratified 2D values in [0;1]^2 range. Point2DIterator is a random-access iterator type.
@@ -86,24 +88,28 @@ namespace SamplingRoutines
   * @param i_x_samples_num Number of samples in x direction.
   * @param i_y_samples_num Number of samples in y direction.
   * @param i_jitter_samples If true the samples will be randomly moved inside their stratas.
+  * @param ip_rng Random number generator. If NULL, thread-safe global implementation will be used.
   */
   template<typename Point2DIterator>
-  void StratifiedSampling2D(Point2DIterator i_begin, size_t i_x_samples_num, size_t i_y_samples_num, bool i_jitter_samples);
+  void StratifiedSampling2D(Point2DIterator i_begin, size_t i_x_samples_num, size_t i_y_samples_num, bool i_jitter_samples, RandomGenerator<double> *ip_rng = NULL);
 
   /**
   * Fills the specified range with 2D values produced by the LatinHypecube algorithm. Point2DIterator is a random-access iterator type.
   * @param i_begin Begin iterator of the range to be filled with the values.
   * @param i_samples_num Number of samples.
   * @param i_jitter_samples If true the samples will be randomly moved inside their stratas.
+  * @param ip_rng Random number generator. If NULL, thread-safe global implementation will be used.
   */
   template<typename Point2DIterator>
-  void LatinHypercubeSampling2D(Point2DIterator i_begin, size_t i_samples_num, bool i_jitter_samples);
+  void LatinHypercubeSampling2D(Point2DIterator i_begin, size_t i_samples_num, bool i_jitter_samples, RandomGenerator<double> *ip_rng = NULL);
 
   /**
   * Randomly shuffles values in the specified vector.
+  * @param io_values Values to be shuffled.
+  * @param ip_rng Random number generator. If NULL, thread-safe global implementation will be used.
   */
   template<typename T>
-  void Shuffle(std::vector<T> &io_values);
+  void Shuffle(std::vector<T> &io_values, RandomGenerator<double> *ip_rng = NULL);
 
   /**
   * Computes weighting coefficient for multiple importance sampling with two PDFs.
@@ -233,7 +239,7 @@ namespace SamplingRoutines
     }
 
   template<typename ValueIterator>
-  void StratifiedSampling1D(ValueIterator i_begin, size_t i_samples_num, bool i_jitter_samples)
+  void StratifiedSampling1D(ValueIterator i_begin, size_t i_samples_num, bool i_jitter_samples, RandomGenerator<double> *ip_rng)
     {
     if(i_samples_num==0)
       return;
@@ -242,15 +248,21 @@ namespace SamplingRoutines
     double inv_samples_num = 1.0/i_samples_num;
 
     if (i_jitter_samples)
-      for (size_t i = 0; i < i_samples_num; ++i)
-        *(it++) = (i + RandomDouble(1.0)) * inv_samples_num;
+      {
+      if (ip_rng)
+        for (size_t i = 0; i < i_samples_num; ++i)
+          *(it++) = (i + (*ip_rng)(1.0)) * inv_samples_num;
+      else
+        for (size_t i = 0; i < i_samples_num; ++i)
+          *(it++) = (i + RandomDouble(1.0)) * inv_samples_num;
+      }
     else
       for (size_t i = 0; i < i_samples_num; ++i)
         *(it++) = (i + 0.5) * inv_samples_num;
     }
 
   template<typename Point2DIterator>
-  void StratifiedSampling2D(Point2DIterator i_begin, size_t i_x_samples_num, size_t i_y_samples_num, bool i_jitter_samples)
+  void StratifiedSampling2D(Point2DIterator i_begin, size_t i_x_samples_num, size_t i_y_samples_num, bool i_jitter_samples, RandomGenerator<double> *ip_rng)
     {
     if(i_x_samples_num==0 || i_y_samples_num==0)
       return;
@@ -260,9 +272,16 @@ namespace SamplingRoutines
     double inv_y_samples_num = 1.0/i_y_samples_num;
 
     if (i_jitter_samples)
-      for (size_t y = 0; y < i_y_samples_num; ++y)
-        for (size_t x = 0; x < i_x_samples_num; ++x)
-          *(it++) = Point2D_d((x + RandomDouble(1.0)) * inv_x_samples_num, (y + RandomDouble(1.0)) * inv_y_samples_num);
+      {
+      if (ip_rng)
+        for (size_t y = 0; y < i_y_samples_num; ++y)
+          for (size_t x = 0; x < i_x_samples_num; ++x)
+            *(it++) = Point2D_d((x + (*ip_rng)(1.0)) * inv_x_samples_num, (y + (*ip_rng)(1.0)) * inv_y_samples_num);
+      else
+        for (size_t y = 0; y < i_y_samples_num; ++y)
+          for (size_t x = 0; x < i_x_samples_num; ++x)
+            *(it++) = Point2D_d((x + RandomDouble(1.0)) * inv_x_samples_num, (y + RandomDouble(1.0)) * inv_y_samples_num);
+      }
     else
       for (size_t y = 0; y < i_y_samples_num; ++y)
         for (size_t x = 0; x < i_x_samples_num; ++x)
@@ -270,43 +289,66 @@ namespace SamplingRoutines
     }
 
   template<typename Point2DIterator>
-  void LatinHypercubeSampling2D(Point2DIterator i_begin, size_t i_samples_num, bool i_jitter_samples)
+  void LatinHypercubeSampling2D(Point2DIterator i_begin, size_t i_samples_num, bool i_jitter_samples, RandomGenerator<double> *ip_rng)
     {
     if (i_samples_num==0)
       return;
 
-    // Generate LHS samples along diagonal.
     double delta = 1.0 / i_samples_num;
-    if (i_jitter_samples)
-      for (size_t i = 0; i < i_samples_num; ++i)
-        *(i_begin+i) = Point2D_d( (i + RandomDouble(1.0)) * delta, (i + RandomDouble(1.0)) * delta );
-    else
-      for (size_t i = 0; i < i_samples_num; ++i)
-        *(i_begin+i) = Point2D_d( (i + 0.5) * delta, (i + 0.5) * delta );
-
-    // Permute LHS samples in X dimension.
-    for (size_t j = 0; j < i_samples_num; ++j)
+    if (ip_rng)
       {
-      size_t other = RandomInt((int)i_samples_num);
-      std::swap( (*(i_begin+j)) [0], (*(i_begin+other)) [0] );
+      // Generate LHS samples along diagonal.
+      if (i_jitter_samples)
+        for (size_t i = 0; i < i_samples_num; ++i)
+          *(i_begin+i) = Point2D_d( (i + (*ip_rng)(1.0)) * delta, (i + (*ip_rng)(1.0)) * delta );
+      else
+        for (size_t i = 0; i < i_samples_num; ++i)
+          *(i_begin+i) = Point2D_d( (i + 0.5) * delta, (i + 0.5) * delta );
+
+      // Permute LHS samples in both dimensions.
+      for(unsigned char d = 0; d < 2; ++d)
+        for (size_t j = 0; j < i_samples_num; ++j)
+          {
+          size_t other = (size_t) (*ip_rng)(i_samples_num);
+          std::swap( (*(i_begin+j)) [d], (*(i_begin+other)) [d] );
+          }
       }
-
-    // Permute LHS samples in Y dimension.
-    for (size_t j = 0; j < i_samples_num; ++j)
+    else
       {
-      size_t other = RandomInt((int)i_samples_num);
-      std::swap( (*(i_begin+j)) [1], (*(i_begin+other)) [1] );
+      // Generate LHS samples along diagonal.
+      if (i_jitter_samples)
+        for (size_t i = 0; i < i_samples_num; ++i)
+          *(i_begin+i) = Point2D_d( (i + RandomDouble(1.0)) * delta, (i + RandomDouble(1.0)) * delta );
+      else
+        for (size_t i = 0; i < i_samples_num; ++i)
+          *(i_begin+i) = Point2D_d( (i + 0.5) * delta, (i + 0.5) * delta );
+
+      // Permute LHS samples in both dimensions.
+      for(unsigned char d = 0; d < 2; ++d)
+        for (size_t j = 0; j < i_samples_num; ++j)
+          {
+          size_t other = RandomInt((int)i_samples_num);
+          std::swap( (*(i_begin+j)) [d], (*(i_begin+other)) [d] );
+          }
       }
     }
 
   template<typename T>
-  void Shuffle(std::vector<T> &io_values)
+  void Shuffle(std::vector<T> &io_values, RandomGenerator<double> *ip_rng)
     {
-    for (size_t i = 0; i < io_values.size(); ++i)
-      {
-      unsigned int other = RandomInt(io_values.size());
-      std::swap(io_values[i], io_values[other]);
-      }
+    size_t N = io_values.size();
+    if (ip_rng)
+      for (size_t i = 0; i < N; ++i)
+        {
+        unsigned int other = (unsigned int) (*ip_rng)(N);
+        std::swap(io_values[i], io_values[other]);
+        }
+    else
+      for (size_t i = 0; i < N; ++i)
+        {
+        unsigned int other = RandomInt(N);
+        std::swap(io_values[i], io_values[other]);
+        }
     }
 
   inline double BalanceHeuristic(size_t i_samples_num1, double i_pdf1, size_t i_samples_num2, double i_pdf2)

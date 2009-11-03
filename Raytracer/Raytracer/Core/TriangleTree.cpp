@@ -1,22 +1,25 @@
 #include "TriangleTree.h"
 
-template<typename T>
-bool Intersect(const BBox3D<T> &i_bbox, const RayInv &i_ray)
+__forceinline bool Intersect(const BBox3D_f &i_bbox, const RayInv &i_ray)
   {
   double t0 = i_ray.m_ray.m_min_t, t1 = i_ray.m_ray.m_max_t;
-  for (int i = 0; i < 3; ++i)
-    {
-    // Update interval for i-th bounding box slab.
-    // No need to check for zero i_ray.m_direction[i] due to the way INF values behave.
-    double tNear = (i_bbox.m_min[i] - i_ray.m_ray.m_origin[i]) * i_ray.m_invs[i];
-    double tFar  = (i_bbox.m_max[i] - i_ray.m_ray.m_origin[i]) * i_ray.m_invs[i];
 
-    if (tNear > tFar) std::swap(tNear, tFar);
-    t0 = tNear > t0 ? tNear : t0;
-    t1 = tFar  < t1 ? tFar  : t1;
-    if (t0 > t1) return false;
-    }
-  return true;
+  double tNear1 = (i_bbox.m_min[0] - i_ray.m_ray.m_origin[0]) * i_ray.m_invs[0];
+  double tFar1  = (i_bbox.m_max[0] - i_ray.m_ray.m_origin[0]) * i_ray.m_invs[0];
+  if (tNear1 > tFar1) std::swap(tNear1, tFar1);
+
+  double tNear2 = (i_bbox.m_min[1] - i_ray.m_ray.m_origin[1]) * i_ray.m_invs[1];
+  double tFar2  = (i_bbox.m_max[1] - i_ray.m_ray.m_origin[1]) * i_ray.m_invs[1];
+  if (tNear2 > tFar2) std::swap(tNear2, tFar2);
+
+  double tNear3 = (i_bbox.m_min[2] - i_ray.m_ray.m_origin[2]) * i_ray.m_invs[2];
+  double tFar3  = (i_bbox.m_max[2] - i_ray.m_ray.m_origin[2]) * i_ray.m_invs[2];
+  if (tNear3 > tFar3) std::swap(tNear3, tFar3);
+
+  return ((t0 > tFar1 || t0 > tFar2 || t0 > tFar3) ||
+    (tNear1 > tFar2 || tNear1 > tFar3 || tNear1 > t1) ||
+    (tNear2 > tFar1 || tNear2 > tFar3 || tNear2 > t1) ||
+    (tNear3 > tFar1 || tNear3 > tFar2 || tNear3 > t1) )==false;
   }
 
 TriangleTree::TriangleTree(std::vector<intrusive_ptr<Primitive> > i_primitives):

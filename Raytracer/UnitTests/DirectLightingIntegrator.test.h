@@ -51,7 +51,7 @@ class DirectLightingIntegratorTestSuite : public CxxTest::TestSuite
       intrusive_ptr<DirectLightingIntegrator> p_integrator( new DirectLightingIntegrator(p_renderer, 1, 1) );
       p_integrator->RequestSamples(p_sampler);
       intrusive_ptr<Sample> p_sample = p_sampler->CreateSample();
-      p_sampler->GetNextSample(p_sample);
+      p_sampler->GetNextSubSampler(1, &m_rng)->GetNextSample(p_sample);
       Spectrum_d radiance = p_integrator->ComputeDirectLighting(isect, ray.m_direction*(-1.0), p_bsdf, p_sample.get(), pool);
 
       // We use mock BxDF which is a Lambertian one so the reflectance is Spectrum_d(1.0)/M_PI.
@@ -82,7 +82,7 @@ class DirectLightingIntegratorTestSuite : public CxxTest::TestSuite
       intrusive_ptr<DirectLightingIntegrator> p_integrator( new DirectLightingIntegrator(p_renderer, 5000, 5100) );
       p_integrator->RequestSamples(p_sampler);
       intrusive_ptr<Sample> p_sample = p_sampler->CreateSample();
-      p_sampler->GetNextSample(p_sample);     
+      p_sampler->GetNextSubSampler(1, &m_rng)->GetNextSample(p_sample);     
       Spectrum_d radiance = p_integrator->ComputeDirectLighting(isect, ray.m_direction*(-1.0), p_bsdf, p_sample.get(), pool);
 
       // We use mock BxDF which is a Lambertian one so the reflectance is Spectrum_d(1.0)/M_PI.
@@ -115,7 +115,7 @@ class DirectLightingIntegratorTestSuite : public CxxTest::TestSuite
       intrusive_ptr<DirectLightingIntegrator> p_integrator( new DirectLightingIntegrator(p_renderer, 5000, 5100) );
       p_integrator->RequestSamples(p_sampler);
       intrusive_ptr<Sample> p_sample = p_sampler->CreateSample();
-      p_sampler->GetNextSample(p_sample);     
+      p_sampler->GetNextSubSampler(1, &m_rng)->GetNextSample(p_sample);     
       Spectrum_d radiance = p_integrator->ComputeDirectLighting(isect, ray.m_direction*(-1.0), p_bsdf, p_sample.get(), pool);
 
       // Compute the estimate numerically.
@@ -190,7 +190,7 @@ class DirectLightingIntegratorTestSuite : public CxxTest::TestSuite
       intrusive_ptr<DirectLightingIntegrator> p_integrator( new DirectLightingIntegrator(p_renderer, 5000, 5100) );
       p_integrator->RequestSamples(p_sampler);
       intrusive_ptr<Sample> p_sample = p_sampler->CreateSample();
-      p_sampler->GetNextSample(p_sample);     
+      p_sampler->GetNextSubSampler(1, &m_rng)->GetNextSample(p_sample);     
       Spectrum_d radiance = p_integrator->ComputeDirectLighting(isect, ray.m_direction*(-1.0), p_bsdf, p_sample.get(), pool);
 
       TS_ASSERT_EQUALS(radiance, Spectrum_d(0));
@@ -270,6 +270,7 @@ class DirectLightingIntegratorTestSuite : public CxxTest::TestSuite
 
     BBox3D_d m_world_bbox;
     intrusive_ptr<TriangleMesh> m_spheres[3];
+    RandomGenerator<double> m_rng;
   };
 
 #endif // DIRECT_LIGHTING_INTEGRATOR_TEST_H

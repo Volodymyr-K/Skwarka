@@ -71,8 +71,6 @@ class TestTracer
 
 int pixel_counter=0;
 
-#include "tbb_pipeline_stuff.h"
-
 inline void TestTracer::LoadMesh()
   {
   /*
@@ -282,11 +280,11 @@ inline void TestTracer::RenderImage(HWND &g_hWnd, HDC &g_memDC)
   //intrusive_ptr<Camera> p_camera( new PerspectiveCamera( MakeLookAt(Point3D_d(0.0,0.26,0.17)+direction*0.08,direction,Vector3D_d(0,1,0)), intrusive_ptr<Film>(film), 0.000, 0.087, 1.3) );
 
   Vector3D_d direction = Vector3D_d(-0.4,0.5,-0.3).Normalized();
-  intrusive_ptr<Camera> p_camera( new PerspectiveCamera( MakeLookAt(Point3D_d(950,-1700,800),direction,Vector3D_d(0,0,1)), intrusive_ptr<Film>(film), 0.000, 0.087, 1.3) );
+  intrusive_ptr<Camera> p_camera( new PerspectiveCamera( MakeLookAt(Point3D_d(950,-1700,800),direction,Vector3D_d(0,0,1)), intrusive_ptr<Film>(film), 0.000, 1000, 1.3) );
 
   intrusive_ptr<ImagePixelsOrder> pixel_order(new UniformImagePixelsOrder);
 
-  intrusive_ptr<Sampler> p_sampler( new StratifiedSampler(window_begin, window_end, 1, 1, pixel_order, true) );
+  intrusive_ptr<Sampler> p_sampler( new StratifiedSampler(window_begin, window_end, 2, 2, pixel_order) );
 
   intrusive_ptr<SamplerBasedRenderer> p_renderer( new SamplerBasedRenderer(mp_scene, p_sampler) );
 

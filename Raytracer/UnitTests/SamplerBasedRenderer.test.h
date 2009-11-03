@@ -52,7 +52,7 @@ class SamplerBasedRendererTestSuite : public CxxTest::TestSuite
 
       Point2D_i window_begin,window_end;
       p_film->GetSamplingExtent(window_begin, window_end);
-      intrusive_ptr<Sampler> p_sampler( new StratifiedSampler(window_begin, window_end, 2, 2, true) );
+      intrusive_ptr<Sampler> p_sampler( new StratifiedSampler(window_begin, window_end, 2, 2) );
 
       mp_log.reset( new StreamLog() );
       mp_renderer.reset( new SamplerBasedRenderer(mp_scene, p_sampler, mp_log) );

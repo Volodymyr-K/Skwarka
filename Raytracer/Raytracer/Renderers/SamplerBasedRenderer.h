@@ -74,7 +74,7 @@ class SamplerBasedRenderer: public Renderer
 
   private:
     // Private types, used for multi-threaded rendering.
-    class SamplesChunk;
+    class PixelsChunk;
     class SamplesGeneratorFilter;
     class IntegratorFilter;
     class FilmWriterFilter;
@@ -91,12 +91,12 @@ class SamplerBasedRenderer: public Renderer
     intrusive_ptr<Log> mp_log;
 
     // Defines the maximum number of tokens the TBB pipeline can run concurrently.
-    // This is also the upper bound on the number of threads the pipeline can utilize at the same time.
-    static const size_t MAX_PIPELINE_TOKENS_NUM = 16;
+    // This is also the upper bound on the number of threads the pipeline can utilize concurrently.
+    static const size_t MAX_PIPELINE_TOKENS_NUM = 64;
 
-    // Defines the number of samples in each SamplesChunk.
-    // Larger values result in larger memory overhead and better performance.
-    static const size_t SAMPLES_PER_CHUNK = 16;
+    // Defines the number of samples in each PixelsChunk.
+    // Larger values decrease the number of needed tokens (and thus reduce the locking overhead) but may decrease the parallelism.
+    static const size_t PIXELS_PER_CHUNK = 16;
   };
 
 #endif // SAMPLER_BASED_RENDERER_H

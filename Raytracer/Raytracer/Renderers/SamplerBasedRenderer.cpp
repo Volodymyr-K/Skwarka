@@ -1,6 +1,7 @@
 #include "SamplerBasedRenderer.h"
 #include <Common/Numerics.h>
 #include <Math/Constants.h>
+#include <Math/RandomGenerator.h>
 #include <tbb/pipeline.h>
 #include <vector>
 
@@ -8,25 +9,25 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
-* This is a DTO class used to store samples and resulting radiance values returned by a renderer.
+* This is a DTO class used to store sub-sampler and resulting radiance values returned by a renderer.
 * The class is passed through the TBB pipeline by SamplesGeneratorFilter, IntegratorFilter and FilmWriterFilter.
-* The class also keeps MemoryPool instance used by integrators.
+* The class also keeps MemoryPool and RandomGenerator instances used by integrators and samplers respectively.
 * Since the class is used by multiple threads it has a simple locking mechanism implemented by Acquire(), Release() and IsAvailable() methods.
 * Although this locking strategy is not really thread-safe it works well for SamplesGeneratorFilter because this filter is serial and multiple
 * threads will never race to acquire the lock over the chunk.
 * @sa SamplesGeneratorFilter, IntegratorFilter and FilmWriterFilter
 */
-class SamplerBasedRenderer::SamplesChunk
+class SamplerBasedRenderer::PixelsChunk
   {
   public:
     /**
-    * Creates SamplesChunk instance.
-    * @param ip_sampler Sampler instance used to create Samples.
-    * @param i_max_samples_num Number of samples in the chunk. Should be positive.
+    * Creates PixelsChunk instance.
+    * @param ip_sample Sample instance. The instance will be populated with sample values by a SubSampler and used by the integrators. Should not be NULL.
+    * @param i_rng_seed Seed number for the random generator.
     */
-    SamplesChunk(intrusive_ptr<Sampler> ip_sampler, size_t i_max_samples_num);
+    PixelsChunk(intrusive_ptr<Sample> ip_sample, size_t i_rng_seed);
 
-    ~SamplesChunk();
+    ~PixelsChunk();
 
     /**
     * Locks the chunk in a multi-threaded environment. The other threads will check if the chunk is available before locking it.
@@ -39,60 +40,63 @@ class SamplerBasedRenderer::SamplesChunk
     void Release();
 
     /**
-    * Returns true if the chunk is not locked by any thread.
+    * Returns true if the chunk is not locked.
     */
     bool IsAvailable() const;
 
     /**
-    * Fills the chunk samples with the data by calling the sampler.
-    * @return true if at least one sample is filled with a data.
+    * Sets sub-sampler for this pixels chunk. Should be called before GetNextSample() method is called.
     */
-    bool GenerateSamples();
+    void SetSubSampler(intrusive_ptr<SubSampler> ip_sub_sampler);   
 
     /**
-    * Returns number of chunk samples filled with the data.
-    * The returned value can be less than the maximum number of samples passed to the class constructor if the sampler did not generate enough samples.
+    * Returns (weak) pointer to the next sample populated by the SubSampler or NULL if there are no more samples.
+    * The method always returns pointer to the same Sample instance but calling this method makes SubSampler fill the Sample with the data.
     */
-    size_t GetNumberOfSamples() const;
+    const Sample *GetNextSample();
 
     /**
-    * Returns (weak) pointer to the specified sample.
-    * @param i_sample_index Index of the requested sample. Should be less than the value returned by GetNumberOfSamples() method.
-    * @return Pointer to the sample.
-    */
-    const Sample *GetSample(size_t i_sample_index) const;
-
-    /**
-    * Sets resulting radiance for the specified camera sample index.
-    * @param i_sample_index Index of the sample. Should be less than the value returned by GetNumberOfSamples() method.
+    * Sets resulting radiance for the specified camera sample.
+    * @param i_image_point Image point.
     * @param i_radiance Radiance value.
     */
-    void SetRadiance(size_t i_sample_index, const Spectrum_d &i_radiance);
+    void AddImageSample(const Point2D_d &i_image_point, const Spectrum_d &i_radiance);
 
     /**
-    * Returns radiance saved for the specified camera index.
+    * Clears all image samples added so far.
     */
-    Spectrum_d GetRadiance(size_t i_sample_index) const;
+    void ClearImageSamples();
+
+    /**
+    * Saves all image samples added so far to the specified film.
+    */
+    void SaveToFilm(intrusive_ptr<Film> ip_film) const;
 
     /**
     * Returns memory pool.
     */
     MemoryPool *GetMemoryPool() const;
 
+    /**
+    * Returns random generator.
+    */
+    RandomGenerator<double> *GetRandomGenerator() const;
+
   private:
     // Not implemented, should only be passed by a reference.
-    SamplesChunk(const SamplesChunk&);
-    SamplesChunk &operator=(const SamplesChunk&);
+    PixelsChunk(const PixelsChunk&);
+    PixelsChunk &operator=(const PixelsChunk&);
 
   private:
-    intrusive_ptr<Sampler> mp_sampler;
-    size_t m_samples_num;
+    intrusive_ptr<Sample> mp_sample;
+    intrusive_ptr<SubSampler> mp_sub_sampler;
     bool m_available;
 
-    std::vector<intrusive_ptr<Sample> > m_samples;
+    std::vector<Point2D_d > m_image_points;
     std::vector<Spectrum_d> m_radiances;
 
     MemoryPool *mp_memory_pool;
+    RandomGenerator<double> *mp_rng;
   };
 
 /**
@@ -103,7 +107,7 @@ class SamplerBasedRenderer::SamplesChunk
 class SamplerBasedRenderer::SamplesGeneratorFilter: public tbb::filter
   {
   public:
-    SamplesGeneratorFilter(intrusive_ptr<Sampler> ip_sampler, size_t i_number_of_chunks, size_t i_samples_per_chunk);
+    SamplesGeneratorFilter(intrusive_ptr<Sampler> ip_sampler, size_t i_number_of_chunks, size_t i_pixels_per_chunk);
 
     ~SamplesGeneratorFilter();
 
@@ -112,14 +116,14 @@ class SamplerBasedRenderer::SamplesGeneratorFilter: public tbb::filter
   private:
     intrusive_ptr<Sampler> mp_sampler;
 
-    std::vector<SamplesChunk*> m_chunks;
+    std::vector<PixelsChunk*> m_chunks;
 
-    size_t m_next_chunk_index;
+    size_t m_next_chunk_index, m_pixels_per_chunk;
   };
 
 /**
 * This is the processing filter for the TBB pipeline.
-* The filter gets the chunk with the samples data generated by SamplesGeneratorFilter filter and computes radiance value for each camera sample.
+* The filter gets the chunk with the sub-sampler set by SamplesGeneratorFilter filter and computes radiance value for all samples the sub-sampler produces.
 * The filter is parallel which means that it can be executed by multiple threads concurrently.
 */
 class SamplerBasedRenderer::IntegratorFilter: public tbb::filter
@@ -138,8 +142,7 @@ class SamplerBasedRenderer::IntegratorFilter: public tbb::filter
 
 /**
 * This is the output filter for the TBB pipeline.
-* The filter gets the chunk with the samples data generated by SamplesGeneratorFilter filter and computed radiance values generated by IntegratorFilter filter
-* and adds them to the camera's film.
+* The filter gets the chunk with the image samples and radiance values generated by IntegratorFilter filter and adds them to the camera's film.
 * The filter is serial which means that two threads never execute it concurrently.
 */
 class SamplerBasedRenderer::FilmWriterFilter: public tbb::filter
@@ -152,7 +155,6 @@ class SamplerBasedRenderer::FilmWriterFilter: public tbb::filter
 
     intrusive_ptr<Film> mp_film;
   };
-
 
 //////////////////////////////////////// SamplerBasedRenderer /////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -241,12 +243,7 @@ void SamplerBasedRenderer::Render(intrusive_ptr<Camera> ip_camera) const
   if (mp_volume_integrator)
     mp_volume_integrator->RequestSamples(mp_sampler);
 
-  /*
-  Not sure what is the best strategy to choose the pipeline tokens number and the number of samples per chunk.
-  I could not find a method in the TBB to find out how many threads the pipeline will be running.
-  Currently, these values are hardcoded as MAX_PIPELINE_TOKENS_NUM and SAMPLES_PER_CHUNK constants.
-  */
-  SamplesGeneratorFilter samples_generator(mp_sampler, MAX_PIPELINE_TOKENS_NUM, SAMPLES_PER_CHUNK);
+  SamplesGeneratorFilter samples_generator(mp_sampler, MAX_PIPELINE_TOKENS_NUM, PIXELS_PER_CHUNK);
   IntegratorFilter integrator(this, ip_camera, mp_log);
   FilmWriterFilter film_writer(ip_camera->GetFilm());
 
@@ -260,99 +257,100 @@ void SamplerBasedRenderer::Render(intrusive_ptr<Camera> ip_camera) const
   pipeline.clear();
   }
 
-//////////////////////////////////////////// SamplesChunk /////////////////////////////////////////////////
+//////////////////////////////////////////// PixelsChunk /////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-SamplerBasedRenderer::SamplesChunk::SamplesChunk(intrusive_ptr<Sampler> ip_sampler, size_t i_max_samples_num):
-mp_sampler(ip_sampler), m_samples(i_max_samples_num), m_radiances(i_max_samples_num),
-m_samples_num(0), m_available(true)
+SamplerBasedRenderer::PixelsChunk::PixelsChunk(intrusive_ptr<Sample> ip_sample, size_t i_rng_seed): mp_sample(ip_sample), mp_sub_sampler(NULL), m_available(true)
   {
-  ASSERT(ip_sampler);
-  ASSERT(i_max_samples_num>0);
+  ASSERT(ip_sample);
 
+  mp_rng = new RandomGenerator<double>(i_rng_seed);
   mp_memory_pool = new MemoryPool();
-
-  for(size_t i=0;i<m_samples.size();++i)
-    m_samples[i]=ip_sampler->CreateSample();
   }
 
-SamplerBasedRenderer::SamplesChunk::~SamplesChunk()
+SamplerBasedRenderer::PixelsChunk::~PixelsChunk()
   {
   delete mp_memory_pool;
+  delete mp_rng;
   }
 
-void SamplerBasedRenderer::SamplesChunk::Acquire()
+void SamplerBasedRenderer::PixelsChunk::Acquire()
   {
   ASSERT(m_available);
   m_available = false;
   }
 
-void SamplerBasedRenderer::SamplesChunk::Release()
+void SamplerBasedRenderer::PixelsChunk::Release()
   {
   ASSERT(m_available==false);
   m_available = true;
   }
 
-bool SamplerBasedRenderer::SamplesChunk::IsAvailable() const
+bool SamplerBasedRenderer::PixelsChunk::IsAvailable() const
   {
   return m_available;
   }
 
-bool SamplerBasedRenderer::SamplesChunk::GenerateSamples()
+void SamplerBasedRenderer::PixelsChunk::SetSubSampler(intrusive_ptr<SubSampler> ip_sub_sampler)
   {
-  m_samples_num = 0;
-  for(size_t i=0;i<m_samples.size();++i)
-    {
-    if (mp_sampler->GetNextSample(m_samples[i]))
-      ++m_samples_num;
-    else
-      break;
-    }
-
-  return m_samples_num > 0;
+  ASSERT(ip_sub_sampler);
+  mp_sub_sampler=ip_sub_sampler;
   }
 
-size_t SamplerBasedRenderer::SamplesChunk::GetNumberOfSamples() const
+const Sample *SamplerBasedRenderer::PixelsChunk::GetNextSample()
   {
-  ASSERT(m_samples_num <= m_samples.size());
-  return m_samples_num;
+  ASSERT(mp_sample);
+  ASSERT(mp_sub_sampler);
+
+  if (mp_sub_sampler->GetNextSample(mp_sample))
+    return mp_sample.get();
+  else
+    return NULL;
   }
 
-const Sample *SamplerBasedRenderer::SamplesChunk::GetSample(size_t i_sample_index) const
+void SamplerBasedRenderer::PixelsChunk::AddImageSample(const Point2D_d &i_image_point, const Spectrum_d &i_radiance)
   {
-  ASSERT(i_sample_index < m_samples_num);
-  return m_samples[i_sample_index].get();
+  m_image_points.push_back(i_image_point);
+  m_radiances.push_back(i_radiance);
   }
 
-void SamplerBasedRenderer::SamplesChunk::SetRadiance(size_t i_sample_index, const Spectrum_d &i_radiance)
+void SamplerBasedRenderer::PixelsChunk::ClearImageSamples()
   {
-  ASSERT(i_sample_index < m_samples_num);
-  m_radiances[i_sample_index] = i_radiance;
+  m_image_points.clear();
+  m_radiances.clear();
   }
 
-Spectrum_d SamplerBasedRenderer::SamplesChunk::GetRadiance(size_t i_sample_index) const
+void SamplerBasedRenderer::PixelsChunk::SaveToFilm(intrusive_ptr<Film> ip_film) const
   {
-  ASSERT(i_sample_index < m_samples_num);
-  return m_radiances[i_sample_index];
+  ASSERT(ip_film);
+  ASSERT(m_image_points.size() == m_radiances.size());
+
+  for(size_t i=0;i<m_image_points.size();++i)
+    ip_film->AddSample(m_image_points[i], Convert<float>(m_radiances[i]));
   }
 
-MemoryPool *SamplerBasedRenderer::SamplesChunk::GetMemoryPool() const
+MemoryPool *SamplerBasedRenderer::PixelsChunk::GetMemoryPool() const
   {
   return mp_memory_pool;
+  }
+
+RandomGenerator<double> *SamplerBasedRenderer::PixelsChunk::GetRandomGenerator() const
+  {
+  return mp_rng;
   }
 
 /////////////////////////////////////// SamplesGeneratorFilter ////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-SamplerBasedRenderer::SamplesGeneratorFilter::SamplesGeneratorFilter(intrusive_ptr<Sampler> ip_sampler, size_t i_number_of_chunks, size_t i_samples_per_chunk):
-filter(serial_out_of_order), mp_sampler(ip_sampler), m_next_chunk_index(0)
+SamplerBasedRenderer::SamplesGeneratorFilter::SamplesGeneratorFilter(intrusive_ptr<Sampler> ip_sampler, size_t i_number_of_chunks, size_t i_pixels_per_chunk):
+filter(serial_out_of_order), mp_sampler(ip_sampler), m_pixels_per_chunk(i_pixels_per_chunk), m_next_chunk_index(0)
   {
   ASSERT(ip_sampler);
   ASSERT(i_number_of_chunks>0);
-  ASSERT(i_samples_per_chunk>0);
+  ASSERT(i_pixels_per_chunk>0);
 
   for(size_t i=0;i<i_number_of_chunks;++i)
-    m_chunks.push_back(new SamplesChunk(ip_sampler, i_samples_per_chunk));
+    m_chunks.push_back(new PixelsChunk( ip_sampler->CreateSample(), i ));
   }
 
 SamplerBasedRenderer::SamplesGeneratorFilter::~SamplesGeneratorFilter()
@@ -371,13 +369,18 @@ void* SamplerBasedRenderer::SamplesGeneratorFilter::operator()(void*)
   while(m_chunks[m_next_chunk_index]->IsAvailable()==false)
     m_next_chunk_index = (m_next_chunk_index+1) % m_chunks.size();
 
-  SamplesChunk *p_chunk = m_chunks[m_next_chunk_index];
+  PixelsChunk *p_chunk = m_chunks[m_next_chunk_index];
   p_chunk->Acquire();
+  p_chunk->ClearImageSamples();
 
   m_next_chunk_index = (m_next_chunk_index+1) % m_chunks.size();
 
-  if (p_chunk->GenerateSamples())
+  intrusive_ptr<SubSampler> p_sub_sampler = mp_sampler->GetNextSubSampler(m_pixels_per_chunk, p_chunk->GetRandomGenerator());
+  if (p_sub_sampler)
+    {
+    p_chunk->SetSubSampler(p_sub_sampler);
     return p_chunk;
+    }
   else
     return NULL;
   }
@@ -394,12 +397,11 @@ mp_renderer(ip_renderer), mp_camera(ip_camera), mp_log(ip_log)
 
 void* SamplerBasedRenderer::IntegratorFilter::operator()(void* ip_chunk)
   {
-  SamplesChunk *p_chunk = static_cast<SamplesChunk*>(ip_chunk);
+  PixelsChunk *p_chunk = static_cast<PixelsChunk*>(ip_chunk);
   MemoryPool *p_pool = p_chunk->GetMemoryPool();
 
-  for(size_t i=0;i<p_chunk->GetNumberOfSamples();++i)
+  while(const Sample *p_sample = p_chunk->GetNextSample())
     {
-    const Sample *p_sample = p_chunk->GetSample(i);
     Point2D_d image_point = p_sample->GetImagePoint();
     Point2D_d lens_uv = p_sample->GetLensUV();
 
@@ -444,7 +446,7 @@ void* SamplerBasedRenderer::IntegratorFilter::operator()(void* ip_chunk)
           radiance = Spectrum_d(0.0);
           }
 
-    p_chunk->SetRadiance(i, radiance * weight);
+    p_chunk->AddImageSample(p_sample->GetImagePoint(), radiance * weight);
 
     // Free all allocated objects since we don't need them anymore at this point.
     p_pool->FreeAll();
@@ -463,16 +465,9 @@ SamplerBasedRenderer::FilmWriterFilter::FilmWriterFilter(intrusive_ptr<Film> ip_
 
 void* SamplerBasedRenderer::FilmWriterFilter::operator()(void* ip_chunk)
   {
-  SamplesChunk *p_chunk = static_cast<SamplesChunk*>(ip_chunk);
-
-  for(size_t i=0;i<p_chunk->GetNumberOfSamples();++i)
-    {
-    const Sample *p_sample = p_chunk->GetSample(i);
-    Spectrum_d radiance = p_chunk->GetRadiance(i);
-
-    mp_film->AddSample(p_sample->GetImagePoint(), Convert<float>(radiance));
-    }
-
+  PixelsChunk *p_chunk = static_cast<PixelsChunk*>(ip_chunk);
+  p_chunk->SaveToFilm(mp_film);
   p_chunk->Release();
+
   return NULL;
   }

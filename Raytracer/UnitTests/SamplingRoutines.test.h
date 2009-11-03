@@ -4,6 +4,7 @@
 #include <cxxtest/TestSuite.h>
 #include "CustomValueTraits.h"
 #include <Math/SamplingRoutines.h>
+#include <Math/RandomGenerator.h>
 #include <Math/ThreadSafeRandom.h>
 #include "SamplingTestHelper.h"
 #include <cmath>
@@ -195,8 +196,9 @@ class SamplingRoutinesTestSuite : public CxxTest::TestSuite
     void test_Stratified1D_Clumping()
       {
       const size_t num_samples = 5000;
+      RandomGenerator<double> rng;
       std::vector<double> samples(num_samples);
-      SamplingRoutines::StratifiedSampling1D(samples.begin(),num_samples,true);
+      SamplingRoutines::StratifiedSampling1D(samples.begin(),num_samples,true,&rng);
 
       bool not_clumped = SamplingTestHelper::TestSamplesClumping1D(samples, 0.0, 1.0);
       TS_ASSERT(not_clumped);
@@ -228,8 +230,10 @@ class SamplingRoutinesTestSuite : public CxxTest::TestSuite
     void test_Stratified2DClumping()
       {
       const int x_samples = 60, y_samples=70;
+
+      RandomGenerator<double> rng;
       std::vector<Point2D_d> samples(x_samples*y_samples);
-      SamplingRoutines::StratifiedSampling2D(samples.begin(),x_samples,y_samples,true);
+      SamplingRoutines::StratifiedSampling2D(samples.begin(),x_samples,y_samples,true,&rng);
 
       bool not_clumped = SamplingTestHelper::TestSamplesClumping2D(samples, Point2D_d(0.0,0.0), Point2D_d(1.0,1.0), x_samples, y_samples);
       TS_ASSERT(not_clumped);
@@ -262,8 +266,9 @@ class SamplingRoutinesTestSuite : public CxxTest::TestSuite
       {
       const size_t num_samples = 5000;
 
+      RandomGenerator<double> rng;
       std::vector<Point2D_d> samples(num_samples);
-      SamplingRoutines::LatinHypercubeSampling2D(samples.begin(),num_samples,true);
+      SamplingRoutines::LatinHypercubeSampling2D(samples.begin(),num_samples,true,&rng);
 
       bool not_clumped = SamplingTestHelper::TestLatinHypercubeDistribution2D(samples, Point2D_d(0.0,0.0), Point2D_d(1.0,1.0));
       TS_ASSERT(not_clumped);
