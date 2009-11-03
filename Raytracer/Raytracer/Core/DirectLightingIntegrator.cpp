@@ -2,8 +2,8 @@
 #include <Raytracer/LightsSamplingStrategies/IrradianceLightsSampling.h>
 #include <Math/SamplingRoutines.h>
 
-DirectLightingIntegrator::DirectLightingIntegrator(intrusive_ptr<Renderer> ip_renderer, size_t i_lights_samples_num, size_t i_bsdf_samples_num,
-                                                   intrusive_ptr<LightsSamplingStrategy> ip_lights_sampling_strategy):
+DirectLightingIntegrator::DirectLightingIntegrator(intrusive_ptr<const Renderer> ip_renderer, size_t i_lights_samples_num, size_t i_bsdf_samples_num,
+                                                   intrusive_ptr<const LightsSamplingStrategy> ip_lights_sampling_strategy):
 mp_renderer(ip_renderer), mp_scene(ip_renderer->GetScene()), m_lights_samples_num(i_lights_samples_num), m_bsdf_samples_num(i_bsdf_samples_num), m_samples_requested(false)
   {
   ASSERT(ip_renderer); 

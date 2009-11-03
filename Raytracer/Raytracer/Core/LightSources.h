@@ -161,7 +161,7 @@ class AreaLightSource: public ReferenceCounted
     /**
     * Returns the triangle mesh associated the area light is associated with.
     */
-    intrusive_ptr<TriangleMesh> GetTriangleMesh() const;
+    intrusive_ptr<const TriangleMesh> GetTriangleMesh() const;
 
     /**
     * Returns the light source radiance for the specified point on a mesh and specified outgoing direction.
@@ -216,7 +216,7 @@ class AreaLightSource: public ReferenceCounted
     /**
     * Creates AreaLightSource instance with the specified triangle mesh.
     */
-    AreaLightSource(intrusive_ptr<TriangleMesh> ip_mesh);
+    AreaLightSource(intrusive_ptr<const TriangleMesh> ip_mesh);
 
   private:
     // Not implemented, not a value type.
@@ -224,7 +224,7 @@ class AreaLightSource: public ReferenceCounted
     AreaLightSource &operator=(const AreaLightSource&);
 
   private:
-    intrusive_ptr<TriangleMesh> mp_mesh;
+    intrusive_ptr<const TriangleMesh> mp_mesh;
   };
 
 /**
@@ -232,11 +232,11 @@ class AreaLightSource: public ReferenceCounted
 */
 struct LightSources
   {
-  std::vector<intrusive_ptr<DeltaLightSource> > m_delta_light_sources;
+  std::vector<intrusive_ptr<const DeltaLightSource> > m_delta_light_sources;
 
-  std::vector<intrusive_ptr<InfiniteLightSource> > m_infinitiy_light_sources;
+  std::vector<intrusive_ptr<const InfiniteLightSource> > m_infinitiy_light_sources;
 
-  std::vector<intrusive_ptr<AreaLightSource> > m_area_light_sources;
+  std::vector<intrusive_ptr<const AreaLightSource> > m_area_light_sources;
   };
 
 #endif // LIGHT_SOURCES_H

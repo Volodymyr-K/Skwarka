@@ -28,14 +28,14 @@ class Primitive: public ReferenceCounted
     * Can be null (in this case the primitive does not emit any light by itself).
     * @param ip_bump_map Bump map. Can be null.
     */
-    Primitive(intrusive_ptr<TriangleMesh> ip_mesh, intrusive_ptr<Material> ip_material,
-      intrusive_ptr<AreaLightSource> ip_area_light_source = NULL, intrusive_ptr<Texture<double> > ip_bump_map = NULL);
+    Primitive(intrusive_ptr<const TriangleMesh> ip_mesh, intrusive_ptr<const Material> ip_material,
+      intrusive_ptr<const AreaLightSource> ip_area_light_source = NULL, intrusive_ptr<const Texture<double> > ip_bump_map = NULL);
 
-    intrusive_ptr<TriangleMesh> GetTriangleMesh() const;
+    intrusive_ptr<const TriangleMesh> GetTriangleMesh() const;
 
-    intrusive_ptr<Material> GetMaterial() const;
+    intrusive_ptr<const Material> GetMaterial() const;
 
-    intrusive_ptr<AreaLightSource> GetAreaLightSource() const;
+    intrusive_ptr<const AreaLightSource> GetAreaLightSource() const;
 
     /**
     * Returns a pointer to BSDF describing local scattering properties at the specified surface point.
@@ -70,34 +70,34 @@ class Primitive: public ReferenceCounted
     void _Bump(const DifferentialGeometry &i_dg, size_t i_triangle_index, DifferentialGeometry &o_bumped_dg) const;
 
   private:
-    intrusive_ptr<TriangleMesh> mp_mesh;
-    intrusive_ptr<Material> mp_material;
-    intrusive_ptr<Texture<double> > mp_bump_map;
-    intrusive_ptr<AreaLightSource> mp_area_light_source;
+    intrusive_ptr<const TriangleMesh> mp_mesh;
+    intrusive_ptr<const Material> mp_material;
+    intrusive_ptr<const Texture<double> > mp_bump_map;
+    intrusive_ptr<const AreaLightSource> mp_area_light_source;
   };
 
 /////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-inline Primitive::Primitive(intrusive_ptr<TriangleMesh> ip_mesh, intrusive_ptr<Material> ip_material,
-                            intrusive_ptr<AreaLightSource> ip_area_light_source, intrusive_ptr<Texture<double> > ip_bump_map):
+inline Primitive::Primitive(intrusive_ptr<const TriangleMesh> ip_mesh, intrusive_ptr<const Material> ip_material,
+                            intrusive_ptr<const AreaLightSource> ip_area_light_source, intrusive_ptr<const Texture<double> > ip_bump_map):
 mp_mesh(ip_mesh), mp_material(ip_material), mp_area_light_source(ip_area_light_source), mp_bump_map(ip_bump_map)
   {
   ASSERT(ip_mesh);
   ASSERT(ip_material);
   }
 
-inline intrusive_ptr<TriangleMesh> Primitive::GetTriangleMesh() const
+inline intrusive_ptr<const TriangleMesh> Primitive::GetTriangleMesh() const
   {
   return mp_mesh;
   }
 
-inline intrusive_ptr<Material> Primitive::GetMaterial() const
+inline intrusive_ptr<const Material> Primitive::GetMaterial() const
   {
   return mp_material;
   }
 
-inline intrusive_ptr<AreaLightSource> Primitive::GetAreaLightSource() const
+inline intrusive_ptr<const AreaLightSource> Primitive::GetAreaLightSource() const
   {
   return mp_area_light_source;
   }

@@ -18,7 +18,7 @@ class Matte: public Material
     /**
     * Creates Matte object with the specified textures defining the reflectivity and roughness of the material.
     */
-    Matte(intrusive_ptr<Texture<Spectrum_d> > ip_reflectance, intrusive_ptr<Texture<double> > ip_sigma);
+    Matte(intrusive_ptr<const Texture<Spectrum_d> > ip_reflectance, intrusive_ptr<const Texture<double> > ip_sigma);
 
     /**
     * Returns a pointer to BSDF describing local scattering properties at the specified surface point.
@@ -31,9 +31,9 @@ class Matte: public Material
     virtual BSDF *GetBSDF(const DifferentialGeometry &i_dg, size_t i_triangle_index, MemoryPool &i_pool) const;
 
   private:
-    intrusive_ptr<Texture<Spectrum_d> > mp_reflectance;
+    intrusive_ptr<const Texture<Spectrum_d> > mp_reflectance;
 
-    intrusive_ptr<Texture<double> > mp_sigma;
+    intrusive_ptr<const Texture<double> > mp_sigma;
   };
 
 #endif // MATTE_H

@@ -17,31 +17,31 @@ Renderer mock implementation. Does not render anything. Returns black radiance. 
 class RendererMock: public Renderer
   {
   public:
-    RendererMock(intrusive_ptr<Scene> ip_scene, intrusive_ptr<Sampler> ip_sampler);
+    RendererMock(intrusive_ptr<const Scene> ip_scene, intrusive_ptr<Sampler> ip_sampler);
 
-    virtual void Render(intrusive_ptr<Camera> ip_camera) const;
+    virtual void Render(intrusive_ptr<const Camera> ip_camera) const;
 
     virtual Spectrum_d Radiance(const RayDifferential &i_ray, const Sample *ip_sample, MemoryPool &i_pool) const;
 
     virtual Spectrum_d Transmittance(const Ray &i_ray, const Sample *ip_sample) const;
 
   private:
-    intrusive_ptr<Scene> mp_scene;
+    intrusive_ptr<const Scene> mp_scene;
 
-    intrusive_ptr<Sampler> mp_sampler;
+    intrusive_ptr<const Sampler> mp_sampler;
   };
 
 /////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-inline RendererMock::RendererMock(intrusive_ptr<Scene> ip_scene, intrusive_ptr<Sampler> ip_sampler): Renderer(ip_scene),
+inline RendererMock::RendererMock(intrusive_ptr<const Scene> ip_scene, intrusive_ptr<Sampler> ip_sampler): Renderer(ip_scene),
 mp_scene(ip_scene), mp_sampler(ip_sampler)
   {
   ASSERT(ip_scene);
   ASSERT(ip_sampler);
   }
 
-inline void RendererMock::Render(intrusive_ptr<Camera> ip_camera) const
+inline void RendererMock::Render(intrusive_ptr<const Camera> ip_camera) const
   {
   ASSERT(ip_camera);
   }

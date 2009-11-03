@@ -30,7 +30,7 @@ class InteractiveFilm: public Film
     * @param i_y_resolution Y resolution. Should be greater than 0.
     * @param ip_filter FilmFilter to be used for filtering pixel samples.
     */
-    InteractiveFilm(size_t i_x_resolution, size_t i_y_resolution, intrusive_ptr<FilmFilter> ip_filter);
+    InteractiveFilm(size_t i_x_resolution, size_t i_y_resolution, intrusive_ptr<const FilmFilter> ip_filter);
 
     /**
     * Adds sample value to the film.

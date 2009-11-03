@@ -19,14 +19,14 @@ class Renderer: public ReferenceCounted
     /**
     * Returns associated rendered scene.
     */
-    intrusive_ptr<Scene> GetScene() const;
+    intrusive_ptr<const Scene> GetScene() const;
 
     /**
     * Renders the scene for the specified camera.
     * The rendered image will be saved to the camera's film. The film is cleared before rendering, so the previous image will be lost.
     * @param ip_camera Camera in the scene for which the image is to be rendered.
     */
-    virtual void Render(intrusive_ptr<Camera> ip_camera) const = 0;
+    virtual void Render(intrusive_ptr<const Camera> ip_camera) const = 0;
 
     /**
     * Computes radiance for the specified ray.
@@ -52,7 +52,7 @@ class Renderer: public ReferenceCounted
     /**
     * Creates Renderer for the specified scene.
     */
-    Renderer(intrusive_ptr<Scene> ip_scene);
+    Renderer(intrusive_ptr<const Scene> ip_scene);
 
   private:
     // Not implemented, not a value type.
@@ -60,19 +60,19 @@ class Renderer: public ReferenceCounted
     Renderer &operator=(const Renderer&);
 
   private:
-    intrusive_ptr<Scene> mp_scene;
+    intrusive_ptr<const Scene> mp_scene;
   };
 
 /////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-inline Renderer::Renderer(intrusive_ptr<Scene> ip_scene):
+inline Renderer::Renderer(intrusive_ptr<const Scene> ip_scene):
 mp_scene(ip_scene)
   {
   ASSERT(ip_scene);
   }
 
-inline intrusive_ptr<Scene> Renderer::GetScene() const
+inline intrusive_ptr<const Scene> Renderer::GetScene() const
   {
   return mp_scene;
   }

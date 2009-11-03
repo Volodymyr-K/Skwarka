@@ -26,7 +26,7 @@ class SamplerBasedRenderer: public Renderer
     /**
     * Creates SamplerBasedRenderer instance for the specified scene. The logger implementation must be thread-safe.
     */
-    SamplerBasedRenderer(intrusive_ptr<Scene> ip_scene, intrusive_ptr<Sampler> ip_sampler, intrusive_ptr<Log> ip_log = NULL);
+    SamplerBasedRenderer(intrusive_ptr<const Scene> ip_scene, intrusive_ptr<Sampler> ip_sampler, intrusive_ptr<Log> ip_log = NULL);
 
     /**
     * Sets surface integrator to be used for computing surface scattering.
@@ -45,7 +45,7 @@ class SamplerBasedRenderer: public Renderer
     * The rendered image is saved to the camera's film. The film is cleared before rendering, so the previous image will be lost.
     * @param ip_camera Camera in the scene for which the image is to be rendered.
     */
-    virtual void Render(intrusive_ptr<Camera> ip_camera) const;
+    virtual void Render(intrusive_ptr<const Camera> ip_camera) const;
 
     /**
     * Computes radiance for the the specified ray.
@@ -80,7 +80,7 @@ class SamplerBasedRenderer: public Renderer
     class FilmWriterFilter;
 
   private:
-    intrusive_ptr<Scene> mp_scene;
+    intrusive_ptr<const Scene> mp_scene;
 
     intrusive_ptr<Sampler> mp_sampler;
 

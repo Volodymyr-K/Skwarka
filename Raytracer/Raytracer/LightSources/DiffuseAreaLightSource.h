@@ -16,7 +16,7 @@ class DiffuseAreaLightSource: public AreaLightSource
     /**
     * Creates DiffuseAreaLightSource instance with the specified radiance value and triangle mesh.
     */
-    DiffuseAreaLightSource(const Spectrum_d &i_radiance, intrusive_ptr<TriangleMesh> ip_mesh);
+    DiffuseAreaLightSource(const Spectrum_d &i_radiance, intrusive_ptr<const TriangleMesh> ip_mesh);
 
     /**
     * Returns the light source radiance for the specified point on a mesh and specified outgoing direction.
@@ -75,7 +75,7 @@ class DiffuseAreaLightSource: public AreaLightSource
   private:
     Spectrum_d m_radiance;
 
-    intrusive_ptr<TriangleMesh> mp_mesh;
+    intrusive_ptr<const TriangleMesh> mp_mesh;
 
     /**
     * Total area of the triangle mesh.

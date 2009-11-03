@@ -31,7 +31,7 @@ class TriangleTree
 
     ////////////////////////////////////////////////// PUBLIC INTERFACE /////////////////////////////////////////////////////
   public:
-    TriangleTree(std::vector<intrusive_ptr<Primitive> > i_primitives);
+    TriangleTree(std::vector<intrusive_ptr<const Primitive> > i_primitives);
     ~TriangleTree();
 
     ////////////////////////////////////////////////////// QUERIES  /////////////////////////////////////////////////////////
@@ -67,7 +67,7 @@ class TriangleTree
     std::vector<size_t> m_primitive_indices;
     std::vector<size_t> m_triangle_indices;
 
-    std::vector<intrusive_ptr<Primitive> > m_primitives;
+    std::vector<intrusive_ptr<const Primitive> > m_primitives;
 
     // The root node of the tree.
     BaseNode *mp_root;

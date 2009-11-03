@@ -5,7 +5,7 @@
 #include <Raytracer/BxDFs/OrenNayar.h>
 #include <Math/Util.h>
 
-Matte::Matte(intrusive_ptr<Texture<Spectrum_d> > ip_reflectance, intrusive_ptr<Texture<double> > ip_sigma):
+Matte::Matte(intrusive_ptr<const Texture<Spectrum_d> > ip_reflectance, intrusive_ptr<const Texture<double> > ip_sigma):
 Material(), mp_reflectance(ip_reflectance), mp_sigma(ip_sigma)
   {
   ASSERT(ip_reflectance);

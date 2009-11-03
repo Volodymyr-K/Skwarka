@@ -6,7 +6,7 @@
 #include <Raytracer/Core/Fresnel.h>
 #include <Math/Util.h>
 
-Transparent::Transparent(intrusive_ptr<Texture<Spectrum_d> > ip_reflectance, intrusive_ptr<Texture<Spectrum_d> > ip_transmittance, double i_refractive_index):
+Transparent::Transparent(intrusive_ptr<const Texture<Spectrum_d> > ip_reflectance, intrusive_ptr<const Texture<Spectrum_d> > ip_transmittance, double i_refractive_index):
 Material(), mp_reflectance(ip_reflectance), mp_transmittance(ip_transmittance), m_refractive_index(i_refractive_index)
   {
   ASSERT(ip_reflectance);

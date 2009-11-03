@@ -3,7 +3,7 @@
 #include <Math/SamplingRoutines.h>
 #include <Math/Util.h>
 
-DiffuseAreaLightSource::DiffuseAreaLightSource(const Spectrum_d &i_radiance, intrusive_ptr<TriangleMesh> ip_mesh): AreaLightSource(ip_mesh),
+DiffuseAreaLightSource::DiffuseAreaLightSource(const Spectrum_d &i_radiance, intrusive_ptr<const TriangleMesh> ip_mesh): AreaLightSource(ip_mesh),
 m_radiance(i_radiance), mp_mesh(ip_mesh)
   {
   ASSERT(InRange(i_radiance,0.0,DBL_INF));

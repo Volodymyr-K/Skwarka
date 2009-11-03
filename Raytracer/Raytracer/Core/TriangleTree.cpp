@@ -22,7 +22,7 @@ __forceinline bool Intersect(const BBox3D_f &i_bbox, const RayInv &i_ray)
     (tNear3 > tFar1 || tNear3 > tFar2 || tNear3 > t1) )==false;
   }
 
-TriangleTree::TriangleTree(std::vector<intrusive_ptr<Primitive> > i_primitives):
+TriangleTree::TriangleTree(std::vector<intrusive_ptr<const Primitive> > i_primitives):
 mp_root(NULL), m_primitives(i_primitives),
 m_NodePool(sizeof(TriangleTree::Node), NODES_TO_ALLOCATE),
 m_LeafPool(sizeof(TriangleTree::Leaf), NODES_TO_ALLOCATE)
@@ -71,7 +71,7 @@ void TriangleTree::_BuildTree()
   size_t index = 0;
   for(size_t i=0;i<m_primitives.size();++i)
     {
-    intrusive_ptr<TriangleMesh> p_mesh=m_primitives[i]->GetTriangleMesh();
+    intrusive_ptr<const TriangleMesh> p_mesh=m_primitives[i]->GetTriangleMesh();
     for(size_t j=0;j<p_mesh->GetNumberOfTriangles();++j)
       {
       MeshTriangle triangle = p_mesh->GetTriangle(j);

@@ -129,14 +129,14 @@ class SamplerBasedRenderer::SamplesGeneratorFilter: public tbb::filter
 class SamplerBasedRenderer::IntegratorFilter: public tbb::filter
   {
   public:
-    IntegratorFilter(const SamplerBasedRenderer *ip_renderer, intrusive_ptr<Camera> ip_camera, intrusive_ptr<Log> ip_log);
+    IntegratorFilter(const SamplerBasedRenderer *ip_renderer, intrusive_ptr<const Camera> ip_camera, intrusive_ptr<Log> ip_log);
 
     void* operator()(void* ip_chunk);
 
   private:
     const SamplerBasedRenderer *mp_renderer;
 
-    intrusive_ptr<Camera> mp_camera;
+    intrusive_ptr<const Camera> mp_camera;
     intrusive_ptr<Log> mp_log;
   };
 
@@ -159,7 +159,7 @@ class SamplerBasedRenderer::FilmWriterFilter: public tbb::filter
 //////////////////////////////////////// SamplerBasedRenderer /////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-SamplerBasedRenderer::SamplerBasedRenderer(intrusive_ptr<Scene> ip_scene, intrusive_ptr<Sampler> ip_sampler, intrusive_ptr<Log> ip_log): Renderer(ip_scene),
+SamplerBasedRenderer::SamplerBasedRenderer(intrusive_ptr<const Scene> ip_scene, intrusive_ptr<Sampler> ip_sampler, intrusive_ptr<Log> ip_log): Renderer(ip_scene),
 mp_scene(ip_scene), mp_sampler(ip_sampler), mp_log(ip_log), mp_surface_integrator(NULL), mp_volume_integrator(NULL)
   {
   ASSERT(ip_scene);
@@ -229,7 +229,7 @@ Spectrum_d SamplerBasedRenderer::Transmittance(const Ray &i_ray, const Sample *i
     return Spectrum_d(1.0);
   }
 
-void SamplerBasedRenderer::Render(intrusive_ptr<Camera> ip_camera) const
+void SamplerBasedRenderer::Render(intrusive_ptr<const Camera> ip_camera) const
   {
   ASSERT(ip_camera);
   ASSERT(mp_surface_integrator);
@@ -388,7 +388,7 @@ void* SamplerBasedRenderer::SamplesGeneratorFilter::operator()(void*)
 ////////////////////////////////////////// IntegratorFilter ///////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-SamplerBasedRenderer::IntegratorFilter::IntegratorFilter(const SamplerBasedRenderer *ip_renderer, intrusive_ptr<Camera> ip_camera, intrusive_ptr<Log> ip_log): tbb::filter(parallel),
+SamplerBasedRenderer::IntegratorFilter::IntegratorFilter(const SamplerBasedRenderer *ip_renderer, intrusive_ptr<const Camera> ip_camera, intrusive_ptr<Log> ip_log): tbb::filter(parallel),
 mp_renderer(ip_renderer), mp_camera(ip_camera), mp_log(ip_log)
   {
   ASSERT(ip_renderer);

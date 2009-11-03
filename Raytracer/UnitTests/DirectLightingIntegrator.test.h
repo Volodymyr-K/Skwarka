@@ -33,7 +33,7 @@ class DirectLightingIntegratorTestSuite : public CxxTest::TestSuite
       {
       intrusive_ptr<TriangleMesh> p_mesh = m_spheres[0];
       intrusive_ptr<Primitive> p_primitive = _CreatePrimitive(p_mesh);
-      std::vector<intrusive_ptr<Primitive> > primitives(1,p_primitive);
+      std::vector<intrusive_ptr<const Primitive> > primitives(1,p_primitive);
 
       LightSources lights;
       lights.m_delta_light_sources.push_back( intrusive_ptr<DeltaLightSource>(new PointLight(Point3D_d(10,0,0),Spectrum_d(100))) );
@@ -63,7 +63,7 @@ class DirectLightingIntegratorTestSuite : public CxxTest::TestSuite
       {
       intrusive_ptr<TriangleMesh> p_mesh = m_spheres[0];
       intrusive_ptr<Primitive> p_primitive = _CreatePrimitive(p_mesh);
-      std::vector<intrusive_ptr<Primitive> > primitives(1,p_primitive);
+      std::vector<intrusive_ptr<const Primitive> > primitives(1,p_primitive);
 
       LightSources lights;
       lights.m_infinitiy_light_sources.push_back(intrusive_ptr<InfiniteLightSource>(new InfiniteLightSourceMock(Spectrum_d(1), m_world_bbox)) );
@@ -93,7 +93,7 @@ class DirectLightingIntegratorTestSuite : public CxxTest::TestSuite
     // There are two area lights in the scene.
     void test_DirectLightingIntegrator_AreaLights()
       {
-      std::vector<intrusive_ptr<Primitive> > primitives;
+      std::vector<intrusive_ptr<const Primitive> > primitives;
       primitives.push_back(_CreatePrimitive(m_spheres[0]));
       primitives.push_back( _CreatePrimitive(m_spheres[1], _CreateAreaLight(m_spheres[1], Spectrum_d(10))) );
       primitives.push_back( _CreatePrimitive(m_spheres[2], _CreateAreaLight(m_spheres[2], Spectrum_d(20))) );
@@ -129,7 +129,7 @@ class DirectLightingIntegratorTestSuite : public CxxTest::TestSuite
     // There are two area lights and two infinity lights in the scene. Also, the integrator is called without Sample instance.
     void test_DirectLightingIntegrator_InfinityAndAreaLights()
       {
-      std::vector<intrusive_ptr<Primitive> > primitives;
+      std::vector<intrusive_ptr<const Primitive> > primitives;
       primitives.push_back(_CreatePrimitive(m_spheres[0]));
       primitives.push_back( _CreatePrimitive(m_spheres[1], _CreateAreaLight(m_spheres[1], Spectrum_d(10))) );
       primitives.push_back( _CreatePrimitive(m_spheres[2], _CreateAreaLight(m_spheres[2], Spectrum_d(20))) );
@@ -166,7 +166,7 @@ class DirectLightingIntegratorTestSuite : public CxxTest::TestSuite
     // There are two area lights and two infinity lights in the scene but the intersection is inside the sphere so there's no lighting.
     void test_DirectLightingIntegrator_NoLighting()
       {
-      std::vector<intrusive_ptr<Primitive> > primitives;
+      std::vector<intrusive_ptr<const Primitive> > primitives;
       primitives.push_back(_CreatePrimitive(m_spheres[0]));
       primitives.push_back( _CreatePrimitive(m_spheres[1], _CreateAreaLight(m_spheres[1], Spectrum_d(10))) );
       primitives.push_back( _CreatePrimitive(m_spheres[2], _CreateAreaLight(m_spheres[2], Spectrum_d(20))) );

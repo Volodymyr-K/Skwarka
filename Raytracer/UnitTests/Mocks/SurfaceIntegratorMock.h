@@ -14,19 +14,19 @@ Evaluates direct lighting only with fixed number of random samples.
 class SurfaceIntegratorMock: public SurfaceIntegrator
   {
   public:
-    SurfaceIntegratorMock(intrusive_ptr<Renderer> ip_renderer);
+    SurfaceIntegratorMock(intrusive_ptr<const Renderer> ip_renderer);
 
     virtual Spectrum_d Radiance(const RayDifferential &i_ray, const Intersection &i_intersection, const Sample *ip_sample, MemoryPool &i_pool) const;
 
   private:
-    intrusive_ptr<Scene> mp_scene;
-    intrusive_ptr<Renderer> mp_renderer;
+    intrusive_ptr<const Scene> mp_scene;
+    intrusive_ptr<const Renderer> mp_renderer;
   };
 
 /////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-SurfaceIntegratorMock::SurfaceIntegratorMock(intrusive_ptr<Renderer> ip_renderer):
+SurfaceIntegratorMock::SurfaceIntegratorMock(intrusive_ptr<const Renderer> ip_renderer):
 SurfaceIntegrator(), mp_renderer(ip_renderer), mp_scene(ip_renderer->GetScene())
   {
   ASSERT(ip_renderer);

@@ -1,7 +1,7 @@
 #include "DirectLightingSurfaceIntegrator.h"
 #include <Math/ThreadSafeRandom.h>
 
-DirectLightingSurfaceIntegrator::DirectLightingSurfaceIntegrator(intrusive_ptr<Renderer> ip_renderer, intrusive_ptr<DirectLightingIntegrator> ip_direct_lighting_integrator):
+DirectLightingSurfaceIntegrator::DirectLightingSurfaceIntegrator(intrusive_ptr<const Renderer> ip_renderer, intrusive_ptr<DirectLightingIntegrator> ip_direct_lighting_integrator):
 SurfaceIntegrator(), mp_renderer(ip_renderer), mp_scene(ip_renderer->GetScene()), mp_direct_lighting_integrator(ip_direct_lighting_integrator)
   {
   ASSERT(ip_renderer);

@@ -193,7 +193,7 @@ inline void TestTracer::LoadMesh()
     }
   fclose(fp);
 
-  std::vector<intrusive_ptr<Primitive> > primitives;
+  std::vector<intrusive_ptr<const Primitive> > primitives;
 
   /////// Add car primitive ///
   mp_mesh = intrusive_ptr<TriangleMesh>( new TriangleMesh(vertices, triangles, true) );

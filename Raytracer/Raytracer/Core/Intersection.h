@@ -14,7 +14,7 @@ struct Intersection
   /**
   * Pointer to the intersected primitive.
   */
-  intrusive_ptr<Primitive> mp_primitive;
+  intrusive_ptr<const Primitive> mp_primitive;
 
   /**
   * Describes local surface geometry at the intersection point.

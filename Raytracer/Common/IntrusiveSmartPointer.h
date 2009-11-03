@@ -19,18 +19,18 @@ class ReferenceCounted
     /**
     * Increments the counter by one and returns the incremented value.
     */
-    size_t IncRef();
+    size_t IncRef() const;
 
     /**
     * Decrements the counter by one and returns the decremented value.
     */
-    size_t DecRef();
+    size_t DecRef() const;
 
     virtual ~ReferenceCounted();
 
   private:
-    tbb::atomic<size_t> m_references;
-    //size_t m_references;
+    mutable tbb::atomic<size_t> m_references;
+    //mutable size_t m_references;
 
     // Not implemented. All classes inheriting ReferenceCounted should only be passed by pointer or reference.
     ReferenceCounted(const ReferenceCounted &);
@@ -51,12 +51,12 @@ inline ReferenceCounted::~ReferenceCounted()
   {
   }
 
-inline size_t ReferenceCounted::IncRef()
+inline size_t ReferenceCounted::IncRef() const
   {
   return ++m_references;
   }
 
-inline size_t ReferenceCounted::DecRef()
+inline size_t ReferenceCounted::DecRef() const
   {
   ASSERT(m_references>0);
   return --m_references;
@@ -66,7 +66,7 @@ inline size_t ReferenceCounted::DecRef()
 * This function is called by boost library when a new intrusive_ptr instance is created.
 */
 template<typename T>
-void intrusive_ptr_add_ref(T *i_ptr)
+void intrusive_ptr_add_ref(const T *i_ptr)
   {
   i_ptr->IncRef();
   }
@@ -75,7 +75,7 @@ void intrusive_ptr_add_ref(T *i_ptr)
 * This function is called by boost library when a an intrusive_ptr instance is deleted.
 */
 template<typename T>
-void intrusive_ptr_release(T *i_ptr)
+void intrusive_ptr_release(const T *i_ptr)
   {
   if (i_ptr->DecRef()==0)
     delete i_ptr;

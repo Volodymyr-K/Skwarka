@@ -21,14 +21,14 @@ class Scene: public ReferenceCounted
     /**
     * Constructs Scene instance with specified primitives and light sources.
     */
-    Scene(const std::vector<intrusive_ptr<Primitive> > &i_primitives, const LightSources &i_light_sources);
+    Scene(const std::vector<intrusive_ptr<const Primitive> > &i_primitives, const LightSources &i_light_sources);
 
     /**
     * Returns all primitives in the scene.
     * @warning For the sake of performance this method returns a constant reference to a member field.
     * The calling code should never utilize the reference after the Scene is destroyed.
     */
-    const std::vector<intrusive_ptr<Primitive> > &GetPrimitives() const;
+    const std::vector<intrusive_ptr<const Primitive> > &GetPrimitives() const;
 
     /**
     * Returns all light sources in the scene.
@@ -66,7 +66,7 @@ class Scene: public ReferenceCounted
     Scene &operator=(const Scene&);
 
   private:
-    std::vector<intrusive_ptr<Primitive> > m_primitives;
+    std::vector<intrusive_ptr<const Primitive> > m_primitives;
 
     TriangleTree m_tree;
 
@@ -76,12 +76,12 @@ class Scene: public ReferenceCounted
 /////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-inline Scene::Scene(const std::vector<intrusive_ptr<Primitive> > &i_primitives, const LightSources &i_light_sources):
+inline Scene::Scene(const std::vector<intrusive_ptr<const Primitive> > &i_primitives, const LightSources &i_light_sources):
 m_primitives(i_primitives), m_light_sources(i_light_sources), m_tree(i_primitives)
   {
   }
 
-inline const std::vector<intrusive_ptr<Primitive> > &Scene::GetPrimitives() const
+inline const std::vector<intrusive_ptr<const Primitive> > &Scene::GetPrimitives() const
   {
   return m_primitives;
   }

@@ -9,15 +9,15 @@
 class DirectLightingSurfaceIntegrator: public SurfaceIntegrator
   {
   public:
-    DirectLightingSurfaceIntegrator(intrusive_ptr<Renderer> ip_renderer, intrusive_ptr<DirectLightingIntegrator> ip_direct_lighting_integrator);
+    DirectLightingSurfaceIntegrator(intrusive_ptr<const Renderer> ip_renderer, intrusive_ptr<DirectLightingIntegrator> ip_direct_lighting_integrator);
 
     virtual Spectrum_d Radiance(const RayDifferential &i_ray, const Intersection &i_intersection, const Sample *ip_sample, MemoryPool &i_pool) const;
 
     virtual void RequestSamples(intrusive_ptr<Sampler> ip_sampler);
 
   private:
-    intrusive_ptr<Scene> mp_scene;
-    intrusive_ptr<Renderer> mp_renderer;
+    intrusive_ptr<const Scene> mp_scene;
+    intrusive_ptr<const Renderer> mp_renderer;
     intrusive_ptr<DirectLightingIntegrator> mp_direct_lighting_integrator;
   };
 
