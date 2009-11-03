@@ -8,6 +8,13 @@ m_light_sources(i_light_sources)
   m_infinity_lights_num = i_light_sources.m_infinitiy_light_sources.size();
   m_area_lights_num = i_light_sources.m_area_light_sources.size();
   m_total_lights_num = m_infinity_lights_num+m_area_lights_num;
+
+  for(size_t i=0;i<m_area_lights_num;++i)
+    {
+    BBox3D_d bbox = Convert<double>(m_light_sources.m_area_light_sources[i]->GetTriangleMesh_RawPtr()->GetBounds());
+    double power = m_light_sources.m_area_light_sources[i]->Power().Luminance();
+    m_area_lights_intensities.push_back( power/(M_PI*bbox.Area()) );
+    }
   }
 
 void IrradianceLightsSampling::GetLightsCDF(const Point3D_d &i_point, double *o_lights_CDF) const
@@ -22,15 +29,11 @@ void IrradianceLightsSampling::GetLightsCDF(const Point3D_d &i_point, double *o_
 
   for(size_t i=0;i<m_area_lights_num;++i)
     {
-    BBox3D_d bbox = Convert<double>(m_light_sources.m_area_light_sources[i]->GetTriangleMesh()->GetBounds());
-    double power = m_light_sources.m_area_light_sources[i]->Power().Luminance();
-    double intensity = power/(M_PI*bbox.Area());
+    BBox3D_d bbox = Convert<double>(m_light_sources.m_area_light_sources[i]->GetTriangleMesh_RawPtr()->GetBounds());
+    double intensity = m_area_lights_intensities[i];
 
     double solid_angle = MathRoutines::SubtendedSolidAngle(i_point, bbox);
-    if (bbox.Inside(i_point))
-      o_lights_CDF[i+m_infinity_lights_num] = 4.0*M_PI*intensity;
-    else
-      o_lights_CDF[i+m_infinity_lights_num] = solid_angle*intensity;
+    o_lights_CDF[i+m_infinity_lights_num] = solid_angle*intensity;
     }
 
   _Weights_To_CDF(o_lights_CDF);
@@ -49,9 +52,8 @@ void IrradianceLightsSampling::GetLightsCDF(const Point3D_d &i_point, const Vect
 
   for(size_t i=0;i<m_area_lights_num;++i)
     {
-    BBox3D_d bbox = Convert<double>(m_light_sources.m_area_light_sources[i]->GetTriangleMesh()->GetBounds());
-    double power = m_light_sources.m_area_light_sources[i]->Power().Luminance();
-    double intensity = power/(M_PI*bbox.Area());
+    BBox3D_d bbox = Convert<double>(m_light_sources.m_area_light_sources[i]->GetTriangleMesh_RawPtr()->GetBounds());
+    double intensity = m_area_lights_intensities[i];
 
     if (bbox.Inside(i_point))
       o_lights_CDF[i+m_infinity_lights_num] = M_PI*intensity;

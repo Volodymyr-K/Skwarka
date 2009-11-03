@@ -2,8 +2,10 @@
 #define IRRADIANCE_LIGHTS_SAMPLING_H
 
 #include <Common/Common.h>
+#include <Math/Geometry.h>
 #include <Raytracer/Core/LightsSamplingStrategy.h>
 #include <Raytracer/Core/LightSources.h>
+#include <vector>
 
 /**
 * The irradiance-based LightsSamplingStrategy implementation.
@@ -46,6 +48,8 @@ class IrradianceLightsSampling: public LightsSamplingStrategy
   private:
     const LightSources &m_light_sources;
     size_t m_infinity_lights_num, m_area_lights_num, m_total_lights_num;
+
+    std::vector<double> m_area_lights_intensities;
   };
 
 #endif // IRRADIANCE_LIGHTS_SAMPLING_H

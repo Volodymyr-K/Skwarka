@@ -48,3 +48,8 @@ intrusive_ptr<const TriangleMesh> AreaLightSource::GetTriangleMesh() const
   {
   return mp_mesh;
   }
+
+const TriangleMesh *AreaLightSource::GetTriangleMesh_RawPtr() const
+  {
+  return mp_mesh.get();
+  }

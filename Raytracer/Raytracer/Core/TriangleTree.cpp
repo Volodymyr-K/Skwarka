@@ -168,9 +168,9 @@ bool TriangleTree::Intersect(const RayDifferential &i_ray, Intersection &o_inter
   if (triangle_index != mp_root->m_end)
     {
     if (o_t) *o_t=ray_inv.m_ray.m_max_t;
-    o_intersection.mp_primitive = m_primitives[m_primitive_indices[triangle_index]];
+    o_intersection.mp_primitive = m_primitives[m_primitive_indices[triangle_index]].get();
     o_intersection.m_triangle_index = m_triangle_indices[triangle_index];
-    o_intersection.mp_primitive->GetTriangleMesh()->ComputeDifferentialGeometry(o_intersection.m_triangle_index, i_ray, o_intersection.m_dg);
+    o_intersection.mp_primitive->GetTriangleMesh_RawPtr()->ComputeDifferentialGeometry(o_intersection.m_triangle_index, i_ray, o_intersection.m_dg);
     return true;
     }
 

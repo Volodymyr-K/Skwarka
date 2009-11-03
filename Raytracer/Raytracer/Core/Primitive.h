@@ -31,11 +31,38 @@ class Primitive: public ReferenceCounted
     Primitive(intrusive_ptr<const TriangleMesh> ip_mesh, intrusive_ptr<const Material> ip_material,
       intrusive_ptr<const AreaLightSource> ip_area_light_source = NULL, intrusive_ptr<const Texture<double> > ip_bump_map = NULL);
 
+    /**
+    * Returns a pointer to the TriangleMesh the primitive is associated with.
+    */
     intrusive_ptr<const TriangleMesh> GetTriangleMesh() const;
 
+    /**
+    * Returns a raw pointer to the TriangleMesh the primitive is associated with.
+    * @warning The calling code should never utilize the pointer after the Primitive is destroyed.
+    */
+    const TriangleMesh *GetTriangleMesh_RawPtr() const;
+
+    /**
+    * Returns a pointer to the Material the primitive is associated with.
+    */
     intrusive_ptr<const Material> GetMaterial() const;
 
+    /**
+    * Returns a raw pointer to the Material the primitive is associated with.
+    * @warning The calling code should never utilize the pointer after the Primitive is destroyed.
+    */
+    intrusive_ptr<const Material> GetMaterial_RawPtr() const;
+
+    /**
+    * Returns a pointer to the AreaLightSource the primitive is associated with or NULL if the primitive does not have emission properties.
+    */
     intrusive_ptr<const AreaLightSource> GetAreaLightSource() const;
+
+    /**
+    * Returns a raw pointer to the AreaLightSource the primitive is associated with or NULL if the primitive does not have emission properties.
+    * @warning The calling code should never utilize the pointer after the Primitive is destroyed.
+    */
+    const AreaLightSource *GetAreaLightSource_RawPtr() const;
 
     /**
     * Returns a pointer to BSDF describing local scattering properties at the specified surface point.
@@ -92,14 +119,29 @@ inline intrusive_ptr<const TriangleMesh> Primitive::GetTriangleMesh() const
   return mp_mesh;
   }
 
+inline const TriangleMesh *Primitive::GetTriangleMesh_RawPtr() const
+  {
+  return mp_mesh.get();
+  }
+
 inline intrusive_ptr<const Material> Primitive::GetMaterial() const
   {
   return mp_material;
   }
 
+inline intrusive_ptr<const Material> Primitive::GetMaterial_RawPtr() const
+  {
+  return mp_material.get();
+  }
+
 inline intrusive_ptr<const AreaLightSource> Primitive::GetAreaLightSource() const
   {
   return mp_area_light_source;
+  }
+
+inline const AreaLightSource *Primitive::GetAreaLightSource_RawPtr() const
+  {
+  return mp_area_light_source.get();
   }
 
 inline BSDF *Primitive::GetBSDF(const DifferentialGeometry &i_dg, size_t i_triangle_index, MemoryPool &i_pool) const

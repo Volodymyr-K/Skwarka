@@ -50,7 +50,7 @@ class SamplerBasedRenderer::PixelsChunk
     void SetSubSampler(intrusive_ptr<SubSampler> ip_sub_sampler);   
 
     /**
-    * Returns (weak) pointer to the next sample populated by the SubSampler or NULL if there are no more samples.
+    * Returns (raw) pointer to the next sample populated by the SubSampler or NULL if there are no more samples.
     * The method always returns pointer to the same Sample instance but calling this method makes SubSampler fill the Sample with the data.
     */
     const Sample *GetNextSample();

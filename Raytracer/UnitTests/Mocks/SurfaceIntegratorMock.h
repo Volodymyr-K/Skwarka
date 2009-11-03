@@ -40,8 +40,9 @@ Spectrum_d SurfaceIntegratorMock::Radiance(const RayDifferential &i_ray, const I
 
   BSDF *p_bsdf = i_intersection.mp_primitive->GetBSDF(i_intersection.m_dg, i_intersection.m_triangle_index, i_pool);
 
-  if (i_intersection.mp_primitive->GetAreaLightSource())
-    radiance = i_intersection.mp_primitive->GetAreaLightSource()->Radiance(i_intersection.m_dg, i_intersection.m_triangle_index, i_ray.m_base_ray.m_direction*(-1.0));
+  const AreaLightSource *p_light_source = i_intersection.mp_primitive->GetAreaLightSource_RawPtr();
+  if (p_light_source)
+    radiance = p_light_source->Radiance(i_intersection.m_dg, i_intersection.m_triangle_index, i_ray.m_base_ray.m_direction*(-1.0));
 
   const LightSources &lights = mp_scene->GetLightSources();
 

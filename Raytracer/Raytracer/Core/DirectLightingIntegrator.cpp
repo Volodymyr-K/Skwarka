@@ -265,7 +265,7 @@ Spectrum_d DirectLightingIntegrator::_SampleBSDF(const Intersection &i_intersect
       if (hit)
         {
         // If area light is sampled.
-        const AreaLightSource *p_area_light = isect.mp_primitive->GetAreaLightSource().get();
+        const AreaLightSource *p_area_light = isect.mp_primitive->GetAreaLightSource_RawPtr();
         if (p_area_light)
           {
           double light_pdf = p_area_light->LightingPDF(lighting_ray, isect.m_triangle_index);

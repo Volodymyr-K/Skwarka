@@ -159,9 +159,15 @@ class AreaLightSource: public ReferenceCounted
   { 
   public:
     /**
-    * Returns the triangle mesh associated the area light is associated with.
+    * Returns a pointer to the TriangleMesh the area light is associated with.
     */
     intrusive_ptr<const TriangleMesh> GetTriangleMesh() const;
+
+    /**
+    * Returns a raw pointer to the TriangleMesh the area light is associated with.
+    * @warning The calling code should never utilize the pointer after the AreaLightSource is destroyed.
+    */
+    const TriangleMesh *GetTriangleMesh_RawPtr() const;
 
     /**
     * Returns the light source radiance for the specified point on a mesh and specified outgoing direction.
