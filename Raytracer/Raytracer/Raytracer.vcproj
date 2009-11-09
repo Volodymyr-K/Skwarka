@@ -202,6 +202,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\Core\Mapping.h"
+					>
+				</File>
+				<File
 					RelativePath=".\Core\Material.h"
 					>
 				</File>
@@ -607,6 +611,30 @@
 					RelativePath=".\LightsSamplingStrategies\PowerLightsSampling.cpp"
 					>
 				</File>
+			</Filter>
+		</Filter>
+		<Filter
+			Name="Mappings"
+			>
+			<Filter
+				Name="Header Files"
+				>
+				<File
+					RelativePath=".\Mappings\SphericalMapping2D.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Mappings\TransformMapping3D.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Mappings\UVMapping2D.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Source Files"
+				>
 			</Filter>
 		</Filter>
 	</Files>

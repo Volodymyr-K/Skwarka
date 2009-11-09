@@ -216,6 +216,34 @@ class UtilTestSuite : public CxxTest::TestSuite
       TS_ASSERT_DELTA(angle, estimated, 1e-5)
       }
 
+    void test_SphericalAngles()
+      {
+      Vector3D_d v=Vector3D_d(1,2,3).Normalized();
+
+      double sin_theta, cos_theta, sin_phi, cos_phi;
+      MathRoutines::SphericalAngles(v, sin_theta, cos_theta, sin_phi, cos_phi);
+      TS_ASSERT_DELTA(cos_theta, v[2], (1e-10));
+      TS_ASSERT_DELTA(sin_theta, sqrt(1.0-v[2]*v[2]), (1e-10));
+      TS_ASSERT_DELTA(sin_phi, v[1]/sqrt(v[0]*v[0]+v[1]*v[1]), (1e-10));
+      TS_ASSERT_DELTA(cos_phi, v[0]/sqrt(v[0]*v[0]+v[1]*v[1]), (1e-10));
+      }
+
+    void test_SphericalTheta()
+      {
+      Vector3D_d v=Vector3D_d(1,2,-3).Normalized();
+      
+      double theta = MathRoutines::SphericalTheta(v);
+      TS_ASSERT_DELTA(theta, acos(v[2]), (1e-10));
+      }
+
+    void test_SphericalPhi()
+      {
+      Vector3D_d v=Vector3D_d(2,-1,-3).Normalized();
+
+      double theta = MathRoutines::SphericalPhi(v);
+      TS_ASSERT_DELTA(theta, 2.0*M_PI-acos(v[0]/sqrt(v[0]*v[0]+v[1]*v[1])), (1e-10));
+      }
+
   private:
     double _EstimateSubtendedSolidAngle(const Point3D_d &i_point, BBox3D_d i_bbox) const
       {

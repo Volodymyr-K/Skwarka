@@ -179,3 +179,21 @@ public:
  void runTest() { suite_UtilTestSuite.test_SubtendedSolidAngle_PointOutside3(); }
 } testDescription_UtilTestSuite_test_SubtendedSolidAngle_PointOutside3;
 
+static class TestDescription_UtilTestSuite_test_SphericalAngles : public CxxTest::RealTestDescription {
+public:
+ TestDescription_UtilTestSuite_test_SphericalAngles() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 219, "test_SphericalAngles" ) {}
+ void runTest() { suite_UtilTestSuite.test_SphericalAngles(); }
+} testDescription_UtilTestSuite_test_SphericalAngles;
+
+static class TestDescription_UtilTestSuite_test_SphericalTheta : public CxxTest::RealTestDescription {
+public:
+ TestDescription_UtilTestSuite_test_SphericalTheta() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 231, "test_SphericalTheta" ) {}
+ void runTest() { suite_UtilTestSuite.test_SphericalTheta(); }
+} testDescription_UtilTestSuite_test_SphericalTheta;
+
+static class TestDescription_UtilTestSuite_test_SphericalPhi : public CxxTest::RealTestDescription {
+public:
+ TestDescription_UtilTestSuite_test_SphericalPhi() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 239, "test_SphericalPhi" ) {}
+ void runTest() { suite_UtilTestSuite.test_SphericalPhi(); }
+} testDescription_UtilTestSuite_test_SphericalPhi;
+

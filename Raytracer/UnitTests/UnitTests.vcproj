@@ -516,6 +516,22 @@
 						>
 					</File>
 				</Filter>
+				<Filter
+					Name="Mappings"
+					>
+					<File
+						RelativePath=".\SphericalMapping2D.test.h"
+						>
+					</File>
+					<File
+						RelativePath=".\TransformMapping3D.test.h"
+						>
+					</File>
+					<File
+						RelativePath=".\UVMapping2D.test.h"
+						>
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="Shapes"
@@ -726,6 +742,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\SphericalMapping2D.test.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\StratifiedSampler.test.cpp"
 				>
 			</File>
@@ -735,6 +755,10 @@
 			</File>
 			<File
 				RelativePath=".\Transform.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\TransformMapping3D.test.cpp"
 				>
 			</File>
 			<File
@@ -755,6 +779,10 @@
 			</File>
 			<File
 				RelativePath=".\Util.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\UVMapping2D.test.cpp"
 				>
 			</File>
 			<File

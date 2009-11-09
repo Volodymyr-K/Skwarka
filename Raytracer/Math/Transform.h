@@ -15,6 +15,9 @@
 class Transform
   {
   public:
+    /**
+    * Creates Transform instance that describes an identity transformation.
+    */
     Transform();
 
     Transform(double i_values[4][4]);
@@ -111,6 +114,14 @@ Transform MakeRotationZ(const double &i_angle);
 * @param i_axis Axis of rotation.
 */
 Transform MakeRotation(const double &i_angle, Vector3D_d i_axis);
+
+/**
+* Creates Transform object that describes rotation that matches i_source direction to i_target direction.
+* Specified vectors should be normalized and should not be collinear.
+* @param i_source Direction to be rotated to match i_target. Should be normalized.
+* @param i_target Direction the i_source should be rotated to. Should be normalized.
+*/
+Transform MakeMatchDirections(const Vector3D_d &i_source, const Vector3D_d &i_target);
 
 /**
 * Creates Transform object that describes transformation from "look-at" space to the world space.

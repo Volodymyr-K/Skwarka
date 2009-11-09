@@ -100,9 +100,15 @@ public:
  void runTest() { suite_TransformTestSuite.test_Transform_Rotation(); }
 } testDescription_TransformTestSuite_test_Transform_Rotation;
 
+static class TestDescription_TransformTestSuite_test_Transform_MatchDirections : public CxxTest::RealTestDescription {
+public:
+ TestDescription_TransformTestSuite_test_Transform_MatchDirections() : CxxTest::RealTestDescription( Tests_TransformTestSuite, suiteDescription_TransformTestSuite, 175, "test_Transform_MatchDirections" ) {}
+ void runTest() { suite_TransformTestSuite.test_Transform_MatchDirections(); }
+} testDescription_TransformTestSuite_test_Transform_MatchDirections;
+
 static class TestDescription_TransformTestSuite_test_Transform_LookAt : public CxxTest::RealTestDescription {
 public:
- TestDescription_TransformTestSuite_test_Transform_LookAt() : CxxTest::RealTestDescription( Tests_TransformTestSuite, suiteDescription_TransformTestSuite, 175, "test_Transform_LookAt" ) {}
+ TestDescription_TransformTestSuite_test_Transform_LookAt() : CxxTest::RealTestDescription( Tests_TransformTestSuite, suiteDescription_TransformTestSuite, 186, "test_Transform_LookAt" ) {}
  void runTest() { suite_TransformTestSuite.test_Transform_LookAt(); }
 } testDescription_TransformTestSuite_test_Transform_LookAt;
 

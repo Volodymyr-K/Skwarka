@@ -407,14 +407,14 @@ void TriangleTree::Leaf::Intersect(RayInv &i_ray, size_t &o_triangle_index) cons
     Vector3D_d e2 = Vector3D_d(v2-v0);
     Vector3D_d s1 = i_ray.m_ray.m_direction^e2;
     double divisor = s1*e1;
-    if (divisor == 0.0)
-      continue;
+    //if (divisor == 0.0)
+      //continue;
     double invDivisor = 1.0 / divisor;
 
     // Compute first barycentric coordinate
     Vector3D_d d = Vector3D_d(i_ray.m_ray.m_origin - v0);
     double b1 = (d*s1) * invDivisor;
-    if(b1 < -DBL_EPS || b1 > 1.0+DBL_EPS)
+    if(b1 < -DBL_EPS || b1 > 1.0+DBL_EPS || divisor==0.0)
       continue;
 
     // Compute second barycentric coordinate
@@ -450,14 +450,14 @@ bool TriangleTree::Leaf::IntersectTest(const RayInv &i_ray) const
     Vector3D_d e2 = Vector3D_d(v2-v0);
     Vector3D_d s1 = i_ray.m_ray.m_direction^e2;
     double divisor = s1*e1;
-    if (divisor == 0.0)
-      continue;
+    //if (divisor == 0.0)
+    //  continue;
     double invDivisor = 1.0 / divisor;
 
     // Compute first barycentric coordinate
     Vector3D_d d = Vector3D_d(i_ray.m_ray.m_origin - v0);
     double b1 = (d*s1) * invDivisor;
-    if(b1 < -DBL_EPS || b1 > 1.0+DBL_EPS)
+    if(b1 < -DBL_EPS || b1 > 1.0+DBL_EPS || divisor==0.0)
       continue;
 
     // Compute second barycentric coordinate

@@ -48,7 +48,7 @@ class SamplerBasedRenderer: public Renderer
     virtual void Render(intrusive_ptr<const Camera> ip_camera) const;
 
     /**
-    * Computes radiance for the the specified ray.
+    * Computes radiance for the specified ray.
     * @param i_ray Ray for which the radiance is to be computed. The direction component of the ray should be normalized.
     * @param ip_sample Sample instance containing requested samples sequences.
     * Can be null, in this case this is up to the implementation how to generate sample values.

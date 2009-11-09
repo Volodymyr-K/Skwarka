@@ -128,11 +128,6 @@ class BxDF
     */
     BxDF(BxDFType i_type);
 
-    /**
-    * A convenient static method that given a point on the sphere surface returns sine and cosine value for phi and theta angles.
-    */
-    static void VectorToAngles(const Vector3D_d &i_vector, double &o_sin_theta, double &o_cos_theta, double &o_sin_phi, double &o_cos_phi);
-
   private:
     const BxDFType m_type;
   };
@@ -192,26 +187,6 @@ inline BxDFType BxDF::GetType() const
 inline bool BxDF::MatchesFlags(BxDFType i_flags) const
   {
   return (m_type & i_flags) == m_type;
-  }
-
-inline void BxDF::VectorToAngles(const Vector3D_d &i_vector, double &o_sin_theta, double &o_cos_theta, double &o_sin_phi, double &o_cos_phi)
-  {
-  ASSERT(i_vector.IsNormalized());
-
-  o_sin_theta=sqrt(std::max(0.0, 1.0 - i_vector[2]*i_vector[2]));
-  o_cos_theta=i_vector[2];
-
-  if (o_sin_theta>DBL_3D_EPS)
-    {
-    double inv_theta_sin=1.0/o_sin_theta;
-    o_sin_phi=i_vector[1] * inv_theta_sin;
-    o_cos_phi=i_vector[0] * inv_theta_sin;
-    }
-  else
-    {
-    o_sin_phi=0.0;
-    o_cos_phi=1.0;
-    }
   }
 
 #endif // BXDF_H

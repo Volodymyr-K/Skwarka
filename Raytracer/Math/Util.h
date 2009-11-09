@@ -1,6 +1,7 @@
 #ifndef UTIL_H
 #define UTIL_H
 
+#include "Constants.h"
 #include "Geometry.h"
 
 /**
@@ -69,6 +70,29 @@ namespace MathRoutines
   template<typename T>
   T SubtendedSolidAngle(const Point3D<T> &i_point, BBox3D<T> i_bbox);
 
+  /**
+  * Given a normalized vector the method returns sine and cosine values for phi and theta angles.
+  * @warning The specified i_vector should be normalized.
+  * For the sake of performance the method does not check if it is normalized, this is up to the calling code to ensure this.
+  */
+  template<typename T>
+  void SphericalAngles(const Vector3D<T> &i_vector, T &o_sin_theta, T &o_cos_theta, T &o_sin_phi, T &o_cos_phi);
+
+  /**
+  * Given a normalized vector the method returns spherical theta angle in [0;PI] range.
+  * @warning The specified i_vector should be normalized.
+  * For the sake of performance the method does not check if it is normalized, this is up to the calling code to ensure this.
+  */
+  template<typename T>
+  T SphericalTheta(const Vector3D<T> &i_vector);
+
+  /**
+  * Given a normalized vector the method returns spherical phi angle in [0;2*PI) range.
+  * @warning The specified i_vector should be normalized.
+  * For the sake of performance the method does not check if it is normalized, this is up to the calling code to ensure this.
+  */
+  template<typename T>
+  T SphericalPhi(const Vector3D<T> &i_vector);
   };
 
 /////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
@@ -253,6 +277,44 @@ namespace MathRoutines
       return 4.0*M_PI;
     else
       return sum;
+    }
+
+  template<typename T>
+  void SphericalAngles(const Vector3D<T> &i_vector, T &o_sin_theta, T &o_cos_theta, T &o_sin_phi, T &o_cos_phi)
+    {
+    ASSERT(i_vector.IsNormalized());
+
+    o_sin_theta=sqrt(std::max(0.0, 1.0 - i_vector[2]*i_vector[2]));
+    o_cos_theta=i_vector[2];
+
+    if (o_sin_theta>DBL_3D_EPS)
+      {
+      double inv_theta_sin=1.0/o_sin_theta;
+      o_sin_phi = (T) (i_vector[1] * inv_theta_sin);
+      o_cos_phi = (T) (i_vector[0] * inv_theta_sin);
+      }
+    else
+      {
+      o_sin_phi = (T)0.0;
+      o_cos_phi = (T)1.0;
+      }
+    }
+
+  template<typename T>
+  T SphericalTheta(const Vector3D<T> &i_vector)
+    {
+    ASSERT(i_vector.IsNormalized());
+
+    return (T) acos(Clamp(i_vector[2], -1.0, 1.0));
+    }
+
+  template<typename T>
+  T SphericalPhi(const Vector3D<T> &i_vector)
+    {
+    ASSERT(i_vector.IsNormalized());
+
+    double p = atan2(i_vector[1], i_vector[0]);
+    return (T) ( (p < 0.0) ? p + 2.0*M_PI : p );
     }
 
   }

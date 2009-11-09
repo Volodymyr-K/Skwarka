@@ -52,12 +52,12 @@ struct DifferentialGeometry
   Vector3D_d m_normal_dy;
 
   /**
-  * First derivative of UV coordinates at U screen-space X coordinate.
+  * First derivative of UV coordinates at X screen-space coordinate.
   */
   Vector2D_d m_duv_dx;
   
   /**
-  * First derivative of UV coordinates at U screen-space Y coordinate.
+  * First derivative of UV coordinates at Y screen-space coordinate.
   */
   Vector2D_d m_duv_dy;
   };

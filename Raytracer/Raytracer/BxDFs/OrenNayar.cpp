@@ -1,4 +1,5 @@
 #include "OrenNayar.h"
+#include <Math/Util.h>
 
 OrenNayar::OrenNayar(Spectrum_d i_reflectance, double i_sigma):
 BxDF(BxDFType(BSDF_REFLECTION | BSDF_DIFFUSE)), m_reflectance(i_reflectance)
@@ -15,10 +16,10 @@ BxDF(BxDFType(BSDF_REFLECTION | BSDF_DIFFUSE)), m_reflectance(i_reflectance)
 Spectrum_d OrenNayar::Evaluate(const Vector3D_d &i_incident, const Vector3D_d &i_exitant) const
   {
   double sin_theta_incident, cos_theta_incident, sin_phi_incident, cos_phi_incident;
-  VectorToAngles(i_incident, sin_theta_incident, cos_theta_incident, sin_phi_incident, cos_phi_incident);
+  MathRoutines::SphericalAngles(i_incident, sin_theta_incident, cos_theta_incident, sin_phi_incident, cos_phi_incident);
 
   double sin_theta_exitant, cos_theta_exitant, sin_phi_exitant, cos_phi_exitant;
-  VectorToAngles(i_exitant, sin_theta_exitant, cos_theta_exitant, sin_phi_exitant, cos_phi_exitant);
+  MathRoutines::SphericalAngles(i_exitant, sin_theta_exitant, cos_theta_exitant, sin_phi_exitant, cos_phi_exitant);
 
   // Compute cosine term of Oren-Nayar model.
   double dcos = cos_phi_incident * cos_phi_exitant + sin_phi_incident * sin_phi_exitant;

@@ -18,7 +18,7 @@ class SurfaceIntegrator: public ReferenceCounted
   {
   public:
     /**
-    * Computes radiance along the the specified ray. The method will only be called when the ray does intersect some primitive in the scene.
+    * Computes radiance along the specified ray. The method will only be called when the ray does intersect some primitive in the scene.
     * @param i_ray Ray for which the radiance is to be computed. The direction component of the ray should be normalized.
     * @param i_intersection Intersection of the specified ray with the nearest primitive in the scene.
     * @param ip_sample Sample instance containing requested samples sequences.

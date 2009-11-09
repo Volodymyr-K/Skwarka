@@ -84,6 +84,14 @@ Transform MakeRotation(const double &i_angle, Vector3D_d i_axis)
   return Transform(Matrix4x4_d(m));
   }
 
+Transform MakeMatchDirections(const Vector3D_d &i_source, const Vector3D_d &i_target)
+  {
+  ASSERT(i_source.IsNormalized() && i_target.IsNormalized());
+
+  Vector3D_d rotation_axis = (i_target^i_source).Normalized();
+  return MakeRotation( -acos(i_target*i_source), rotation_axis);
+  }
+
 Transform MakeLookAt(const Point3D_d &i_origin, Vector3D_d i_direction, const Vector3D_d &i_up)
   {
 	double m[4][4];
