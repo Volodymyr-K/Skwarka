@@ -332,6 +332,10 @@
 					Name="Core"
 					>
 					<File
+						RelativePath=".\BlockedArray.test.h"
+						>
+					</File>
+					<File
 						RelativePath=".\BSDF.test.h"
 						>
 					</File>
@@ -571,6 +575,10 @@
 			</File>
 			<File
 				RelativePath=".\BlinnDistribution.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\BlockedArray.test.cpp"
 				>
 			</File>
 			<File

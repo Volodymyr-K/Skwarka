@@ -5,8 +5,8 @@
 #include <Raytracer/Core/Film.h>
 #include <Raytracer/Core/FilmFilter.h>
 #include <Raytracer/Core/Spectrum.h>
+#include <Raytracer/Core/BlockedArray.h>
 #include <Math/Point2D.h>
-#include <vector>
 
 /**
 * Film implementation that stores the resulting image as a two-dimensional array.
@@ -70,7 +70,7 @@ class ImageFilm: public Film
 
     // TBD: Cache filter values
     intrusive_ptr<const FilmFilter> mp_filter;
-    std::vector< ImageFilmPixel > m_pixels; // TBD: rewrite as blocked array
+    BlockedArray<ImageFilmPixel> m_pixels;
     
     Point2D_i m_crop_window_begin, m_crop_window_end;
   };
