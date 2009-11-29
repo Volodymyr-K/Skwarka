@@ -143,57 +143,141 @@ public:
  void runTest() { suite_UtilTestSuite.test_CeilLog2_NotPowerOf2Case(); }
 } testDescription_UtilTestSuite_test_CeilLog2_NotPowerOf2Case;
 
+static class TestDescription_UtilTestSuite_test_RoundDownPow2_ZeroCase : public CxxTest::RealTestDescription {
+public:
+ TestDescription_UtilTestSuite_test_RoundDownPow2_ZeroCase() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 153, "test_RoundDownPow2_ZeroCase" ) {}
+ void runTest() { suite_UtilTestSuite.test_RoundDownPow2_ZeroCase(); }
+} testDescription_UtilTestSuite_test_RoundDownPow2_ZeroCase;
+
+static class TestDescription_UtilTestSuite_test_RoundDownPow2_PowerOf2Case : public CxxTest::RealTestDescription {
+public:
+ TestDescription_UtilTestSuite_test_RoundDownPow2_PowerOf2Case() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 158, "test_RoundDownPow2_PowerOf2Case" ) {}
+ void runTest() { suite_UtilTestSuite.test_RoundDownPow2_PowerOf2Case(); }
+} testDescription_UtilTestSuite_test_RoundDownPow2_PowerOf2Case;
+
+static class TestDescription_UtilTestSuite_test_RoundDownPow2_NotPowerOf2Case : public CxxTest::RealTestDescription {
+public:
+ TestDescription_UtilTestSuite_test_RoundDownPow2_NotPowerOf2Case() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 163, "test_RoundDownPow2_NotPowerOf2Case" ) {}
+ void runTest() { suite_UtilTestSuite.test_RoundDownPow2_NotPowerOf2Case(); }
+} testDescription_UtilTestSuite_test_RoundDownPow2_NotPowerOf2Case;
+
+static class TestDescription_UtilTestSuite_test_RoundUpPow2_ZeroCase : public CxxTest::RealTestDescription {
+public:
+ TestDescription_UtilTestSuite_test_RoundUpPow2_ZeroCase() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 168, "test_RoundUpPow2_ZeroCase" ) {}
+ void runTest() { suite_UtilTestSuite.test_RoundUpPow2_ZeroCase(); }
+} testDescription_UtilTestSuite_test_RoundUpPow2_ZeroCase;
+
+static class TestDescription_UtilTestSuite_test_RoundUpPow2_PowerOf2Case : public CxxTest::RealTestDescription {
+public:
+ TestDescription_UtilTestSuite_test_RoundUpPow2_PowerOf2Case() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 173, "test_RoundUpPow2_PowerOf2Case" ) {}
+ void runTest() { suite_UtilTestSuite.test_RoundUpPow2_PowerOf2Case(); }
+} testDescription_UtilTestSuite_test_RoundUpPow2_PowerOf2Case;
+
+static class TestDescription_UtilTestSuite_test_RoundUpPow2_NotPowerOf2Case : public CxxTest::RealTestDescription {
+public:
+ TestDescription_UtilTestSuite_test_RoundUpPow2_NotPowerOf2Case() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 178, "test_RoundUpPow2_NotPowerOf2Case" ) {}
+ void runTest() { suite_UtilTestSuite.test_RoundUpPow2_NotPowerOf2Case(); }
+} testDescription_UtilTestSuite_test_RoundUpPow2_NotPowerOf2Case;
+
+static class TestDescription_UtilTestSuite_test_Mod_Case1 : public CxxTest::RealTestDescription {
+public:
+ TestDescription_UtilTestSuite_test_Mod_Case1() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 183, "test_Mod_Case1" ) {}
+ void runTest() { suite_UtilTestSuite.test_Mod_Case1(); }
+} testDescription_UtilTestSuite_test_Mod_Case1;
+
+static class TestDescription_UtilTestSuite_test_Mod_Case2 : public CxxTest::RealTestDescription {
+public:
+ TestDescription_UtilTestSuite_test_Mod_Case2() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 188, "test_Mod_Case2" ) {}
+ void runTest() { suite_UtilTestSuite.test_Mod_Case2(); }
+} testDescription_UtilTestSuite_test_Mod_Case2;
+
+static class TestDescription_UtilTestSuite_test_Mod_Case3 : public CxxTest::RealTestDescription {
+public:
+ TestDescription_UtilTestSuite_test_Mod_Case3() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 193, "test_Mod_Case3" ) {}
+ void runTest() { suite_UtilTestSuite.test_Mod_Case3(); }
+} testDescription_UtilTestSuite_test_Mod_Case3;
+
+static class TestDescription_UtilTestSuite_test_Mod_Case4 : public CxxTest::RealTestDescription {
+public:
+ TestDescription_UtilTestSuite_test_Mod_Case4() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 198, "test_Mod_Case4" ) {}
+ void runTest() { suite_UtilTestSuite.test_Mod_Case4(); }
+} testDescription_UtilTestSuite_test_Mod_Case4;
+
+static class TestDescription_UtilTestSuite_test_Mod_Case5 : public CxxTest::RealTestDescription {
+public:
+ TestDescription_UtilTestSuite_test_Mod_Case5() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 203, "test_Mod_Case5" ) {}
+ void runTest() { suite_UtilTestSuite.test_Mod_Case5(); }
+} testDescription_UtilTestSuite_test_Mod_Case5;
+
+static class TestDescription_UtilTestSuite_test_Log2_Case1 : public CxxTest::RealTestDescription {
+public:
+ TestDescription_UtilTestSuite_test_Log2_Case1() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 208, "test_Log2_Case1" ) {}
+ void runTest() { suite_UtilTestSuite.test_Log2_Case1(); }
+} testDescription_UtilTestSuite_test_Log2_Case1;
+
+static class TestDescription_UtilTestSuite_test_Log2_Case2 : public CxxTest::RealTestDescription {
+public:
+ TestDescription_UtilTestSuite_test_Log2_Case2() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 213, "test_Log2_Case2" ) {}
+ void runTest() { suite_UtilTestSuite.test_Log2_Case2(); }
+} testDescription_UtilTestSuite_test_Log2_Case2;
+
+static class TestDescription_UtilTestSuite_test_Log2_Case3 : public CxxTest::RealTestDescription {
+public:
+ TestDescription_UtilTestSuite_test_Log2_Case3() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 218, "test_Log2_Case3" ) {}
+ void runTest() { suite_UtilTestSuite.test_Log2_Case3(); }
+} testDescription_UtilTestSuite_test_Log2_Case3;
+
 static class TestDescription_UtilTestSuite_test_CoordinateSystem : public CxxTest::RealTestDescription {
 public:
- TestDescription_UtilTestSuite_test_CoordinateSystem() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 153, "test_CoordinateSystem" ) {}
+ TestDescription_UtilTestSuite_test_CoordinateSystem() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 223, "test_CoordinateSystem" ) {}
  void runTest() { suite_UtilTestSuite.test_CoordinateSystem(); }
 } testDescription_UtilTestSuite_test_CoordinateSystem;
 
 static class TestDescription_UtilTestSuite_test_SubtendedSolidAngle_PointInside : public CxxTest::RealTestDescription {
 public:
- TestDescription_UtilTestSuite_test_SubtendedSolidAngle_PointInside() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 173, "test_SubtendedSolidAngle_PointInside" ) {}
+ TestDescription_UtilTestSuite_test_SubtendedSolidAngle_PointInside() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 243, "test_SubtendedSolidAngle_PointInside" ) {}
  void runTest() { suite_UtilTestSuite.test_SubtendedSolidAngle_PointInside(); }
 } testDescription_UtilTestSuite_test_SubtendedSolidAngle_PointInside;
 
 static class TestDescription_UtilTestSuite_test_SubtendedSolidAngle_PointOnTheBoundaries : public CxxTest::RealTestDescription {
 public:
- TestDescription_UtilTestSuite_test_SubtendedSolidAngle_PointOnTheBoundaries() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 181, "test_SubtendedSolidAngle_PointOnTheBoundaries" ) {}
+ TestDescription_UtilTestSuite_test_SubtendedSolidAngle_PointOnTheBoundaries() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 251, "test_SubtendedSolidAngle_PointOnTheBoundaries" ) {}
  void runTest() { suite_UtilTestSuite.test_SubtendedSolidAngle_PointOnTheBoundaries(); }
 } testDescription_UtilTestSuite_test_SubtendedSolidAngle_PointOnTheBoundaries;
 
 static class TestDescription_UtilTestSuite_test_SubtendedSolidAngle_PointOutside1 : public CxxTest::RealTestDescription {
 public:
- TestDescription_UtilTestSuite_test_SubtendedSolidAngle_PointOutside1() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 189, "test_SubtendedSolidAngle_PointOutside1" ) {}
+ TestDescription_UtilTestSuite_test_SubtendedSolidAngle_PointOutside1() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 259, "test_SubtendedSolidAngle_PointOutside1" ) {}
  void runTest() { suite_UtilTestSuite.test_SubtendedSolidAngle_PointOutside1(); }
 } testDescription_UtilTestSuite_test_SubtendedSolidAngle_PointOutside1;
 
 static class TestDescription_UtilTestSuite_test_SubtendedSolidAngle_PointOutside2 : public CxxTest::RealTestDescription {
 public:
- TestDescription_UtilTestSuite_test_SubtendedSolidAngle_PointOutside2() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 199, "test_SubtendedSolidAngle_PointOutside2" ) {}
+ TestDescription_UtilTestSuite_test_SubtendedSolidAngle_PointOutside2() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 269, "test_SubtendedSolidAngle_PointOutside2" ) {}
  void runTest() { suite_UtilTestSuite.test_SubtendedSolidAngle_PointOutside2(); }
 } testDescription_UtilTestSuite_test_SubtendedSolidAngle_PointOutside2;
 
 static class TestDescription_UtilTestSuite_test_SubtendedSolidAngle_PointOutside3 : public CxxTest::RealTestDescription {
 public:
- TestDescription_UtilTestSuite_test_SubtendedSolidAngle_PointOutside3() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 209, "test_SubtendedSolidAngle_PointOutside3" ) {}
+ TestDescription_UtilTestSuite_test_SubtendedSolidAngle_PointOutside3() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 279, "test_SubtendedSolidAngle_PointOutside3" ) {}
  void runTest() { suite_UtilTestSuite.test_SubtendedSolidAngle_PointOutside3(); }
 } testDescription_UtilTestSuite_test_SubtendedSolidAngle_PointOutside3;
 
 static class TestDescription_UtilTestSuite_test_SphericalAngles : public CxxTest::RealTestDescription {
 public:
- TestDescription_UtilTestSuite_test_SphericalAngles() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 219, "test_SphericalAngles" ) {}
+ TestDescription_UtilTestSuite_test_SphericalAngles() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 289, "test_SphericalAngles" ) {}
  void runTest() { suite_UtilTestSuite.test_SphericalAngles(); }
 } testDescription_UtilTestSuite_test_SphericalAngles;
 
 static class TestDescription_UtilTestSuite_test_SphericalTheta : public CxxTest::RealTestDescription {
 public:
- TestDescription_UtilTestSuite_test_SphericalTheta() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 231, "test_SphericalTheta" ) {}
+ TestDescription_UtilTestSuite_test_SphericalTheta() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 301, "test_SphericalTheta" ) {}
  void runTest() { suite_UtilTestSuite.test_SphericalTheta(); }
 } testDescription_UtilTestSuite_test_SphericalTheta;
 
 static class TestDescription_UtilTestSuite_test_SphericalPhi : public CxxTest::RealTestDescription {
 public:
- TestDescription_UtilTestSuite_test_SphericalPhi() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 239, "test_SphericalPhi" ) {}
+ TestDescription_UtilTestSuite_test_SphericalPhi() : CxxTest::RealTestDescription( Tests_UtilTestSuite, suiteDescription_UtilTestSuite, 309, "test_SphericalPhi" ) {}
  void runTest() { suite_UtilTestSuite.test_SphericalPhi(); }
 } testDescription_UtilTestSuite_test_SphericalPhi;
 

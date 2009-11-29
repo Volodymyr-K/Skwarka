@@ -38,6 +38,8 @@
 #include <UnitTests/Mocks/InfiniteLightSourceMock.h>
 #include <UnitTests/Mocks/VolumeIntegratorMock.h>
 #include <Raytracer/LightsSamplingStrategies/IrradianceLightsSampling.h>
+#include <Raytracer/Core/MIPMap.h>
+#include "EasyBMP.h"
 
 class TestTracer
   {
@@ -73,6 +75,53 @@ int pixel_counter=0;
 
 inline void TestTracer::LoadMesh()
   {
+  BMP Input;
+  Input.ReadFromFile("image.bmp");
+
+  std::vector<std::vector<Spectrum_d> > values(Input.TellHeight(),std::vector<Spectrum_d>(Input.TellWidth()));
+  for( int j=0 ; j < Input.TellHeight() ; j++)
+    {
+    for( int i=0 ; i < Input.TellWidth() ; i++)
+      {
+      values[j][i]=Spectrum_d(Input(i,j)->Red,Input(i,j)->Green,Input(i,j)->Blue);
+      }
+    }
+
+  MIPMap<Spectrum_d> mipmap(values,false);
+/*
+  for(double x1=0;x1<0.01;x1+=0.0001)
+    for(double y1=0;y1<0.01;y1+=0.0001)
+      for(double x2=0;x2<0.01;x2+=0.0001)
+        for(double y2=0;y2<0.01;y2+=0.0001)
+          mipmap.Get(Point2D_d(double(1220.0)/Input.TellWidth(), double(-2340.0)/Input.TellHeight()), Vector2D_d(x1,y1), Vector2D_d(x2,y2));
+*/
+  for(int w=1;w<=100;++w)
+    {
+    double angle = 5.0*w/100;
+
+    Vector2D_d p1(cos(angle),sin(angle));p1*=0.0008;
+    Vector2D_d p2(cos(angle+M_PI_2),sin(angle+M_PI_2));p2*=0.03;
+
+    for( int j=0 ; j < Input.TellHeight() ; j++)
+      {
+      for( int i=0 ; i < Input.TellWidth() ; i++)
+        {
+        //values[j][i] = mipmap.Get(Point2D_d(double(i+0.5)/Input.TellWidth(), double(j+0.5)/Input.TellHeight()), width);
+        values[j][i] = mipmap.Evaluate(Point2D_d(double(i+0.5)/Input.TellWidth(), double(j+0.5)/Input.TellHeight()), p1, p2);
+        values[j][i].Clamp(0.0,255.0);
+        Input(i,j)->Red = (int) (values[j][i][0]+0.5);
+        Input(i,j)->Green = (int) (values[j][i][1]+0.5);
+        Input(i,j)->Blue = (int) (values[j][i][2]+0.5);
+        }
+      }
+
+    char buf[256];
+    sprintf(buf,"image%d.bmp",w);
+    Input.WriteToFile(buf);
+
+//    break;
+    }
+
   /*
   Sphere s;
   s.SetParameter("Center","0 0 0");

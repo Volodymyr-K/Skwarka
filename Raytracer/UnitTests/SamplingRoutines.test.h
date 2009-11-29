@@ -312,6 +312,16 @@ class SamplingRoutinesTestSuite : public CxxTest::TestSuite
       TS_ASSERT_EQUALS(SamplingRoutines::PowerHeuristic(0,0.2,10,0.8), 0.0);
       TS_ASSERT_EQUALS(SamplingRoutines::PowerHeuristic(10,0.2,10,0.8), 0.2*0.2/(0.2*0.2+0.8*0.8));
       }
+
+    void test_Lanczos()
+      {
+      TS_ASSERT_EQUALS(SamplingRoutines::Lanczos(0.0,2.0), 1.0);
+      TS_ASSERT(SamplingRoutines::Lanczos(0.3,2.0) > 0.0);
+      TS_ASSERT_EQUALS(SamplingRoutines::Lanczos(1.1,2.0), 0.0);
+
+      // Tests symmetry.
+      TS_ASSERT_EQUALS(SamplingRoutines::Lanczos(0.5,2.0), SamplingRoutines::Lanczos(-0.5,2.0));
+      }
   };
 
 #endif // SAMPLING_ROUTINES_TEST_H

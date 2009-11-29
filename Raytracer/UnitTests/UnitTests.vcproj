@@ -364,6 +364,10 @@
 						>
 					</File>
 					<File
+						RelativePath=".\MIPMap.test.h"
+						>
+					</File>
+					<File
 						RelativePath=".\Primitive.test.h"
 						>
 					</File>
@@ -663,6 +667,10 @@
 			</File>
 			<File
 				RelativePath=".\Microfacet.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\MIPMap.test.cpp"
 				>
 			</File>
 			<File

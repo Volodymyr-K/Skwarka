@@ -150,6 +150,76 @@ class UtilTestSuite : public CxxTest::TestSuite
       TS_ASSERT_EQUALS(MathRoutines::CeilLog2(15),4);
       }
 
+    void test_RoundDownPow2_ZeroCase()
+      {
+      TS_ASSERT_EQUALS(MathRoutines::RoundDownPow2(0),-1);
+      }
+
+    void test_RoundDownPow2_PowerOf2Case()
+      {
+      TS_ASSERT_EQUALS(MathRoutines::RoundDownPow2(16),16);
+      }
+
+    void test_RoundDownPow2_NotPowerOf2Case()
+      {
+      TS_ASSERT_EQUALS(MathRoutines::RoundDownPow2(11),8);
+      }
+
+    void test_RoundUpPow2_ZeroCase()
+      {
+      TS_ASSERT_EQUALS(MathRoutines::RoundUpPow2(0),1);
+      }
+
+    void test_RoundUpPow2_PowerOf2Case()
+      {
+      TS_ASSERT_EQUALS(MathRoutines::RoundUpPow2(16),16);
+      }
+
+    void test_RoundUpPow2_NotPowerOf2Case()
+      {
+      TS_ASSERT_EQUALS(MathRoutines::RoundUpPow2(11),16);
+      }
+
+    void test_Mod_Case1()
+      {
+      TS_ASSERT_EQUALS(MathRoutines::Mod(3,4),3);
+      }
+
+    void test_Mod_Case2()
+      {
+      TS_ASSERT_EQUALS(MathRoutines::Mod(4,4),0);
+      }
+
+    void test_Mod_Case3()
+      {
+      TS_ASSERT_EQUALS(MathRoutines::Mod(-3,4),1);
+      }
+
+    void test_Mod_Case4()
+      {
+      TS_ASSERT_EQUALS(MathRoutines::Mod(-4,4),0);
+      }
+
+    void test_Mod_Case5()
+      {
+      TS_ASSERT_EQUALS(MathRoutines::Mod(-3,-4),1);
+      }
+
+    void test_Log2_Case1()
+      {
+      TS_ASSERT_EQUALS(MathRoutines::Log2(1.0),0.0);
+      }
+
+    void test_Log2_Case2()
+      {
+      TS_ASSERT_EQUALS(MathRoutines::Log2(2.0),1.0);
+      }
+
+    void test_Log2_Case3()
+      {
+      TS_ASSERT_DELTA(MathRoutines::Log2(111),6.794416,1e-5);
+      }
+
     void test_CoordinateSystem()
       {
       Vector3D_d e1(1.5,-0.5,1.0);

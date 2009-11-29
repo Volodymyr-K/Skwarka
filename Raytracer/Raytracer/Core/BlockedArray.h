@@ -30,6 +30,16 @@ class BlockedArray
     BlockedArray(const std::vector<std::vector<T> > &i_values);
 
     /**
+    * Returns size of the 2D array in the first dimension (U dimension).
+    */
+    size_t GetSizeU() const;
+
+    /**
+    * Returns size of the 2D array in the second dimension (V dimension).
+    */
+    size_t GetSizeV() const;
+
+    /**
     * Returns non-const reference to the element with the specified indices.
     */
     T &Get(size_t i_u, size_t i_v);
@@ -101,6 +111,18 @@ m_size_u(i_values.size()), m_size_v(i_values[0].size())
     for(size_t j=0;j<m_size_v;++j)
       Get(i,j)=i_values[i][j];
     }
+  }
+
+template<typename T, size_t block_size_log>
+size_t BlockedArray<T,block_size_log>::GetSizeU() const
+  {
+  return m_size_u;
+  }
+
+template<typename T, size_t block_size_log>
+size_t BlockedArray<T,block_size_log>::GetSizeV() const
+  {
+  return m_size_v;
   }
 
 template<typename T, size_t block_size_log>

@@ -214,6 +214,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\Core\MIPMap.h"
+					>
+				</File>
+				<File
 					RelativePath=".\Core\Primitive.h"
 					>
 				</File>

@@ -125,3 +125,9 @@ public:
  void runTest() { suite_SamplingRoutinesTestSuite.test_PowerHeuristic(); }
 } testDescription_SamplingRoutinesTestSuite_test_PowerHeuristic;
 
+static class TestDescription_SamplingRoutinesTestSuite_test_Lanczos : public CxxTest::RealTestDescription {
+public:
+ TestDescription_SamplingRoutinesTestSuite_test_Lanczos() : CxxTest::RealTestDescription( Tests_SamplingRoutinesTestSuite, suiteDescription_SamplingRoutinesTestSuite, 316, "test_Lanczos" ) {}
+ void runTest() { suite_SamplingRoutinesTestSuite.test_Lanczos(); }
+} testDescription_SamplingRoutinesTestSuite_test_Lanczos;
+

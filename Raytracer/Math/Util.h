@@ -43,16 +43,42 @@ namespace MathRoutines
   bool IsPowerOf2(unsigned int i_value);
 
   /**
-  * Returns the floor form of binary logarithm for an integer.
+  * Returns the floor of binary logarithm of the specified integer.
   * -1 is returned if i_value is 0.
   */
   int FloorLog2(unsigned int i_value);
 
   /**
-  * Returns the ceil form of binary logarithm for an integer.
+  * Returns the ceil of binary logarithm of the specified integer.
   * -1 is returned if i_value is 0.
   */
   int CeilLog2(unsigned int i_value);
+
+  /**
+  * Returns the largest power of 2 less or equal than the specified integer.
+  * -1 is returned if i_value is 0.
+  */
+  size_t RoundDownPow2(unsigned int i_value);
+
+  /**
+  * Returns the smallest power of 2 greater or equal than the specified integer.
+  * 1 is returned if i_value is 0.
+  */
+  size_t RoundUpPow2(unsigned int i_value);
+
+  /**
+  * Returns the remainder of i_a / i_b integer division.
+  * In contrast to the built-in % operator the function returns correct value for negative values of i_a.
+  * The sign of i_b does not matter, but it should not be zero.
+  */
+  template<typename T>
+  T Mod(T i_a, T i_b);
+
+  /**
+  * Returns binary logarithm of the specified value.
+  * @param i_x Should be greater than zero.
+  */
+  double Log2(double i_x);
 
   /**
   * Creates an arbitrary orthonormal coordinate system with one of the base vectors specified.
@@ -181,6 +207,51 @@ namespace MathRoutines
     if (i_value >= 1<< 1) pos +=  1;
 
     return ((i_value == 0) ? (-1) : pos);
+    }
+
+  inline size_t RoundUpPow2(unsigned int i_value)
+    {
+    if (i_value==0) return 1;
+
+    --i_value;
+    i_value |= i_value >> 1;
+    i_value |= i_value >> 2;
+    i_value |= i_value >> 4;
+    i_value |= i_value >> 8;
+    i_value |= i_value >> 16;
+    return i_value+1;
+    }
+
+  inline size_t RoundDownPow2(unsigned int i_value)
+    {
+    if (i_value==0) return -1;
+    else
+      if ((i_value & (i_value - 1)) == 0)
+        return i_value;
+      else
+        return RoundUpPow2(i_value)>>1;
+    }
+
+  template<typename T>
+  T Mod(T i_a, T i_b)
+    {
+    ASSERT(i_b != 0);
+
+    if (i_a>=0)
+      return i_a%i_b;
+    else
+      if (i_b>0)
+        return ((i_a%i_b)+i_b)%i_b;
+      else
+        return ((i_a%i_b)-i_b)%i_b;
+    }
+
+  inline double Log2(double i_x)
+    {
+    static double inv_log_2 = 1.0 / log(2.0);
+    ASSERT(i_x>0);
+
+    return log(i_x) * inv_log_2;
     }
 
   template<typename T>

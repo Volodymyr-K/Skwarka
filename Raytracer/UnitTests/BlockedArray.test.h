@@ -27,6 +27,15 @@ class BlockedArrayTestSuite : public CxxTest::TestSuite
             }
       }
 
+    void test_BlockedArray_Size()
+      {
+      size_t n=55,m=122;
+      BlockedArray<double,3> A(n,m);
+
+      TS_ASSERT_EQUALS(A.GetSizeU(), n);
+      TS_ASSERT_EQUALS(A.GetSizeV(), m);
+      }
+
     void test_BlockedArray_SetGet()
       {
       size_t n=55,m=122;

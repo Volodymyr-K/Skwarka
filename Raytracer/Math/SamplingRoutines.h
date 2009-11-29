@@ -120,6 +120,13 @@ namespace SamplingRoutines
   * Computes weighting coefficient for multiple importance sampling with two PDFs. The exponent value is hard-coded as 2 (as recommended by Veach).
   */
   double PowerHeuristic(size_t i_samples_num1, double i_pdf1, size_t i_samples_num2, double i_pdf2);
+
+  /**
+  * Lanczos filter function (a windowed form of the sinc filter).
+  * @param i_x Point at which the filter is to be evaluated. Should be normalized, i.e. should be in [-1;1] range (otherwise 0.0 is returned).
+  * @param i_tau Filter width.
+  */
+  double Lanczos(double i_x, double i_tau);
   };
 
 /////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
@@ -364,6 +371,17 @@ namespace SamplingRoutines
     ASSERT(i_samples_num2>=0 && i_pdf2>=0.0);
     double f = i_samples_num1 * i_pdf1, g = i_samples_num2 * i_pdf2;
     return (f*f) / (f*f + g*g);
+    }
+
+  inline double Lanczos(double i_x, double i_tau)
+    {
+    i_x = fabs(i_x);
+    if (i_x < 1e-5) return 1.0;
+    if (i_x > 1.0) return 0.0;
+    i_x *= M_PI;
+    double s = sin(i_x * i_tau) / (i_x * i_tau);
+    double lanczos = sin(i_x) / i_x;
+    return s * lanczos;
     }
 
   };
