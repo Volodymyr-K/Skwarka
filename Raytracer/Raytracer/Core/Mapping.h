@@ -15,11 +15,12 @@ class Mapping2D : public ReferenceCounted
     /**
     * Maps DifferentialGeometry to a 2D point.
     * @param i_dg DifferentialGeometry object describing the surface point.
+    * @param i_triangle_index Mesh triangle index.
     * @param[out] o_point Mapped 2D point.
     * @param[out] o_dp_dx Mapped X screen-space differential.
     * @param[out] o_dp_dy Mapped Y screen-space differential.
     */
-    virtual void Map(const DifferentialGeometry &i_dg, Point2D_d &o_point, Vector2D_d &o_dp_dx, Vector2D_d &o_dp_dy) const = 0;
+    virtual void Map(const DifferentialGeometry &i_dg, size_t i_triangle_index, Point2D_d &o_point, Vector2D_d &o_dp_dx, Vector2D_d &o_dp_dy) const = 0;
 
     virtual ~Mapping2D();
 
@@ -37,11 +38,12 @@ class Mapping3D : public ReferenceCounted
     /**
     * Maps DifferentialGeometry to a 3D point.
     * @param i_dg DifferentialGeometry object describing the surface point.
+    * @param i_triangle_index Mesh triangle index.
     * @param[out] o_point Mapped 3D point.
     * @param[out] o_dp_dx Mapped X screen-space differential.
     * @param[out] o_dp_dy Mapped Y screen-space differential.
     */
-    virtual void Map(const DifferentialGeometry &i_dg, Point3D_d &o_point, Vector3D_d &o_dp_dx, Vector3D_d &o_dp_dy) const = 0;
+    virtual void Map(const DifferentialGeometry &i_dg, size_t i_triangle_index, Point3D_d &o_point, Vector3D_d &o_dp_dx, Vector3D_d &o_dp_dy) const = 0;
 
     virtual ~Mapping3D();
 
