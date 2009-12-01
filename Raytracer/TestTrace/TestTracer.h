@@ -39,6 +39,9 @@
 #include <UnitTests/Mocks/VolumeIntegratorMock.h>
 #include <Raytracer/LightsSamplingStrategies/IrradianceLightsSampling.h>
 #include <Raytracer/Core/MIPMap.h>
+#include <Raytracer/Textures/ImageTexture.h>
+#include <Raytracer/Mappings/SphericalMapping2D.h>
+#include <Raytracer/Mappings/UVMapping2D.h>
 #include "EasyBMP.h"
 
 class TestTracer
@@ -78,49 +81,39 @@ inline void TestTracer::LoadMesh()
   BMP Input;
   Input.ReadFromFile("image.bmp");
 
-  std::vector<std::vector<Spectrum_d> > values(Input.TellHeight(),std::vector<Spectrum_d>(Input.TellWidth()));
+  std::vector<std::vector<Spectrum_f> > values(Input.TellHeight(),std::vector<Spectrum_f>(Input.TellWidth()));
   for( int j=0 ; j < Input.TellHeight() ; j++)
     {
     for( int i=0 ; i < Input.TellWidth() ; i++)
       {
-      values[j][i]=Spectrum_d(Input(i,j)->Red,Input(i,j)->Green,Input(i,j)->Blue);
+      values[j][i]=Spectrum_f(Input(i,j)->Red,Input(i,j)->Green,Input(i,j)->Blue);
+      values[j][i]/=255.0;
       }
     }
-
-  MIPMap<Spectrum_d> mipmap(values,false);
 /*
-  for(double x1=0;x1<0.01;x1+=0.0001)
-    for(double y1=0;y1<0.01;y1+=0.0001)
-      for(double x2=0;x2<0.01;x2+=0.0001)
-        for(double y2=0;y2<0.01;y2+=0.0001)
-          mipmap.Get(Point2D_d(double(1220.0)/Input.TellWidth(), double(-2340.0)/Input.TellHeight()), Vector2D_d(x1,y1), Vector2D_d(x2,y2));
-*/
-  for(int w=1;w<=100;++w)
+  MIPMap<Spectrum_d> mipmap(values,true,8);
+
+  Input.SetSize(mipmap.m_levels[0]->GetSizeV(),mipmap.m_levels[0]->GetSizeU());
+  for( int j=0 ; j < Input.TellHeight() ; j++)
     {
-    double angle = 5.0*w/100;
-
-    Vector2D_d p1(cos(angle),sin(angle));p1*=0.0008;
-    Vector2D_d p2(cos(angle+M_PI_2),sin(angle+M_PI_2));p2*=0.03;
-
-    for( int j=0 ; j < Input.TellHeight() ; j++)
+    for( int i=0 ; i < Input.TellWidth() ; i++)
       {
-      for( int i=0 ; i < Input.TellWidth() ; i++)
-        {
-        //values[j][i] = mipmap.Get(Point2D_d(double(i+0.5)/Input.TellWidth(), double(j+0.5)/Input.TellHeight()), width);
-        values[j][i] = mipmap.Evaluate(Point2D_d(double(i+0.5)/Input.TellWidth(), double(j+0.5)/Input.TellHeight()), p1, p2);
-        values[j][i].Clamp(0.0,255.0);
-        Input(i,j)->Red = (int) (values[j][i][0]+0.5);
-        Input(i,j)->Green = (int) (values[j][i][1]+0.5);
-        Input(i,j)->Blue = (int) (values[j][i][2]+0.5);
-        }
+      //values[j][i] = mipmap.Get(Point2D_d(double(i+0.5)/Input.TellWidth(), double(j+0.5)/Input.TellHeight()), width);
+      Spectrum_d v = mipmap.m_levels[0]->Get(j,i)*255.0;
+      v.Clamp(0.0,255.0);
+      Input(i,j)->Red = (int) (v[0]+0.5);
+      Input(i,j)->Green = (int) (v[1]+0.5);
+      Input(i,j)->Blue = (int) (v[2]+0.5);
       }
-
-    char buf[256];
-    sprintf(buf,"image%d.bmp",w);
-    Input.WriteToFile(buf);
-
-//    break;
     }
+
+  char buf[256];
+  sprintf(buf,"image%d.bmp",1);
+  Input.WriteToFile(buf);
+*/
+  //intrusive_ptr<Mapping2D> p_mapping( new SphericalMapping2D(Point3D_d(100,-400,300), Vector3D_d(0,0,1), Vector3D_d(1,0,0)) );
+  intrusive_ptr<Mapping2D> p_mapping( new UVMapping2D );
+  intrusive_ptr< ImageTexture<Spectrum_f,Spectrum_d> > p_text(new ImageTexture<Spectrum_f,Spectrum_d>(values, p_mapping) );
 
   /*
   Sphere s;
@@ -245,11 +238,28 @@ inline void TestTracer::LoadMesh()
   std::vector<intrusive_ptr<const Primitive> > primitives;
 
   /////// Add car primitive ///
+  /*
   mp_mesh = intrusive_ptr<TriangleMesh>( new TriangleMesh(vertices, triangles, true) );
 
-  intrusive_ptr<Texture<Spectrum_d> > p_reflectance(new ConstantTexture<Spectrum_d> (Spectrum_d(212,175,55)/255.0*0.8));
+  intrusive_ptr<Texture<Spectrum_d> > p_reflectance;
+  //intrusive_ptr<Texture<Spectrum_d> > p_reflectance(new ConstantTexture<Spectrum_d> (Spectrum_d(212,175,55)/255.0*0.8));
   intrusive_ptr<Texture<double> > p_sigma(new ConstantTexture<double> (0.15));
-  intrusive_ptr<Material> p_material(new Matte(p_reflectance, p_sigma));
+  intrusive_ptr<Material> p_material(new Matte(p_text, p_sigma));
+
+  intrusive_ptr<Primitive> p_primitive(new Primitive(mp_mesh, p_material));
+  primitives.push_back(p_primitive);
+*/
+   /////// Add sphere primitive ///
+
+  Sphere s;
+  s.SetParameter("Center","400 -1000 400");
+  s.SetParameter("Radius","350");
+  s.SetParameter("Subdivisions","6");
+  mp_mesh = s.BuildMesh();
+
+  intrusive_ptr<Texture<Spectrum_d> > p_reflectance;
+  intrusive_ptr<Texture<double> > p_sigma(new ConstantTexture<double> (0.15));
+  intrusive_ptr<Material> p_material(new Matte(p_text, p_sigma));
 
   intrusive_ptr<Primitive> p_primitive(new Primitive(mp_mesh, p_material));
   primitives.push_back(p_primitive);
@@ -271,26 +281,28 @@ inline void TestTracer::LoadMesh()
   primitives.push_back(p_primitive);
 
   LightSources lights;
- 
+ /*
     {
   Sphere s;
   s.SetParameter("Center","900 -1800 3000");
   s.SetParameter("Radius","150");
   s.SetParameter("Subdivisions","3");
   intrusive_ptr<TriangleMesh> p_sphere( s.BuildMesh() );
-  intrusive_ptr<AreaLightSource> p_area_light( new DiffuseAreaLightSource(Spectrum_d(40000.0,40000.0,40000.0), p_sphere) );
+  intrusive_ptr<AreaLightSource> p_area_light( new DiffuseAreaLightSource(Spectrum_d(10000.0,10000.0,10000.0), p_sphere) );
   intrusive_ptr<Primitive> p_sphere_primitive(new Primitive(p_sphere, p_material, p_area_light));
 
   primitives.push_back(p_sphere_primitive);
   lights.m_area_light_sources.push_back(p_area_light);
     }
+    */
+  
     {
   Sphere s;
   s.SetParameter("Center","-900 -1800 3000");
   s.SetParameter("Radius","150");
   s.SetParameter("Subdivisions","3");
   intrusive_ptr<TriangleMesh> p_sphere( s.BuildMesh() );
-  intrusive_ptr<AreaLightSource> p_area_light( new DiffuseAreaLightSource(Spectrum_d(30000.0,40000.0,10000.0), p_sphere) );
+  intrusive_ptr<AreaLightSource> p_area_light( new DiffuseAreaLightSource(Spectrum_d(10000.0,10000.0,5000.0), p_sphere) );
   intrusive_ptr<Primitive> p_sphere_primitive(new Primitive(p_sphere, p_material, p_area_light));
 
   primitives.push_back(p_sphere_primitive);
@@ -298,16 +310,16 @@ inline void TestTracer::LoadMesh()
     }
 
 
-  intrusive_ptr<InfiniteLightSource> p_inf_light( new InfiniteLightSourceMock(Spectrum_d(200.0,200.0,300.0), BBox3D_d(Point3D_d(-20000,-20000,0),Point3D_d(20000,20000,1000) ) ) );
+  intrusive_ptr<InfiniteLightSource> p_inf_light( new InfiniteLightSourceMock(Spectrum_d(300.0,300.0,300.0), BBox3D_d(Point3D_d(-20000,-20000,0),Point3D_d(20000,20000,1000) ) ) );
   lights.m_infinitiy_light_sources.push_back(p_inf_light);
 
 /*
     {
-  intrusive_ptr<DeltaLightSource> p_source( new PointLight(Point3D_d(900, -1800, 3000), Spectrum_d(5000000000.0)) );
+  intrusive_ptr<DeltaLightSource> p_source( new PointLight(Point3D_d(1300, -2200, 3000), Spectrum_d(4000000000.0)) );
   lights.m_delta_light_sources.push_back(p_source);
     }
     {
-  intrusive_ptr<DeltaLightSource> p_source( new PointLight(Point3D_d(-900, -1800, 3000), Spectrum_d(5000000000.0)) );
+  intrusive_ptr<DeltaLightSource> p_source( new PointLight(Point3D_d(-500, -2200, 3000), Spectrum_d(4000000000.0)) );
   lights.m_delta_light_sources.push_back(p_source);
     }
 */
@@ -328,12 +340,15 @@ inline void TestTracer::RenderImage(HWND &g_hWnd, HDC &g_memDC)
   // Vector3D_d direction = Vector3D_d(0,-0.5,-1).Normalized();
   //intrusive_ptr<Camera> p_camera( new PerspectiveCamera( MakeLookAt(Point3D_d(0.0,0.26,0.17)+direction*0.08,direction,Vector3D_d(0,1,0)), intrusive_ptr<Film>(film), 0.000, 0.087, 1.3) );
 
-  Vector3D_d direction = Vector3D_d(-0.4,0.5,-0.3).Normalized();
-  intrusive_ptr<Camera> p_camera( new PerspectiveCamera( MakeLookAt(Point3D_d(950,-1700,800),direction,Vector3D_d(0,0,1)), intrusive_ptr<Film>(film), 0.000, 1000, 1.3) );
+  Vector3D_d direction = Vector3D_d(-0.4,0.5,-0.6).Normalized();
+  intrusive_ptr<Camera> p_camera( new PerspectiveCamera( MakeLookAt(Point3D_d(900,-1600,1100),direction,Vector3D_d(0,0,1)), intrusive_ptr<Film>(film), 0.000, 1000, 1.3) );
+
+  //Vector3D_d direction = Vector3D_d(0.3,0.5,-0.6).Normalized();
+  //intrusive_ptr<Camera> p_camera( new PerspectiveCamera( MakeLookAt(Point3D_d(-100,-1600,1100),direction,Vector3D_d(0,0,1)), intrusive_ptr<Film>(film), 0.000, 1000, 1.3) );
 
   intrusive_ptr<ImagePixelsOrder> pixel_order(new UniformImagePixelsOrder);
 
-  intrusive_ptr<Sampler> p_sampler( new StratifiedSampler(window_begin, window_end, 2, 2, pixel_order) );
+  intrusive_ptr<Sampler> p_sampler( new StratifiedSampler(window_begin, window_end, 1, 1, pixel_order) );
 
   intrusive_ptr<SamplerBasedRenderer> p_renderer( new SamplerBasedRenderer(mp_scene, p_sampler) );
 

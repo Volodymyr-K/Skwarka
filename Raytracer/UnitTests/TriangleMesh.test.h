@@ -194,9 +194,9 @@ class TriangleMeshTestSuite : public CxxTest::TestSuite
       CustomAssertDelta(dg.m_point_dx, Point3D_d(0.15,0.25,-1.0/3.0), (1e-6));
       CustomAssertDelta(dg.m_point_dy, Point3D_d(0.05,0.15,-1.0/3.0), (1e-6));
 
-      // Test that the UV derivatives are not nulls.
-      TS_ASSERT(dg.m_duv_dx.Length() > 0.0);
-      TS_ASSERT(dg.m_duv_dy.Length() > 0.0);
+      // Test that the UV derivatives are nulls (because UV parameterization was not set).
+      TS_ASSERT_EQUALS(dg.m_duv_dx, Vector2D_d());
+      TS_ASSERT_EQUALS(dg.m_duv_dy, Vector2D_d());
 
       // Test dx and dy shading normals.
       TS_ASSERT(dg.m_normal_dx != dg.m_shading_normal);

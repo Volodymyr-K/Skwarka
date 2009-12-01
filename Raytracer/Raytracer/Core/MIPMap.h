@@ -22,18 +22,18 @@ class MIPMap: public ReferenceCounted
   public:
     /**
     * Constructs MIPMap for the given original image (2D array).
-    * @param i_values 2D array of image values. All inner vectors should have the same size. Should have at least one row and at least one column.
+    * @param i_values 2D array of the image values. All inner vectors should have the same size. Should have at least one row and at least one column.
     * @param i_repeat Sets whether to wrap the texture on its edges. If false, the value is considered zero (black) beyond the image.
-    * @param i_max_anisotropy Specified maximum anisotropy allowed (ratio of major ellipse axis to its minor axis). Should be greater or equal than 1.0.
+    * @param i_max_anisotropy Maximum anisotropy allowed (ratio of the major ellipse axis to its minor axis). Should be greater or equal than 1.0.
     */
-    MIPMap(const std::vector<std::vector<T> > &i_values, bool i_repeat = true, double i_max_anisotropy = 8.0);
+    MIPMap(const std::vector<std::vector<T> > &i_values, bool i_repeat, double i_max_anisotropy);
     
     /**
     * Returns filtered value of image at the specified point using trilinear filter.
     * @param i_point Point at which the image is to be filtered. The range [0;1]x[0;1] corresponds to the points inside the image.
-    * @param i_width Filter width in normalized coordinates space.
+    * @param i_width Filter width in normalized coordinates space. Please note that the actual filter's extend is twice the width.
     */
-    T Evaluate(const Point2D_d &i_point, double i_width);
+    T Evaluate(const Point2D_d &i_point, double i_width) const;
 
     /**
     * Returns filtered value of image at the specified point using anisotropic filter.
@@ -41,7 +41,7 @@ class MIPMap: public ReferenceCounted
     * @param i_dxy_1 First ellipse axis in normalized coordinates space.
     * @param i_dxy_2 Second ellipse axis in normalized coordinates space.
     */
-    T Evaluate(const Point2D_d &i_point, Vector2D_d i_dxy_1, Vector2D_d i_dxy_2);
+    T Evaluate(const Point2D_d &i_point, Vector2D_d i_dxy_1, Vector2D_d i_dxy_2) const;
 
     ~MIPMap();
 
@@ -325,7 +325,7 @@ const T &MIPMap<T>::_GetTexel(size_t i_level, int i_x, int i_y) const
   }
 
 template <typename T>
-T MIPMap<T>::Evaluate(const Point2D_d &i_point, double i_width)
+T MIPMap<T>::Evaluate(const Point2D_d &i_point, double i_width) const
   {
   // Compute MIPMap level for trilinear filtering.
   double level = 0.0;
@@ -341,7 +341,17 @@ T MIPMap<T>::Evaluate(const Point2D_d &i_point, double i_width)
   if (level <= 0)
     return _Interpolate(0, i_point);
   else if (level >= m_num_levels-1)
-    return _GetTexel(m_num_levels-1, 0, 0);
+    {
+    if (m_repeat)
+      return _GetTexel(m_num_levels-1, 0, 0);
+    else
+      // We just return the highest layer's value if the point is inside the [0;1]^2 range.
+      // This way we don't filter the values though.
+      if (i_point[0]>=0.0 && i_point[0]<=1.0 && i_point[1]>=0.0 && i_point[1]<=1.0)
+        return _GetTexel(m_num_levels-1, 0, 0);
+      else
+        return T();
+    }
   else
     {
     double delta = level - (size_t)level;
@@ -350,7 +360,7 @@ T MIPMap<T>::Evaluate(const Point2D_d &i_point, double i_width)
   }
 
 template <typename T>
-T MIPMap<T>::Evaluate(const Point2D_d &i_point, Vector2D_d i_dxy_1, Vector2D_d i_dxy_2)
+T MIPMap<T>::Evaluate(const Point2D_d &i_point, Vector2D_d i_dxy_1, Vector2D_d i_dxy_2) const
   {
   // Compute ellipse minor and major axes.
   if (i_dxy_1.LengthSqr() < i_dxy_2.LengthSqr())
@@ -378,7 +388,17 @@ T MIPMap<T>::Evaluate(const Point2D_d &i_point, Vector2D_d i_dxy_1, Vector2D_d i
       level = std::max(0.0, m_num_levels - 1 + MathRoutines::Log2(minor_length));
 
   if (level >= m_num_levels-1)
-    return _GetTexel(m_num_levels-1, 0, 0);
+    {
+    if (m_repeat)
+      return _GetTexel(m_num_levels-1, 0, 0);
+    else
+      // We just return the highest layer's value if the point is inside the [0;1]^2 range.
+      // This way we don't filter the values though.
+      if (i_point[0]>=0.0 && i_point[0]<=1.0 && i_point[1]>=0.0 && i_point[1]<=1.0)
+        return _GetTexel(m_num_levels-1, 0, 0);
+      else
+        return T();
+    }
   else
     {
     // Choose level of detail for EWA lookup and perform EWA filtering.
@@ -452,7 +472,7 @@ T MIPMap<T>::_EWA(size_t i_level, Point2D_d i_point, Vector2D_d i_dxy_1, Vector2
       {
       double xx = x - i_point[0];
 
-      // Compute squared radius and filter texel if inside ellipse.
+      // Compute squared radius and filter texel if inside the ellipse.
       double r_sqr = A*xx*xx + B*xx*yy + C*yy*yy;
       if (r_sqr < 1.0)
         {

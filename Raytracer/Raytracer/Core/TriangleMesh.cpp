@@ -81,6 +81,7 @@ void TriangleMesh::ConnectivityData::GetIncidentTriangles(size_t i_vertex_index1
 
 MeshTriangle::MeshTriangle()
   {
+  m_uvs[0]=m_uvs[0]=m_uvs[0]=Point2D_f();
   }
 
 MeshTriangle::MeshTriangle(size_t i_v1, size_t i_v2, size_t i_v3)
@@ -88,6 +89,8 @@ MeshTriangle::MeshTriangle(size_t i_v1, size_t i_v2, size_t i_v3)
   m_vertices[0]=i_v1;
   m_vertices[1]=i_v2;
   m_vertices[2]=i_v3;
+
+  m_uvs[0]=m_uvs[0]=m_uvs[0]=Point2D_f();
   }
 
 /////////////// IllegalTrianglesPredicate ////////////////
@@ -393,8 +396,7 @@ void TriangleMesh::ComputeDifferentialGeometry(size_t i_triangle_index, const Ra
   ASSERT(t >= i_ray.m_base_ray.m_min_t && t <= i_ray.m_base_ray.m_max_t);
   o_dg.m_point=i_ray.m_base_ray(t);
 
-  Point2D_d uv[3];
-  _GetUVs(triangle,uv);
+  Point2D_d uv[3]={Convert<double>(triangle.m_uvs[0]), Convert<double>(triangle.m_uvs[1]), Convert<double>(triangle.m_uvs[2])};
 
   // Interpolate triangle uv coordinates.
   b0 = 1.0 - b1 - b2;
@@ -450,32 +452,6 @@ void TriangleMesh::ComputeDifferentialGeometry(size_t i_triangle_index, const Ra
     o_dg.m_point_dx = o_dg.m_point_dy = o_dg.m_point;
     o_dg.m_normal_dx = o_dg.m_normal_dy= o_dg.m_shading_normal;
     }
-  }
-
-/**
-* Returns UV triangles for the specified triangle.
-* If UV parameterization is not set a dummy set of UV coordinates is returned.
-*/
-void TriangleMesh::_GetUVs(const MeshTriangle &i_triangle, Point2D_d o_uv[3]) const
-  {
-  if (m_uv_parameterization.empty()) 
-    {
-    o_uv[0] = Point2D_d(0.0, 0.0);
-    o_uv[1] = Point2D_d(1.0, 0.0);
-    o_uv[2] = Point2D_d(0.0, 1.0);
-    }
-  else
-    {
-    o_uv[0] = Convert<double>(m_uv_parameterization[i_triangle.m_vertices[0]]);
-    o_uv[1] = Convert<double>(m_uv_parameterization[i_triangle.m_vertices[1]]);
-    o_uv[2] = Convert<double>(m_uv_parameterization[i_triangle.m_vertices[2]]);
-    }
-  }
-
-void TriangleMesh::SetUVParameterization(const std::vector<Point2D_f> &i_uv_parameterization)
-  {
-  ASSERT(i_uv_parameterization.size() == m_vertices.size());
-  m_uv_parameterization.assign(i_uv_parameterization.begin(), i_uv_parameterization.end());
   }
 
 void TriangleMesh::SetUseShadingNormals(bool i_use_shading_normals)

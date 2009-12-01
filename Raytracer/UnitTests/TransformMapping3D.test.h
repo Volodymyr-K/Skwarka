@@ -21,7 +21,7 @@ class TransformMapping3DTestSuite : public CxxTest::TestSuite
 
       Point3D_d mapped;
       Vector3D_d dp_dx, dp_dy;
-      mapping->Map(dg, mapped, dp_dx, dp_dy);
+      mapping->Map(dg, 0, mapped, dp_dx, dp_dy);
 
       TS_ASSERT_EQUALS(mapped, dg.m_point);
       TS_ASSERT_EQUALS(dp_dx, Vector3D_d(dg.m_point_dx-dg.m_point));
@@ -40,7 +40,7 @@ class TransformMapping3DTestSuite : public CxxTest::TestSuite
 
       Point3D_d mapped;
       Vector3D_d dp_dx, dp_dy;
-      mapping->Map(dg, mapped, dp_dx, dp_dy);
+      mapping->Map(dg, 0, mapped, dp_dx, dp_dy);
 
       TS_ASSERT_EQUALS(mapped, t(dg.m_point));
       TS_ASSERT_EQUALS(dp_dx, t(Vector3D_d(dg.m_point_dx-dg.m_point)));

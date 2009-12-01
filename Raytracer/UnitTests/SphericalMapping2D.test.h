@@ -22,7 +22,7 @@ class SphericalMapping2DTestSuite : public CxxTest::TestSuite
 
       Point2D_d mapped;
       Vector2D_d dp_dx, dp_dy;
-      mapping->Map(dg, mapped, dp_dx, dp_dy);
+      mapping->Map(dg,  0,mapped, dp_dx, dp_dy);
       TS_ASSERT_DELTA(mapped[0], acos(10/sqrt(102.0))*INV_PI, (1e-10));
       TS_ASSERT_DELTA(mapped[1], 0.125, (1e-10));
       

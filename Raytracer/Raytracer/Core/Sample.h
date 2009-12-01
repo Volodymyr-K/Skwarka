@@ -116,12 +116,17 @@ inline Sample::Sample(const std::vector<size_t> &i_sequences_1D_size, const std:
 
   m_1D_samples.assign(total_1D_samples, 0.0);
 
-  total_1D_samples=0;
-  for(size_t i=0;i<i_sequences_1D_size.size();++i)
+  if (total_1D_samples>0)
     {
-    m_sample_sequences_1D.push_back( SamplesSequence1D( (&m_1D_samples[0])+total_1D_samples, (&m_1D_samples[0])+total_1D_samples+i_sequences_1D_size[i]) );
-    total_1D_samples+=i_sequences_1D_size[i];
+    total_1D_samples=0;
+    for(size_t i=0;i<i_sequences_1D_size.size();++i)
+      {
+      m_sample_sequences_1D.push_back( SamplesSequence1D( (&m_1D_samples[0])+total_1D_samples, (&m_1D_samples[0])+total_1D_samples+i_sequences_1D_size[i]) );
+      total_1D_samples+=i_sequences_1D_size[i];
+      }
     }
+  else
+    m_sample_sequences_1D.assign(i_sequences_1D_size.size(), SamplesSequence1D(NULL, NULL));
 
   // 2D
   size_t total_2D_samples=0;
@@ -130,12 +135,17 @@ inline Sample::Sample(const std::vector<size_t> &i_sequences_1D_size, const std:
 
   m_2D_samples.assign(total_2D_samples, Point2D_d());
 
-  total_2D_samples=0;
-  for(size_t i=0;i<i_sequences_2D_size.size();++i)
+  if (total_2D_samples>0)
     {
-    m_sample_sequences_2D.push_back( SamplesSequence2D( (&m_2D_samples[0])+total_2D_samples, (&m_2D_samples[0])+total_2D_samples+i_sequences_2D_size[i]) );
-    total_2D_samples+=i_sequences_2D_size[i];
+    total_2D_samples=0;
+    for(size_t i=0;i<i_sequences_2D_size.size();++i)
+      {
+      m_sample_sequences_2D.push_back( SamplesSequence2D( (&m_2D_samples[0])+total_2D_samples, (&m_2D_samples[0])+total_2D_samples+i_sequences_2D_size[i]) );
+      total_2D_samples+=i_sequences_2D_size[i];
+      }
     }
+  else
+    m_sample_sequences_2D.assign(i_sequences_2D_size.size(), SamplesSequence2D(NULL, NULL));
   }
 
 inline void Sample::SetImagePoint(const Point2D_d &i_image_point)

@@ -6,8 +6,7 @@ DirectLightingIntegrator::DirectLightingIntegrator(intrusive_ptr<const Renderer>
                                                    intrusive_ptr<const LightsSamplingStrategy> ip_lights_sampling_strategy):
 mp_renderer(ip_renderer), mp_scene(ip_renderer->GetScene()), m_lights_samples_num(i_lights_samples_num), m_bsdf_samples_num(i_bsdf_samples_num), m_samples_requested(false)
   {
-  ASSERT(ip_renderer); 
-  ASSERT(i_lights_samples_num>=0 && i_bsdf_samples_num>=0 && i_lights_samples_num+i_bsdf_samples_num>0);
+  ASSERT(ip_renderer);
 
   if (i_lights_samples_num>=0)
     m_lights_samples_num = i_lights_samples_num;
@@ -23,7 +22,6 @@ mp_renderer(ip_renderer), mp_scene(ip_renderer->GetScene()), m_lights_samples_nu
     mp_lights_sampling_strategy = ip_lights_sampling_strategy;
   else
     mp_lights_sampling_strategy.reset( new IrradianceLightsSampling(mp_scene->GetLightSources()) );
-
   
   // Sort and cache area lights. This is needed for a quick search of the area light's index by a pointer.
   const LightSources &light_sources = mp_scene->GetLightSources();

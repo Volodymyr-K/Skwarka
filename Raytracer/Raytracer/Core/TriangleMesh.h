@@ -41,11 +41,12 @@ struct MeshTriangle
   MeshTriangle(size_t i_v1, size_t i_v2, size_t i_v3);
 
   size_t m_vertices[3];
+  Point2D_f m_uvs[3];
   };
 
 /**
 * Triangle mesh represented by a set of vertices and triangles.
-* The mesh can also have UV parameterization of the surface. UV parameterization is defined by the UV coordinates of the mesh vertices.
+* The mesh can also have UV parameterization of the surface. UV parameterization is defined by the UV coordinates of the each triangle vertices.
 * The UV values are linearly interpolated inside the triangles.
 * The class provides an option to interpolate the normals inside the triangles to make the imitate a smooth surface.
 *
@@ -61,12 +62,6 @@ class TriangleMesh: public ReferenceCounted
     * @param i_use_shading_normals true if normals need to be interpolated inside the triangles.
     */
     TriangleMesh(const std::vector<Point3D_f> &i_vertices, const std::vector<MeshTriangle> &i_triangles, bool i_use_shading_normals=true);
-
-    /**
-    * Sets UV parameterization of the mesh.
-    * @param i_uv_parameterization UV coordinates of the mesh vertices. Should have exactly the same number of elements as many vertices the mesh has.
-    */
-    void SetUVParameterization(const std::vector<Point2D_f> &i_uv_parameterization);
 
     /**
     * Sets whether the normals should be interpolated inside the triangles.
@@ -107,7 +102,6 @@ class TriangleMesh: public ReferenceCounted
     void _ComputeTopologyInfo(const ConnectivityData &i_connectivity);
     bool _ConsistentlyOriented(size_t i_triangle_index1, size_t i_triangle_index2) const;
 
-    void _GetUVs(const MeshTriangle &i_triangle, Point2D_d o_uv[3]) const;
     bool _ComputeIntersectionPoint(const Point3D_d i_vertices[3], const Point3D_d &i_origin, const Vector3D_d &i_direction, double &o_b1, double &o_b2, double &o_t) const;
 
     void _BuildConnectivityData(ConnectivityData &o_connectivity);
@@ -116,7 +110,6 @@ class TriangleMesh: public ReferenceCounted
     std::vector<Point3D_f> m_vertices;
     std::vector<MeshTriangle> m_triangles;
     std::vector<Vector3D_f> m_shading_normals;
-    std::vector<Point2D_f> m_uv_parameterization;
 
     bool m_use_shading_normals;
 

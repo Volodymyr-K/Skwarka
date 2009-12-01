@@ -71,8 +71,8 @@ class Spectrum
     T m_rgb[3];
   };
 
-template<typename T>
-Spectrum<T> operator*(T i_value, const Spectrum<T> &i_spectrum);
+template<typename T1, typename T2>
+Spectrum<T2> operator*(T1 i_value, const Spectrum<T2> &i_spectrum);
 
 /**
 * Reads Spectrum from the input stream.
@@ -333,8 +333,9 @@ T Spectrum<T>::Luminance() const
   return YWeight[0]*m_rgb[0] + YWeight[1]*m_rgb[1] + YWeight[2]*m_rgb[2];
   }
 
-template<typename T>
-Spectrum<T> operator*(T i_value, const Spectrum<T> &i_spectrum)
+
+template<typename T1, typename T2>
+Spectrum<T2> operator*(T1 i_value, const Spectrum<T2> &i_spectrum)
   {
   ASSERT(IsNaN(i_value)==false);
   return i_spectrum*i_value;

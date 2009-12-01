@@ -65,6 +65,16 @@ class MIPMapTestSuite : public CxxTest::TestSuite
       TS_ASSERT(t.IsBlack());
       }
 
+    // Tests on a 1x1 image size.
+    void test_MIPMap_Anisotropic3()
+      {
+      intrusive_ptr<MIPMap<Spectrum_d> > p_map = _CreateBlueRedMIPMap(1,1,true,8.0);
+
+      Spectrum_d t = p_map->Evaluate(Point2D_d(0.3,0.7), Vector2D_d(0.02,0.0), Vector2D_d(0.0,0.2));
+      TS_ASSERT_EQUALS(t, Spectrum_d(0.0,0.0,1.0));
+      }
+
+
   private:
     intrusive_ptr<MIPMap<double> > _CreateWhiteMIPMap(size_t i_width, size_t i_height, double i_value, bool i_repeat, double i_max_anisotropy)
       {

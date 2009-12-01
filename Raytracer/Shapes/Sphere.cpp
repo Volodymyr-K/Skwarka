@@ -136,27 +136,48 @@ intrusive_ptr<TriangleMesh> Sphere::BuildMesh()
         }
     }
 
-  // Prepare a list of non-deleted triangles.
+  // Prepare the list of non-deleted triangles.
   std::vector<MeshTriangle> triangles_cleaned;
   for (size_t i=0;i<triangles.size();++i)
     if (deleted[i]==false)
+      {
       triangles_cleaned.push_back(triangles[i]);
+      }
 
-  std::vector<Point2D_f> uv_parameterization(vertices.size());
-
-  for (size_t i=0;i<vertices.size();++i)
+  for (size_t i=0;i<triangles_cleaned.size();++i)
     {
-    float phi = atan2(vertices[i][1],vertices[i][0]);
-    if (phi < 0.0) phi+=(float)(2.0*M_PI);
-    float theta = acos(vertices[i][2]);
+    Point2D_f uvs[3];
+    for (unsigned char j=0;j<3;++j)
+      {
+      Point3D_f vertex = vertices[triangles_cleaned[i].m_vertices[j]];
 
-    uv_parameterization[i]=Point2D_f((float) (phi*INV_2PI), (float) (theta*INV_PI));
+      float phi = atan2( vertex[1],vertex[0]);
+      if (phi < 0.0) phi+=(float)(2.0*M_PI);
+      float theta = acos(vertex[2]);
 
-    vertices[i]=vertices[i]*params.m_radius+params.m_center;
+      uvs[j]=Point2D_f((float) (phi*INV_2PI), (float) (theta*INV_PI));
+      }
+
+    // For those triangles whose edges intersect the phi==0.0 line we need to adjust the UV coordinates.
+    Vector3D_f normal =
+      Vector3D_f(vertices[triangles_cleaned[i].m_vertices[1]]-vertices[triangles_cleaned[i].m_vertices[0]])^
+      Vector3D_f(vertices[triangles_cleaned[i].m_vertices[2]]-vertices[triangles_cleaned[i].m_vertices[0]]);
+    if (normal[0]>0.0 && ((uvs[0][0]>0.5 || uvs[1][0]>0.5 || uvs[2][0]>0.5) && (uvs[0][0]<0.5 || uvs[1][0]<0.5 || uvs[2][0]<0.5)))
+      {
+      if (uvs[0][0]<0.5) uvs[0][0] += 1.0;
+      if (uvs[1][0]<0.5) uvs[1][0] += 1.0;
+      if (uvs[2][0]<0.5) uvs[2][0] += 1.0;
+      }
+
+    triangles_cleaned[i].m_uvs[0]=uvs[0];
+    triangles_cleaned[i].m_uvs[1]=uvs[1];
+    triangles_cleaned[i].m_uvs[2]=uvs[2];
     }
 
+  for (size_t i=0;i<vertices.size();++i)
+    vertices[i]=vertices[i]*params.m_radius+params.m_center;
+
   TriangleMesh *p_mesh = new TriangleMesh(vertices, triangles_cleaned);
-  p_mesh->SetUVParameterization(uv_parameterization);
 
   // The sphere is supposed to be smooth by definition so we use interpolated normals.
   p_mesh->SetUseShadingNormals(true);

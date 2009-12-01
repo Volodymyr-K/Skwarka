@@ -459,6 +459,10 @@
 					RelativePath=".\Textures\ConstantTexture.h"
 					>
 				</File>
+				<File
+					RelativePath=".\Textures\ImageTexture.h"
+					>
+				</File>
 			</Filter>
 			<Filter
 				Name="Source Files"

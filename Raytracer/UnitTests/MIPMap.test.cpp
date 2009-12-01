@@ -53,3 +53,9 @@ public:
  void runTest() { suite_MIPMapTestSuite.test_MIPMap_Anisotropic2(); }
 } testDescription_MIPMapTestSuite_test_MIPMap_Anisotropic2;
 
+static class TestDescription_MIPMapTestSuite_test_MIPMap_Anisotropic3 : public CxxTest::RealTestDescription {
+public:
+ TestDescription_MIPMapTestSuite_test_MIPMap_Anisotropic3() : CxxTest::RealTestDescription( Tests_MIPMapTestSuite, suiteDescription_MIPMapTestSuite, 69, "test_MIPMap_Anisotropic3" ) {}
+ void runTest() { suite_MIPMapTestSuite.test_MIPMap_Anisotropic3(); }
+} testDescription_MIPMapTestSuite_test_MIPMap_Anisotropic3;
+

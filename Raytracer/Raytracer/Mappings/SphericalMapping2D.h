@@ -24,11 +24,12 @@ class SphericalMapping2D: public Mapping2D
     * Maps 3D point defined by the specified DifferentialGeometry object by projecting it onto the sphere and returning (theta,phi) coordinates.
     * The method does not account for the singularity near the poles and so the differentials may be inaccurate if they are near the sphere poles.
     * @param i_dg DifferentialGeometry object describing the surface point.
+    * @param i_triangle_index Mesh triangle index.
     * @param[out] o_point Mapped 2D point.
     * @param[out] o_dp_dx Mapped X screen-space differential.
     * @param[out] o_dp_dy Mapped Y screen-space differential.
     */
-    virtual void Map(const DifferentialGeometry &i_dg, Point2D_d &o_point, Vector2D_d &o_dp_dx, Vector2D_d &o_dp_dy) const;
+    virtual void Map(const DifferentialGeometry &i_dg, size_t i_triangle_index, Point2D_d &o_point, Vector2D_d &o_dp_dx, Vector2D_d &o_dp_dy) const;
 
   private:
     /**
@@ -60,7 +61,7 @@ inline SphericalMapping2D::SphericalMapping2D(const Point3D_d &i_sphere_center, 
   m_world_to_sphere = x_rotation * z_rotation * translation;
   }
 
-inline void SphericalMapping2D::Map(const DifferentialGeometry &i_dg, Point2D_d &o_point, Vector2D_d &o_dp_dx, Vector2D_d &o_dp_dy) const
+inline void SphericalMapping2D::Map(const DifferentialGeometry &i_dg, size_t i_triangle_index, Point2D_d &o_point, Vector2D_d &o_dp_dx, Vector2D_d &o_dp_dy) const
   {
   _MapPoint(i_dg.m_point, o_point);
 

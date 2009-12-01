@@ -471,6 +471,10 @@
 						RelativePath=".\ConstantTexture.test.h"
 						>
 					</File>
+					<File
+						RelativePath=".\ImageTexture.test.h"
+						>
+					</File>
 				</Filter>
 				<Filter
 					Name="Materials"
@@ -631,6 +635,10 @@
 			</File>
 			<File
 				RelativePath=".\ImageFilm.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ImageTexture.test.cpp"
 				>
 			</File>
 			<File
