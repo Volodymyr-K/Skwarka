@@ -440,6 +440,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\Materials\Metal.h"
+					>
+				</File>
+				<File
 					RelativePath=".\Materials\Transparent.h"
 					>
 				</File>
@@ -449,6 +453,10 @@
 				>
 				<File
 					RelativePath=".\Materials\Matte.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Materials\Metal.cpp"
 					>
 				</File>
 				<File

@@ -17,6 +17,8 @@ class Matte: public Material
   public:
     /**
     * Creates Matte object with the specified textures defining the reflectivity and roughness of the material.
+    * @param ip_reflectance The texture defining the total hemisphere reflectance. Each spectrum component should be in [0;1] range.
+    * @param i_sigma The texture defining the roughness of the surface. Values should be be in [0;1] range.
     */
     Matte(intrusive_ptr<const Texture<Spectrum_d> > ip_reflectance, intrusive_ptr<const Texture<double> > ip_sigma);
 

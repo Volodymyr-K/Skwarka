@@ -43,6 +43,7 @@
 #include <Raytracer/Mappings/SphericalMapping2D.h>
 #include <Raytracer/Mappings/UVMapping2D.h>
 #include <Raytracer/Materials/Transparent.h>
+#include <Raytracer/Materials/Metal.h>
 #include <Raytracer/Core/Fresnel.h>
 #include "EasyBMP.h"
 
@@ -114,8 +115,8 @@ inline void TestTracer::LoadMesh()
   Input.WriteToFile(buf);
 */
   //intrusive_ptr<Mapping2D> p_mapping( new SphericalMapping2D(Point3D_d(100,-400,300), Vector3D_d(0,0,1), Vector3D_d(1,0,0)) );
-  intrusive_ptr<Mapping2D> p_mapping( new UVMapping2D(16.0,16.0,Vector2D_d(-0.057,-0.003)) );
-  //intrusive_ptr<Mapping2D> p_mapping( new UVMapping2D(16.0,16.0,Vector2D_d(0.3,0.25)) );
+  //intrusive_ptr<Mapping2D> p_mapping( new UVMapping2D(16.0,16.0,Vector2D_d(-0.057,-0.003)) );
+  intrusive_ptr<Mapping2D> p_mapping( new UVMapping2D() );
   intrusive_ptr< ImageTexture<Spectrum_f,Spectrum_d> > p_text(new ImageTexture<Spectrum_f,Spectrum_d>(values, p_mapping) );
 
   /*
@@ -188,7 +189,7 @@ inline void TestTracer::LoadMesh()
   Vector3D_f normal;
   Point3D_f v1,v2,v3;
   size_t ind=0,num_ver=0;
-  while(true && 0)
+  while(true)
     {
     char buf[1024];
     if ( !fgets(buf,1024,fp) ) break;
@@ -241,19 +242,23 @@ inline void TestTracer::LoadMesh()
   std::vector<intrusive_ptr<const Primitive> > primitives;
 
   /////// Add car primitive ///
-  /*
+  
   mp_mesh = intrusive_ptr<TriangleMesh>( new TriangleMesh(vertices, triangles, true) );
 
   intrusive_ptr<Texture<Spectrum_d> > p_reflectance;
   //intrusive_ptr<Texture<Spectrum_d> > p_reflectance(new ConstantTexture<Spectrum_d> (Spectrum_d(212,175,55)/255.0*0.8));
-  intrusive_ptr<Texture<double> > p_sigma(new ConstantTexture<double> (0.15));
-  intrusive_ptr<Material> p_material(new Matte(p_text, p_sigma));
+  intrusive_ptr<Texture<double> > p_sigma(new ConstantTexture<double> (0.04));
+  //intrusive_ptr<Material> p_material(new Matte(p_text, p_sigma));
+
+  intrusive_ptr<Texture<Spectrum_d> > p_refr(new ConstantTexture<Spectrum_d>(Spectrum_d(0.41,1.15,1.18)));
+  intrusive_ptr<Texture<Spectrum_d> > p_a(new ConstantTexture<Spectrum_d>(Spectrum_d(4.2,2.66,2.5)));
+  intrusive_ptr<Material> p_material(new Metal(p_refr, p_a, p_sigma));
 
   intrusive_ptr<Primitive> p_primitive(new Primitive(mp_mesh, p_material));
   primitives.push_back(p_primitive);
-*/
-   /////// Add sphere primitive ///
 
+   /////// Add sphere primitive ///
+/*
   Sphere s;
   s.SetParameter("Center","400 -1000 400");
   s.SetParameter("Radius","350");
@@ -261,50 +266,14 @@ inline void TestTracer::LoadMesh()
   mp_mesh = s.BuildMesh();
 
   intrusive_ptr<Texture<Spectrum_d> > p_reflectance;
-  intrusive_ptr<Texture<double> > p_sigma(new ConstantTexture<double> (0.15));
-  //intrusive_ptr<Material> p_material(new Matte(p_text, p_sigma));
+  intrusive_ptr<Texture<double> > p_sigma(new ConstantTexture<double> (0.17));
+  //intrusive_ptr<Material> p_material(new Matte(p_reflectance, p_sigma));
+  intrusive_ptr<Material> p_material(new Metal(p_text, p_sigma));
 
-  p_reflectance.reset(new ConstantTexture<Spectrum_d>(Spectrum_d(1.0)));
-  intrusive_ptr<Material> p_material(new Transparent(p_reflectance, p_reflectance, 1.4));
+  //p_reflectance.reset(new ConstantTexture<Spectrum_d>(Spectrum_d(1.0)));
+  //intrusive_ptr<Material> p_material(new Transparent(p_reflectance, p_reflectance, 1.4));
 
   intrusive_ptr<Primitive> p_primitive(new Primitive(mp_mesh, p_material));
-  primitives.push_back(p_primitive);
-
-/*
-  // MIRRORS
-  vertices.clear();
-  vertices.push_back(Point3D_f(-600,-2000,0));vertices.push_back(Point3D_f(100,5000,0));
-  vertices.push_back(Point3D_f(100,5000,800));vertices.push_back(Point3D_f(-600,-2000,800));
-  triangles.clear();
-  triangles.push_back(MeshTriangle(0,1,2));triangles.push_back(MeshTriangle(2,3,0));
-  triangles[0].m_uvs[0]=Point2D_f(0,0);triangles[0].m_uvs[1]=Point2D_f(1,0);triangles[0].m_uvs[2]=Point2D_f(1,1);
-  triangles[1].m_uvs[0]=Point2D_f(1,1);triangles[1].m_uvs[1]=Point2D_f(0,1);triangles[1].m_uvs[2]=Point2D_f(0,0);
-  intrusive_ptr<TriangleMesh> p_mirror1_mesh = intrusive_ptr<TriangleMesh>( new TriangleMesh(vertices, triangles, true) );
-
-  intrusive_ptr<Texture<Spectrum_d> > p_reflectance;
-  intrusive_ptr<Texture<double> > p_sigma(new ConstantTexture<double> (0.15));
-
-  p_reflectance.reset(new ConstantTexture<Spectrum_d> (Spectrum_d(1.0)));
-  intrusive_ptr<Material> p_material(new Transparent(p_reflectance, p_reflectance, 1.4));
-
-  intrusive_ptr<Primitive> p_primitive(new Primitive(p_mirror1_mesh, p_material));
-  primitives.push_back(p_primitive);
-
-
-  vertices.clear();
-  vertices.push_back(Point3D_f(1600,-2000,0));vertices.push_back(Point3D_f(900,5000,0));
-  vertices.push_back(Point3D_f(900,5000,800));vertices.push_back(Point3D_f(1600,-2000,800));
-  triangles.clear();
-  triangles.push_back(MeshTriangle(0,1,2));triangles.push_back(MeshTriangle(2,3,0));
-  triangles[0].m_uvs[0]=Point2D_f(0,0);triangles[0].m_uvs[1]=Point2D_f(1,0);triangles[0].m_uvs[2]=Point2D_f(1,1);
-  triangles[1].m_uvs[0]=Point2D_f(1,1);triangles[1].m_uvs[1]=Point2D_f(0,1);triangles[1].m_uvs[2]=Point2D_f(0,0);
-  intrusive_ptr<TriangleMesh> p_mirror2_mesh = intrusive_ptr<TriangleMesh>( new TriangleMesh(vertices, triangles, true) );
-
-
-  p_reflectance.reset(new ConstantTexture<Spectrum_d> (Spectrum_d(1.0)));
-  p_material.reset(new Transparent(p_reflectance, p_reflectance, 1.4));
-
-  p_primitive.reset(new Primitive(p_mirror2_mesh, p_material));
   primitives.push_back(p_primitive);
 */
   /////// Add ground primitive ///
@@ -320,8 +289,8 @@ inline void TestTracer::LoadMesh()
 
   p_reflectance.reset(new ConstantTexture<Spectrum_d> (Spectrum_d(200,200,200)/255.0*0.6));
   p_sigma.reset(new ConstantTexture<double> (0.35));
-  //p_material.reset(new Matte(p_reflectance, p_sigma));
-  p_material.reset(new Matte(p_text, p_sigma));
+  p_material.reset(new Matte(p_reflectance, p_sigma));
+  //p_material.reset(new Matte(p_text, p_sigma));
 
   p_primitive.reset(new Primitive(p_ground_mesh, p_material));
   primitives.push_back(p_primitive);
@@ -386,15 +355,15 @@ inline void TestTracer::RenderImage(HWND &g_hWnd, HDC &g_memDC)
   // Vector3D_d direction = Vector3D_d(0,-0.5,-1).Normalized();
   //intrusive_ptr<Camera> p_camera( new PerspectiveCamera( MakeLookAt(Point3D_d(0.0,0.26,0.17)+direction*0.08,direction,Vector3D_d(0,1,0)), intrusive_ptr<Film>(film), 0.000, 0.087, 1.3) );
 
-  Vector3D_d direction = Vector3D_d(-0.4,0.5,-0.6).Normalized();
-  intrusive_ptr<Camera> p_camera( new PerspectiveCamera( MakeLookAt(Point3D_d(900,-1600,1100),direction,Vector3D_d(0,0,1)), intrusive_ptr<Film>(film), 0.000, 1000, 1.3) );
+  Vector3D_d direction = Vector3D_d(-0.4,0.5,-0.3).Normalized();
+  intrusive_ptr<Camera> p_camera( new PerspectiveCamera( MakeLookAt(Point3D_d(900,-1600,900),direction,Vector3D_d(0,0,1)), intrusive_ptr<Film>(film), 0.000, 1000, 1.3) );
 
   //Vector3D_d direction = Vector3D_d(0.0,0.5,-0.2).Normalized();
   //intrusive_ptr<Camera> p_camera( new PerspectiveCamera( MakeLookAt(Point3D_d(500,-1600,800),direction,Vector3D_d(0,0,1)), intrusive_ptr<Film>(film), 0.000, 1000, 1.3) );
 
   intrusive_ptr<ImagePixelsOrder> pixel_order(new UniformImagePixelsOrder);
 
-  intrusive_ptr<Sampler> p_sampler( new StratifiedSampler(window_begin, window_end, 1, 1, pixel_order) );
+  intrusive_ptr<Sampler> p_sampler( new StratifiedSampler(window_begin, window_end, 3, 3, pixel_order) );
 
   intrusive_ptr<SamplerBasedRenderer> p_renderer( new SamplerBasedRenderer(mp_scene, p_sampler) );
 
