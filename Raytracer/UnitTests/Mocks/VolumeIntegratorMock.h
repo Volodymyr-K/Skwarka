@@ -29,7 +29,7 @@ class VolumeIntegratorMock: public VolumeIntegrator
 /////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-VolumeIntegratorMock::VolumeIntegratorMock(intrusive_ptr<const Renderer> ip_renderer): VolumeIntegrator(), mp_renderer(ip_renderer), mp_scene(ip_renderer->GetScene())
+VolumeIntegratorMock::VolumeIntegratorMock(intrusive_ptr<const Renderer> ip_renderer): VolumeIntegrator(ip_renderer), mp_renderer(ip_renderer), mp_scene(ip_renderer->GetScene())
   {
   ASSERT(ip_renderer);
   ASSERT(ip_renderer->GetScene());

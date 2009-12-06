@@ -1,5 +1,5 @@
 #include "IrradianceLightsSampling.h"
-#include <Math/Util.h>
+#include <Math/MathRoutines.h>
 #include <cstring>
 
 IrradianceLightsSampling::IrradianceLightsSampling(const LightSources &i_light_sources): LightsSamplingStrategy(),

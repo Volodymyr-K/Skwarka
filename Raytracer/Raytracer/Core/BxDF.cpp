@@ -1,6 +1,6 @@
 #include "BxDF.h"
 #include <Math/Constants.h>
-#include <Math/Util.h>
+#include <Math/MathRoutines.h>
 #include <Math/SamplingRoutines.h>
 
 Spectrum_d BxDF::Sample(const Vector3D_d &i_incident, Vector3D_d &o_exitant, const Point2D_d &i_sample, double &o_pdf) const

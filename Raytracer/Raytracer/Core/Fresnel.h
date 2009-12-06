@@ -4,7 +4,7 @@
 #include <Common/Common.h>
 #include "Spectrum.h"
 #include <Math/Constants.h>
-#include <Math/Util.h>
+#include <Math/MathRoutines.h>
 #include <utility>
 #include <cmath>
 

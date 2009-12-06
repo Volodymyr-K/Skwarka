@@ -405,12 +405,15 @@ void* SamplerBasedRenderer::IntegratorFilter::operator()(void* ip_chunk)
     Point2D_d image_point = p_sample->GetImagePoint();
     Point2D_d lens_uv = p_sample->GetLensUV();
 
+    double x_filter_width, y_filter_width;
+    p_sample->GetImageFilterWidth(x_filter_width, y_filter_width);
+
     // Compute ray differentials by computing camera rays for adjacent image pixels.
     RayDifferential ray;
     Ray r_dx, r_dy;
     double weight = mp_camera->GenerateRay(image_point, lens_uv, ray.m_base_ray);
-    double weight_dx = mp_camera->GenerateRay(image_point+Point2D_d(1.0, 0.0), lens_uv, r_dx);
-    double weight_dy = mp_camera->GenerateRay(image_point+Point2D_d(0.0, 1.0), lens_uv, r_dy);
+    double weight_dx = mp_camera->GenerateRay(image_point+Point2D_d(x_filter_width, 0.0), lens_uv, r_dx);
+    double weight_dy = mp_camera->GenerateRay(image_point+Point2D_d(0.0, y_filter_width), lens_uv, r_dy);
 
     if (weight_dx != 0.0 && weight_dy != 0.0)
       ray.m_has_differentials = true;

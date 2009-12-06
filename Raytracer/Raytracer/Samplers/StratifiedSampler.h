@@ -90,6 +90,7 @@ class StratifiedSubSampler: public SubSampler
 
   private:
     size_t m_x_samples_per_pixel, m_y_samples_per_pixel;
+    double m_inv_x_samples_per_pixel, m_inv_y_samples_per_pixel;
 
     std::vector<Point2D_d> m_image_points;
     std::vector<Point2D_d> m_lens_UVs;

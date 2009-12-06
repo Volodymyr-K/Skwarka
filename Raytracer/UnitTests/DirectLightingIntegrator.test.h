@@ -46,7 +46,7 @@ class DirectLightingIntegratorTestSuite : public CxxTest::TestSuite
       Ray ray(Point3D_d(5,5,0), Vector3D_d(1-5,0-5,0-0).Normalized());
       Intersection isect;
       p_scene->Intersect(RayDifferential(ray), isect);
-      BSDF *p_bsdf = isect.mp_primitive->GetBSDF(isect.m_dg, isect.m_triangle_index, pool);
+      const BSDF *p_bsdf = isect.mp_primitive->GetBSDF(isect.m_dg, isect.m_triangle_index, pool);
 
       intrusive_ptr<DirectLightingIntegrator> p_integrator( new DirectLightingIntegrator(p_renderer, 1, 1) );
       p_integrator->RequestSamples(p_sampler);
@@ -77,7 +77,7 @@ class DirectLightingIntegratorTestSuite : public CxxTest::TestSuite
       Ray ray(Point3D_d(5,5,0), Vector3D_d(1-5,0-5,0-0).Normalized());
       Intersection isect;
       p_scene->Intersect(RayDifferential(ray), isect);
-      BSDF *p_bsdf = isect.mp_primitive->GetBSDF(isect.m_dg, isect.m_triangle_index, pool);
+      const BSDF *p_bsdf = isect.mp_primitive->GetBSDF(isect.m_dg, isect.m_triangle_index, pool);
 
       intrusive_ptr<DirectLightingIntegrator> p_integrator( new DirectLightingIntegrator(p_renderer, 5000, 5100) );
       p_integrator->RequestSamples(p_sampler);
@@ -110,7 +110,7 @@ class DirectLightingIntegratorTestSuite : public CxxTest::TestSuite
       Ray ray(Point3D_d(5,5,0), Vector3D_d(1-5,1-5,0-0).Normalized());
       Intersection isect;
       p_scene->Intersect(RayDifferential(ray), isect);
-      BSDF *p_bsdf = isect.mp_primitive->GetBSDF(isect.m_dg, isect.m_triangle_index, pool);
+      const BSDF *p_bsdf = isect.mp_primitive->GetBSDF(isect.m_dg, isect.m_triangle_index, pool);
 
       intrusive_ptr<DirectLightingIntegrator> p_integrator( new DirectLightingIntegrator(p_renderer, 5000, 5100) );
       p_integrator->RequestSamples(p_sampler);
@@ -148,7 +148,7 @@ class DirectLightingIntegratorTestSuite : public CxxTest::TestSuite
       Ray ray(Point3D_d(5,5,0), Vector3D_d(1-5,1-5,0-0).Normalized());
       Intersection isect;
       p_scene->Intersect(RayDifferential(ray), isect);
-      BSDF *p_bsdf = isect.mp_primitive->GetBSDF(isect.m_dg, isect.m_triangle_index, pool);
+      const BSDF *p_bsdf = isect.mp_primitive->GetBSDF(isect.m_dg, isect.m_triangle_index, pool);
 
       intrusive_ptr<DirectLightingIntegrator> p_integrator( new DirectLightingIntegrator(p_renderer, 10000, 11000) );  
       Spectrum_d radiance = p_integrator->ComputeDirectLighting(isect, ray.m_direction*(-1.0), p_bsdf, NULL, pool); // Call without Sample.
@@ -185,7 +185,7 @@ class DirectLightingIntegratorTestSuite : public CxxTest::TestSuite
       Ray ray(Point3D_d(0,0,0), Vector3D_d(1,1,1).Normalized());
       Intersection isect;
       p_scene->Intersect(RayDifferential(ray), isect);
-      BSDF *p_bsdf = isect.mp_primitive->GetBSDF(isect.m_dg, isect.m_triangle_index, pool);
+      const BSDF *p_bsdf = isect.mp_primitive->GetBSDF(isect.m_dg, isect.m_triangle_index, pool);
 
       intrusive_ptr<DirectLightingIntegrator> p_integrator( new DirectLightingIntegrator(p_renderer, 5000, 5100) );
       p_integrator->RequestSamples(p_sampler);

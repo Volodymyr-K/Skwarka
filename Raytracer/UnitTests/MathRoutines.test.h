@@ -1,12 +1,12 @@
-#ifndef UTIL_TEST_H
-#define UTIL_TEST_H
+#ifndef MATH_ROUTINES_TEST_H
+#define MATH_ROUTINES_TEST_H
 
 #include <cxxtest/TestSuite.h>
 #include "CustomValueTraits.h"
-#include <Math/Util.h>
+#include <Math/MathRoutines.h>
 #include <vector>
 
-class UtilTestSuite : public CxxTest::TestSuite
+class MathRoutinesTestSuite : public CxxTest::TestSuite
   {
   public:
     void test_SolveLinearSystem2x2()
@@ -365,4 +365,4 @@ class UtilTestSuite : public CxxTest::TestSuite
 
   };
 
-#endif // UTIL_TEST_H
+#endif // MATH_ROUTINES_TEST_H

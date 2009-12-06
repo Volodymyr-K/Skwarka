@@ -28,7 +28,7 @@ class Matte: public Material
     * @param i_pool Memory pool object that is used for allocating the BSDF and BxDFs objects.
     * @return A pointer to the resulting BSDF object. The object is allocated in the specified memory pool.
     */
-    virtual BSDF *GetBSDF(const DifferentialGeometry &i_dg, size_t i_triangle_index, MemoryPool &i_pool) const;
+    virtual const BSDF *GetBSDF(const DifferentialGeometry &i_dg, size_t i_triangle_index, MemoryPool &i_pool) const;
 
   private:
     intrusive_ptr<const Texture<Spectrum_d> > mp_reflectance;

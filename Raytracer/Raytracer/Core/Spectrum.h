@@ -3,7 +3,7 @@
 
 #include "Common\Common.h"
 #include <istream>
-#include <Math/Util.h>
+#include <Math/MathRoutines.h>
 
 /**
 * Represents the spectrum of light (i.e. color).

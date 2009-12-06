@@ -8,6 +8,7 @@
 #include "Sample.h"
 #include "Sampler.h"
 #include "Intersection.h"
+#include "Renderer.h"
 
 /**
 * An abstract class defining the contract for surface integrator implementations.
@@ -38,27 +39,30 @@ class SurfaceIntegrator: public ReferenceCounted
     virtual ~SurfaceIntegrator();
 
   protected:
-    SurfaceIntegrator();
+    /**
+    * Creates SurfaceIntegrator instance with the specified renderer.
+    */
+    SurfaceIntegrator(intrusive_ptr<const Renderer> ip_renderer);
+
+    /**
+    * The method for derived classes to compute radiance for the specularly reflected ray.
+    * The method calls Renderer::Radiance() method to compute the radiance (which can result in recursive call depending on the renderer implementation).
+    */
+    Spectrum_d _SpecularReflect(const RayDifferential &i_ray, const Intersection &i_intersection, const BSDF *ip_bsdf, const Sample *ip_sample, MemoryPool &i_pool) const;
+
+    /**
+    * The method for derived classes to compute radiance for the specularly transmitted ray.
+    * The method calls Renderer::Radiance() method to compute the radiance (which can result in recursive call depending on the renderer implementation).
+    */
+    Spectrum_d _SpecularTransmit(const RayDifferential &i_ray, const Intersection &i_intersection, const BSDF *ip_bsdf, const Sample *ip_sample, MemoryPool &i_pool) const;
 
   private:
     // Not implemented, not a value type.
     SurfaceIntegrator(const SurfaceIntegrator&);
     SurfaceIntegrator &operator=(const SurfaceIntegrator&);
+
+  private:
+    intrusive_ptr<const Renderer> mp_renderer;
   };
-
-/////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-inline SurfaceIntegrator::SurfaceIntegrator()
-  {
-  }
-
-inline SurfaceIntegrator::~SurfaceIntegrator()
-  {
-  }
-
-inline void SurfaceIntegrator::RequestSamples(intrusive_ptr<Sampler> ip_sampler)
-  {
-  }
 
 #endif // SURFACE_INTEGRATOR_H

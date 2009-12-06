@@ -51,7 +51,7 @@ class Primitive: public ReferenceCounted
     * Returns a raw pointer to the Material the primitive is associated with.
     * @warning The calling code should never utilize the pointer after the Primitive is destroyed.
     */
-    intrusive_ptr<const Material> GetMaterial_RawPtr() const;
+    const Material *GetMaterial_RawPtr() const;
 
     /**
     * Returns a pointer to the AreaLightSource the primitive is associated with or NULL if the primitive does not have emission properties.
@@ -73,7 +73,7 @@ class Primitive: public ReferenceCounted
     * @param i_pool Memory pool object that is used for allocating the BSDF and BxDFs objects.
     * @return A pointer to the resulting BSDF object. The object is allocated in the specified memory pool.
     */
-    BSDF *GetBSDF(const DifferentialGeometry &i_dg, size_t i_triangle_index, MemoryPool &i_pool) const;
+    const BSDF *GetBSDF(const DifferentialGeometry &i_dg, size_t i_triangle_index, MemoryPool &i_pool) const;
 
     /**
     * Returns self-emittance of the primitive at the specified surface point.
@@ -129,7 +129,7 @@ inline intrusive_ptr<const Material> Primitive::GetMaterial() const
   return mp_material;
   }
 
-inline intrusive_ptr<const Material> Primitive::GetMaterial_RawPtr() const
+inline const Material *Primitive::GetMaterial_RawPtr() const
   {
   return mp_material.get();
   }
@@ -144,7 +144,7 @@ inline const AreaLightSource *Primitive::GetAreaLightSource_RawPtr() const
   return mp_area_light_source.get();
   }
 
-inline BSDF *Primitive::GetBSDF(const DifferentialGeometry &i_dg, size_t i_triangle_index, MemoryPool &i_pool) const
+inline const BSDF *Primitive::GetBSDF(const DifferentialGeometry &i_dg, size_t i_triangle_index, MemoryPool &i_pool) const
   {
   ASSERT(mp_mesh);
   ASSERT(mp_material);

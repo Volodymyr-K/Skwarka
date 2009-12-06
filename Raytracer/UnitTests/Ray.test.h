@@ -45,7 +45,8 @@ class RayTestSuite : public CxxTest::TestSuite
     void test_Ray_DifferentialDefaultConstr()
       {
       RayDifferential rd;
-      TS_ASSERT(rd.m_has_differentials==false);
+      TS_ASSERT(rd.m_has_differentials == false);
+      TS_ASSERT_EQUALS(rd.m_specular_depth, 0);
       }
 
     void test_Ray_RayDifferentialMutualConstructors()

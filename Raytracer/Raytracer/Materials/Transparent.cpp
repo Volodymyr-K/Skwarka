@@ -4,7 +4,7 @@
 #include <Raytracer/BxDFs/SpecularReflection.h>
 #include <Raytracer/BxDFs/SpecularTransmission.h>
 #include <Raytracer/Core/Fresnel.h>
-#include <Math/Util.h>
+#include <Math/MathRoutines.h>
 
 Transparent::Transparent(intrusive_ptr<const Texture<Spectrum_d> > ip_reflectance, intrusive_ptr<const Texture<Spectrum_d> > ip_transmittance, double i_refractive_index):
 Material(), mp_reflectance(ip_reflectance), mp_transmittance(ip_transmittance), m_refractive_index(i_refractive_index)
@@ -17,7 +17,7 @@ Material(), mp_reflectance(ip_reflectance), mp_transmittance(ip_transmittance), 
     m_refractive_index=0.0;
   }
 
-BSDF *Transparent::GetBSDF(const DifferentialGeometry &i_dg, size_t i_triangle_index, MemoryPool &i_pool) const
+const BSDF *Transparent::GetBSDF(const DifferentialGeometry &i_dg, size_t i_triangle_index, MemoryPool &i_pool) const
   {
   BSDF *p_bsdf = new ( i_pool.Alloc(sizeof(BSDF)) ) BSDF(i_dg, m_refractive_index);
 

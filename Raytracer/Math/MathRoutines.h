@@ -1,5 +1,5 @@
-#ifndef UTIL_H
-#define UTIL_H
+#ifndef MATH_ROUTINES_H
+#define MATH_ROUTINES_H
 
 #include "Constants.h"
 #include "Geometry.h"
@@ -389,4 +389,5 @@ namespace MathRoutines
     }
 
   }
-#endif // UTIL_H
+
+#endif // MATH_ROUTINES_H

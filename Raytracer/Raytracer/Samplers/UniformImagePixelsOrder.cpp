@@ -1,6 +1,6 @@
 #include "UniformImagePixelsOrder.h"
 #include <Common/Common.h>
-#include <Math/Util.h>
+#include <Math/MathRoutines.h>
 
 UniformImagePixelsOrder::UniformImagePixelsOrder(): ImagePixelsOrder()
   {

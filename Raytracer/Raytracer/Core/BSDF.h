@@ -6,7 +6,7 @@
 #include "Spectrum.h"
 #include "DifferentialGeometry.h"
 #include "BxDF.h"
-#include <Math/Util.h>
+#include <Math/MathRoutines.h>
 
 /**
 * The class represents full scattering properties of a surface point.

@@ -45,8 +45,8 @@ inline void UVMapping2D::Map(const DifferentialGeometry &i_dg, size_t i_triangle
   {
   o_point = Point2D_d(i_dg.m_uv[0]*m_u_scale + m_uv_translation[0], i_dg.m_uv[1]*m_v_scale + m_uv_translation[1]);
 
-  o_dp_dx = Vector2D_d(i_dg.m_duv_dx[0]*m_u_scale + m_uv_translation[0], i_dg.m_duv_dx[1]*m_v_scale + m_uv_translation[1]);
-  o_dp_dy = Vector2D_d(i_dg.m_duv_dy[0]*m_u_scale + m_uv_translation[0], i_dg.m_duv_dy[1]*m_v_scale + m_uv_translation[1]);
+  o_dp_dx = Vector2D_d(i_dg.m_duv_dx[0]*m_u_scale, i_dg.m_duv_dx[1]*m_v_scale);
+  o_dp_dy = Vector2D_d(i_dg.m_duv_dy[0]*m_u_scale, i_dg.m_duv_dy[1]*m_v_scale);
   }
 
 #endif // UV_MAPPING_2D_H

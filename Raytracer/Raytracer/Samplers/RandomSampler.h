@@ -68,6 +68,9 @@ class RandomSubSampler: public SubSampler
     * Populates the Sample with the samples data for the specified image pixel and specified sample's index inside that pixel.
     */
     virtual void _GetSample(const Point2D_i &i_current_pixel, size_t i_pixel_sample_index, intrusive_ptr<Sample> op_sample);
+
+  private:
+    double m_inv_samples_per_pixel;
   };
 
 #endif // RANDOM_SAMPLER_H

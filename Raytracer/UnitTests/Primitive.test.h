@@ -44,7 +44,7 @@ class PrimitiveTestSuite : public CxxTest::TestSuite
       dg.m_point_dx=Point3D_d(1,0,0);
       dg.m_point_dy=Point3D_d(0,1,0);
 
-      BSDF *p_bsdf=p_primitive->GetBSDF(dg,0,pool);
+      const BSDF *p_bsdf=p_primitive->GetBSDF(dg,0,pool);
       // Constant bump mapping should produce the same result as if no bump mapping was done at all.
       TS_ASSERT_EQUALS(p_bsdf->GetShadingNormal(),Vector3D_d(0.0,0.0,1.0));
       }

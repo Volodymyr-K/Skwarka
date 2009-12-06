@@ -6,6 +6,7 @@
 #include "Spectrum.h"
 #include "Sample.h"
 #include "Sampler.h"
+#include "Renderer.h"
 
 /**
 * An abstract class defining the contract for volume integrator implementations.
@@ -45,19 +46,24 @@ class VolumeIntegrator: public ReferenceCounted
     virtual ~VolumeIntegrator();
 
   protected:
-    VolumeIntegrator();
+    VolumeIntegrator(intrusive_ptr<const Renderer> ip_renderer);
 
   private:
     // Not implemented, not a value type.
     VolumeIntegrator(const VolumeIntegrator&);
     VolumeIntegrator &operator=(const VolumeIntegrator&);
+
+
+  private:
+    intrusive_ptr<const Renderer> mp_renderer;
   };
 
 /////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-inline VolumeIntegrator::VolumeIntegrator()
+inline VolumeIntegrator::VolumeIntegrator(intrusive_ptr<const Renderer> ip_renderer): mp_renderer(ip_renderer)
   {
+  ASSERT(ip_renderer);
   }
 
 inline VolumeIntegrator::~VolumeIntegrator()

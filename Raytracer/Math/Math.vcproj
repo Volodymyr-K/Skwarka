@@ -181,6 +181,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\MathRoutines.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Matrix.h"
 				>
 			</File>
@@ -214,10 +218,6 @@
 			</File>
 			<File
 				RelativePath=".\Triangle3D.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Util.h"
 				>
 			</File>
 			<File

@@ -17,7 +17,7 @@
 #include <WinBase.h>
 #include <cstdio>
 #include <Raytracer/Core/Spectrum.h>
-#include <Math/Util.h>
+#include <Math/MathRoutines.h>
 #include <Raytracer/Core/Camera.h>
 #include <Raytracer/FilmFilters/BoxFilter.h>
 #include <Raytracer/Core/Sample.h>
@@ -42,6 +42,8 @@
 #include <Raytracer/Textures/ImageTexture.h>
 #include <Raytracer/Mappings/SphericalMapping2D.h>
 #include <Raytracer/Mappings/UVMapping2D.h>
+#include <Raytracer/Materials/Transparent.h>
+#include <Raytracer/Core/Fresnel.h>
 #include "EasyBMP.h"
 
 class TestTracer
@@ -86,7 +88,7 @@ inline void TestTracer::LoadMesh()
     {
     for( int i=0 ; i < Input.TellWidth() ; i++)
       {
-      values[j][i]=Spectrum_f(Input(i,j)->Red,Input(i,j)->Green,Input(i,j)->Blue);
+      values[j][i]=Spectrum_f(Input(i,j)->Red,Input(i,j)->Green,Input(i,j)->Blue)*0.8;
       values[j][i]/=255.0;
       }
     }
@@ -112,7 +114,8 @@ inline void TestTracer::LoadMesh()
   Input.WriteToFile(buf);
 */
   //intrusive_ptr<Mapping2D> p_mapping( new SphericalMapping2D(Point3D_d(100,-400,300), Vector3D_d(0,0,1), Vector3D_d(1,0,0)) );
-  intrusive_ptr<Mapping2D> p_mapping( new UVMapping2D );
+  intrusive_ptr<Mapping2D> p_mapping( new UVMapping2D(16.0,16.0,Vector2D_d(-0.057,-0.003)) );
+  //intrusive_ptr<Mapping2D> p_mapping( new UVMapping2D(16.0,16.0,Vector2D_d(0.3,0.25)) );
   intrusive_ptr< ImageTexture<Spectrum_f,Spectrum_d> > p_text(new ImageTexture<Spectrum_f,Spectrum_d>(values, p_mapping) );
 
   /*
@@ -185,7 +188,7 @@ inline void TestTracer::LoadMesh()
   Vector3D_f normal;
   Point3D_f v1,v2,v3;
   size_t ind=0,num_ver=0;
-  while(true)
+  while(true && 0)
     {
     char buf[1024];
     if ( !fgets(buf,1024,fp) ) break;
@@ -254,16 +257,56 @@ inline void TestTracer::LoadMesh()
   Sphere s;
   s.SetParameter("Center","400 -1000 400");
   s.SetParameter("Radius","350");
-  s.SetParameter("Subdivisions","6");
+  s.SetParameter("Subdivisions","9");
   mp_mesh = s.BuildMesh();
 
   intrusive_ptr<Texture<Spectrum_d> > p_reflectance;
   intrusive_ptr<Texture<double> > p_sigma(new ConstantTexture<double> (0.15));
-  intrusive_ptr<Material> p_material(new Matte(p_text, p_sigma));
+  //intrusive_ptr<Material> p_material(new Matte(p_text, p_sigma));
+
+  p_reflectance.reset(new ConstantTexture<Spectrum_d>(Spectrum_d(1.0)));
+  intrusive_ptr<Material> p_material(new Transparent(p_reflectance, p_reflectance, 1.4));
 
   intrusive_ptr<Primitive> p_primitive(new Primitive(mp_mesh, p_material));
   primitives.push_back(p_primitive);
 
+/*
+  // MIRRORS
+  vertices.clear();
+  vertices.push_back(Point3D_f(-600,-2000,0));vertices.push_back(Point3D_f(100,5000,0));
+  vertices.push_back(Point3D_f(100,5000,800));vertices.push_back(Point3D_f(-600,-2000,800));
+  triangles.clear();
+  triangles.push_back(MeshTriangle(0,1,2));triangles.push_back(MeshTriangle(2,3,0));
+  triangles[0].m_uvs[0]=Point2D_f(0,0);triangles[0].m_uvs[1]=Point2D_f(1,0);triangles[0].m_uvs[2]=Point2D_f(1,1);
+  triangles[1].m_uvs[0]=Point2D_f(1,1);triangles[1].m_uvs[1]=Point2D_f(0,1);triangles[1].m_uvs[2]=Point2D_f(0,0);
+  intrusive_ptr<TriangleMesh> p_mirror1_mesh = intrusive_ptr<TriangleMesh>( new TriangleMesh(vertices, triangles, true) );
+
+  intrusive_ptr<Texture<Spectrum_d> > p_reflectance;
+  intrusive_ptr<Texture<double> > p_sigma(new ConstantTexture<double> (0.15));
+
+  p_reflectance.reset(new ConstantTexture<Spectrum_d> (Spectrum_d(1.0)));
+  intrusive_ptr<Material> p_material(new Transparent(p_reflectance, p_reflectance, 1.4));
+
+  intrusive_ptr<Primitive> p_primitive(new Primitive(p_mirror1_mesh, p_material));
+  primitives.push_back(p_primitive);
+
+
+  vertices.clear();
+  vertices.push_back(Point3D_f(1600,-2000,0));vertices.push_back(Point3D_f(900,5000,0));
+  vertices.push_back(Point3D_f(900,5000,800));vertices.push_back(Point3D_f(1600,-2000,800));
+  triangles.clear();
+  triangles.push_back(MeshTriangle(0,1,2));triangles.push_back(MeshTriangle(2,3,0));
+  triangles[0].m_uvs[0]=Point2D_f(0,0);triangles[0].m_uvs[1]=Point2D_f(1,0);triangles[0].m_uvs[2]=Point2D_f(1,1);
+  triangles[1].m_uvs[0]=Point2D_f(1,1);triangles[1].m_uvs[1]=Point2D_f(0,1);triangles[1].m_uvs[2]=Point2D_f(0,0);
+  intrusive_ptr<TriangleMesh> p_mirror2_mesh = intrusive_ptr<TriangleMesh>( new TriangleMesh(vertices, triangles, true) );
+
+
+  p_reflectance.reset(new ConstantTexture<Spectrum_d> (Spectrum_d(1.0)));
+  p_material.reset(new Transparent(p_reflectance, p_reflectance, 1.4));
+
+  p_primitive.reset(new Primitive(p_mirror2_mesh, p_material));
+  primitives.push_back(p_primitive);
+*/
   /////// Add ground primitive ///
 
   vertices.clear();
@@ -271,11 +314,14 @@ inline void TestTracer::LoadMesh()
   vertices.push_back(Point3D_f(20000,20000,0));vertices.push_back(Point3D_f(-20000,20000,0));
   triangles.clear();
   triangles.push_back(MeshTriangle(0,1,2));triangles.push_back(MeshTriangle(2,3,0));
+  triangles[0].m_uvs[0]=Point2D_f(0,0);triangles[0].m_uvs[1]=Point2D_f(1,0);triangles[0].m_uvs[2]=Point2D_f(1,1);
+  triangles[1].m_uvs[0]=Point2D_f(1,1);triangles[1].m_uvs[1]=Point2D_f(0,1);triangles[1].m_uvs[2]=Point2D_f(0,0);
   intrusive_ptr<TriangleMesh> p_ground_mesh = intrusive_ptr<TriangleMesh>( new TriangleMesh(vertices, triangles, true) );
 
   p_reflectance.reset(new ConstantTexture<Spectrum_d> (Spectrum_d(200,200,200)/255.0*0.6));
   p_sigma.reset(new ConstantTexture<double> (0.35));
-  p_material.reset(new Matte(p_reflectance, p_sigma));
+  //p_material.reset(new Matte(p_reflectance, p_sigma));
+  p_material.reset(new Matte(p_text, p_sigma));
 
   p_primitive.reset(new Primitive(p_ground_mesh, p_material));
   primitives.push_back(p_primitive);
@@ -331,7 +377,7 @@ inline void TestTracer::RenderImage(HWND &g_hWnd, HDC &g_memDC)
   {
   FilmFilter *filter = new BoxFilter(0.5,0.5);
   InteractiveFilm *film = new InteractiveFilm(GetImageWidth(), GetImageHeight(), intrusive_ptr<FilmFilter>(filter));
-  //film->SetCropWindow(Point2D_i(100,200),Point2D_i(550,300));
+  //film->SetCropWindow(Point2D_i(0,106-27),Point2D_i(800,200-27));
 
   Point2D_i window_begin,window_end;
   film->GetSamplingExtent(window_begin, window_end);
@@ -343,8 +389,8 @@ inline void TestTracer::RenderImage(HWND &g_hWnd, HDC &g_memDC)
   Vector3D_d direction = Vector3D_d(-0.4,0.5,-0.6).Normalized();
   intrusive_ptr<Camera> p_camera( new PerspectiveCamera( MakeLookAt(Point3D_d(900,-1600,1100),direction,Vector3D_d(0,0,1)), intrusive_ptr<Film>(film), 0.000, 1000, 1.3) );
 
-  //Vector3D_d direction = Vector3D_d(0.3,0.5,-0.6).Normalized();
-  //intrusive_ptr<Camera> p_camera( new PerspectiveCamera( MakeLookAt(Point3D_d(-100,-1600,1100),direction,Vector3D_d(0,0,1)), intrusive_ptr<Film>(film), 0.000, 1000, 1.3) );
+  //Vector3D_d direction = Vector3D_d(0.0,0.5,-0.2).Normalized();
+  //intrusive_ptr<Camera> p_camera( new PerspectiveCamera( MakeLookAt(Point3D_d(500,-1600,800),direction,Vector3D_d(0,0,1)), intrusive_ptr<Film>(film), 0.000, 1000, 1.3) );
 
   intrusive_ptr<ImagePixelsOrder> pixel_order(new UniformImagePixelsOrder);
 
@@ -354,7 +400,7 @@ inline void TestTracer::RenderImage(HWND &g_hWnd, HDC &g_memDC)
 
   intrusive_ptr<LightsSamplingStrategy> p_sampling_strategy( new IrradianceLightsSampling(mp_scene->GetLightSources()) );
   intrusive_ptr<DirectLightingIntegrator> p_direct_int( new DirectLightingIntegrator(p_renderer, 128, 32, p_sampling_strategy) );
-  intrusive_ptr<SurfaceIntegrator> surf_int( new DirectLightingSurfaceIntegrator(p_renderer, p_direct_int) );
+  intrusive_ptr<SurfaceIntegrator> surf_int( new DirectLightingSurfaceIntegrator(p_renderer, p_direct_int, 5, 0.1) );
   intrusive_ptr<VolumeIntegrator> volume_int( new VolumeIntegratorMock(p_renderer) );
   p_renderer->SetSurfaceIntegrator(surf_int);
   //p_renderer->SetVolumeIntegrator(volume_int);

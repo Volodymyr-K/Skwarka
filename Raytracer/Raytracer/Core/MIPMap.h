@@ -4,7 +4,7 @@
 #include <Common/Common.h>
 #include <Raytracer/Core/BlockedArray.h>
 #include <Math/Point2D.h>
-#include <Math/Util.h>
+#include <Math/MathRoutines.h>
 #include <Math/SamplingRoutines.h>
 #include <vector>
 

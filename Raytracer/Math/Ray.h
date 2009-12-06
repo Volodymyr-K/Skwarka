@@ -46,7 +46,7 @@ class Ray
   };
 
 /**
-* Represents 3D ray with its screen-space differentials.
+* Represents 3D ray with its screen-space differentials and depth information.
 * The differentials are two additional rays corresponding to the neighbor x and y image pixels.
 * The differential rays do not have bounded parametric region.
 * @sa Ray
@@ -86,9 +86,14 @@ class RayDifferential
     Vector3D_d m_direction_dy;
 
     /**
-    * true if the differential rays are present and false otherwise.
+    * True if the differential rays are present and false otherwise.
     */
     bool m_has_differentials;
+
+    /**
+    * Ray specular depth, i.e. how many time the ray was reflected or refracted.
+    */
+    size_t m_specular_depth;
   };
 
 /////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
@@ -117,14 +122,13 @@ inline Point3D_d Ray::operator()(double i_t) const
 
 
 inline RayDifferential::RayDifferential():
-  m_base_ray(), m_has_differentials(false)
+m_base_ray(), m_has_differentials(false), m_specular_depth(0)
   {
   }
 
 inline RayDifferential::RayDifferential(const Ray &i_ray):
-m_base_ray(i_ray), m_has_differentials(false)
+m_base_ray(i_ray), m_has_differentials(false), m_specular_depth(0)
   {
   }
-
 
 #endif // RAY_H

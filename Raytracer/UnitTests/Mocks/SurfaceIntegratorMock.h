@@ -27,7 +27,7 @@ class SurfaceIntegratorMock: public SurfaceIntegrator
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 SurfaceIntegratorMock::SurfaceIntegratorMock(intrusive_ptr<const Renderer> ip_renderer):
-SurfaceIntegrator(), mp_renderer(ip_renderer), mp_scene(ip_renderer->GetScene())
+SurfaceIntegrator(ip_renderer), mp_renderer(ip_renderer), mp_scene(ip_renderer->GetScene())
   {
   ASSERT(ip_renderer);
   ASSERT(ip_renderer->GetScene());
@@ -38,7 +38,7 @@ Spectrum_d SurfaceIntegratorMock::Radiance(const RayDifferential &i_ray, const I
   ASSERT(i_ray.m_base_ray.m_direction.IsNormalized());
   Spectrum_d radiance;
 
-  BSDF *p_bsdf = i_intersection.mp_primitive->GetBSDF(i_intersection.m_dg, i_intersection.m_triangle_index, i_pool);
+  const BSDF *p_bsdf = i_intersection.mp_primitive->GetBSDF(i_intersection.m_dg, i_intersection.m_triangle_index, i_pool);
 
   const AreaLightSource *p_light_source = i_intersection.mp_primitive->GetAreaLightSource_RawPtr();
   if (p_light_source)

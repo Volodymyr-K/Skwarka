@@ -21,7 +21,7 @@ class Material: public ReferenceCounted
     * @param i_pool Memory pool object that is used for allocating the BSDF and BxDFs objects.
     * @return A pointer to the resulting BSDF object. The object is allocated in the specified memory pool.
     */
-    virtual BSDF *GetBSDF(const DifferentialGeometry &i_dg, size_t i_triangle_index, MemoryPool &i_pool) const = 0;
+    virtual const BSDF *GetBSDF(const DifferentialGeometry &i_dg, size_t i_triangle_index, MemoryPool &i_pool) const = 0;
 
     virtual ~Material();
 

@@ -41,6 +41,7 @@ struct SamplesSequence2D
 * The class is a container for sample values.
 * It holds the following data:
 *   - Image point.
+*   - Image filter width (the extent of the sample on the image plane).
 *   - Lens UV values.
 *   - Integrator's 1D samples.
 *   - Integrator's 2D samples.
@@ -60,6 +61,9 @@ class Sample: public ReferenceCounted
     void SetImagePoint(const Point2D_d &i_image_point);
     Point2D_d GetImagePoint() const;
 
+    void SetImageFilterWidth(double i_x_filter_width, double i_y_filter_width);
+    void GetImageFilterWidth(double &o_x_filter_width, double &o_y_filter_width) const;
+
     void SetLensUV(const Point2D_d &i_lens_uv);
     Point2D_d GetLensUV() const;
 
@@ -77,6 +81,9 @@ class Sample: public ReferenceCounted
 
   private:
     Point2D_d m_image_point;
+
+    double m_x_filter_width, m_y_filter_width;
+
     Point2D_d m_lens_uv;
 
     std::vector<double> m_1D_samples;
@@ -156,6 +163,18 @@ inline void Sample::SetImagePoint(const Point2D_d &i_image_point)
 inline Point2D_d Sample::GetImagePoint() const
   {
   return m_image_point;
+  }
+
+inline void Sample::SetImageFilterWidth(double i_x_filter_width, double i_y_filter_width)
+  {
+  m_x_filter_width = i_x_filter_width;
+  m_y_filter_width = i_y_filter_width;
+  }
+
+inline void Sample::GetImageFilterWidth(double &o_x_filter_width, double &o_y_filter_width) const
+  {
+  o_x_filter_width = m_x_filter_width;
+  o_y_filter_width = m_y_filter_width;
   }
 
 inline void Sample::SetLensUV(const Point2D_d &i_lens_uv)

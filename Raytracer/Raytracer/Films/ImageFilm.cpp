@@ -1,5 +1,5 @@
 #include "ImageFilm.h"
-#include <Math/Util.h>
+#include <Math/MathRoutines.h>
 
 ImageFilm::ImageFilm(size_t i_x_resolution, size_t i_y_resolution, intrusive_ptr<const FilmFilter> ip_filter):
 Film(i_x_resolution, i_y_resolution), m_x_resolution(i_x_resolution), m_y_resolution(i_y_resolution), mp_filter(ip_filter), m_pixels(i_x_resolution, i_y_resolution)

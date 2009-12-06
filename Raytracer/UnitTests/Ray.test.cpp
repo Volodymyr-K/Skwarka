@@ -42,7 +42,7 @@ public:
 
 static class TestDescription_RayTestSuite_test_Ray_RayDifferentialMutualConstructors : public CxxTest::RealTestDescription {
 public:
- TestDescription_RayTestSuite_test_Ray_RayDifferentialMutualConstructors() : CxxTest::RealTestDescription( Tests_RayTestSuite, suiteDescription_RayTestSuite, 51, "test_Ray_RayDifferentialMutualConstructors" ) {}
+ TestDescription_RayTestSuite_test_Ray_RayDifferentialMutualConstructors() : CxxTest::RealTestDescription( Tests_RayTestSuite, suiteDescription_RayTestSuite, 52, "test_Ray_RayDifferentialMutualConstructors" ) {}
  void runTest() { suite_RayTestSuite.test_Ray_RayDifferentialMutualConstructors(); }
 } testDescription_RayTestSuite_test_Ray_RayDifferentialMutualConstructors;
 

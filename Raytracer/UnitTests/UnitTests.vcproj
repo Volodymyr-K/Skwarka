@@ -277,6 +277,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\MathRoutines.test.h"
+					>
+				</File>
+				<File
 					RelativePath=".\Matrix.test.h"
 					>
 				</File>
@@ -313,10 +317,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\Util.test.h"
-					>
-				</File>
-				<File
 					RelativePath=".\Vector2D.test.h"
 					>
 				</File>
@@ -345,6 +345,10 @@
 					</File>
 					<File
 						RelativePath=".\Camera.test.h"
+						>
+					</File>
+					<File
+						RelativePath=".\CoreUtils.test.h"
 						>
 					</File>
 					<File
@@ -614,6 +618,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CoreUtils.test.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\DiffuseAreaLightSource.test.cpp"
 				>
 			</File>
@@ -659,6 +667,10 @@
 			</File>
 			<File
 				RelativePath=".\Main.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\MathRoutines.test.cpp"
 				>
 			</File>
 			<File
@@ -799,10 +811,6 @@
 			</File>
 			<File
 				RelativePath=".\UniformImagePixelsOrder.test.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Util.test.cpp"
 				>
 			</File>
 			<File

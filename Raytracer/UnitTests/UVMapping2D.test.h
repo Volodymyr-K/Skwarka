@@ -41,8 +41,8 @@ class UVMapping2DTestSuite : public CxxTest::TestSuite
       Vector2D_d dp_dx, dp_dy;
       mapping->Map(dg, 0, mapped, dp_dx, dp_dy);
       TS_ASSERT_EQUALS(mapped, Point2D_d(dg.m_uv[0]*u_scale,dg.m_uv[1]*v_scale)+translation);
-      TS_ASSERT_EQUALS(dp_dx, Vector2D_d(dg.m_duv_dx[0]*u_scale,dg.m_duv_dx[1]*v_scale)+translation);
-      TS_ASSERT_EQUALS(dp_dy, Vector2D_d(dg.m_duv_dy[0]*u_scale,dg.m_duv_dy[1]*v_scale)+translation);
+      TS_ASSERT_EQUALS(dp_dx, Vector2D_d(dg.m_duv_dx[0]*u_scale,dg.m_duv_dx[1]*v_scale));
+      TS_ASSERT_EQUALS(dp_dy, Vector2D_d(dg.m_duv_dy[0]*u_scale,dg.m_duv_dy[1]*v_scale));
       }
 
   };

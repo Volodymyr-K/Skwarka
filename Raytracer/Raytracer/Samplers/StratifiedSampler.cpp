@@ -33,6 +33,10 @@ StratifiedSubSampler::StratifiedSubSampler(const std::vector<Point2D_i> &i_pixel
 SubSampler(i_pixels, i_x_samples_per_pixel*i_y_samples_per_pixel, ip_rng), m_x_samples_per_pixel(i_x_samples_per_pixel), m_y_samples_per_pixel(i_y_samples_per_pixel), 
 m_image_points(i_x_samples_per_pixel*i_y_samples_per_pixel), m_lens_UVs(i_x_samples_per_pixel*i_y_samples_per_pixel)
   {
+  ASSERT(i_x_samples_per_pixel>0 && i_y_samples_per_pixel>0);
+
+  m_inv_x_samples_per_pixel = 1.0/i_x_samples_per_pixel;
+  m_inv_y_samples_per_pixel = 1.0/i_y_samples_per_pixel;
   }
 
 void StratifiedSubSampler::_GetSample(const Point2D_i &i_current_pixel, size_t i_pixel_sample_index, intrusive_ptr<Sample> op_sample)
@@ -40,6 +44,7 @@ void StratifiedSubSampler::_GetSample(const Point2D_i &i_current_pixel, size_t i
   RandomGenerator<double> *p_rng = _GetRandomGenerator();
 
   op_sample->SetImagePoint( m_image_points[i_pixel_sample_index] );
+  op_sample->SetImageFilterWidth(m_inv_x_samples_per_pixel, m_inv_y_samples_per_pixel);
   op_sample->SetLensUV( m_lens_UVs[i_pixel_sample_index] );
 
   for(size_t i=0;i<op_sample->GetNumberOfSamplesSequences1D();++i)
