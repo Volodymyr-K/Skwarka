@@ -9,6 +9,7 @@
 #include "tbb/task_scheduler_init.h"
 #include <sstream>
 
+#include "MeshLoader.h"
 #include <Math/Geometry.h>
 #include <Raytracer/Core/TriangleMesh.h>
 #include <Shapes/Sphere.h>
@@ -114,168 +115,37 @@ inline void TestTracer::LoadMesh()
   sprintf(buf,"image%d.bmp",1);
   Input.WriteToFile(buf);
 */
-  //intrusive_ptr<Mapping2D> p_mapping( new SphericalMapping2D(Point3D_d(100,-400,300), Vector3D_d(0,0,1), Vector3D_d(1,0,0)) );
+  intrusive_ptr<Mapping2D> p_mapping( new SphericalMapping2D(Point3D_d(100,-400,600), Vector3D_d(0,1,0), Vector3D_d(0,0,-1)) );
   //intrusive_ptr<Mapping2D> p_mapping( new UVMapping2D(16.0,16.0,Vector2D_d(-0.057,-0.003)) );
-  intrusive_ptr<Mapping2D> p_mapping( new UVMapping2D() );
+  //intrusive_ptr<Mapping2D> p_mapping( new UVMapping2D() );
   intrusive_ptr< ImageTexture<Spectrum_f,Spectrum_d> > p_text(new ImageTexture<Spectrum_f,Spectrum_d>(values, p_mapping) );
 
-  /*
-  Sphere s;
-  s.SetParameter("Center","0 0 0");
-  s.SetParameter("Radius","0.4");
-  s.SetParameter("Subdivisions","5");
-  mp_mesh = s.BuildMesh();
-*/
-  /*
   std::vector<Point3D_f> vertices;
   std::vector<MeshTriangle> triangles;
   std::vector<float> uv_parameterization;
-
-  std::map<std::pair<std::pair<float,float>,float>,size_t> uniq;
-  std::vector<size_t> repl;
-  #pragma warning(disable : 4996)
-  FILE *fp=fopen("vertices.txt","r");
-  int ver=0;
-  while(true)
-    {
-   // if(++ver>100000) break;
-    float x,y,z;
-    int read = fscanf(fp,"%f %f %f",&x,&y,&z);
-    if (read<=0) break;
-    vertices.push_back(Point3D_f(x,y,z));
-
-    if (uniq.find(std::make_pair(std::make_pair(x,y),z))==uniq.end())
-      {
-      uniq[std::make_pair(std::make_pair(x,y),z)]=vertices.size()-1;
-      repl.push_back(vertices.size()-1);
-      }
-    else
-      {
-      repl.push_back(uniq[std::make_pair(std::make_pair(x,y),z)]);
-      }
-    }
-  fclose(fp);
-
-  int num_tr=0;
-  fp=fopen("triangles.txt","r");
-  int tr=0;
-  while(true)
-    {
-    size_t v1,v2,v3;
-   // if(++tr>10000) break;
-    int read = fscanf(fp,"%d %d %d",&v1,&v2,&v3);
-    if (read<=0) break;
-
-    v1=repl[v1];
-    v2=repl[v2];
-    v3=repl[v3];
-    if (v1==v2 || v1==v3 || v2==v3)
-      continue;
-
-    MeshTriangle tr(v1,v2,v3);
-    triangles.push_back(tr);
-    }
-  fclose(fp);
-  */
-
-  std::vector<Point3D_f> vertices;
-  std::vector<MeshTriangle> triangles;
-  std::vector<float> uv_parameterization;
-
-  std::map< std::pair<float,std::pair<float,float> >, size_t > vertices_tmp;
-#pragma warning(disable : 4996)
-  FILE *fp=fopen("car.STL","r");
-
-  Vector3D_f normal;
-  Point3D_f v1,v2,v3;
-  size_t ind=0,num_ver=0;
-  while(true)
-    {
-    char buf[1024];
-    if ( !fgets(buf,1024,fp) ) break;
-
-    std::string s=buf;
-    if (s.find("normal")!=-1)
-      {
-      std::stringstream sstream;
-      sstream << s;
-
-      std::string dummy;
-      float x,y,z;
-      sstream >> dummy >> dummy >> x >> y >> z;
-      normal=Vector3D_f(x,y,z);
-      }
-    if (s.find("vertex")!=-1)
-      {
-      std::stringstream sstream;
-      sstream << s;
-
-      std::string dummy;
-      float x,y,z;
-      sstream >> dummy >> x >> y >> z;
-      if (num_ver==0) v1=Point3D_f(x,y,z);
-      if (num_ver==1) v2=Point3D_f(x,y,z);
-      if (num_ver==2) v3=Point3D_f(x,y,z);
-      ++num_ver;
-      }
-
-    size_t ind1,ind2,ind3;
-    if (num_ver==3)
-      {
-      num_ver=0;
-      std::pair<float,std::pair<float,float> > vertex1=std::make_pair(v1[0],std::make_pair(v1[1],v1[2]));
-      std::pair<float,std::pair<float,float> > vertex2=std::make_pair(v2[0],std::make_pair(v2[1],v2[2]));
-      std::pair<float,std::pair<float,float> > vertex3=std::make_pair(v3[0],std::make_pair(v3[1],v3[2]));
-      if (vertices_tmp.find(vertex1)==vertices_tmp.end()) {vertices.push_back(v1);vertices_tmp[vertex1]=ind1=ind++;} else ind1=vertices_tmp[vertex1];
-      if (vertices_tmp.find(vertex2)==vertices_tmp.end()) {vertices.push_back(v2);vertices_tmp[vertex2]=ind2=ind++;} else ind2=vertices_tmp[vertex2];
-      if (vertices_tmp.find(vertex3)==vertices_tmp.end()) {vertices.push_back(v3);vertices_tmp[vertex3]=ind3=ind++;} else ind3=vertices_tmp[vertex3];
-
-      if ( (Vector3D_f(v2-v1)^Vector3D_f(v3-v1))*normal < 0.0) std::swap(ind1,ind2);
-      MeshTriangle tr;
-      tr.m_vertices[0]=ind1;tr.m_vertices[1]=ind2;tr.m_vertices[2]=ind3;
-      if (ind1!=ind2 && ind1!=ind3 && ind2!=ind3) triangles.push_back(tr);
-      }
-
-    }
-  fclose(fp);
 
   std::vector<intrusive_ptr<const Primitive> > primitives;
 
   /////// Add car primitive ///
   
-  mp_mesh = intrusive_ptr<TriangleMesh>( new TriangleMesh(vertices, triangles, true) );
+  mp_mesh = intrusive_ptr<TriangleMesh>( LoadMeshFromStl("car.stl") );
 
-  intrusive_ptr<Texture<Spectrum_d> > p_reflectance;
-  //intrusive_ptr<Texture<Spectrum_d> > p_reflectance(new ConstantTexture<Spectrum_d> (Spectrum_d(212,175,55)/255.0*0.8));
+  intrusive_ptr<Texture<Spectrum_d> > p_reflectance(new ConstantTexture<Spectrum_d> (Spectrum_d(212,175,55)/255.0*0.8));
   intrusive_ptr<Texture<double> > p_sigma(new ConstantTexture<double> (0.04));
-  //intrusive_ptr<Material> p_material(new Matte(p_text, p_sigma));
-
-  intrusive_ptr<Texture<Spectrum_d> > p_refr(new ConstantTexture<Spectrum_d>(Spectrum_d(0.41,1.15,1.18)));
-  intrusive_ptr<Texture<Spectrum_d> > p_a(new ConstantTexture<Spectrum_d>(Spectrum_d(4.2,2.66,2.5)));
-  intrusive_ptr<Material> p_material(new Metal(p_refr, p_a, p_sigma));
+  intrusive_ptr<Material> p_material(new Matte(p_text, p_sigma));
 
   intrusive_ptr<Primitive> p_primitive(new Primitive(mp_mesh, p_material));
   primitives.push_back(p_primitive);
 
-   /////// Add sphere primitive ///
-/*
-  Sphere s;
-  s.SetParameter("Center","400 -1000 400");
-  s.SetParameter("Radius","350");
-  s.SetParameter("Subdivisions","9");
-  mp_mesh = s.BuildMesh();
+  /////// Add bunny primitive ///
 
-  intrusive_ptr<Texture<Spectrum_d> > p_reflectance;
-  intrusive_ptr<Texture<double> > p_sigma(new ConstantTexture<double> (0.17));
-  //intrusive_ptr<Material> p_material(new Matte(p_reflectance, p_sigma));
-  intrusive_ptr<Material> p_material(new Metal(p_text, p_sigma));
+  mp_mesh = intrusive_ptr<TriangleMesh>( LoadMeshFromPbrt("vertices.txt","triangles.txt") );
 
-  //p_reflectance.reset(new ConstantTexture<Spectrum_d>(Spectrum_d(1.0)));
-  //intrusive_ptr<Material> p_material(new Transparent(p_reflectance, p_reflectance, 1.4));
+  p_material.reset(new Matte(p_reflectance, p_sigma));
 
-  intrusive_ptr<Primitive> p_primitive(new Primitive(mp_mesh, p_material));
+  p_primitive.reset(new Primitive(mp_mesh, p_material));
   primitives.push_back(p_primitive);
-*/
+
   /////// Add ground primitive ///
 
   vertices.clear();
@@ -324,20 +194,9 @@ inline void TestTracer::LoadMesh()
   lights.m_area_light_sources.push_back(p_area_light);
     }
 
-
   intrusive_ptr<InfiniteLightSource> p_inf_light( new InfiniteLightSourceMock(Spectrum_d(300.0,300.0,300.0), BBox3D_d(Point3D_d(-20000,-20000,0),Point3D_d(20000,20000,1000) ) ) );
   lights.m_infinitiy_light_sources.push_back(p_inf_light);
 
-/*
-    {
-  intrusive_ptr<DeltaLightSource> p_source( new PointLight(Point3D_d(1300, -2200, 3000), Spectrum_d(4000000000.0)) );
-  lights.m_delta_light_sources.push_back(p_source);
-    }
-    {
-  intrusive_ptr<DeltaLightSource> p_source( new PointLight(Point3D_d(-500, -2200, 3000), Spectrum_d(4000000000.0)) );
-  lights.m_delta_light_sources.push_back(p_source);
-    }
-*/
   mp_scene.reset(new Scene(primitives, lights));
   }
 
@@ -363,12 +222,12 @@ inline void TestTracer::RenderImage(HWND &g_hWnd, HDC &g_memDC)
 
   intrusive_ptr<ImagePixelsOrder> pixel_order(new UniformImagePixelsOrder);
 
-  intrusive_ptr<Sampler> p_sampler( new StratifiedSampler(window_begin, window_end, 3, 3, pixel_order) );
+  intrusive_ptr<Sampler> p_sampler( new StratifiedSampler(window_begin, window_end, 1, 1, pixel_order) );
 
   intrusive_ptr<SamplerBasedRenderer> p_renderer( new SamplerBasedRenderer(mp_scene, p_sampler) );
 
   intrusive_ptr<LightsSamplingStrategy> p_sampling_strategy( new IrradianceLightsSampling(mp_scene->GetLightSources()) );
-  intrusive_ptr<DirectLightingIntegrator> p_direct_int( new DirectLightingIntegrator(p_renderer, 128, 32, p_sampling_strategy) );
+  intrusive_ptr<DirectLightingIntegrator> p_direct_int( new DirectLightingIntegrator(p_renderer, 121, 25, p_sampling_strategy) );
   intrusive_ptr<SurfaceIntegrator> surf_int( new DirectLightingSurfaceIntegrator(p_renderer, p_direct_int, 5, 0.1) );
   intrusive_ptr<VolumeIntegrator> volume_int( new VolumeIntegratorMock(p_renderer) );
   p_renderer->SetSurfaceIntegrator(surf_int);

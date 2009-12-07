@@ -10,7 +10,7 @@
 /**
 * Sampler implementation that creates StratifiedSubSampler instances that produces stratified samples.
 * Image and lens samples are stratified with respect to other samples inside the same pixel.
-* Integrator 2D samples are produced by the LatinHypercube algorithm.
+* Integrator 2D samples are produced by the StratifiedSampling2D algorithm.
 * Integrator samples are stratified within each pixel.
 * Integrator samples are <b>not</b> stratified with respect to other pixels.
 *
@@ -44,7 +44,7 @@ class StratifiedSampler: public Sampler
   protected:
     /**
     * Returns the nearest number of integrator samples higher or equal than the specified one that the sampler can produce.
-    * Since LatinHypercube can produce any given number of samples, this method just returns what is passed.
+    * The method returns the next square integer to be able to generate the same number of samples in both dimensions for 2D samples sequences.
     */
     size_t _RoundSamplesNumber(size_t i_samples_number) const;
 

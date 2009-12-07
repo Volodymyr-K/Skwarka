@@ -18,7 +18,8 @@ m_x_samples_per_pixel(i_x_samples_per_pixel), m_y_samples_per_pixel(i_y_samples_
 
 size_t StratifiedSampler::_RoundSamplesNumber(size_t i_samples_number) const
   {
-  return i_samples_number;
+  size_t sqrt_ceil = (size_t) ceil(sqrt((double)i_samples_number));
+  return sqrt_ceil*sqrt_ceil;
   }
 
 intrusive_ptr<SubSampler> StratifiedSampler::_CreateSubSampler(const std::vector<Point2D_i> &i_pixels, size_t i_samples_per_pixel, RandomGenerator<double> *ip_rng) const
@@ -56,7 +57,11 @@ void StratifiedSubSampler::_GetSample(const Point2D_i &i_current_pixel, size_t i
   for(size_t i=0;i<op_sample->GetNumberOfSamplesSequences2D();++i)
     {
     SamplesSequence2D sequence = op_sample->GetSamplesSequence2D(i);
-    SamplingRoutines::LatinHypercubeSampling2D(sequence.m_begin, std::distance(sequence.m_begin, sequence.m_end), true, p_rng);
+
+    size_t samples_num_sqrt = (size_t) sqrt((double)std::distance(sequence.m_begin, sequence.m_end));
+    ASSERT(samples_num_sqrt*samples_num_sqrt == std::distance(sequence.m_begin, sequence.m_end));
+
+    SamplingRoutines::StratifiedSampling2D(sequence.m_begin, samples_num_sqrt, samples_num_sqrt, true, p_rng);
     }
   }
 

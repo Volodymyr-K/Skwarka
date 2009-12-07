@@ -313,12 +313,14 @@ namespace SamplingRoutines
           *(i_begin+i) = Point2D_d( (i + 0.5) * delta, (i + 0.5) * delta );
 
       // Permute LHS samples in both dimensions.
-      for(unsigned char d = 0; d < 2; ++d)
-        for (size_t j = 0; j < i_samples_num; ++j)
-          {
-          size_t other = (size_t) (*ip_rng)(i_samples_num);
-          std::swap( (*(i_begin+j)) [d], (*(i_begin+other)) [d] );
-          }
+      for (size_t j = 0; j < i_samples_num; ++j)
+        {
+        size_t other = (size_t) (*ip_rng)(i_samples_num);
+        std::swap( (*(i_begin+j)) [0], (*(i_begin+other)) [0] );
+
+        other = (size_t) (*ip_rng)(i_samples_num);
+        std::swap( (*(i_begin+j)) [1], (*(i_begin+other)) [1] );
+        }
       }
     else
       {
@@ -331,12 +333,14 @@ namespace SamplingRoutines
           *(i_begin+i) = Point2D_d( (i + 0.5) * delta, (i + 0.5) * delta );
 
       // Permute LHS samples in both dimensions.
-      for(unsigned char d = 0; d < 2; ++d)
-        for (size_t j = 0; j < i_samples_num; ++j)
-          {
-          size_t other = RandomInt((int)i_samples_num);
-          std::swap( (*(i_begin+j)) [d], (*(i_begin+other)) [d] );
-          }
+      for (size_t j = 0; j < i_samples_num; ++j)
+        {
+        size_t other = RandomInt((int)i_samples_num);
+        std::swap( (*(i_begin+j)) [0], (*(i_begin+other)) [0] );
+
+        other = RandomInt((int)i_samples_num);
+        std::swap( (*(i_begin+j)) [1], (*(i_begin+other)) [1] );
+        }
       }
     }
 

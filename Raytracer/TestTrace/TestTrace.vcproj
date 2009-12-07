@@ -233,6 +233,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\MeshLoader.h"
+				>
+			</File>
+			<File
 				RelativePath=".\raytracer_app.h"
 				>
 			</File>

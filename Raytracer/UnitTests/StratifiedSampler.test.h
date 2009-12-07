@@ -84,7 +84,7 @@ class StratifiedSamplerTestSuite : public CxxTest::TestSuite
 
       size_t actual_size;
       size_t index=p_sampler->AddSamplesSequence1D(1000, &actual_size);
-      TS_ASSERT(actual_size == 1000); // Random sampler does not change the size.
+      TS_ASSERT(actual_size == 1024); // Stratified sampler rounds to the next square integer.
 
       bool out_of_range=false;
       bool not_clumped=true, uniform=true;
@@ -120,7 +120,7 @@ class StratifiedSamplerTestSuite : public CxxTest::TestSuite
 
       size_t actual_size;
       size_t index=p_sampler->AddSamplesSequence2D(1000, &actual_size);
-      TS_ASSERT(actual_size == 1000); // Random sampler does not change the size.
+      TS_ASSERT(actual_size == 1024); // Stratified sampler rounds to the next square integer.
 
       bool out_of_range=false;
       bool not_clumped=true, uniform=true;
@@ -140,7 +140,7 @@ class StratifiedSamplerTestSuite : public CxxTest::TestSuite
             }
 
         uniform = uniform && SamplingTestHelper::TestUniformDistribution2D(values, Point2D_d(0.0,0.0), Point2D_d(1.0,1.0));
-        not_clumped = not_clumped && SamplingTestHelper::TestLatinHypercubeDistribution2D(values, Point2D_d(0.0,0.0), Point2D_d(1.0,1.0));
+        not_clumped = not_clumped && SamplingTestHelper::TestSamplesClumping2D(values, Point2D_d(0.0,0.0), Point2D_d(1.0,1.0), 32, 32);
         if (uniform==false || not_clumped==false) break;
         }
 

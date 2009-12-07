@@ -15,28 +15,13 @@ BxDF(BxDFType(BSDF_REFLECTION | BSDF_DIFFUSE)), m_reflectance(i_reflectance)
 // The method does not check if the vectors are in the same hemisphere.
 Spectrum_d OrenNayar::Evaluate(const Vector3D_d &i_incident, const Vector3D_d &i_exitant) const
   {
-  double sin_theta_incident, cos_theta_incident, sin_phi_incident, cos_phi_incident;
-  MathRoutines::SphericalAngles(i_incident, sin_theta_incident, cos_theta_incident, sin_phi_incident, cos_phi_incident);
+  double cos_theta_incident = i_incident[2], cos_theta_exitant = i_exitant[2];
 
-  double sin_theta_exitant, cos_theta_exitant, sin_phi_exitant, cos_phi_exitant;
-  MathRoutines::SphericalAngles(i_exitant, sin_theta_exitant, cos_theta_exitant, sin_phi_exitant, cos_phi_exitant);
-
-  // Compute cosine term of Oren-Nayar model.
-  double dcos = cos_phi_incident * cos_phi_exitant + sin_phi_incident * sin_phi_exitant;
+  double dcos = i_incident[0] * i_exitant[0] + i_incident[1] * i_exitant[1];
   double max_cos = std::max(0.0, dcos);
 
-  // Compute sine and tangent terms of Oren-Nayar model.
-  double sin_alpha, tan_beta;
   if (fabs(cos_theta_incident) > fabs(cos_theta_exitant))
-    {
-    sin_alpha = sin_theta_exitant;
-    tan_beta = sin_theta_incident / fabs(cos_theta_incident);
-    }
+    return m_reflectance * (INV_PI * (m_A + m_B * max_cos / fabs(cos_theta_incident)));
   else
-    {
-    sin_alpha = sin_theta_incident;
-    tan_beta = sin_theta_exitant / fabs(cos_theta_exitant);
-    }
-
-  return m_reflectance * (INV_PI * (m_A + m_B * max_cos * sin_alpha * tan_beta));
+    return m_reflectance * (INV_PI * (m_A + m_B * max_cos / fabs(cos_theta_exitant)));
   }
