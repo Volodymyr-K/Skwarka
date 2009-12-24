@@ -25,6 +25,18 @@ struct Intersection
   * Index of the intersected mesh triangle.
   */
   size_t m_triangle_index;
+
+  /**
+  * Specific parameter of ray-triangle intersection test.
+  * This value is used to determine epsilon value for the outgoing rays to avoid self-intersection with the same triangle.
+  */
+  Vector3D_d m_cross;
+
+  /**
+  * Specific parameter of ray-triangle intersection test.
+  * This value is used to determine epsilon value for the outgoing rays to avoid self-intersection with the same triangle.
+  */
+  double m_dot;
   };
 
 #endif // INTERSECTION_H

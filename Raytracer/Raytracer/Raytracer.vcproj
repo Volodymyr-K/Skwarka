@@ -254,11 +254,11 @@
 					>
 				</File>
 				<File
-					RelativePath=".\Core\TriangleMesh.h"
+					RelativePath=".\Core\TriangleAccelerator.h"
 					>
 				</File>
 				<File
-					RelativePath=".\Core\TriangleTree.h"
+					RelativePath=".\Core\TriangleMesh.h"
 					>
 				</File>
 				<File
@@ -308,11 +308,11 @@
 					>
 				</File>
 				<File
-					RelativePath=".\Core\TriangleMesh.cpp"
+					RelativePath=".\Core\TriangleAccelerator.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\Core\TriangleTree.cpp"
+					RelativePath=".\Core\TriangleMesh.cpp"
 					>
 				</File>
 			</Filter>

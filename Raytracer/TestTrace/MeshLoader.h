@@ -7,7 +7,6 @@
 #include <Math/Geometry.h>
 #include <Raytracer/Core/TriangleMesh.h>
 #include <Shapes/Sphere.h>
-#include <Raytracer/Core/TriangleTree.h>
 #include <Math/Transform.h>
 #include <string>
 #include <cstdio>
@@ -90,12 +89,14 @@ intrusive_ptr<TriangleMesh> LoadMeshFromPbrt(std::string i_vertices_filename, st
   std::vector<size_t> repl;
   #pragma warning(disable : 4996)
   FILE *fp=fopen(i_vertices_filename.c_str(),"r");
+  //FILE *fp2=fopen("vertices3.txt","w");
   int ver=0;
   while(true)
   {
   // if(++ver>100000) break;
   float x,y,z;
   int read = fscanf(fp,"%f %f %f",&x,&y,&z);
+  //fprintf(fp2,"%f %f %f\n",-1100+5000*z,5000*x-500,-200+5000*y);
 
   if (read<=0) break;
   vertices.push_back(Point3D_f(x,y,z));
@@ -111,6 +112,7 @@ intrusive_ptr<TriangleMesh> LoadMeshFromPbrt(std::string i_vertices_filename, st
   }
   }
   fclose(fp);
+  //fclose(fp2);
 
   int num_tr=0;
   fp=fopen(i_triangles_filename.c_str(),"r");

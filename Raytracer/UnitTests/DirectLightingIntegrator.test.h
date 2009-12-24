@@ -8,13 +8,11 @@
 #include <Raytracer/LightSources/DiffuseAreaLightSource.h>
 #include <Raytracer/LightSources/PointLight.h>
 #include <Raytracer/Samplers/StratifiedSampler.h>
-#include <Shapes/Sphere.h>
 #include "Mocks/RendererMock.h"
 #include "Mocks/MaterialMock.h"
 #include "Mocks/InfiniteLightSourceMock.h"
 #include <Math/SamplingRoutines.h>
-#include <sstream>
-#include <string>
+#include "TriangleMeshTestHelper.h"
 
 class DirectLightingIntegratorTestSuite : public CxxTest::TestSuite
   {
@@ -23,9 +21,9 @@ class DirectLightingIntegratorTestSuite : public CxxTest::TestSuite
     // Spheres creation separated to the constructor (instead of setUp() method) to avoid performance overhead.
     DirectLightingIntegratorTestSuite()
       {
-      m_spheres[0] = _CreateSphereMesh(Point3D_d(0,0,0),1.0);
-      m_spheres[1] = _CreateSphereMesh(Point3D_d(10,0,0),1.0);
-      m_spheres[2] = _CreateSphereMesh(Point3D_d(0,10,0),1.0);
+      m_spheres[0] = TriangleMeshHelper::ConstructSphere(Point3D_d(0,0,0),1.0, 6);
+      m_spheres[1] = TriangleMeshHelper::ConstructSphere(Point3D_d(10,0,0),1.0, 6);
+      m_spheres[2] = TriangleMeshHelper::ConstructSphere(Point3D_d(0,10,0),1.0, 6);
       m_world_bbox = BBox3D_d(Point3D_d(-1,-1,-1), Point3D_d(11,11,1));
       }
 
@@ -197,33 +195,6 @@ class DirectLightingIntegratorTestSuite : public CxxTest::TestSuite
       }
 
   private:
-    intrusive_ptr<TriangleMesh> _CreateSphereMesh(const Point3D_d &i_center, double i_radius) const
-      {
-      std::string center_str, radius_str;
-        {
-        std::stringstream sstream;
-        sstream << i_center;
-
-        char buf[256];
-        sstream.getline(buf, 256);
-        center_str = std::string(buf);
-        }
-        {
-        std::stringstream sstream;
-        sstream << i_radius;
-
-        char buf[256];
-        sstream.getline(buf, 256);
-        radius_str = std::string(buf);
-        }
-
-      Sphere s;
-      s.SetParameter("Center",center_str);
-      s.SetParameter("Radius",radius_str);
-      s.SetParameter("Subdivisions","6");
-
-      return s.BuildMesh();
-      }
 
     intrusive_ptr<AreaLightSource> _CreateAreaLight(intrusive_ptr<TriangleMesh> ip_mesh, const Spectrum_d &i_radiance) const
       {

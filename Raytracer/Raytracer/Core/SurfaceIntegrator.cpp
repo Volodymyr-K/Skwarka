@@ -30,7 +30,7 @@ Spectrum_d SurfaceIntegrator::_SpecularReflect(const RayDifferential &i_ray, con
 
   if (brdf.IsBlack()==false && fabs(exitant*dg.m_shading_normal)>DBL_EPS)
     {
-    RayDifferential rd( Ray(dg.m_point, exitant, 1e-5) ); // TBD: fix this
+    RayDifferential rd( Ray(dg.m_point, exitant, CoreUtils::GetNextMinT(i_intersection, exitant)) );
     rd.m_specular_depth = i_ray.m_specular_depth + 1;
 
     CoreUtils::SetReflectedDifferentials(i_ray, dg, rd);
@@ -57,7 +57,7 @@ Spectrum_d SurfaceIntegrator::_SpecularTransmit(const RayDifferential &i_ray, co
 
   if (btdf.IsBlack()==false && fabs(exitant*dg.m_shading_normal)>DBL_EPS)
     {
-    RayDifferential rd( Ray(dg.m_point, exitant, 1e-5) ); // TBD: fix this
+    RayDifferential rd( Ray(dg.m_point, exitant, CoreUtils::GetNextMinT(i_intersection, exitant)) );
     rd.m_specular_depth = i_ray.m_specular_depth + 1;
 
     CoreUtils::SetTransmittedDifferentials(i_ray, dg, ip_bsdf->GetRefractiveIndex(), rd);

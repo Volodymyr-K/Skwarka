@@ -13,7 +13,6 @@
 #include <Math/Geometry.h>
 #include <Raytracer/Core/TriangleMesh.h>
 #include <Shapes/Sphere.h>
-#include <Raytracer/Core/TriangleTree.h>
 #include "stdafx.h"
 #include <WinBase.h>
 #include <cstdio>
@@ -39,6 +38,7 @@
 #include <UnitTests/Mocks/InfiniteLightSourceMock.h>
 #include <UnitTests/Mocks/VolumeIntegratorMock.h>
 #include <Raytracer/LightsSamplingStrategies/IrradianceLightsSampling.h>
+#include <Raytracer/LightsSamplingStrategies/PowerLightsSampling.h>
 #include <Raytracer/Core/MIPMap.h>
 #include <Raytracer/Textures/ImageTexture.h>
 #include <Raytracer/Mappings/SphericalMapping2D.h>
@@ -146,6 +146,18 @@ inline void TestTracer::LoadMesh()
   p_primitive.reset(new Primitive(mp_mesh, p_material));
   primitives.push_back(p_primitive);
 
+
+  /////// Add budda primitive ///
+
+  mp_mesh = intrusive_ptr<TriangleMesh>( LoadMeshFromPbrt("vertices2.txt","triangles2.txt") );
+
+  p_reflectance.reset(new ConstantTexture<Spectrum_d> (Spectrum_d(22,235,75)/255.0*0.8));
+  p_material.reset(new Matte(p_reflectance, p_sigma));
+
+  p_primitive.reset(new Primitive(mp_mesh, p_material));
+  primitives.push_back(p_primitive);
+
+
   /////// Add ground primitive ///
 
   vertices.clear();
@@ -214,7 +226,7 @@ inline void TestTracer::RenderImage(HWND &g_hWnd, HDC &g_memDC)
   // Vector3D_d direction = Vector3D_d(0,-0.5,-1).Normalized();
   //intrusive_ptr<Camera> p_camera( new PerspectiveCamera( MakeLookAt(Point3D_d(0.0,0.26,0.17)+direction*0.08,direction,Vector3D_d(0,1,0)), intrusive_ptr<Film>(film), 0.000, 0.087, 1.3) );
 
-  Vector3D_d direction = Vector3D_d(-0.4,0.5,-0.3).Normalized();
+  Vector3D_d direction = Vector3D_d(-0.45,0.5,-0.28).Normalized();
   intrusive_ptr<Camera> p_camera( new PerspectiveCamera( MakeLookAt(Point3D_d(900,-1600,900),direction,Vector3D_d(0,0,1)), intrusive_ptr<Film>(film), 0.000, 1000, 1.3) );
 
   //Vector3D_d direction = Vector3D_d(0.0,0.5,-0.2).Normalized();
@@ -239,7 +251,6 @@ inline void TestTracer::RenderImage(HWND &g_hWnd, HDC &g_memDC)
   tbb::tick_count t1 = tbb::tick_count::now();
 
   printf("time = %g\n", (t1-t0).seconds());
-
 
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
   

@@ -392,6 +392,10 @@
 						>
 					</File>
 					<File
+						RelativePath=".\TriangleAccelerator.test.h"
+						>
+					</File>
+					<File
 						RelativePath=".\TriangleMesh.test.h"
 						>
 					</File>
@@ -811,6 +815,10 @@
 			</File>
 			<File
 				RelativePath=".\Triangle3D.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\TriangleAccelerator.test.cpp"
 				>
 			</File>
 			<File

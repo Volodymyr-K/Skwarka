@@ -9,12 +9,12 @@
 #include "Mocks/VolumeIntegratorMock.h"
 #include "Mocks/MaterialMock.h"
 #include "Mocks/InfiniteLightSourceMock.h"
-#include <Shapes/Sphere.h>
 #include <Raytracer/Cameras/PerspectiveCamera.h>
 #include <Raytracer/LightSources/PointLight.h>
 #include <Raytracer/Films/ImageFilm.h>
 #include <Raytracer/FilmFilters/BoxFilter.h>
 #include <Raytracer/Samplers/StratifiedSampler.h>
+#include "TriangleMeshTestHelper.h"
 
 class SamplerBasedRendererTestSuite : public CxxTest::TestSuite
   {
@@ -23,11 +23,7 @@ class SamplerBasedRendererTestSuite : public CxxTest::TestSuite
     // Primitives creation separated to the constructor (instead of setUp() method) to avoid performance overhead.
     SamplerBasedRendererTestSuite()
       {
-      Sphere s;
-      s.SetParameter("Center","0 0.0 0.0");
-      s.SetParameter("Radius","1.0");
-      s.SetParameter("Subdivisions","6");
-      intrusive_ptr<TriangleMesh> p_sphere( s.BuildMesh() );
+      intrusive_ptr<TriangleMesh> p_sphere( TriangleMeshHelper::ConstructSphere(Point3D_d(0,0,0),1.0, 6) );
       intrusive_ptr<Material> p_material(new MaterialMock());
       intrusive_ptr<Primitive> p_sphere_primitive(new Primitive(p_sphere, p_material));
 

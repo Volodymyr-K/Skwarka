@@ -1,6 +1,7 @@
 #include "DirectLightingIntegrator.h"
 #include <Raytracer/LightsSamplingStrategies/IrradianceLightsSampling.h>
 #include <Math/SamplingRoutines.h>
+#include "CoreUtils.h"
 
 DirectLightingIntegrator::DirectLightingIntegrator(intrusive_ptr<const Renderer> ip_renderer, size_t i_lights_samples_num, size_t i_bsdf_samples_num,
                                                    intrusive_ptr<const LightsSamplingStrategy> ip_lights_sampling_strategy):
@@ -72,7 +73,7 @@ Spectrum_d DirectLightingIntegrator::ComputeDirectLighting(const Intersection &i
       {
       Spectrum_d reflectance = ip_bsdf->Evaluate(lighting_ray.m_direction, i_view_direction);
 
-      lighting_ray.m_min_t += 1e-5; // TBD: fix this
+      lighting_ray.m_min_t = CoreUtils::GetNextMinT(i_intersection, lighting_ray.m_direction);
       if (reflectance.IsBlack()==false && mp_scene->IntersectTest(lighting_ray) == false)
         {
         Spectrum_d transmittance = mp_renderer->Transmittance(lighting_ray, NULL);
@@ -153,6 +154,7 @@ Spectrum_d DirectLightingIntegrator::_SampleLights(const Intersection &i_interse
 
   double inv_infinity_lights_probability = infinity_light_sources_num>0 ? 1.0/ip_lights_CDF[infinity_light_sources_num-1] : 0.0;
 
+  Ray lighting_ray;
   SamplesSequence1D::Iterator component_iterator = i_samples.m_light_1D_samples.m_begin;
   SamplesSequence2D::Iterator position_iterator = i_samples.m_light_2D_samples.m_begin;
   for(size_t i=0;i<m_lights_samples_num;++i)
@@ -167,26 +169,26 @@ Spectrum_d DirectLightingIntegrator::_SampleLights(const Intersection &i_interse
     // This is the probability of the sampled light source to be sampled.
     double component_pdf = sampled_index==0 ? ip_lights_CDF[0] : ip_lights_CDF[sampled_index]-ip_lights_CDF[sampled_index-1];
 
-    Ray lighting_ray;
-    Spectrum_d light;
-    double weight=0.0;
     if (sampled_index<infinity_light_sources_num)
       {
       // If infinity light is sampled.
       double light_pdf=0.0;
-      light = light_sources.m_infinitiy_light_sources[sampled_index]->SampleLighting(i_intersection.m_dg.m_point,
+      Spectrum_d light = light_sources.m_infinitiy_light_sources[sampled_index]->SampleLighting(i_intersection.m_dg.m_point,
         i_intersection.m_dg.m_shading_normal, position_sample, lighting_ray, light_pdf);
 
       if (light_pdf>0.0 && light.IsBlack()==false)
         {
-        lighting_ray.m_min_t += 1e-5; // TBD: fix this
         light *= ip_bsdf->Evaluate(lighting_ray.m_direction, i_view_direction);
 
         double bsdf_pdf = ip_bsdf->PDF(i_view_direction, lighting_ray.m_direction);
 
         // Compute weighting coefficient for the multiple importance sampling.
-        weight = SamplingRoutines::PowerHeuristic(m_lights_samples_num, light_pdf*component_pdf, m_bsdf_samples_num, bsdf_pdf*component_pdf*inv_infinity_lights_probability);
+        double weight = SamplingRoutines::PowerHeuristic(m_lights_samples_num, light_pdf*component_pdf, m_bsdf_samples_num, bsdf_pdf*component_pdf*inv_infinity_lights_probability);
         weight *= fabs(lighting_ray.m_direction*i_intersection.m_dg.m_shading_normal) / (light_pdf*component_pdf);
+
+        lighting_ray.m_min_t = CoreUtils::GetNextMinT(i_intersection, lighting_ray.m_direction);
+        if (weight>0.0 && light.IsBlack()==false && mp_scene->IntersectTest(lighting_ray)==false)
+          radiance.AddWeighted(light*mp_renderer->Transmittance(lighting_ray, NULL), weight);
         }
       }
     else
@@ -194,13 +196,12 @@ Spectrum_d DirectLightingIntegrator::_SampleLights(const Intersection &i_interse
       // If area light is sampled.
       double light_pdf=0.0;
       double triangle_sample = (sampled_index==0 ? component_sample : component_sample-ip_lights_CDF[sampled_index-1]) / component_pdf;
-      light = light_sources.m_area_light_sources[sampled_index-infinity_light_sources_num]->SampleLighting(i_intersection.m_dg.m_point, triangle_sample,
+      Spectrum_d light = light_sources.m_area_light_sources[sampled_index-infinity_light_sources_num]->SampleLighting(i_intersection.m_dg.m_point, triangle_sample,
         position_sample, lighting_ray, light_pdf);
 
       if (light_pdf>0.0 && light.IsBlack()==false)
         {
-        lighting_ray.m_min_t += 1e-5; // TBD: fix this
-        lighting_ray.m_max_t -= 1e-5;
+        lighting_ray.m_max_t -= (1e-4); // To avoid intersection with the area light.
         light *= ip_bsdf->Evaluate(lighting_ray.m_direction, i_view_direction);
 
         double bsdf_pdf = ip_bsdf->PDF(i_view_direction, lighting_ray.m_direction);
@@ -211,14 +212,14 @@ Spectrum_d DirectLightingIntegrator::_SampleLights(const Intersection &i_interse
         This is because when sampling the BSDF there is exactly one area light and exactly one triangle contributing to the direct lighting along this direction.
         If the light source (or triangle) currently being sampled is not the nearest one it will contribute zero radiance to the direct lighting along this direction.
         */
-        weight = SamplingRoutines::PowerHeuristic(m_lights_samples_num, light_pdf*component_pdf, m_bsdf_samples_num, bsdf_pdf);
+        double weight = SamplingRoutines::PowerHeuristic(m_lights_samples_num, light_pdf*component_pdf, m_bsdf_samples_num, bsdf_pdf);
         weight *= fabs(lighting_ray.m_direction*i_intersection.m_dg.m_shading_normal) / (light_pdf*component_pdf);
+
+        lighting_ray.m_min_t = CoreUtils::GetNextMinT(i_intersection, lighting_ray.m_direction);
+        if (weight>0.0 && light.IsBlack()==false && mp_scene->IntersectTest(lighting_ray)==false)
+          radiance.AddWeighted(light*mp_renderer->Transmittance(lighting_ray, NULL), weight);
         }
       }
-
-    if (weight>0.0 && light.IsBlack()==false)
-      if (mp_scene->IntersectTest(lighting_ray)==false)
-        radiance.AddWeighted(light*mp_renderer->Transmittance(lighting_ray, NULL), weight);
 
     ++component_iterator;
     ++position_iterator;
@@ -256,7 +257,8 @@ Spectrum_d DirectLightingIntegrator::_SampleBSDF(const Intersection &i_intersect
     if (bsdf_pdf>0.0 && reflectance.IsBlack()==false)
       {
       Ray lighting_ray(i_intersection.m_dg.m_point, lighting_direction);
-      lighting_ray.m_min_t += 1e-5; // TBD: fix this
+      lighting_ray.m_min_t = CoreUtils::GetNextMinT(i_intersection, lighting_direction);
+
       Intersection isect;
       bool hit = mp_scene->Intersect(RayDifferential(lighting_ray), isect, &lighting_ray.m_max_t);
 

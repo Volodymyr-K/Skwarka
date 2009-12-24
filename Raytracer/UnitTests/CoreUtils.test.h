@@ -158,7 +158,6 @@ class CoreUtilsTestSuite : public CxxTest::TestSuite
       double cs_incident_dy=fabs(incident.m_direction_dy*dg.m_normal_dy);
       TS_ASSERT_DELTA( sqrt(1.0-cs_exitant_dy*cs_exitant_dy), sqrt(1.0-cs_incident_dy*cs_incident_dy)*1.4, 1e-5);
       }
-
   };
 
 #endif // CORE_UTILS_TEST_H

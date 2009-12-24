@@ -5,6 +5,7 @@
 #include "CustomValueTraits.h"
 #include <Raytracer/Core/Scene.h>
 #include <Raytracer/Core/Primitive.h>
+#include <Raytracer/Core/TriangleAccelerator.h>
 #include <Raytracer/Core/TriangleMesh.h>
 #include <Raytracer/Core/Intersection.h>
 #include <Raytracer/LightSources/PointLight.h>
@@ -58,12 +59,12 @@ class SceneTestSuite : public CxxTest::TestSuite
 
     void test_Scene_Intersect()
       {
-      RayDifferential rd( Ray(Point3D_d(0.0,0.0,-1.0), Vector3D_d(0.1,0.1,1.0)) );
-      TriangleTree tree(m_primitives);
+      RayDifferential rd( Ray(Point3D_d(0.0,0.0,-1.0), Vector3D_d(0.1,0.1,1.0).Normalized()) );
+      TriangleAccelerator accelerator(m_primitives);
 
       Intersection isect1,isect2;
       bool t1 = mp_scene->Intersect(rd, isect1);     
-      bool t2 = tree.Intersect(rd,isect2);
+      bool t2 = accelerator.Intersect(rd,isect2);
 
       TS_ASSERT(t1 == t2);
       TS_ASSERT(isect1.mp_primitive == isect2.mp_primitive);
@@ -73,7 +74,7 @@ class SceneTestSuite : public CxxTest::TestSuite
 
     void test_Scene_IntersectTest1()
       {
-      Ray r = Ray(Point3D_d(0.0,0.0,-1.0), Vector3D_d(0.1,0.1,1.0));
+      Ray r = Ray(Point3D_d(0.0,0.0,-1.0), Vector3D_d(0.1,0.1,1.0).Normalized());
 
       bool intersected = mp_scene->IntersectTest(r);     
       TS_ASSERT(intersected);
@@ -81,7 +82,7 @@ class SceneTestSuite : public CxxTest::TestSuite
 
     void test_Scene_IntersectTest2()
       {
-      Ray r = Ray(Point3D_d(0.0,0.0,-1.0), Vector3D_d(2.1,2.1,1.0));
+      Ray r = Ray(Point3D_d(0.0,0.0,-1.0), Vector3D_d(2.1,2.1,1.0).Normalized());
 
       bool intersected = mp_scene->IntersectTest(r);     
       TS_ASSERT(intersected == false);

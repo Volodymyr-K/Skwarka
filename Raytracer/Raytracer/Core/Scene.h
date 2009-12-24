@@ -5,7 +5,7 @@
 #include <Math/Geometry.h>
 #include "Primitive.h"
 #include "LightSources.h"
-#include "TriangleTree.h"
+#include "TriangleAccelerator.h"
 #include <vector>
 
 // TBD: Add volume regions, update docs and unit tests
@@ -68,7 +68,7 @@ class Scene: public ReferenceCounted
   private:
     std::vector<intrusive_ptr<const Primitive> > m_primitives;
 
-    TriangleTree m_tree;
+    TriangleAccelerator m_triangle_accelerator;
 
     LightSources m_light_sources;
   };
@@ -77,7 +77,7 @@ class Scene: public ReferenceCounted
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 inline Scene::Scene(const std::vector<intrusive_ptr<const Primitive> > &i_primitives, const LightSources &i_light_sources):
-m_primitives(i_primitives), m_light_sources(i_light_sources), m_tree(i_primitives)
+m_primitives(i_primitives), m_light_sources(i_light_sources), m_triangle_accelerator(i_primitives)
   {
   }
 
@@ -94,17 +94,17 @@ inline const LightSources &Scene::GetLightSources() const
 inline BBox3D_d Scene::GetWorldBounds() const
   {
   // TBD: union with volume regions
-  return m_tree.GetWorldBounds();
+  return m_triangle_accelerator.GetWorldBounds();
   }
 
 inline bool Scene::Intersect(const RayDifferential &i_ray, Intersection &o_intersection, double *o_t) const
   {
-  return m_tree.Intersect(i_ray, o_intersection, o_t);
+  return m_triangle_accelerator.Intersect(i_ray, o_intersection, o_t);
   }
 
 inline bool Scene::IntersectTest(const Ray &i_ray) const
   {
-  return m_tree.IntersectTest(i_ray);
+  return m_triangle_accelerator.IntersectTest(i_ray);
   }
 
 #endif // SCENE_H

@@ -3,6 +3,7 @@
 
 #include <Math/Geometry.h>
 #include "DifferentialGeometry.h"
+#include "Intersection.h"
 
 /**
 * This namespace contains helper routines for the raytracer core.
@@ -29,6 +30,12 @@ namespace CoreUtils
   * @param[out] o_exitant_ray The ray whose differential components will be set.
   */
   void SetTransmittedDifferentials(const RayDifferential &i_incident_ray, const DifferentialGeometry &i_dg, double i_refractive_index, RayDifferential &o_exitant_ray);
+
+  /**
+  * Helper method that given an intersection and an outgoing direction returns the minimum ray parameter that avoid intersecting with the same triangle.
+  * The ray origin is assumed to be at the specified intersection point.
+  */
+  double GetNextMinT(const Intersection &i_intersection, const Vector3D_d &i_direction);
 
   };
 
@@ -104,6 +111,17 @@ namespace CoreUtils
 
       o_exitant_ray.m_has_differentials = true;
       }
+    }
+
+  inline double GetNextMinT(const Intersection &i_intersection, const Vector3D_d &i_direction)
+    {
+    ASSERT(i_direction.IsNormalized());
+
+    double divisor = i_direction*i_intersection.m_cross;
+    if (divisor == 0.0)
+      return 0.0;
+    else
+      return std::max(0.0,(i_intersection.m_dot * (1.0/divisor)) + (1e-14));
     }
 
   }

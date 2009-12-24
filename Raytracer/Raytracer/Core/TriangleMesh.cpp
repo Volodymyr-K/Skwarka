@@ -151,8 +151,7 @@ m_use_shading_normals(i_use_shading_normals)
     m_bbox.m_min=m_bbox.m_max=Point3D_f(0.f,0.f,0.f);
   else
     {
-    m_bbox.m_min=Point3D_f(FLT_INF,FLT_INF,FLT_INF);
-    m_bbox.m_max=Point3D_f(-FLT_INF,-FLT_INF,-FLT_INF);
+    m_bbox = BBox3D_f();
     for(size_t i=0;i<m_triangles.size();++i)
       {
       const MeshTriangle &triangle = m_triangles[i];

@@ -303,10 +303,7 @@ void Spectrum<T>::AddWeighted(const Spectrum &i_spectrum, T i_weight)
 template<typename T>
 bool Spectrum<T>::IsBlack() const
   {  
-  if (m_rgb[0] != (T)0.0) return false;
-  if (m_rgb[1] != (T)0.0) return false;
-  if (m_rgb[2] != (T)0.0) return false;
-  return true;
+  return m_rgb[0] == (T)0.0 && m_rgb[1] == (T)0.0 && m_rgb[2] == (T)0.0;
   }
 
 template<typename T>
