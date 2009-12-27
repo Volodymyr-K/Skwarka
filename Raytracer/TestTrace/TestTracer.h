@@ -23,6 +23,7 @@
 #include <Raytracer/Core/Sample.h>
 #include <Raytracer/Samplers/RandomSampler.h>
 #include <Raytracer/Samplers/StratifiedSampler.h>
+#include <Raytracer/Samplers/LDSampler.h>
 #include <Raytracer/Cameras/PerspectiveCamera.h>
 #include <Math/ThreadSafeRandom.h>
 #include <Raytracer/Samplers/UniformImagePixelsOrder.h>
@@ -147,7 +148,7 @@ inline void TestTracer::LoadMesh()
   primitives.push_back(p_primitive);
 
 
-  /////// Add budda primitive ///
+  /////// Add buddha primitive ///
 
   mp_mesh = intrusive_ptr<TriangleMesh>( LoadMeshFromPbrt("vertices2.txt","triangles2.txt") );
 
@@ -157,6 +158,16 @@ inline void TestTracer::LoadMesh()
   p_primitive.reset(new Primitive(mp_mesh, p_material));
   primitives.push_back(p_primitive);
 
+
+  /////// Add buddha2 primitive ///
+
+  mp_mesh = intrusive_ptr<TriangleMesh>( LoadMeshFromPbrt("vertices3.txt","triangles2.txt") );
+
+  p_reflectance.reset(new ConstantTexture<Spectrum_d> (Spectrum_d(250,180,75)/255.0*0.8));
+  p_material.reset(new Matte(p_reflectance, p_sigma));
+
+  p_primitive.reset(new Primitive(mp_mesh, p_material));
+  primitives.push_back(p_primitive);
 
   /////// Add ground primitive ///
 
@@ -212,7 +223,6 @@ inline void TestTracer::LoadMesh()
   mp_scene.reset(new Scene(primitives, lights));
   }
 
-// 73 291
 inline void TestTracer::RenderImage(HWND &g_hWnd, HDC &g_memDC)
   {
   FilmFilter *filter = new BoxFilter(0.5,0.5);
@@ -222,24 +232,19 @@ inline void TestTracer::RenderImage(HWND &g_hWnd, HDC &g_memDC)
   Point2D_i window_begin,window_end;
   film->GetSamplingExtent(window_begin, window_end);
 
-  // this is for budha
-  // Vector3D_d direction = Vector3D_d(0,-0.5,-1).Normalized();
-  //intrusive_ptr<Camera> p_camera( new PerspectiveCamera( MakeLookAt(Point3D_d(0.0,0.26,0.17)+direction*0.08,direction,Vector3D_d(0,1,0)), intrusive_ptr<Film>(film), 0.000, 0.087, 1.3) );
-
   Vector3D_d direction = Vector3D_d(-0.45,0.5,-0.28).Normalized();
-  intrusive_ptr<Camera> p_camera( new PerspectiveCamera( MakeLookAt(Point3D_d(900,-1600,900),direction,Vector3D_d(0,0,1)), intrusive_ptr<Film>(film), 0.000, 1000, 1.3) );
-
-  //Vector3D_d direction = Vector3D_d(0.0,0.5,-0.2).Normalized();
-  //intrusive_ptr<Camera> p_camera( new PerspectiveCamera( MakeLookAt(Point3D_d(500,-1600,800),direction,Vector3D_d(0,0,1)), intrusive_ptr<Film>(film), 0.000, 1000, 1.3) );
+  intrusive_ptr<Camera> p_camera( new PerspectiveCamera( MakeLookAt(Point3D_d(900,-1600,900),direction,Vector3D_d(0,0,1)), intrusive_ptr<Film>(film), 12.000, 1300, 1.3) );
 
   intrusive_ptr<ImagePixelsOrder> pixel_order(new UniformImagePixelsOrder);
 
-  intrusive_ptr<Sampler> p_sampler( new StratifiedSampler(window_begin, window_end, 1, 1, pixel_order) );
+  //intrusive_ptr<Sampler> p_sampler( new StratifiedSampler(window_begin, window_end, 2, 2/*, pixel_order*/) );
+  intrusive_ptr<Sampler> p_sampler( new LDSampler(window_begin, window_end, 4*1/*, pixel_order*/) );
+  //intrusive_ptr<Sampler> p_sampler( new RandomSampler(window_begin, window_end, 1/*, pixel_order*/) );
 
   intrusive_ptr<SamplerBasedRenderer> p_renderer( new SamplerBasedRenderer(mp_scene, p_sampler) );
 
   intrusive_ptr<LightsSamplingStrategy> p_sampling_strategy( new IrradianceLightsSampling(mp_scene->GetLightSources()) );
-  intrusive_ptr<DirectLightingIntegrator> p_direct_int( new DirectLightingIntegrator(p_renderer, 121, 25, p_sampling_strategy) );
+  intrusive_ptr<DirectLightingIntegrator> p_direct_int( new DirectLightingIntegrator(p_renderer, 64, 16, /*121, 25,*/ p_sampling_strategy) );
   intrusive_ptr<SurfaceIntegrator> surf_int( new DirectLightingSurfaceIntegrator(p_renderer, p_direct_int, 5, 0.1) );
   intrusive_ptr<VolumeIntegrator> volume_int( new VolumeIntegratorMock(p_renderer) );
   p_renderer->SetSurfaceIntegrator(surf_int);

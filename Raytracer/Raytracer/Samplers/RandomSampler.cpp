@@ -27,14 +27,16 @@ intrusive_ptr<SubSampler> RandomSampler::_CreateSubSampler(const std::vector<Poi
 RandomSubSampler::RandomSubSampler(const std::vector<Point2D_i> &i_pixels, size_t i_samples_per_pixel, RandomGenerator<double> *ip_rng): SubSampler(i_pixels, i_samples_per_pixel, ip_rng)
   {
   ASSERT(i_samples_per_pixel > 0);
-  m_inv_samples_per_pixel = 1.0 / i_samples_per_pixel;
+  m_inv_samples_per_pixel_sqrt = 1.0 / sqrt((double)i_samples_per_pixel);
   }
 
 void RandomSubSampler::_GetSample(const Point2D_i &i_current_pixel, size_t i_pixel_sample_index, intrusive_ptr<Sample> op_sample)
   {
   RandomGenerator<double> *p_rng = _GetRandomGenerator();
+  ASSERT(p_rng);
+
   op_sample->SetImagePoint( Convert<double>(i_current_pixel) + Point2D_d( (*p_rng)(1.0), (*p_rng)(1.0) ) );
-  op_sample->SetImageFilterWidth(m_inv_samples_per_pixel, m_inv_samples_per_pixel);
+  op_sample->SetImageFilterWidth(m_inv_samples_per_pixel_sqrt, m_inv_samples_per_pixel_sqrt);
   op_sample->SetLensUV( Point2D_d( (*p_rng)(1.0), (*p_rng)(1.0) ) );
 
   for(size_t i=0;i<op_sample->GetNumberOfSamplesSequences1D();++i)

@@ -45,7 +45,7 @@
 				Name="VCCLCompilerTool"
 				InlineFunctionExpansion="1"
 				AdditionalIncludeDirectories="..\;..\..\..\ThirdParty\;..\..\..\ThirdParty\boost\1.40\;..\..\..\ThirdParty\TBB\2.2\include"
-				PreprocessorDefinitions="WIN32,NDEBUG,_CONSOLE;NOMINMAX"
+				PreprocessorDefinitions="WIN32,NDEBUG,_CONSOLE;NOMINMAX;_SECURE_SCL=0"
 				StringPooling="true"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"

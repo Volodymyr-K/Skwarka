@@ -9,6 +9,7 @@ These functions are called from different test suites testing that a samples seq
 */
 
 #include <Math/Point2D.h>
+#include <Math/MathRoutines.h>
 #include <cmath>
 #include <vector>
 #include <algorithm>
@@ -30,7 +31,7 @@ namespace SamplingTestHelper
   bool TestUniformDistribution2D(const std::vector<Point2D<T> > &i_values, Point2D<T> i_low, Point2D<T> i_high);
 
   /*
-  This method checks that the given 1D distribution of sample does not have regions of clumping samples.
+  This method checks that the given 1D distribution of samples does not have regions of clumping samples.
   This test checks the same property that the stratified sampling has, that there is no segment of one strata's size with more than two samples inside.
   Return true if there are no clumping regions.
 
@@ -40,7 +41,7 @@ namespace SamplingTestHelper
   bool TestSamplesClumping1D(std::vector<T> i_values, T i_low, T i_high);
 
   /*
-  This method checks that the given 2D distribution of sample does not have regions of clumping samples.
+  This method checks that the given 2D distribution of samples does not have regions of clumping samples.
   This test checks the same property that the stratified sampling has, that there is no segment of one strata's size with more than four samples inside.
   Return true if there are no clumping regions.
 
@@ -50,7 +51,7 @@ namespace SamplingTestHelper
   bool TestSamplesClumping2D(std::vector<Point2D<T> > i_values, Point2D<T> i_low, Point2D<T> i_high, size_t i_x_num_samples, size_t i_y_num_samples);
 
   /*
-  This method checks that the given 2D distribution of sample does not have regions of clumping samples.
+  This method checks that the given 2D distribution of samples does not have regions of clumping samples.
   This test checks the same property that the Latin Hypercube Sampling has, that in each dimension there is no segment of one strata's size with more than two samples inside.
   The difference between this and TestSamplesClumping2D() method is that this method tests each dimension separately while TestSamplesClumping2D() looks for the
   clumping in 2D taking both dimensions into the account at the same time.
@@ -61,6 +62,14 @@ namespace SamplingTestHelper
   */
   template<typename T>
   bool TestLatinHypercubeDistribution2D(std::vector<Point2D<T> > i_values, Point2D<T> i_low, Point2D<T> i_high);
+
+  /*
+  This method checks that the given 2D distribution of samples conforms to the (0,2)-sequence property.
+  In other words for samples sequence with 2^(k+l) values there should be exactly one sample in each strata if the domain was uniformly divided into (2^k)*(2^l) stratas.
+  The input vector length should be a power of 2.
+  */
+  template<typename T>
+  bool TestLD02Distribution2D(const std::vector<Point2D<T> > &i_values, Point2D<T> i_low, Point2D<T> i_high);
 
   };
 
@@ -212,6 +221,43 @@ namespace SamplingTestHelper
     bool not_clumped_x = TestSamplesClumping1D(values_x,i_low[0],i_high[0]);
     bool not_clumped_y = TestSamplesClumping1D(values_y,i_low[1],i_high[1]);
     return not_clumped_x && not_clumped_y;
+    }
+
+  template<typename T>
+  bool TestLD02Distribution2D(const std::vector<Point2D<T> > &i_values, Point2D<T> i_low, Point2D<T> i_high)
+    {
+    size_t N=i_values.size();
+    ASSERT(MathRoutines::IsPowerOf2(N));
+    size_t p = MathRoutines::CeilLog2(N);
+
+    for(size_t i=0;i<=p;++i)
+      if (_CheckLD02Stratification(i_values, i_low, i_high, 1<<i, 1<<(p-i))==false)
+        return false;
+
+    return true;
+    }
+
+  template<typename T>
+  bool _CheckLD02Stratification(const std::vector<Point2D<T> > &i_values, Point2D<T> i_low, Point2D<T> i_high, size_t i_n, size_t i_m)
+    {
+    ASSERT(i_values.size() == i_n*i_m);
+    std::vector<std::vector<bool> > hit(i_n, std::vector<bool>(i_m, false));
+
+    for(size_t i=0;i<i_values.size();++i)
+      {
+      int index1 = (int)( i_n*(i_values[i][0]-i_low[0])/(i_high[0]-i_low[0]) );
+      int index2 = (int)( i_m*(i_values[i][1]-i_low[1])/(i_high[1]-i_low[1]) );
+
+      if (index1<0 || index2<0 || index1>=(int)i_n || index2>=(int)i_m)
+        return false;
+
+      if (hit[index1][index2])
+        return false;
+      else
+        hit[index1][index2] = true;
+      }
+
+    return true;
     }
 
   };

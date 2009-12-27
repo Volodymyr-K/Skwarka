@@ -145,6 +145,16 @@ class Sampler: public ReferenceCounted
     */
     virtual intrusive_ptr<SubSampler> _CreateSubSampler(const std::vector<Point2D_i> &i_pixels, size_t i_samples_per_pixel, RandomGenerator<double> *ip_rng) const = 0;
 
+    /**
+    * The method can be called by derived classes to get the sizes of the requested 1D samples sequences.
+    */
+    std::vector<size_t> _GetSequences1DSize() const;
+
+    /**
+    * The method can be called by derived classes to get the sizes of the requested 1D samples sequences.
+    */
+    std::vector<size_t> _GetSequences2DSize() const;
+
   private:
     // Not implemented, not a value type.
     Sampler();

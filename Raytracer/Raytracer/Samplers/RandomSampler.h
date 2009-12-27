@@ -21,7 +21,7 @@ class RandomSampler: public Sampler
     * ConsecutiveImagePixelsOrder implementation is used to define the order the image pixels are sampled in.
     * @param i_image_begin Left lower corner of the sampling image.
     * @param i_image_end Right upper corner of the sampling image (exclusive).
-    * @param i_samples_per_pixel Number of pixel samples per pixel.
+    * @param i_samples_per_pixel Number of image samples per pixel.
     */
     RandomSampler(const Point2D_i &i_image_begin, const Point2D_i &i_image_end, size_t i_samples_per_pixel);
 
@@ -29,7 +29,7 @@ class RandomSampler: public Sampler
     * Creates RandomSampler instance.
     * @param i_image_begin Left lower corner of the sampling image.
     * @param i_image_end Right upper corner of the sampling image (exclusive).
-    * @param i_samples_per_pixel Number of pixel samples per pixel.
+    * @param i_samples_per_pixel Number of image samples per pixel.
     * @param ip_pixels_order ImagePixelsOrder implementation defining the order the image pixels are sampled in. Should not be NULL.
     */
     RandomSampler(const Point2D_i &i_image_begin, const Point2D_i &i_image_end, size_t i_samples_per_pixel, intrusive_ptr<ImagePixelsOrder> ip_pixels_order);
@@ -54,14 +54,8 @@ class RandomSampler: public Sampler
 */
 class RandomSubSampler: public SubSampler
   {
-  public:
-    /**
-    * Creates RandomSubSampler instance for the specified pixels.
-    * @param i_pixels Pixels the sub-sampler should create samples for. Should not be empty.
-    * @param i_samples_per_pixel Number of pixel samples per pixel. Should be greater than zero.
-    * @param ip_rng Random number generator to be used by the sub-sampler for generating samples. Should not be NULL.
-    */
-    RandomSubSampler(const std::vector<Point2D_i> &i_pixels, size_t i_samples_per_pixel, RandomGenerator<double> *ip_rng);
+  // Only corresponding Sampler implementation can create the sub-sampler.
+  friend RandomSampler;
 
   protected:
     /**
@@ -70,7 +64,16 @@ class RandomSubSampler: public SubSampler
     virtual void _GetSample(const Point2D_i &i_current_pixel, size_t i_pixel_sample_index, intrusive_ptr<Sample> op_sample);
 
   private:
-    double m_inv_samples_per_pixel;
+    /**
+    * Creates RandomSubSampler instance for the specified pixels.
+    * @param i_pixels Pixels the sub-sampler should create samples for. Should not be empty.
+    * @param i_samples_per_pixel Number of image samples per pixel. Should be greater than zero.
+    * @param ip_rng Random number generator to be used by the sub-sampler for generating samples. Should not be NULL.
+    */
+    RandomSubSampler(const std::vector<Point2D_i> &i_pixels, size_t i_samples_per_pixel, RandomGenerator<double> *ip_rng);
+
+  private:
+    double m_inv_samples_per_pixel_sqrt;
   };
 
 #endif // RANDOM_SAMPLER_H

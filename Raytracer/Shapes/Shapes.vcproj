@@ -108,7 +108,7 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				AdditionalIncludeDirectories="..\;..\..\..\ThirdParty\;..\..\..\ThirdParty\boost\1.40\;..\..\..\ThirdParty\TBB\2.2\include"
-				PreprocessorDefinitions="NDEBUG;NOMINMAX"
+				PreprocessorDefinitions="NDEBUG;NOMINMAX;_SECURE_SCL=0"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				EnableEnhancedInstructionSet="2"

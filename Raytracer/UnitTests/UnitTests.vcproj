@@ -137,7 +137,7 @@
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
 				AdditionalIncludeDirectories="..\;..\..\..\ThirdParty\;..\..\..\ThirdParty\boost\1.40\;..\..\..\ThirdParty\TBB\2.2\include;..\..\..\ThirdParty\cxxtest\3.10.1\"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;NOMINMAX"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;NOMINMAX;_SECURE_SCL=0"
 				MinimalRebuild="false"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -424,6 +424,10 @@
 						>
 					</File>
 					<File
+						RelativePath=".\LDSampler.test.h"
+						>
+					</File>
+					<File
 						RelativePath=".\RandomSampler.test.h"
 						>
 					</File>
@@ -667,6 +671,10 @@
 			</File>
 			<File
 				RelativePath=".\Lambertian.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\LDSampler.test.cpp"
 				>
 			</File>
 			<File

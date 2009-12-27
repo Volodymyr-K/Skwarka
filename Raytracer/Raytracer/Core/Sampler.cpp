@@ -80,6 +80,16 @@ size_t Sampler::GetTotalSamplesNum() const
   return mp_pixels_order->GetTotalPixelsNum()*m_samples_per_pixel;
   }
 
+std::vector<size_t> Sampler::_GetSequences1DSize() const
+  {
+  return m_sequences_1D_size;
+  }
+
+std::vector<size_t> Sampler::_GetSequences2DSize() const
+  {
+  return m_sequences_2D_size;
+  }
+
 Sampler::~Sampler()
   {
   }

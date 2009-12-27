@@ -104,12 +104,13 @@ namespace SamplingRoutines
   void LatinHypercubeSampling2D(Point2DIterator i_begin, size_t i_samples_num, bool i_jitter_samples, RandomGenerator<double> *ip_rng = NULL);
 
   /**
-  * Randomly shuffles values in the specified vector.
-  * @param io_values Values to be shuffled.
+  * Randomly shuffles values in the specified range.
+  * @param i_begin Begin iterator of the range to be shuffled.
+  * @param i_samples_num Number of values in the range.
   * @param ip_rng Random number generator. If NULL, thread-safe global implementation will be used.
   */
-  template<typename T>
-  void Shuffle(std::vector<T> &io_values, RandomGenerator<double> *ip_rng = NULL);
+  template<typename ValueIterator>
+  void Shuffle(ValueIterator i_begin, size_t i_samples_num, RandomGenerator<double> *ip_rng = NULL);
 
   /**
   * Computes weighting coefficient for multiple importance sampling with two PDFs.
@@ -127,6 +128,26 @@ namespace SamplingRoutines
   * @param i_tau Filter width.
   */
   double Lanczos(double i_x, double i_tau);
+
+  /**
+  * Generates low-discrepancy sample values with a radical inverse function in base 2 (this is what the VanDerCorput sequence is).
+  * The function also scrambles the sample values using the specified scramble value.
+  * Scrambled value are still well distributed (given they are scrambled with the same scramble value).
+  * @param i_n Index of the sample value.
+  * @param i_scramble Scramble value, can take any possible value.
+  * @return Sample value. Should be in [0;1] range.
+  */
+  double VanDerCorput(unsigned int i_n, unsigned int i_scramble);
+
+  /**
+  * Generates low-discrepancy sample values with Sobol' function.
+  * The function also scrambles the sample values using the specified scramble value.
+  * Scrambled value are still well distributed (given they are scrambled with the same scramble value).
+  * @param i_n Index of the sample value.
+  * @param i_scramble Scramble value, can take any possible value.
+  * @return Sample value. Should be in [0;1] range.
+  */
+  double Sobol2(unsigned int i_n, unsigned int i_scramble);
   };
 
 /////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
@@ -344,21 +365,20 @@ namespace SamplingRoutines
       }
     }
 
-  template<typename T>
-  void Shuffle(std::vector<T> &io_values, RandomGenerator<double> *ip_rng)
+  template<typename ValueIterator>
+  void Shuffle(ValueIterator i_begin, size_t i_samples_num, RandomGenerator<double> *ip_rng)
     {
-    size_t N = io_values.size();
     if (ip_rng)
-      for (size_t i = 0; i < N; ++i)
+      for (size_t i = 0; i < i_samples_num; ++i)
         {
-        unsigned int other = (unsigned int) (*ip_rng)(N);
-        std::swap(io_values[i], io_values[other]);
+        unsigned int other = (unsigned int) (*ip_rng)(i_samples_num);
+        std::swap(*(i_begin+i), *(i_begin+other));
         }
     else
-      for (size_t i = 0; i < N; ++i)
+      for (size_t i = 0; i < i_samples_num; ++i)
         {
-        unsigned int other = RandomInt(N);
-        std::swap(io_values[i], io_values[other]);
+        unsigned int other = RandomInt(i_samples_num);
+        std::swap(*(i_begin+i), *(i_begin+other));
         }
     }
 
@@ -386,6 +406,30 @@ namespace SamplingRoutines
     double s = sin(i_x * i_tau) / (i_x * i_tau);
     double lanczos = sin(i_x) / i_x;
     return s * lanczos;
+    }
+
+  inline double VanDerCorput(unsigned int i_n, unsigned int i_scramble)
+    {
+    ASSERT(sizeof(unsigned int)==4); // Better use a static assert but don't have a framework yet.
+
+    i_n = (i_n << 16) | (i_n >> 16);
+    i_n = ((i_n & 0x00ff00ff) << 8) | ((i_n & 0xff00ff00) >> 8);
+    i_n = ((i_n & 0x0f0f0f0f) << 4) | ((i_n & 0xf0f0f0f0) >> 4);
+    i_n = ((i_n & 0x33333333) << 2) | ((i_n & 0xcccccccc) >> 2);
+    i_n = ((i_n & 0x55555555) << 1) | ((i_n & 0xaaaaaaaa) >> 1);
+    i_n ^= i_scramble;
+
+    return (double)i_n / (double)0x100000000LL;
+    }
+
+  inline double Sobol2(unsigned int i_n, unsigned int i_scramble)
+    {
+    ASSERT(sizeof(unsigned int)==4); // Better use a static assert but don't have a framework yet.
+
+    for (unsigned int v = 1 << 31; i_n != 0; i_n >>= 1, v ^= v >> 1)
+      if (i_n & 0x1) i_scramble ^= v;
+
+    return (double)i_scramble / (double)0x100000000LL;
     }
 
   };

@@ -8,9 +8,10 @@
 #include <vector>
 
 /**
-* Sampler implementation that creates StratifiedSubSampler instances that produces stratified samples.
+* Sampler implementation that creates StratifiedSubSampler instances that produce stratified samples.
 * Image and lens samples are stratified with respect to other samples inside the same pixel.
 * Integrator 2D samples are produced by the StratifiedSampling2D algorithm.
+* The sampler can produce samples sequences with a length that is a square integer.
 * Integrator samples are stratified within each pixel.
 * Integrator samples are <b>not</b> stratified with respect to other pixels.
 *
@@ -25,8 +26,8 @@ class StratifiedSampler: public Sampler
     * ConsecutiveImagePixelsOrder implementation is used to define the order the image pixels are sampled in.
     * @param i_image_begin Left lower corner of the sampling image.
     * @param i_image_end Right upper corner of the sampling image (exclusive).
-    * @param i_x_samples_per_pixel Number of pixel samples in X direction.
-    * @param i_y_samples_per_pixel Number of pixel samples in Y direction.
+    * @param i_x_samples_per_pixel Number of image samples in X direction.
+    * @param i_y_samples_per_pixel Number of image samples in Y direction.
     */
     StratifiedSampler(const Point2D_i &i_image_begin, const Point2D_i &i_image_end, size_t i_x_samples_per_pixel, size_t i_y_samples_per_pixel);
 
@@ -34,8 +35,8 @@ class StratifiedSampler: public Sampler
     * Creates StratifiedSampler instance.
     * @param i_image_begin Left lower corner of the sampling image.
     * @param i_image_end Right upper corner of the sampling image (exclusive).
-    * @param i_x_samples_per_pixel Number of pixel samples in X direction.
-    * @param i_y_samples_per_pixel Number of pixel samples in Y direction.
+    * @param i_x_samples_per_pixel Number of image samples per pixel in X dimension.
+    * @param i_y_samples_per_pixel Number of image samples per pixel in Y dimension.
     * @param ip_pixels_order ImagePixelsOrder implementation defining the order the image pixels are sampled in. Should not be NULL.
     */
     StratifiedSampler(const Point2D_i &i_image_begin, const Point2D_i &i_image_end, size_t i_x_samples_per_pixel,
@@ -67,15 +68,8 @@ class StratifiedSampler: public Sampler
 */
 class StratifiedSubSampler: public SubSampler
   {
-  public:
-    /**
-    * Creates StratifiedSubSampler instance for the specified pixels.
-    * @param i_pixels Pixels the sub-sampler should create samples for. Should not be empty.
-    * @param i_x_samples_per_pixel Number of pixel samples in X direction.
-    * @param i_y_samples_per_pixel Number of pixel samples in Y direction.
-    * @param ip_rng Random number generator to be used by the sub-sampler for generating samples. Should not be NULL.
-    */
-    StratifiedSubSampler(const std::vector<Point2D_i> &i_pixels, size_t i_x_samples_per_pixel, size_t i_y_samples_per_pixel, RandomGenerator<double> *ip_rng);
+  // Only corresponding Sampler implementation can create the sub-sampler.
+  friend StratifiedSampler;
 
   protected:
     /**
@@ -87,6 +81,16 @@ class StratifiedSubSampler: public SubSampler
     * Precomputes image and lens samples for the specified pixel.
     */
     void _PrecomputePixelSamples(const Point2D_i &i_current_pixel);
+
+  private:
+    /**
+    * Creates StratifiedSubSampler instance for the specified pixels.
+    * @param i_pixels Pixels the sub-sampler should create samples for. Should not be empty.
+    * @param i_x_samples_per_pixel Number of image samples per pixel in X dimension.
+    * @param i_y_samples_per_pixel Number of image samples per pixel in Y dimension.
+    * @param ip_rng Random number generator to be used by the sub-sampler for generating samples. Should not be NULL.
+    */
+    StratifiedSubSampler(const std::vector<Point2D_i> &i_pixels, size_t i_x_samples_per_pixel, size_t i_y_samples_per_pixel, RandomGenerator<double> *ip_rng);
 
   private:
     size_t m_x_samples_per_pixel, m_y_samples_per_pixel;

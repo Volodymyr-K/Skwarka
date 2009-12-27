@@ -127,7 +127,7 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				AdditionalIncludeDirectories="..\;..\..\..\ThirdParty\;..\..\..\ThirdParty\boost\1.40\;..\..\..\ThirdParty\TBB\2.2\include;..\..\..\ThirdParty\EasyBMP\1.06"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;NOMINMAX"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;NOMINMAX;_SECURE_SCL=0"
 				RuntimeLibrary="2"
 				EnableEnhancedInstructionSet="2"
 				FloatingPointModel="0"

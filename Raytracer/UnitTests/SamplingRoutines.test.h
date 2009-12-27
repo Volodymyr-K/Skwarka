@@ -6,6 +6,7 @@
 #include <Math/SamplingRoutines.h>
 #include <Math/RandomGenerator.h>
 #include <Math/ThreadSafeRandom.h>
+#include <Math/MathRoutines.h>
 #include "SamplingTestHelper.h"
 #include <cmath>
 #include <vector>
@@ -283,7 +284,7 @@ class SamplingRoutinesTestSuite : public CxxTest::TestSuite
         samples.push_back(i);
 
       std::vector<int> shuffled(samples.begin(), samples.end());
-      SamplingRoutines::Shuffle(shuffled);
+      SamplingRoutines::Shuffle(shuffled.begin(), shuffled.size());
 
       double distance=0;
       for(size_t i=0;i<num_samples;++i)
@@ -322,6 +323,130 @@ class SamplingRoutinesTestSuite : public CxxTest::TestSuite
       // Tests symmetry.
       TS_ASSERT_EQUALS(SamplingRoutines::Lanczos(0.5,2.0), SamplingRoutines::Lanczos(-0.5,2.0));
       }
+
+    void test_VanDerCorput_Range()
+      {
+      size_t p = 12;
+      size_t N = 1<<p;
+
+      for(size_t t=0;t<100;++t)
+        {
+        unsigned int scramble = RandomUInt();
+
+        for(size_t i=0;i<N;++i)
+          {
+          double val=SamplingRoutines::VanDerCorput(i,scramble);
+          if (val<0.0 || val>1.0)
+            {
+            TS_FAIL("VanDerCorput sequence is out of [0;1] range.");
+            return;
+            }
+          }
+        }
+      }
+
+    // Tests that each aligned sub-region of VanDerCorput sequence with length that is a power of 2 is stratified.
+    // The method also tests different scramble values.
+    void test_VanDerCorput_Stratification()
+      {
+      size_t p = 12;
+      size_t N = 1<<p;
+
+      for(size_t t=0;t<100;++t)
+        {
+        std::vector<double> values;
+        unsigned int scramble = RandomUInt();
+        for(size_t i=0;i<N;++i)
+          values.push_back(SamplingRoutines::VanDerCorput(i, scramble));
+
+        if (_TestLDStratification1D(values)==false)
+          {
+          TS_FAIL("VanDerCorput sequence stratification test failed.");
+          return;
+          }
+        }
+      }
+
+    void test_Sobol2_Range()
+      {
+      size_t p = 12;
+      size_t N = 1<<p;
+
+      for(size_t t=0;t<100;++t)
+        {
+        unsigned int scramble = RandomUInt();
+
+        for(size_t i=0;i<N;++i)
+          {
+          double val=SamplingRoutines::Sobol2(i,scramble);
+          if (val<0.0 || val>1.0)
+            {
+            TS_FAIL("Sobol2 sequence is out of [0;1] range.");
+            return;
+            }
+          }
+        }
+      }
+
+    // Tests that each aligned sub-region of Sobol2 sequence with length that is a power of 2 is stratified.
+    // The method also tests different scramble values.
+    void test_Sobol2_Stratification()
+      {
+      size_t p = 12;
+      size_t N = 1<<p;
+
+      for(size_t t=0;t<100;++t)
+        {
+        std::vector<double> values;
+        unsigned int scramble = RandomUInt();
+        for(size_t i=0;i<N;++i)
+          values.push_back(SamplingRoutines::Sobol2(i, scramble));
+
+        if (_TestLDStratification1D(values)==false)
+          {
+          TS_FAIL("Sobol2 sequence stratification test failed.");
+          return;
+          }
+        }
+      }
+
+    private:
+      bool _TestLDStratification1D(const std::vector<double> &i_values)
+        {
+        size_t N = i_values.size();
+        ASSERT(MathRoutines::IsPowerOf2(N));
+
+        size_t p = MathRoutines::CeilLog2(N);
+
+        for(size_t i=0;i<=p;++i)
+          {
+          size_t num=1<<i;
+          for(size_t j=0;j<N;j+=num)
+            if (_TestStratification1D(i_values, j, j+num)==false)
+              return false;
+          }
+        return true;
+        }
+
+      // Helper method that checks stratification in 1D of the specified sub-region in vector.
+      bool _TestStratification1D(const std::vector<double> &i_values, size_t i_begin, size_t i_end)
+        {
+        size_t N=i_end-i_begin;
+        std::vector<bool> hit(N,false);
+        for(size_t i=i_begin;i<i_end;++i)
+          {
+          int index = (int)( N*i_values[i] );
+          if (index<0 || index>=(int)N)
+            return false;
+
+          if (hit[index])
+            return false;
+          else
+            hit[index]=true;
+          }
+
+        return true;
+        }
   };
 
 #endif // SAMPLING_ROUTINES_TEST_H
