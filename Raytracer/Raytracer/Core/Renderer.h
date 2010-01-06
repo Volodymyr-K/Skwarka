@@ -8,10 +8,13 @@
 #include "Scene.h"
 #include "Sample.h"
 #include "Camera.h"
+#include "tbb/tick_count.h"
+
+class DisplayUpdateCallback;
 
 /**
 * A central abstract class defining the contract for scene renderers.
-* Renderers are responsible to render the image seen from a camra onto the camera's film. They also provide method to compute scene radiance and transmittance for a given ray.
+* Renderers are responsible to render the image seen from a camera onto the camera's film. They also provide method to compute scene radiance and transmittance for a given ray.
 */
 class Renderer: public ReferenceCounted
   {
@@ -48,11 +51,27 @@ class Renderer: public ReferenceCounted
     */
     virtual Spectrum_d Transmittance(const Ray &i_ray, const Sample *ip_sample) const = 0;
 
+    /**
+    * Sets callback that will be called periodically to update display with the currently rendered image.
+    * The callback will be called by Render() method periodically with the specified period (in seconds).
+    * @param ip_display_update_callback Pointer to the callback. If NULL, the callback won't be called.
+    * @param i_update_period Time period in seconds. Should be greater than zero.
+    */
+    void SetDisplayUpdateCallback(DisplayUpdateCallback *ip_display_update_callback, double i_update_period = 1.0);
+
   protected:
     /**
     * Creates Renderer for the specified scene.
     */
     Renderer(intrusive_ptr<const Scene> ip_scene);
+
+    /**
+    * A helper method for the derived classes that calls DisplayUpdateCallback if the specified time period has already passed since the last call or if i_force_update is true.
+    * Implementations needs to call this method periodically to ensure that the display is updated frequently enough.
+    * @param ip_film Film with the rendered image. Should not be NULL.
+    * @param i_force_update If true the callback will be called regardless of whether the time period has passed.
+    */
+    void _UpdateDisplay(intrusive_ptr<const Film> ip_film, bool i_force_update = false) const;
 
   private:
     // Not implemented, not a value type.
@@ -61,20 +80,33 @@ class Renderer: public ReferenceCounted
 
   private:
     intrusive_ptr<const Scene> mp_scene;
+
+    DisplayUpdateCallback *mp_display_update_callback;
+    double m_update_period;
+
+    // Time when the DisplayUpdateCallback was called last time (or the time of class construction if it was never called).
+    mutable tbb::tick_count m_last_display_update;
   };
 
-/////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-inline Renderer::Renderer(intrusive_ptr<const Scene> ip_scene):
-mp_scene(ip_scene)
+/**
+* This is a callback interface for updating display with the currently rendered image.
+* The callbacks are called by Renderer::Render() method periodically to keep the display updated with the currently rendered image.
+*/
+class DisplayUpdateCallback
   {
-  ASSERT(ip_scene);
-  }
+  public:
+    /**
+    * Updates display with the image from the specified film.
+    */
+    virtual void Update(intrusive_ptr<const Film> ip_film) = 0;
 
-inline intrusive_ptr<const Scene> Renderer::GetScene() const
-  {
-  return mp_scene;
-  }
+  protected:
+    DisplayUpdateCallback();
+
+  private:
+    // Not implemented, not a value type.
+    DisplayUpdateCallback(const DisplayUpdateCallback&);
+    DisplayUpdateCallback &operator=(const DisplayUpdateCallback&);
+  };
 
 #endif // RENDERER_H

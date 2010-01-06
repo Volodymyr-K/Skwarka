@@ -25,7 +25,7 @@ Film(i_x_resolution, i_y_resolution), m_x_resolution(i_x_resolution), m_y_resolu
 
   }
 
-void InteractiveFilm::AddSample(const Point2D_d &i_image_point, const Spectrum_f &i_spectrum)
+void InteractiveFilm::AddSample(const Point2D_d &i_image_point, const Spectrum_d &i_spectrum)
   {
   Point2D_d image_point(i_image_point);
 
@@ -43,7 +43,7 @@ void InteractiveFilm::ClearFilm()
     m_image_films[i]->ClearFilm();
   }
 
-bool InteractiveFilm::GetPixel(const Point2D_i &i_image_point, Spectrum_f &o_spectrum, bool i_clamp_values) const
+bool InteractiveFilm::GetPixel(const Point2D_i &i_image_point, Spectrum_d &o_spectrum, bool i_clamp_values) const
   {
   ASSERT(i_image_point[0]>=0 && i_image_point[1]>=0 && i_image_point[0]<(int)m_x_resolution && i_image_point[1]<(int)m_y_resolution);
 

@@ -148,12 +148,13 @@ class SamplerBasedRenderer::IntegratorFilter: public tbb::filter
 class SamplerBasedRenderer::FilmWriterFilter: public tbb::filter
   {
   public:
-    FilmWriterFilter(intrusive_ptr<Film> ip_film);
+    FilmWriterFilter(intrusive_ptr<Film> ip_film, const SamplerBasedRenderer *ip_renderer);
 
     void* operator()(void* ip_chunk);
   private:
 
     intrusive_ptr<Film> mp_film;
+    const SamplerBasedRenderer *mp_renderer;
   };
 
 //////////////////////////////////////// SamplerBasedRenderer /////////////////////////////////////////////
@@ -245,7 +246,7 @@ void SamplerBasedRenderer::Render(intrusive_ptr<const Camera> ip_camera) const
 
   SamplesGeneratorFilter samples_generator(mp_sampler, MAX_PIPELINE_TOKENS_NUM, PIXELS_PER_CHUNK);
   IntegratorFilter integrator(this, ip_camera, mp_log);
-  FilmWriterFilter film_writer(ip_camera->GetFilm());
+  FilmWriterFilter film_writer(ip_camera->GetFilm(), this);
 
   tbb::pipeline pipeline;
   pipeline.add_filter(samples_generator);
@@ -253,8 +254,10 @@ void SamplerBasedRenderer::Render(intrusive_ptr<const Camera> ip_camera) const
   pipeline.add_filter(film_writer);
 
   pipeline.run(MAX_PIPELINE_TOKENS_NUM);
-
   pipeline.clear();
+
+  // Force display update (even if the time period has not passed yet).
+  _UpdateDisplay(ip_camera->GetFilm(), true);
   }
 
 //////////////////////////////////////////// PixelsChunk /////////////////////////////////////////////////
@@ -326,7 +329,7 @@ void SamplerBasedRenderer::PixelsChunk::SaveToFilm(intrusive_ptr<Film> ip_film) 
   ASSERT(m_image_points.size() == m_radiances.size());
 
   for(size_t i=0;i<m_image_points.size();++i)
-    ip_film->AddSample(m_image_points[i], Convert<float>(m_radiances[i]));
+    ip_film->AddSample(m_image_points[i], m_radiances[i]);
   }
 
 MemoryPool *SamplerBasedRenderer::PixelsChunk::GetMemoryPool() const
@@ -461,9 +464,11 @@ void* SamplerBasedRenderer::IntegratorFilter::operator()(void* ip_chunk)
 ////////////////////////////////////////// FilmWriterFilter ///////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-SamplerBasedRenderer::FilmWriterFilter::FilmWriterFilter(intrusive_ptr<Film> ip_film): tbb::filter(serial_out_of_order), mp_film(ip_film)
+SamplerBasedRenderer::FilmWriterFilter::FilmWriterFilter(intrusive_ptr<Film> ip_film, const SamplerBasedRenderer *ip_renderer): tbb::filter(serial_out_of_order),
+mp_film(ip_film), mp_renderer(ip_renderer)
   {
   ASSERT(ip_film);
+  ASSERT(ip_renderer);
   }
 
 void* SamplerBasedRenderer::FilmWriterFilter::operator()(void* ip_chunk)
@@ -471,6 +476,9 @@ void* SamplerBasedRenderer::FilmWriterFilter::operator()(void* ip_chunk)
   PixelsChunk *p_chunk = static_cast<PixelsChunk*>(ip_chunk);
   p_chunk->SaveToFilm(mp_film);
   p_chunk->Release();
+
+  // Update display only if the time period has passed.
+  mp_renderer->_UpdateDisplay(mp_film, false);
 
   return NULL;
   }

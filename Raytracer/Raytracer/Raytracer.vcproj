@@ -300,6 +300,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\Core\Renderer.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\Core\Sampler.cpp"
 					>
 				</File>
@@ -500,6 +504,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\Samplers\RandomBlockedImagePixelsOrder.h"
+					>
+				</File>
+				<File
 					RelativePath=".\Samplers\RandomSampler.h"
 					>
 				</File>
@@ -521,6 +529,10 @@
 				</File>
 				<File
 					RelativePath=".\Samplers\LDSampler.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Samplers\RandomBlockedImagePixelsOrder.cpp"
 					>
 				</File>
 				<File

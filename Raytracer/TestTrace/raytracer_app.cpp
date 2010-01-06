@@ -5,6 +5,8 @@
 #include "raytracer_app.h"
 #include "TestTracer.h"
 #include "Console.h"
+#include <Raytracer/Core/Renderer.h>
+#include <Raytracer/Core/Film.h>
 
 static HINSTANCE	g_hInstance;
 static HWND			g_hWnd;
@@ -22,6 +24,40 @@ INT_PTR CALLBACK About(HWND, UINT, WPARAM, LPARAM);
 
 TestTracer *tracer;
 Console* g_console;
+
+bool tracing_complete = false;
+
+class MyDisplayUpdateCallback: public DisplayUpdateCallback
+  {
+  public:
+    MyDisplayUpdateCallback(Byte* i_image): m_image(i_image) {}
+
+    void Update(intrusive_ptr<const Film> ip_film)
+      {
+      const Film *p_film = ip_film.get();
+      size_t height = p_film->GetYResolution(), width = p_film->GetXResolution();
+
+      for(int y=0;y<(int)height;++y)
+        for(int x=0;x<(int)width;++x)
+          {
+          Spectrum_d sp;
+          p_film->GetPixel(Point2D_i(x,y),sp);
+
+          unsigned int pixel_index = (unsigned int) ((y*width+x)*4);
+          Byte* pixel = m_image;
+          pixel[pixel_index+2] = Byte(std::min(sp[0],255.0));
+          pixel[pixel_index+1] = Byte(std::min(sp[1],255.0));
+          pixel[pixel_index+0] = Byte(std::min(sp[2],255.0));
+          }
+
+      BitBlt(GetDC(g_hWnd), 0, 0, tracer->GetImageWidth(), tracer->GetImageHeight(), g_memDC, 0, 0, SRCCOPY);
+      }
+
+  private:
+    Byte* m_image;
+  };
+
+MyDisplayUpdateCallback *p_update_callback;
 
 void CreateRenderer() {
   tracer = new TestTracer(IMAGE_WIDTH, IMAGE_HEIGHT);
@@ -97,7 +133,9 @@ static bool CreateMainImage() {
 		ptr[i] = 255;
 	}
 
-  tracer->SetImage(image);
+  p_update_callback = new MyDisplayUpdateCallback(image);
+  tracer->SetDisplayUpdateCallback(p_update_callback);
+
 	return true;
 }
 
@@ -127,8 +165,8 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE, LPTSTR, int nCmdShow)
 		return FALSE;
 	}
 
-  tracer->RenderImage(g_hWnd, g_memDC);
-  //BitBlt(GetDC(g_hWnd), 0, 0, tracer->GetImageWidth(), tracer->GetImageHeight(), g_memDC, 0, 0, SRCCOPY);
+  tracer->RenderImage();
+  tracing_complete = true;
 
 	MSG msg;
 	while (true) {
@@ -173,6 +211,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_PAINT:
 		hdc = BeginPaint(hWnd, &ps);
 		// TODO: Add any drawing code here...
+
+    if (tracing_complete)
+      BitBlt(GetDC(g_hWnd), 0, 0, tracer->GetImageWidth(), tracer->GetImageHeight(), g_memDC, 0, 0, SRCCOPY);
+
 		EndPaint(hWnd, &ps);
 		break;
 	case WM_DESTROY:

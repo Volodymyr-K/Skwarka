@@ -94,7 +94,7 @@ class SamplerBasedRenderer: public Renderer
     // This is also the upper bound on the number of threads the pipeline can utilize concurrently.
     static const size_t MAX_PIPELINE_TOKENS_NUM = 64;
 
-    // Defines the number of samples in each PixelsChunk.
+    // Defines the number of pixels in each PixelsChunk.
     // Larger values decrease the number of needed tokens (and thus reduce the locking overhead) but may decrease the parallelism.
     static const size_t PIXELS_PER_CHUNK = 16;
   };

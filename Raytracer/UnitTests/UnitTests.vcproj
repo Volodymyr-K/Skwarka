@@ -428,6 +428,10 @@
 						>
 					</File>
 					<File
+						RelativePath=".\RandomBlockedImagePixelsOrder.test.h"
+						>
+					</File>
+					<File
 						RelativePath=".\RandomSampler.test.h"
 						>
 					</File>
@@ -743,6 +747,10 @@
 			</File>
 			<File
 				RelativePath=".\Primitive.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\RandomBlockedImagePixelsOrder.test.cpp"
 				>
 			</File>
 			<File

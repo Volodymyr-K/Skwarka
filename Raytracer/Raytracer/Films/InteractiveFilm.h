@@ -35,7 +35,7 @@ class InteractiveFilm: public Film
     /**
     * Adds sample value to the film.
     */
-    virtual void AddSample(const Point2D_d &i_image_point, const Spectrum_f &i_spectrum);
+    virtual void AddSample(const Point2D_d &i_image_point, const Spectrum_d &i_spectrum);
 
     /**
     * Clears the film.
@@ -51,7 +51,7 @@ class InteractiveFilm: public Film
     * @param i_clamp_values If true, the Spectrum value will be clamped before returning.
     * @return true if the spectrum value were computed successfully and false if there is no samples contributing to the pixel.
     */
-    virtual bool GetPixel(const Point2D_i &i_image_point, Spectrum_f &o_spectrum, bool i_clamp_values = true) const;
+    virtual bool GetPixel(const Point2D_i &i_image_point, Spectrum_d &o_spectrum, bool i_clamp_values = true) const;
 
     /**
     * Returns the window in the image plane where samples need to be generated.

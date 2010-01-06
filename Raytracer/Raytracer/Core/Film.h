@@ -27,7 +27,7 @@ class Film: public ReferenceCounted
     /**
     * Adds sample value to the film.
     */
-    virtual void AddSample(const Point2D_d &i_image_point, const Spectrum_f &i_spectrum) = 0;
+    virtual void AddSample(const Point2D_d &i_image_point, const Spectrum_d &i_spectrum) = 0;
 
     /**
     * Clears the film.
@@ -42,7 +42,7 @@ class Film: public ReferenceCounted
     * @param i_clamp_values If true, the Spectrum value will be clamped before returning.
     * @return true if the spectrum value were computed successfully and false otherwise (e.g. if there's no enough samples in the pixel's vicinity).
     */
-    virtual bool GetPixel(const Point2D_i &i_image_point, Spectrum_f &o_spectrum,  bool i_clamp_values = true) const = 0;
+    virtual bool GetPixel(const Point2D_i &i_image_point, Spectrum_d &o_spectrum,  bool i_clamp_values = true) const = 0;
 
     /**
     * Returns the window in the image plane where samples need to be generated.

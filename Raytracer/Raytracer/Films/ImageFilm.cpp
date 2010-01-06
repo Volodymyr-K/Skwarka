@@ -15,21 +15,18 @@ Film(i_x_resolution, i_y_resolution), m_x_resolution(i_x_resolution), m_y_resolu
   m_crop_window_end = Point2D_i(m_x_resolution, m_y_resolution);
   }
 
-void ImageFilm::AddSample(const Point2D_d &i_image_point, const Spectrum_f &i_spectrum)
+void ImageFilm::AddSample(const Point2D_d &i_image_point, const Spectrum_d &i_spectrum)
   {
   double image_x = i_image_point[0] - 0.5;
   double image_y = i_image_point[1] - 0.5;
-  int x0 = (int)ceil (image_x - m_filter_x_width);
-  int x1 = (int)floor(image_x + m_filter_x_width);
-  int y0 = (int)ceil (image_y - m_filter_y_width);
-  int y1 = (int)floor(image_y + m_filter_y_width);
+  int x0 = (int) (image_x - m_filter_x_width + 1.0-(1e-10));
+  int x1 = (int) (image_x + m_filter_x_width);
+  int y0 = (int) (image_y - m_filter_y_width + 1.0-(1e-10));
+  int y1 = (int) (image_y + m_filter_y_width);
   x0 = std::max(x0, m_crop_window_begin[0]);
   x1 = std::min(x1, m_crop_window_end[0]-1);
   y0 = std::max(y0, m_crop_window_begin[1]);
   y1 = std::min(y1, m_crop_window_end[1]-1);
-
-  if (x1<x0 || y1<y0)
-    return;
 
   // Loop over filter support and add sample to pixel arrays.
   for (int y = y0; y <= y1; ++y)
@@ -37,7 +34,7 @@ void ImageFilm::AddSample(const Point2D_d &i_image_point, const Spectrum_f &i_sp
       {
       ImageFilmPixel &pixel = m_pixels.Get(x,y);
 
-      float filter_weight = (float)mp_filter->Evaluate(x-image_x, y-image_y);
+      double filter_weight = mp_filter->Evaluate(x-image_x, y-image_y);
 
       pixel.m_spectrum.AddWeighted(i_spectrum, filter_weight);
       pixel.m_weight_sum += filter_weight;
@@ -49,7 +46,7 @@ void ImageFilm::ClearFilm()
   m_pixels.Fill(ImageFilmPixel());
   }
 
-bool ImageFilm::GetPixel(const Point2D_i &i_image_point, Spectrum_f &o_spectrum, bool i_clamp_values) const
+bool ImageFilm::GetPixel(const Point2D_i &i_image_point, Spectrum_d &o_spectrum, bool i_clamp_values) const
   {
   ASSERT(i_image_point[0]>=0 && i_image_point[1]>=0 && i_image_point[0]<(int)m_x_resolution && i_image_point[1]<(int)m_y_resolution);
 
@@ -59,12 +56,11 @@ bool ImageFilm::GetPixel(const Point2D_i &i_image_point, Spectrum_f &o_spectrum,
 
   const ImageFilmPixel &pixel = m_pixels.Get(i_image_point[0],i_image_point[1]);
 
-  if (pixel.m_weight_sum != 0.f)
+  if (pixel.m_weight_sum != 0.0)
     {
-    float invWt = 1.f / pixel.m_weight_sum;
-    o_spectrum=pixel.m_spectrum*invWt;
+    o_spectrum=pixel.m_spectrum / pixel.m_weight_sum;
     if (i_clamp_values)
-      o_spectrum.Clamp(0.f, FLT_INF);
+      o_spectrum.Clamp(0.0, DBL_INF);
     return true;
     }
   else

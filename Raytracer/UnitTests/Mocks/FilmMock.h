@@ -16,7 +16,7 @@ class FilmMock: public Film
       {
       }
 
-    virtual void AddSample(const Point2D_d &i_image_point, const Spectrum_f &i_spectrum)
+    virtual void AddSample(const Point2D_d &i_image_point, const Spectrum_d &i_spectrum)
       {
       }
 
@@ -24,9 +24,9 @@ class FilmMock: public Film
       {
       }
 
-    virtual bool GetPixel(const Point2D_i &i_image_point, Spectrum_f &o_spectrum, bool i_clamp_values = true) const
+    virtual bool GetPixel(const Point2D_i &i_image_point, Spectrum_d &o_spectrum, bool i_clamp_values = true) const
       {
-      o_spectrum=Spectrum_f(1.0,1.0,1.0);
+      o_spectrum=Spectrum_d(1.0,1.0,1.0);
       return true;
       }
 
