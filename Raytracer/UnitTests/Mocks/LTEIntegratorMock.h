@@ -1,39 +1,37 @@
-#ifndef SURFACE_INTEGRATOR_MOCK_H
-#define SURFACE_INTEGRATOR_MOCK_H
+#ifndef LTE_INTEGRATOR_MOCK_H
+#define LTE_INTEGRATOR_MOCK_H
 
 #include <Common/Common.h>
 #include <Math/ThreadSafeRandom.h>
-#include <Raytracer/Core/SurfaceIntegrator.h>
+#include <Raytracer/Core/LTEIntegrator.h>
 #include <Raytracer/Core/Renderer.h>
 #include <Raytracer/Core/Scene.h>
 
 /*
-SurfaceIntegrator mock implementation.
+LTEIntegrator mock implementation.
 Evaluates direct lighting only with fixed number of random samples.
 */
-class SurfaceIntegratorMock: public SurfaceIntegrator
+class LTEIntegratorMock: public LTEIntegrator
   {
   public:
-    SurfaceIntegratorMock(intrusive_ptr<const Renderer> ip_renderer);
+    LTEIntegratorMock(intrusive_ptr<const Scene> ip_scene, intrusive_ptr<VolumeIntegrator> ip_volume_integrator);
 
-    virtual Spectrum_d Radiance(const RayDifferential &i_ray, const Intersection &i_intersection, const Sample *ip_sample, MemoryPool &i_pool) const;
+  private:
+    virtual Spectrum_d _SurfaceRadiance(const RayDifferential &i_ray, const Intersection &i_intersection, const Sample *ip_sample, MemoryPool &i_pool) const;
 
   private:
     intrusive_ptr<const Scene> mp_scene;
-    intrusive_ptr<const Renderer> mp_renderer;
   };
 
 /////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-SurfaceIntegratorMock::SurfaceIntegratorMock(intrusive_ptr<const Renderer> ip_renderer):
-SurfaceIntegrator(ip_renderer), mp_renderer(ip_renderer), mp_scene(ip_renderer->GetScene())
+inline LTEIntegratorMock::LTEIntegratorMock(intrusive_ptr<const Scene> ip_scene, intrusive_ptr<VolumeIntegrator> ip_volume_integrator):
+LTEIntegrator(ip_scene, ip_volume_integrator), mp_scene(ip_scene)
   {
-  ASSERT(ip_renderer);
-  ASSERT(ip_renderer->GetScene());
   }
 
-Spectrum_d SurfaceIntegratorMock::Radiance(const RayDifferential &i_ray, const Intersection &i_intersection, const Sample *ip_sample, MemoryPool &i_pool) const
+inline Spectrum_d LTEIntegratorMock::_SurfaceRadiance(const RayDifferential &i_ray, const Intersection &i_intersection, const Sample *ip_sample, MemoryPool &i_pool) const
   {
   ASSERT(i_ray.m_base_ray.m_direction.IsNormalized());
   Spectrum_d radiance;
@@ -59,7 +57,7 @@ Spectrum_d SurfaceIntegratorMock::Radiance(const RayDifferential &i_ray, const I
     Spectrum_d f = p_bsdf->Evaluate(lighting_ray.m_direction.Normalized(), i_ray.m_base_ray.m_direction*(-1.0));
     if (!f.IsBlack() && mp_scene->IntersectTest(lighting_ray)==false)
       {
-      Spectrum_d transmittance = mp_renderer->Transmittance(lighting_ray, ip_sample);
+      Spectrum_d transmittance = _VolumeTransmittance(lighting_ray, ip_sample);
       radiance += (f * Li * transmittance) * fabs(lighting_ray.m_direction.Normalized()* i_intersection.m_dg.m_shading_normal);
       }
     }
@@ -83,7 +81,7 @@ Spectrum_d SurfaceIntegratorMock::Radiance(const RayDifferential &i_ray, const I
           {
           Ray lighting_ray(i_intersection.m_dg.m_point, exitant);
           Spectrum_d Li = lights.m_infinitiy_light_sources[j]->Radiance(RayDifferential(lighting_ray));
-          Spectrum_d transmittance = mp_renderer->Transmittance(lighting_ray, ip_sample);
+          Spectrum_d transmittance = _VolumeTransmittance(lighting_ray, ip_sample);
 
           infinity_light += (f * Li * transmittance) * cs / pdf;
           }
@@ -124,4 +122,4 @@ Spectrum_d SurfaceIntegratorMock::Radiance(const RayDifferential &i_ray, const I
   return radiance;
   }
 
-#endif // SURFACE_INTEGRATOR_MOCK_H
+#endif // LTE_INTEGRATOR_MOCK_H

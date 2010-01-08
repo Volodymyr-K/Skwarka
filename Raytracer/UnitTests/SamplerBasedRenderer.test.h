@@ -5,7 +5,7 @@
 #include "CustomValueTraits.h"
 #include <Common/MemoryPool.h>
 #include <Raytracer/Renderers/SamplerBasedRenderer.h>
-#include "Mocks/SurfaceIntegratorMock.h"
+#include "Mocks/LTEIntegratorMock.h"
 #include "Mocks/VolumeIntegratorMock.h"
 #include "Mocks/MaterialMock.h"
 #include "Mocks/InfiniteLightSourceMock.h"
@@ -48,12 +48,7 @@ class SamplerBasedRendererTestSuite : public CxxTest::TestSuite
 
       Point2D_i window_begin,window_end;
       p_film->GetSamplingExtent(window_begin, window_end);
-      intrusive_ptr<Sampler> p_sampler( new StratifiedSampler(window_begin, window_end, 2, 2) );
-
-      mp_log.reset( new StreamLog() );
-      mp_renderer.reset( new SamplerBasedRenderer(mp_scene, p_sampler, mp_log) );
-      mp_surf_int.reset( new SurfaceIntegratorMock(mp_renderer) );
-      mp_volume_int.reset( new VolumeIntegratorMock(mp_renderer) );
+      mp_sampler.reset( new StratifiedSampler(window_begin, window_end, 2, 2) );
       }
 
     void tearDown()
@@ -61,69 +56,14 @@ class SamplerBasedRendererTestSuite : public CxxTest::TestSuite
       // Nothing to clear.
       }
 
-    void test_SamplerBasedRenderer_RadianceInsideSphere_SurfaceIntegratorOnly()
-      {
-      mp_renderer->SetSurfaceIntegrator(mp_surf_int);
-      MemoryPool pool;
-      Spectrum_d radiance = mp_renderer->Radiance(RayDifferential(Ray(Point3D_d(0,0,0),Vector3D_d(1,0,0))), NULL, pool);
-
-      // Since the mesh is a unit radius sphere with a point light in its center we can compute the radiance analytically.
-      Spectrum_d analytical_radiance = Spectrum_d(100.0)*INV_PI;
-      CustomAssertDelta(radiance, analytical_radiance, 0.05);
-      }
-
-    void test_SamplerBasedRenderer_RadianceOutsideSphere_SurfaceIntegratorOnly()
-      {
-      mp_renderer->SetSurfaceIntegrator(mp_surf_int);
-      MemoryPool pool;
-      Spectrum_d radiance = mp_renderer->Radiance(RayDifferential(Ray(Point3D_d(20,0,0),Vector3D_d(-1,0,0))), NULL, pool);
-
-      // Since the sphere is lighted by the infinity light mock we can compute the radiance analytically.
-      Spectrum_d analytical_radiance = (Spectrum_d(10.0)*M_PI) * INV_PI;
-      CustomAssertDelta(radiance, analytical_radiance, 0.001);
-      }
-
-    void test_SamplerBasedRenderer_RadianceOutsideSphere_SurfaceAndVolumeIntegrators()
-      {
-      mp_renderer->SetSurfaceIntegrator(mp_surf_int);
-      mp_renderer->SetVolumeIntegrator(mp_volume_int);
-      MemoryPool pool;
-      Spectrum_d radiance = mp_renderer->Radiance(RayDifferential(Ray(Point3D_d(20,0,0),Vector3D_d(-1,0,0))), NULL, pool);
-
-      // Since the participating media completely absorbs the infinite light the radiance is black.
-      TS_ASSERT_EQUALS(radiance, Spectrum_d(0.0));
-      }
-
-    void test_SamplerBasedRenderer_RadianceInsideSphere_SurfaceAndVolumeIntegrators()
-      {
-      mp_renderer->SetSurfaceIntegrator(mp_surf_int);
-      mp_renderer->SetVolumeIntegrator(mp_volume_int);
-      MemoryPool pool;
-      RayDifferential ray(Ray(Point3D_d(0,0,0),Vector3D_d(1,0,0)));
-      Spectrum_d radiance = mp_renderer->Radiance(ray, NULL, pool);
-
-      // Since the mesh is a unit radius sphere with a point light in its center we can compute the radiance analytically.
-      Spectrum_d analytical_radiance = Spectrum_d(100.0)*INV_PI * exp(-1.0) * exp(-1.0); // exp is multiplied twice to account for light attenuation and camera ray attenuation.
-      CustomAssertDelta(radiance, analytical_radiance, 0.02);
-      }
-
-    void test_SamplerBasedRenderer_Transmittance()
-      {
-      mp_renderer->SetSurfaceIntegrator(mp_surf_int);
-      mp_renderer->SetVolumeIntegrator(mp_volume_int);
-      Ray ray(Point3D_d(0,0,0),Vector3D_d(1,0,0),0,1);
-      Spectrum_d transmittance = mp_renderer->Transmittance(ray, NULL);
-
-      TS_ASSERT_EQUALS(transmittance, mp_volume_int->Transmittance(ray,NULL));
-      }
-
     // This will run in multiple threads depending on the number of threads available.
     void test_SamplerBasedRendererInsideSphere_Render()
       {
-      mp_renderer->SetSurfaceIntegrator(mp_surf_int);
-      mp_renderer->SetVolumeIntegrator(mp_volume_int);
+      intrusive_ptr<VolumeIntegrator> mp_volume_int( new VolumeIntegratorMock() );
+      intrusive_ptr<LTEIntegrator> p_lte_int( new LTEIntegratorMock(mp_scene, mp_volume_int) );
+      intrusive_ptr<SamplerBasedRenderer> p_renderer( new SamplerBasedRenderer(p_lte_int, mp_sampler, intrusive_ptr<Log>(new StreamLog())) );
 
-      mp_renderer->Render(mp_camera);
+      p_renderer->Render(mp_camera);
       intrusive_ptr<Film> film = mp_camera->GetFilm();
 
       bool to_break=false;
@@ -146,11 +86,9 @@ class SamplerBasedRendererTestSuite : public CxxTest::TestSuite
     std::vector<intrusive_ptr<const Primitive> > m_primitives;
 
     intrusive_ptr<Scene> mp_scene;
-    intrusive_ptr<SurfaceIntegrator> mp_surf_int;
     intrusive_ptr<VolumeIntegrator> mp_volume_int;
-    intrusive_ptr<SamplerBasedRenderer> mp_renderer;
+    intrusive_ptr<Sampler> mp_sampler;
     intrusive_ptr<Camera> mp_camera;
-    intrusive_ptr<Log> mp_log;
   };
 
 #endif // SAMPLER_BASED_RENDERER_TEST_H

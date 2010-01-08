@@ -1,18 +1,11 @@
 #include "Renderer.h"
 
-Renderer::Renderer(intrusive_ptr<const Scene> ip_scene):
-mp_scene(ip_scene), mp_display_update_callback(NULL), m_update_period(1.0)
+Renderer::Renderer(): mp_display_update_callback(NULL), m_update_period(1.0)
   {
-  ASSERT(ip_scene);
   m_last_display_update = tbb::tick_count::now();
   }
 
-intrusive_ptr<const Scene> Renderer::GetScene() const
-  {
-  return mp_scene;
-  }
-
-void Renderer::SetDisplayUpdateCallback(DisplayUpdateCallback *ip_display_update_callback, double i_update_period)
+void Renderer::SetDisplayUpdateCallback(intrusive_ptr<DisplayUpdateCallback> ip_display_update_callback, double i_update_period)
   {
   ASSERT(i_update_period>0.0);
   if (i_update_period<=0.0) i_update_period=1.0;

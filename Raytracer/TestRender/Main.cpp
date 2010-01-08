@@ -11,6 +11,7 @@
 #include <Shapes/Sphere.h>
 #include <vector>
 #include <cstdio>
+#include <TestTrace/MeshLoader.h>
 
 #pragma warning(disable : 4996)
 
@@ -24,22 +25,18 @@ void LoadMesh()
   std::vector<float> uv_parameterization;
 
   RayDifferential rd;
-
+/*
   Sphere s;
   s.SetParameter("Center","0 0 0");
   s.SetParameter("Radius","0.4");
   s.SetParameter("Subdivisions","5");
   p_mesh=s.BuildMesh();
+*/
+
+  p_mesh = intrusive_ptr<TriangleMesh>( LoadMeshFromStl("kitchen.stl", false) );
 
   TopologyInfo ti = p_mesh->GetTopologyInfo();
 
-  RayDifferential r;
-  r.m_base_ray.m_origin=Point3D_d();
-  r.m_base_ray.m_direction = 
-    Convert<double>( 
-    Vector3D_f(p_mesh->GetVertex(p_mesh->GetTriangle(10).m_vertices[0])+p_mesh->GetVertex(p_mesh->GetTriangle(10).m_vertices[1]))
-    ).Normalized();
-  DifferentialGeometry dg;
   //p_mesh->ComputeDifferentialGeometry(10,r,dg); 
 /*
   FILE *fp=fopen("vertices.txt","r");
@@ -87,14 +84,14 @@ void InitAll() {
   glLightfv(GL_LIGHT0, GL_POSITION, lightPos);
 }
 
-float an=0,r=10;
-float cx=0, cy=0, cz=10.0;
+float an=0,r=50000;
+float cx=0, cy=0, cz=0.0;
 
 //------------------ glut handlers -----------------------
 void glut_display() {
   glLoadIdentity();
-  gluLookAt(cx, cy, cz,   0, 0, 0,  0, 1, 0);
-  glScalef(10, 10, 10);
+  gluLookAt(cx, cy, cz,   0, 0, 1000,  0, 0, 1);
+  //glScalef(10, 10, 10);
 
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -148,15 +145,15 @@ void glut_keyboard(unsigned char key, int x, int y) {
 
   if (key==113)
     {
-    r+=0.1;
+    r+=10;
     }
   if (key==101)
     {
-    r-=0.1;
+    r-=10;
     }
 
   cx=r*sin(an);
-  cz=r*cos(an);
+  cy=r*cos(an);
 
     if (key == 27) {
         exit(0);

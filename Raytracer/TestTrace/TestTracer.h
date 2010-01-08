@@ -36,7 +36,7 @@
 #include <Raytracer/Renderers/SamplerBasedRenderer.h>
 #include <Raytracer/LightSources/PointLight.h>
 #include <Raytracer/LightSources/DiffuseAreaLightSource.h>
-#include <Raytracer/SurfaceIntegrators/DirectLightingSurfaceIntegrator.h>
+#include <Raytracer/LTEIntegrators/DirectLightingLTEIntegrator.h>
 #include <UnitTests/Mocks/InfiniteLightSourceMock.h>
 #include <UnitTests/Mocks/VolumeIntegratorMock.h>
 #include <Raytracer/LightsSamplingStrategies/IrradianceLightsSampling.h>
@@ -80,145 +80,119 @@ class TestTracer
   intrusive_ptr<Scene> mp_scene;
   };
 
-int pixel_counter=0;
-
-inline void TestTracer::LoadMesh()
+intrusive_ptr<Primitive> LoadWallsPrimitive(std::string i_filename, bool i_smooth)
   {
+  intrusive_ptr<TriangleMesh> p_mesh( LoadMeshFromStl(i_filename, i_smooth) );
+
   BMP Input;
-  Input.ReadFromFile("image.bmp");
+  Input.ReadFromFile("walls.bmp");
 
   std::vector<std::vector<Spectrum_f> > values(Input.TellHeight(),std::vector<Spectrum_f>(Input.TellWidth()));
   for( int j=0 ; j < Input.TellHeight() ; j++)
     {
     for( int i=0 ; i < Input.TellWidth() ; i++)
       {
-      values[j][i]=Spectrum_f(Input(i,j)->Red,Input(i,j)->Green,Input(i,j)->Blue)*0.8;
+      values[j][i]=Spectrum_f(Input(i,j)->Red,Input(i,j)->Green,Input(i,j)->Blue)*1.0;
       values[j][i]/=255.0;
       }
     }
-/*
-  MIPMap<Spectrum_d> mipmap(values,true,8);
-
-  Input.SetSize(mipmap.m_levels[0]->GetSizeV(),mipmap.m_levels[0]->GetSizeU());
-  for( int j=0 ; j < Input.TellHeight() ; j++)
-    {
-    for( int i=0 ; i < Input.TellWidth() ; i++)
-      {
-      //values[j][i] = mipmap.Get(Point2D_d(double(i+0.5)/Input.TellWidth(), double(j+0.5)/Input.TellHeight()), width);
-      Spectrum_d v = mipmap.m_levels[0]->Get(j,i)*255.0;
-      v.Clamp(0.0,255.0);
-      Input(i,j)->Red = (int) (v[0]+0.5);
-      Input(i,j)->Green = (int) (v[1]+0.5);
-      Input(i,j)->Blue = (int) (v[2]+0.5);
-      }
-    }
-
-  char buf[256];
-  sprintf(buf,"image%d.bmp",1);
-  Input.WriteToFile(buf);
-*/
-  intrusive_ptr<Mapping2D> p_mapping( new SphericalMapping2D(Point3D_d(100,-400,600), Vector3D_d(0,1,0), Vector3D_d(0,0,-1)) );
-  //intrusive_ptr<Mapping2D> p_mapping( new UVMapping2D(16.0,16.0,Vector2D_d(-0.057,-0.003)) );
-  //intrusive_ptr<Mapping2D> p_mapping( new UVMapping2D() );
+    
+  intrusive_ptr<Mapping2D> p_mapping( new SphericalMapping2D(Point3D_d(-770,-2315,1500), Vector3D_d(0,0,1), Vector3D_d(1,0,0)) );
   intrusive_ptr< ImageTexture<Spectrum_f,Spectrum_d> > p_text(new ImageTexture<Spectrum_f,Spectrum_d>(values, p_mapping) );
 
-  std::vector<Point3D_f> vertices;
-  std::vector<MeshTriangle> triangles;
-  std::vector<float> uv_parameterization;
-
-  std::vector<intrusive_ptr<const Primitive> > primitives;
-
-  /////// Add car primitive ///
-  
-  mp_mesh = intrusive_ptr<TriangleMesh>( LoadMeshFromStl("car.stl") );
-
-  intrusive_ptr<Texture<Spectrum_d> > p_reflectance(new ConstantTexture<Spectrum_d> (Spectrum_d(212,175,55)/255.0*0.8));
   intrusive_ptr<Texture<double> > p_sigma(new ConstantTexture<double> (0.04));
   intrusive_ptr<Material> p_material(new Matte(p_text, p_sigma));
 
-  intrusive_ptr<Primitive> p_primitive(new Primitive(mp_mesh, p_material));
-  primitives.push_back(p_primitive);
+  intrusive_ptr<Primitive> p_primitive(new Primitive(p_mesh, p_material));
+  return p_primitive;
+  }
 
-  /////// Add bunny primitive ///
+intrusive_ptr<Primitive> LoadDiffusePrimitive(std::string i_filename, bool i_smooth, Spectrum_d i_color)
+  {
+  intrusive_ptr<TriangleMesh> p_mesh( LoadMeshFromStl(i_filename, i_smooth) );
 
-  mp_mesh = intrusive_ptr<TriangleMesh>( LoadMeshFromPbrt("vertices.txt","triangles.txt") );
+  intrusive_ptr<Texture<Spectrum_d> > p_reflectance(new ConstantTexture<Spectrum_d> (i_color));
+  intrusive_ptr<Texture<double> > p_sigma(new ConstantTexture<double> (0.04));
+  intrusive_ptr<Material> p_material(new Matte(p_reflectance, p_sigma));
 
-  p_material.reset(new Matte(p_reflectance, p_sigma));
+  intrusive_ptr<Primitive> p_primitive(new Primitive(p_mesh, p_material));
+  return p_primitive;
+  }
 
-  p_primitive.reset(new Primitive(mp_mesh, p_material));
-  primitives.push_back(p_primitive);
+intrusive_ptr<Primitive> LoadGlassPrimitive(std::string i_filename, bool i_smooth, Spectrum_d i_color)
+  {
+  intrusive_ptr<TriangleMesh> p_mesh( LoadMeshFromStl(i_filename, i_smooth) );
+
+  intrusive_ptr<Texture<Spectrum_d> > p_reflectance(new ConstantTexture<Spectrum_d> (Spectrum_d(1.0)));
+  intrusive_ptr<Texture<Spectrum_d> > p_transmittance(new ConstantTexture<Spectrum_d> (i_color));
+  intrusive_ptr<Material> p_material(new Transparent(p_reflectance, p_transmittance, 1.4));
+
+  intrusive_ptr<Primitive> p_primitive(new Primitive(p_mesh, p_material));
+  return p_primitive;
+  }
+
+intrusive_ptr<Primitive> LoadMetalPrimitive(std::string i_filename, bool i_smooth, Spectrum_d i_color, double i_roughness)
+  {
+  intrusive_ptr<TriangleMesh> p_mesh( LoadMeshFromStl(i_filename, i_smooth) );
+
+  intrusive_ptr<Texture<Spectrum_d> > p_refrlection(new ConstantTexture<Spectrum_d> (i_color));
+  intrusive_ptr<Texture<double> > p_roughness(new ConstantTexture<double> (i_roughness));
+  intrusive_ptr<Material> p_material(new Metal(p_refrlection, p_roughness));
+
+  intrusive_ptr<Primitive> p_primitive(new Primitive(p_mesh, p_material));
+  return p_primitive;
+  }
 
 
-  /////// Add buddha primitive ///
+inline void TestTracer::LoadMesh()
+  {
+  std::vector<intrusive_ptr<const Primitive> > primitives;
 
-  mp_mesh = intrusive_ptr<TriangleMesh>( LoadMeshFromPbrt("vertices2.txt","triangles2.txt") );
+  primitives.push_back(LoadWallsPrimitive("stls/walls.stl", false));
+  primitives.push_back(LoadDiffusePrimitive("stls/floor.stl", false, Spectrum_d(248,244,180)/255.0));
+  //primitives.push_back(LoadDiffusePrimitive("stls/ceiling.stl", false, Spectrum_d(248,244,180)/255.0));
+  primitives.push_back(LoadDiffusePrimitive("stls/window.stl", false, Spectrum_d(238,194,121)/255.0));
 
-  p_reflectance.reset(new ConstantTexture<Spectrum_d> (Spectrum_d(22,235,75)/255.0*0.8));
-  p_material.reset(new Matte(p_reflectance, p_sigma));
+  primitives.push_back(LoadDiffusePrimitive("stls/door.stl", false, Spectrum_d(238,194,121)/255.0));
+  primitives.push_back(LoadGlassPrimitive("stls/door_glass.stl", false, Spectrum_d(255.0,255.0,255.0)/255.0));
 
-  p_primitive.reset(new Primitive(mp_mesh, p_material));
-  primitives.push_back(p_primitive);
+  primitives.push_back(LoadDiffusePrimitive("stls/table.stl", false, Spectrum_d(238,194,121)/255.0));
+  primitives.push_back(LoadDiffusePrimitive("stls/chair1.stl", false, Spectrum_d(127,90,48)/255.0));
+  primitives.push_back(LoadDiffusePrimitive("stls/chair2.stl", false, Spectrum_d(127,90,48)/255.0));
+  primitives.push_back(LoadDiffusePrimitive("stls/chair3.stl", false, Spectrum_d(127,90,48)/255.0));
 
+  primitives.push_back(LoadMetalPrimitive("stls/lamp1.stl", true, Spectrum_d(240,240,240)/255.0, 0.05));
+  primitives.push_back(LoadMetalPrimitive("stls/lamp2.stl", true, Spectrum_d(240,240,240)/255.0, 0.05));
 
-  /////// Add buddha2 primitive ///
-/*
-  mp_mesh = intrusive_ptr<TriangleMesh>( LoadMeshFromPbrt("vertices3.txt","triangles2.txt") );
+  primitives.push_back(LoadDiffusePrimitive("stls/shelf1.stl", false, Spectrum_d(255,245,245)/255.0));
+  primitives.push_back(LoadDiffusePrimitive("stls/shelf2.stl", false, Spectrum_d(255,245,245)/255.0));
+  primitives.push_back(LoadDiffusePrimitive("stls/upper_shelf.stl", false, Spectrum_d(173,216,230)/255.0));
 
-  p_reflectance.reset(new ConstantTexture<Spectrum_d> (Spectrum_d(250,180,75)/255.0*0.8));
-  p_material.reset(new Matte(p_reflectance, p_sigma));
+  primitives.push_back(LoadGlassPrimitive("stls/fruit_plate.stl", true, Spectrum_d(255,210,210)/255.0));
 
-  p_primitive.reset(new Primitive(mp_mesh, p_material));
-  primitives.push_back(p_primitive);
-*/
-  /////// Add ground primitive ///
+  primitives.push_back(LoadDiffusePrimitive("stls/oranges.stl", true, Spectrum_d(255,165,0)/255.0));
+  primitives.push_back(LoadDiffusePrimitive("stls/strawberry.stl", true, Spectrum_d(255,3,62)/255.0));
 
-  vertices.clear();
-  vertices.push_back(Point3D_f(-20000,-20000,0));vertices.push_back(Point3D_f(20000,-20000,0));
-  vertices.push_back(Point3D_f(20000,20000,0));vertices.push_back(Point3D_f(-20000,20000,0));
-  triangles.clear();
-  triangles.push_back(MeshTriangle(0,1,2));triangles.push_back(MeshTriangle(2,3,0));
-  triangles[0].m_uvs[0]=Point2D_f(0,0);triangles[0].m_uvs[1]=Point2D_f(1,0);triangles[0].m_uvs[2]=Point2D_f(1,1);
-  triangles[1].m_uvs[0]=Point2D_f(1,1);triangles[1].m_uvs[1]=Point2D_f(0,1);triangles[1].m_uvs[2]=Point2D_f(0,0);
-  intrusive_ptr<TriangleMesh> p_ground_mesh = intrusive_ptr<TriangleMesh>( new TriangleMesh(vertices, triangles, true) );
+  //primitives.push_back(LoadMetalPrimitive("stls/bin.stl", true, Spectrum_d(255,255,150)/255.0, 0.1));
+  primitives.push_back(LoadGlassPrimitive("stls/bottles.stl", true, Spectrum_d(255,255,255)/255.0));
+  primitives.push_back(LoadDiffusePrimitive("stls/cups.stl", true, Spectrum_d(255,255,255)/255.0));
+  primitives.push_back(LoadDiffusePrimitive("stls/shoes.stl", false, Spectrum_d(255,255,255)/255.0));
 
-  p_reflectance.reset(new ConstantTexture<Spectrum_d> (Spectrum_d(200,200,200)/255.0*0.6));
-  p_sigma.reset(new ConstantTexture<double> (0.35));
-  p_material.reset(new Matte(p_reflectance, p_sigma));
-  //p_material.reset(new Matte(p_text, p_sigma));
+  primitives.push_back(LoadDiffusePrimitive("stls/cooker_plate.stl", false, Spectrum_d(50,50,50)/255.0));
+  primitives.push_back(LoadDiffusePrimitive("stls/saucepan_handles.stl", false, Spectrum_d(50,50,50)/255.0));
+  primitives.push_back(LoadMetalPrimitive("stls/saucepan.stl", true, Spectrum_d(184,115,51)/255.0, 0.1));
+  primitives.push_back(LoadMetalPrimitive("stls/teapot.stl", true, Spectrum_d(255,215,0)/255.0, 0.1));
+  primitives.push_back(LoadMetalPrimitive("stls/teapot2.stl", true, Spectrum_d(255,215,0)/255.0, 0.1));
+  primitives.push_back(LoadMetalPrimitive("stls/extractor_fan.stl", true, Spectrum_d(201,192,187)/255.0, 0.1));
 
-  p_primitive.reset(new Primitive(p_ground_mesh, p_material));
-  primitives.push_back(p_primitive);
+  primitives.push_back(LoadDiffusePrimitive("stls/frying_pan1_handle.stl", false, Spectrum_d(50,50,50)/255.0));
+  primitives.push_back(LoadDiffusePrimitive("stls/frying_pan2_handle.stl", false, Spectrum_d(50,50,50)/255.0));
+  primitives.push_back(LoadMetalPrimitive("stls/frying_pan1.stl", true, Spectrum_d(255,40,50)/255.0, 0.1));
+  primitives.push_back(LoadMetalPrimitive("stls/frying_pan2.stl", true, Spectrum_d(201,192,187)/255.0, 0.1));
 
   LightSources lights;
- /*
-    {
-  Sphere s;
-  s.SetParameter("Center","900 -1800 3000");
-  s.SetParameter("Radius","150");
-  s.SetParameter("Subdivisions","3");
-  intrusive_ptr<TriangleMesh> p_sphere( s.BuildMesh() );
-  intrusive_ptr<AreaLightSource> p_area_light( new DiffuseAreaLightSource(Spectrum_d(10000.0,10000.0,10000.0), p_sphere) );
-  intrusive_ptr<Primitive> p_sphere_primitive(new Primitive(p_sphere, p_material, p_area_light));
 
-  primitives.push_back(p_sphere_primitive);
-  lights.m_area_light_sources.push_back(p_area_light);
-    }
-    */
-  
-    {
-  Sphere s;
-  s.SetParameter("Center","-900 -1800 3000");
-  s.SetParameter("Radius","150");
-  s.SetParameter("Subdivisions","3");
-  intrusive_ptr<TriangleMesh> p_sphere( s.BuildMesh() );
-  intrusive_ptr<AreaLightSource> p_area_light( new DiffuseAreaLightSource(Spectrum_d(10000.0,10000.0,5000.0), p_sphere) );
-  intrusive_ptr<Primitive> p_sphere_primitive(new Primitive(p_sphere, p_material, p_area_light));
-
-  primitives.push_back(p_sphere_primitive);
-  lights.m_area_light_sources.push_back(p_area_light);
-    }
-
-  intrusive_ptr<InfiniteLightSource> p_inf_light( new InfiniteLightSourceMock(Spectrum_d(300.0,300.0,300.0), BBox3D_d(Point3D_d(-20000,-20000,0),Point3D_d(20000,20000,1000) ) ) );
+  intrusive_ptr<InfiniteLightSource> p_inf_light( new InfiniteLightSourceMock(Spectrum_d(400.0,400.0,400.0), BBox3D_d(Point3D_d(-3000,-5000,-500),Point3D_d(1500,1000,3500) ) ) );
   lights.m_infinitiy_light_sources.push_back(p_inf_light);
 
   mp_scene.reset(new Scene(primitives, lights));
@@ -227,33 +201,35 @@ inline void TestTracer::LoadMesh()
 inline void TestTracer::RenderImage()
   {
   FilmFilter *filter = new BoxFilter(0.5,0.5);
-  intrusive_ptr<Film> p_film(new InteractiveFilm(GetImageWidth(), GetImageHeight(), intrusive_ptr<FilmFilter>(filter)));
-  //intrusive_ptr<Film> p_film(new ImageFilm(GetImageWidth(), GetImageHeight(), intrusive_ptr<FilmFilter>(filter)));
-  //film->SetCropWindow(Point2D_i(0,106-27),Point2D_i(800,200-27));
+  intrusive_ptr<InteractiveFilm> p_film(new InteractiveFilm(GetImageWidth(), GetImageHeight(), intrusive_ptr<FilmFilter>(filter)));
+  //intrusive_ptr<ImageFilm> p_film(new ImageFilm(GetImageWidth(), GetImageHeight(), intrusive_ptr<FilmFilter>(filter)));
+  //p_film->SetCropWindow(Point2D_i(0,0),Point2D_i(300,300));
 
   Point2D_i window_begin,window_end;
   p_film->GetSamplingExtent(window_begin, window_end);
 
-  Vector3D_d direction = Vector3D_d(-0.45,0.5,-0.28).Normalized();
-  intrusive_ptr<Camera> p_camera( new PerspectiveCamera( MakeLookAt(Point3D_d(900,-1600,900),direction,Vector3D_d(0,0,1)), p_film, 12.000, 1300, 1.3) );
+  //Vector3D_d direction = Vector3D_d(-2441-831,38+4831,1342-1194-2200).Normalized();
+  //intrusive_ptr<Camera> p_camera( new PerspectiveCamera( MakeLookAt(Point3D_d(-600,-1783,778)-direction*500,direction,Vector3D_d(0,0,1)), p_film, 0.001*12.000, 1300, 1.3) );
+
+  Vector3D_d direction = Vector3D_d(-2441-831,-590+4331,1342-1194).Normalized();
+  intrusive_ptr<Camera> p_camera( new PerspectiveCamera( MakeLookAt(Point3D_d(831,-4331,1194),direction,Vector3D_d(0,0,1)), p_film, 0.001*12.000, 1300, 1.35) );
 
   //intrusive_ptr<ImagePixelsOrder> pixel_order(new UniformImagePixelsOrder);
   intrusive_ptr<ImagePixelsOrder> pixel_order(new RandomBlockedImagePixelsOrder);
   //intrusive_ptr<ImagePixelsOrder> pixel_order(new ConsecutiveImagePixelsOrder);
 
   //intrusive_ptr<Sampler> p_sampler( new StratifiedSampler(window_begin, window_end, 2, 2/*, pixel_order*/) );
-  intrusive_ptr<Sampler> p_sampler( new LDSampler(window_begin, window_end, 4, pixel_order) );
+  intrusive_ptr<Sampler> p_sampler( new LDSampler(window_begin, window_end, 4*2, pixel_order) );
   //intrusive_ptr<Sampler> p_sampler( new RandomSampler(window_begin, window_end, 1/*, pixel_order*/) );
 
-  intrusive_ptr<SamplerBasedRenderer> p_renderer( new SamplerBasedRenderer(mp_scene, p_sampler) );
-  p_renderer->SetDisplayUpdateCallback(mp_callback, 5.0);
-
   intrusive_ptr<LightsSamplingStrategy> p_sampling_strategy( new IrradianceLightsSampling(mp_scene->GetLightSources()) );
-  intrusive_ptr<DirectLightingIntegrator> p_direct_int( new DirectLightingIntegrator(p_renderer, 64/4, 16/4, /*121, 25,*/ p_sampling_strategy) );
-  intrusive_ptr<SurfaceIntegrator> surf_int( new DirectLightingSurfaceIntegrator(p_renderer, p_direct_int, 5, 0.1) );
-  intrusive_ptr<VolumeIntegrator> volume_int( new VolumeIntegratorMock(p_renderer) );
-  p_renderer->SetSurfaceIntegrator(surf_int);
-  //p_renderer->SetVolumeIntegrator(volume_int);
+
+  //intrusive_ptr<VolumeIntegrator> p_volume_int( new VolumeIntegratorMock() );
+  intrusive_ptr<DirectLightingIntegrator> p_direct_int( new DirectLightingIntegrator(mp_scene, NULL, 64/4, 16/4, /*121, 25,*/ p_sampling_strategy) );
+  intrusive_ptr<LTEIntegrator> p_lte_int( new DirectLightingLTEIntegrator(mp_scene, NULL, p_direct_int, 6) );
+
+  intrusive_ptr<SamplerBasedRenderer> p_renderer( new SamplerBasedRenderer(p_lte_int, p_sampler) );
+  p_renderer->SetDisplayUpdateCallback(mp_callback, 2.0);
 
   tbb::task_scheduler_init init;
   tbb::tick_count t0 = tbb::tick_count::now();
@@ -261,6 +237,8 @@ inline void TestTracer::RenderImage()
   tbb::tick_count t1 = tbb::tick_count::now();
 
   printf("time = %g\n", (t1-t0).seconds());
+  p_film->ClearFilm();
+  p_sampler->Reset();
 
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
   

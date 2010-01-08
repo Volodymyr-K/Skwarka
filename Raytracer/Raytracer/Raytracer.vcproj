@@ -210,6 +210,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\Core\LTEIntegrator.h"
+					>
+				</File>
+				<File
 					RelativePath=".\Core\Mapping.h"
 					>
 				</File>
@@ -243,10 +247,6 @@
 				</File>
 				<File
 					RelativePath=".\Core\Spectrum.h"
-					>
-				</File>
-				<File
-					RelativePath=".\Core\SurfaceIntegrator.h"
 					>
 				</File>
 				<File
@@ -296,6 +296,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\Core\LTEIntegrator.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\Core\Primitive.cpp"
 					>
 				</File>
@@ -305,10 +309,6 @@
 				</File>
 				<File
 					RelativePath=".\Core\Sampler.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\Core\SurfaceIntegrator.cpp"
 					>
 				</File>
 				<File
@@ -614,13 +614,13 @@
 			</Filter>
 		</Filter>
 		<Filter
-			Name="SurfaceIntegrators"
+			Name="LTEIntegrators"
 			>
 			<Filter
 				Name="Header Files"
 				>
 				<File
-					RelativePath=".\SurfaceIntegrators\DirectLightingSurfaceIntegrator.h"
+					RelativePath=".\LTEIntegrators\DirectLightingLTEIntegrator.h"
 					>
 				</File>
 			</Filter>
@@ -628,7 +628,7 @@
 				Name="Source Files"
 				>
 				<File
-					RelativePath=".\SurfaceIntegrators\DirectLightingSurfaceIntegrator.cpp"
+					RelativePath=".\LTEIntegrators\DirectLightingLTEIntegrator.cpp"
 					>
 				</File>
 			</Filter>

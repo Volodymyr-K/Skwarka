@@ -15,27 +15,22 @@ Does not scatter or emit light, just absorb it.
 class VolumeIntegratorMock: public VolumeIntegrator
   {
   public:
-    VolumeIntegratorMock(intrusive_ptr<const Renderer> ip_renderer);
+    VolumeIntegratorMock();
 
-    virtual Spectrum_d Radiance(const RayDifferential &i_ray, const Sample *ip_sample, Spectrum_d &o_transmittance) const;
+    virtual Spectrum_d RadianceAndTransmittance(const RayDifferential &i_ray, const Sample *ip_sample, Spectrum_d &o_transmittance) const;
 
     virtual Spectrum_d Transmittance(const Ray &i_ray, const Sample *ip_sample) const;
 
-  private:
-    intrusive_ptr<const Scene> mp_scene;
-    intrusive_ptr<const Renderer> mp_renderer;
   };
 
 /////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-VolumeIntegratorMock::VolumeIntegratorMock(intrusive_ptr<const Renderer> ip_renderer): VolumeIntegrator(ip_renderer), mp_renderer(ip_renderer), mp_scene(ip_renderer->GetScene())
+inline VolumeIntegratorMock::VolumeIntegratorMock(): VolumeIntegrator()
   {
-  ASSERT(ip_renderer);
-  ASSERT(ip_renderer->GetScene());
   }
 
-Spectrum_d VolumeIntegratorMock::Radiance(const RayDifferential &i_ray, const Sample *ip_sample, Spectrum_d &o_transmittance) const
+inline Spectrum_d VolumeIntegratorMock::RadianceAndTransmittance(const RayDifferential &i_ray, const Sample *ip_sample, Spectrum_d &o_transmittance) const
   {
   ASSERT(i_ray.m_base_ray.m_direction.IsNormalized());
   double ray_length = i_ray.m_base_ray.m_direction.Length()*fabs(i_ray.m_base_ray.m_max_t-i_ray.m_base_ray.m_min_t);
@@ -43,7 +38,7 @@ Spectrum_d VolumeIntegratorMock::Radiance(const RayDifferential &i_ray, const Sa
   return Spectrum_d(0.0);
   }
 
-Spectrum_d VolumeIntegratorMock::Transmittance(const Ray &i_ray, const Sample *ip_sample) const
+inline Spectrum_d VolumeIntegratorMock::Transmittance(const Ray &i_ray, const Sample *ip_sample) const
   {
   ASSERT(i_ray.m_direction.IsNormalized());
   double ray_length = i_ray.m_direction.Length()*fabs(i_ray.m_max_t-i_ray.m_min_t);

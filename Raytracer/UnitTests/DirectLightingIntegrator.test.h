@@ -8,7 +8,6 @@
 #include <Raytracer/LightSources/DiffuseAreaLightSource.h>
 #include <Raytracer/LightSources/PointLight.h>
 #include <Raytracer/Samplers/StratifiedSampler.h>
-#include "Mocks/RendererMock.h"
 #include "Mocks/MaterialMock.h"
 #include "Mocks/InfiniteLightSourceMock.h"
 #include <Math/SamplingRoutines.h>
@@ -38,7 +37,6 @@ class DirectLightingIntegratorTestSuite : public CxxTest::TestSuite
 
       intrusive_ptr<Scene> p_scene( new Scene(primitives, lights) );
       intrusive_ptr<Sampler> p_sampler = _CreaterSampler();
-      intrusive_ptr<Renderer> p_renderer( new RendererMock(p_scene, p_sampler) );
      
       MemoryPool pool;
       Ray ray(Point3D_d(5,5,0), Vector3D_d(1-5,0-5,0-0).Normalized());
@@ -46,7 +44,7 @@ class DirectLightingIntegratorTestSuite : public CxxTest::TestSuite
       p_scene->Intersect(RayDifferential(ray), isect);
       const BSDF *p_bsdf = isect.mp_primitive->GetBSDF(isect.m_dg, isect.m_triangle_index, pool);
 
-      intrusive_ptr<DirectLightingIntegrator> p_integrator( new DirectLightingIntegrator(p_renderer, 1, 1) );
+      intrusive_ptr<DirectLightingIntegrator> p_integrator( new DirectLightingIntegrator(p_scene, NULL, 1, 1) );
       p_integrator->RequestSamples(p_sampler);
       intrusive_ptr<Sample> p_sample = p_sampler->CreateSample();
       p_sampler->GetNextSubSampler(1, &m_rng)->GetNextSample(p_sample);
@@ -69,7 +67,6 @@ class DirectLightingIntegratorTestSuite : public CxxTest::TestSuite
 
       intrusive_ptr<Scene> p_scene( new Scene(primitives, lights) );
       intrusive_ptr<Sampler> p_sampler = _CreaterSampler();
-      intrusive_ptr<Renderer> p_renderer( new RendererMock(p_scene, p_sampler) ); 
 
       MemoryPool pool;
       Ray ray(Point3D_d(5,5,0), Vector3D_d(1-5,0-5,0-0).Normalized());
@@ -77,7 +74,7 @@ class DirectLightingIntegratorTestSuite : public CxxTest::TestSuite
       p_scene->Intersect(RayDifferential(ray), isect);
       const BSDF *p_bsdf = isect.mp_primitive->GetBSDF(isect.m_dg, isect.m_triangle_index, pool);
 
-      intrusive_ptr<DirectLightingIntegrator> p_integrator( new DirectLightingIntegrator(p_renderer, 5000, 5100) );
+      intrusive_ptr<DirectLightingIntegrator> p_integrator( new DirectLightingIntegrator(p_scene, NULL, 5000, 5100) );
       p_integrator->RequestSamples(p_sampler);
       intrusive_ptr<Sample> p_sample = p_sampler->CreateSample();
       p_sampler->GetNextSubSampler(1, &m_rng)->GetNextSample(p_sample);     
@@ -102,7 +99,6 @@ class DirectLightingIntegratorTestSuite : public CxxTest::TestSuite
 
       intrusive_ptr<Scene> p_scene( new Scene(primitives, lights) );
       intrusive_ptr<Sampler> p_sampler = _CreaterSampler();
-      intrusive_ptr<Renderer> p_renderer( new RendererMock(p_scene, p_sampler) ); 
 
       MemoryPool pool;
       Ray ray(Point3D_d(5,5,0), Vector3D_d(1-5,1-5,0-0).Normalized());
@@ -110,7 +106,7 @@ class DirectLightingIntegratorTestSuite : public CxxTest::TestSuite
       p_scene->Intersect(RayDifferential(ray), isect);
       const BSDF *p_bsdf = isect.mp_primitive->GetBSDF(isect.m_dg, isect.m_triangle_index, pool);
 
-      intrusive_ptr<DirectLightingIntegrator> p_integrator( new DirectLightingIntegrator(p_renderer, 5000, 5100) );
+      intrusive_ptr<DirectLightingIntegrator> p_integrator( new DirectLightingIntegrator(p_scene, NULL, 5000, 5100) );
       p_integrator->RequestSamples(p_sampler);
       intrusive_ptr<Sample> p_sample = p_sampler->CreateSample();
       p_sampler->GetNextSubSampler(1, &m_rng)->GetNextSample(p_sample);     
@@ -140,7 +136,6 @@ class DirectLightingIntegratorTestSuite : public CxxTest::TestSuite
 
       intrusive_ptr<Scene> p_scene( new Scene(primitives, lights) );
       intrusive_ptr<Sampler> p_sampler = _CreaterSampler();
-      intrusive_ptr<Renderer> p_renderer( new RendererMock(p_scene, p_sampler) ); 
 
       MemoryPool pool;
       Ray ray(Point3D_d(5,5,0), Vector3D_d(1-5,1-5,0-0).Normalized());
@@ -148,7 +143,7 @@ class DirectLightingIntegratorTestSuite : public CxxTest::TestSuite
       p_scene->Intersect(RayDifferential(ray), isect);
       const BSDF *p_bsdf = isect.mp_primitive->GetBSDF(isect.m_dg, isect.m_triangle_index, pool);
 
-      intrusive_ptr<DirectLightingIntegrator> p_integrator( new DirectLightingIntegrator(p_renderer, 10000, 11000) );  
+      intrusive_ptr<DirectLightingIntegrator> p_integrator( new DirectLightingIntegrator(p_scene, NULL, 10000, 11000) );  
       Spectrum_d radiance = p_integrator->ComputeDirectLighting(isect, ray.m_direction*(-1.0), p_bsdf, NULL, pool); // Call without Sample.
 
       // Compute the estimate numerically.
@@ -177,7 +172,6 @@ class DirectLightingIntegratorTestSuite : public CxxTest::TestSuite
 
       intrusive_ptr<Scene> p_scene( new Scene(primitives, lights) );
       intrusive_ptr<Sampler> p_sampler = _CreaterSampler();
-      intrusive_ptr<Renderer> p_renderer( new RendererMock(p_scene, p_sampler) ); 
 
       MemoryPool pool;
       Ray ray(Point3D_d(0,0,0), Vector3D_d(1,1,1).Normalized());
@@ -185,7 +179,7 @@ class DirectLightingIntegratorTestSuite : public CxxTest::TestSuite
       p_scene->Intersect(RayDifferential(ray), isect);
       const BSDF *p_bsdf = isect.mp_primitive->GetBSDF(isect.m_dg, isect.m_triangle_index, pool);
 
-      intrusive_ptr<DirectLightingIntegrator> p_integrator( new DirectLightingIntegrator(p_renderer, 5000, 5100) );
+      intrusive_ptr<DirectLightingIntegrator> p_integrator( new DirectLightingIntegrator(p_scene, NULL, 5000, 5100) );
       p_integrator->RequestSamples(p_sampler);
       intrusive_ptr<Sample> p_sample = p_sampler->CreateSample();
       p_sampler->GetNextSubSampler(1, &m_rng)->GetNextSample(p_sample);     
@@ -237,7 +231,6 @@ class DirectLightingIntegratorTestSuite : public CxxTest::TestSuite
   private:
     intrusive_ptr<Scene> mp_scene;
     intrusive_ptr<Sampler> mp_sampler;
-    intrusive_ptr<Renderer> mp_renderer;
 
     BBox3D_d m_world_bbox;
     intrusive_ptr<TriangleMesh> m_spheres[3];

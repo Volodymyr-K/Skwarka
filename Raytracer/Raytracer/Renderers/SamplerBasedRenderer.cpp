@@ -14,7 +14,7 @@
 * The class also keeps MemoryPool and RandomGenerator instances used by integrators and samplers respectively.
 * Since the class is used by multiple threads it has a simple locking mechanism implemented by Acquire(), Release() and IsAvailable() methods.
 * Although this locking strategy is not really thread-safe it works well for SamplesGeneratorFilter because this filter is serial and multiple
-* threads will never race to acquire the lock over the chunk.
+* threads will never race to acquire the lock over the same PixelsChunk.
 * @sa SamplesGeneratorFilter, IntegratorFilter and FilmWriterFilter
 */
 class SamplerBasedRenderer::PixelsChunk
@@ -22,7 +22,7 @@ class SamplerBasedRenderer::PixelsChunk
   public:
     /**
     * Creates PixelsChunk instance.
-    * @param ip_sample Sample instance. The instance will be populated with sample values by a SubSampler and used by the integrators. Should not be NULL.
+    * @param ip_sample Sample instance. The instance will be populated with sample values by a SubSampler and used by the LTEIntegrator. Should not be NULL.
     * @param i_rng_seed Seed number for the random generator.
     */
     PixelsChunk(intrusive_ptr<Sample> ip_sample, size_t i_rng_seed);
@@ -100,8 +100,8 @@ class SamplerBasedRenderer::PixelsChunk
   };
 
 /**
-* This is the input filter for the TBB pipeline.
-* It picks up an arbitrary available chunk, locks it to prevent other threads using it, fills it with the data from the sampler and returns.
+* This is the input filter for the TBB pipeline (i.e. the first filter in the chain).
+* It picks up an arbitrary available chunk, locks it to prevent other threads from using it, fills it with the data from the sampler and returns it.
 * The filter is serial which means that two threads never execute it concurrently.
 */
 class SamplerBasedRenderer::SamplesGeneratorFilter: public tbb::filter
@@ -129,12 +129,12 @@ class SamplerBasedRenderer::SamplesGeneratorFilter: public tbb::filter
 class SamplerBasedRenderer::IntegratorFilter: public tbb::filter
   {
   public:
-    IntegratorFilter(const SamplerBasedRenderer *ip_renderer, intrusive_ptr<const Camera> ip_camera, intrusive_ptr<Log> ip_log);
+    IntegratorFilter(intrusive_ptr<const LTEIntegrator> ip_lte_integrator, intrusive_ptr<const Camera> ip_camera, intrusive_ptr<Log> ip_log);
 
     void* operator()(void* ip_chunk);
 
   private:
-    const SamplerBasedRenderer *mp_renderer;
+    intrusive_ptr<const LTEIntegrator> mp_lte_integrator;
 
     intrusive_ptr<const Camera> mp_camera;
     intrusive_ptr<Log> mp_log;
@@ -160,92 +160,26 @@ class SamplerBasedRenderer::FilmWriterFilter: public tbb::filter
 //////////////////////////////////////// SamplerBasedRenderer /////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-SamplerBasedRenderer::SamplerBasedRenderer(intrusive_ptr<const Scene> ip_scene, intrusive_ptr<Sampler> ip_sampler, intrusive_ptr<Log> ip_log): Renderer(ip_scene),
-mp_scene(ip_scene), mp_sampler(ip_sampler), mp_log(ip_log), mp_surface_integrator(NULL), mp_volume_integrator(NULL)
+SamplerBasedRenderer::SamplerBasedRenderer(intrusive_ptr<LTEIntegrator> ip_lte_integrator, intrusive_ptr<Sampler> ip_sampler, intrusive_ptr<Log> ip_log): Renderer(),
+mp_lte_integrator(ip_lte_integrator), mp_sampler(ip_sampler), mp_log(ip_log)
   {
-  ASSERT(ip_scene);
+  ASSERT(ip_lte_integrator);
   ASSERT(ip_sampler);
-  }
-
-void SamplerBasedRenderer::SetSurfaceIntegrator(intrusive_ptr<SurfaceIntegrator> ip_surface_integrator)
-  {
-  mp_surface_integrator=ip_surface_integrator;
-  }
-
-void SamplerBasedRenderer::SetVolumeIntegrator(intrusive_ptr<VolumeIntegrator> ip_volume_integrator)
-  {
-  mp_volume_integrator=ip_volume_integrator;
-  }
-
-Spectrum_d SamplerBasedRenderer::Radiance(const RayDifferential &i_ray, const Sample *ip_sample, MemoryPool &i_pool) const
-  {
-  ASSERT(mp_surface_integrator);
-  ASSERT(i_ray.m_base_ray.m_direction.IsNormalized());
-
-  Intersection isect;
-  double intersection_t;
-  bool hit=mp_scene->Intersect(i_ray, isect, &intersection_t);
-
-  RayDifferential intersection_ray(i_ray);
-  Spectrum_d radiance;
-  if (hit)
-    {
-    radiance = mp_surface_integrator->Radiance(i_ray, isect, ip_sample, i_pool);
-    intersection_ray.m_base_ray.m_max_t=intersection_t;
-    }
-  else
-    if (IsInf(i_ray.m_base_ray.m_max_t)) // Check if the ray is unbounded.
-      {
-      // Add contribution of infinite light sources for an unbounded ray that does not intersect any primitive.
-      const LightSources &lights = mp_scene->GetLightSources();
-      for (size_t i = 0; i < lights.m_infinitiy_light_sources.size(); ++i)
-        radiance += lights.m_infinitiy_light_sources[i]->Radiance(i_ray);
-      }
-
-  if (mp_volume_integrator)
-    {
-    Spectrum_d volume_radiance(0.0);
-    Spectrum_d transmittance(1.0);
-
-    volume_radiance = mp_volume_integrator->Radiance(intersection_ray, ip_sample, transmittance);
-    ASSERT(InRange(transmittance, 0.0, 1.0));
-
-    return radiance * transmittance + volume_radiance;
-    }
-  else
-    return radiance;
-  }
-
-Spectrum_d SamplerBasedRenderer::Transmittance(const Ray &i_ray, const Sample *ip_sample) const
-  {
-  ASSERT(i_ray.m_direction.IsNormalized());
-
-  if (mp_volume_integrator)
-    {
-    Spectrum_d transmittance = mp_volume_integrator->Transmittance(i_ray, ip_sample);
-    ASSERT(InRange(transmittance, 0.0, 1.0));
-    return transmittance;
-    }
-  else
-    return Spectrum_d(1.0);
   }
 
 void SamplerBasedRenderer::Render(intrusive_ptr<const Camera> ip_camera) const
   {
   ASSERT(ip_camera);
-  ASSERT(mp_surface_integrator);
 
   ip_camera->GetFilm()->ClearFilm();
 
   mp_sampler->Reset();
   mp_sampler->ClearSamplesSequences();
 
-  mp_surface_integrator->RequestSamples(mp_sampler);
-  if (mp_volume_integrator)
-    mp_volume_integrator->RequestSamples(mp_sampler);
+  mp_lte_integrator->RequestSamples(mp_sampler);
 
   SamplesGeneratorFilter samples_generator(mp_sampler, MAX_PIPELINE_TOKENS_NUM, PIXELS_PER_CHUNK);
-  IntegratorFilter integrator(this, ip_camera, mp_log);
+  IntegratorFilter integrator(mp_lte_integrator, ip_camera, mp_log);
   FilmWriterFilter film_writer(ip_camera->GetFilm(), this);
 
   tbb::pipeline pipeline;
@@ -366,7 +300,7 @@ void* SamplerBasedRenderer::SamplesGeneratorFilter::operator()(void*)
   {
   /*
   Here we loop over all chunks until we find an available one, i.e. a one that is not locked by other thread.
-  Although this is not really a thread-safe strategy it works well here since SamplesGeneratorFilter is serial, so two
+  Although this is not really a thread-safe approach it works well here since SamplesGeneratorFilter is serial, so two
   threads will never try to get a lock concurrently.
   */
   while(m_chunks[m_next_chunk_index]->IsAvailable()==false)
@@ -391,10 +325,10 @@ void* SamplerBasedRenderer::SamplesGeneratorFilter::operator()(void*)
 ////////////////////////////////////////// IntegratorFilter ///////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-SamplerBasedRenderer::IntegratorFilter::IntegratorFilter(const SamplerBasedRenderer *ip_renderer, intrusive_ptr<const Camera> ip_camera, intrusive_ptr<Log> ip_log): tbb::filter(parallel),
-mp_renderer(ip_renderer), mp_camera(ip_camera), mp_log(ip_log)
+SamplerBasedRenderer::IntegratorFilter::IntegratorFilter(intrusive_ptr<const LTEIntegrator> ip_lte_integrator, intrusive_ptr<const Camera> ip_camera, intrusive_ptr<Log> ip_log): tbb::filter(parallel),
+mp_lte_integrator(ip_lte_integrator), mp_camera(ip_camera), mp_log(ip_log)
   {
-  ASSERT(ip_renderer);
+  ASSERT(ip_lte_integrator);
   ASSERT(ip_camera);
   }
 
@@ -428,7 +362,7 @@ void* SamplerBasedRenderer::IntegratorFilter::operator()(void* ip_chunk)
 
     Spectrum_d radiance=Spectrum_d(0.0);
     if (weight != 0.0)
-      radiance = mp_renderer->Radiance(ray, p_sample, *p_pool);
+      radiance = mp_lte_integrator->Radiance(ray, p_sample, *p_pool);
 
     // Log unexpected radiance values.
     if (IsNaN(radiance))

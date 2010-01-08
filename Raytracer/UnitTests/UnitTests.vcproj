@@ -368,6 +368,10 @@
 						>
 					</File>
 					<File
+						RelativePath=".\LTEIntegrator.test.h"
+						>
+					</File>
+					<File
 						RelativePath=".\MIPMap.test.h"
 						>
 					</File>
@@ -686,6 +690,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\LTEIntegrator.test.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Main.test.cpp"
 				>
 			</File>
@@ -952,7 +960,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\Mocks\MaterialMock.h"
+				RelativePath=".\Mocks\LTEIntegratorMock.h"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -970,7 +978,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\Mocks\RendererMock.h"
+				RelativePath=".\Mocks\MaterialMock.h"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -1007,24 +1015,6 @@
 			</File>
 			<File
 				RelativePath=".\Mocks\ShapeMock.h"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\Mocks\SurfaceIntegratorMock.h"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"

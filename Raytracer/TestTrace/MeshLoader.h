@@ -12,7 +12,7 @@
 #include <cstdio>
 #include <vector>
 
-intrusive_ptr<TriangleMesh> LoadMeshFromStl(std::string i_filename)
+intrusive_ptr<TriangleMesh> LoadMeshFromStl(std::string i_filename, bool i_smooth)
   {
   std::vector<Point3D_f> vertices;
   std::vector<MeshTriangle> triangles;
@@ -75,7 +75,7 @@ intrusive_ptr<TriangleMesh> LoadMeshFromStl(std::string i_filename)
     }
   fclose(fp);
 
-  return intrusive_ptr<TriangleMesh>( new TriangleMesh(vertices, triangles, true) );
+  return intrusive_ptr<TriangleMesh>( new TriangleMesh(vertices, triangles, i_smooth) );
   }
 
 
