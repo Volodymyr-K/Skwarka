@@ -528,6 +528,10 @@
 						>
 					</File>
 					<File
+						RelativePath=".\ParallelLight.test.h"
+						>
+					</File>
+					<File
 						RelativePath=".\PointLight.test.h"
 						>
 					</File>
@@ -731,6 +735,10 @@
 			</File>
 			<File
 				RelativePath=".\OrenNayar.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ParallelLight.test.cpp"
 				>
 			</File>
 			<File

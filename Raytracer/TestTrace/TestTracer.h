@@ -35,6 +35,7 @@
 #include <Raytracer/Textures/ConstantTexture.h>
 #include <Raytracer/Renderers/SamplerBasedRenderer.h>
 #include <Raytracer/LightSources/PointLight.h>
+#include <Raytracer/LightSources/ParallelLight.h>
 #include <Raytracer/LightSources/DiffuseAreaLightSource.h>
 #include <Raytracer/LTEIntegrators/DirectLightingLTEIntegrator.h>
 #include <UnitTests/Mocks/InfiniteLightSourceMock.h>
@@ -150,7 +151,7 @@ inline void TestTracer::LoadMesh()
 
   primitives.push_back(LoadWallsPrimitive("stls/walls.stl", false));
   primitives.push_back(LoadDiffusePrimitive("stls/floor.stl", false, Spectrum_d(248,244,180)/255.0));
-  //primitives.push_back(LoadDiffusePrimitive("stls/ceiling.stl", false, Spectrum_d(248,244,180)/255.0));
+  primitives.push_back(LoadDiffusePrimitive("stls/ceiling.stl", false, Spectrum_d(248,244,180)/255.0));
   primitives.push_back(LoadDiffusePrimitive("stls/window.stl", false, Spectrum_d(238,194,121)/255.0));
 
   primitives.push_back(LoadDiffusePrimitive("stls/door.stl", false, Spectrum_d(238,194,121)/255.0));
@@ -192,8 +193,11 @@ inline void TestTracer::LoadMesh()
 
   LightSources lights;
 
-  intrusive_ptr<InfiniteLightSource> p_inf_light( new InfiniteLightSourceMock(Spectrum_d(400.0,400.0,400.0), BBox3D_d(Point3D_d(-3000,-5000,-500),Point3D_d(1500,1000,3500) ) ) );
+  intrusive_ptr<InfiniteLightSource> p_inf_light( new InfiniteLightSourceMock(Spectrum_d(200.0,220.0,250.0), BBox3D_d(Point3D_d(-3000,-5000,-500),Point3D_d(1500,1000,3500) ) ) );
   lights.m_infinitiy_light_sources.push_back(p_inf_light);
+
+  intrusive_ptr<DeltaLightSource> p_parallel_light( new ParallelLight(Vector3D_d(-0.3,-0.5,-0.2).Normalized(), Spectrum_d(M_PI*500.0), BBox3D_d(Point3D_d(-3000,-5000,-500),Point3D_d(1500,1000,3500) ) ) );
+  lights.m_delta_light_sources.push_back(p_parallel_light);
 
   mp_scene.reset(new Scene(primitives, lights));
   }

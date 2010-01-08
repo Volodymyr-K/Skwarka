@@ -24,7 +24,7 @@ class PointLight: public DeltaLightSource
     /**
     * Returns the light source radiance at the specified point.
     * @param i_point Lighted point.
-    * @param[out] o_lighting_ray Ray to the light source from the specified point.
+    * @param[out] o_lighting_ray Ray to the light source from the specified point. The direction component of the ray is normalized.
     * @return Radiance value.
     */
     virtual Spectrum_d Lighting(const Point3D_d &i_point, Ray &o_lighting_ray) const;

@@ -75,9 +75,9 @@ class PointLightTestSuite : public CxxTest::TestSuite
           break;
           }
 
-        if (pdf < 0.0)
+        if (pdf <= 0.0)
           {
-          TS_FAIL("PDF value is negative.");
+          TS_FAIL("PDF value is not positive.");
           break;
           }
 
