@@ -60,7 +60,7 @@ class LTEIntegratorTestSuite : public CxxTest::TestSuite
       intrusive_ptr<LTEIntegrator> p_lte_int( new LTEIntegratorMock(mp_scene, NULL) );
 
       MemoryPool pool;
-      Spectrum_d radiance = p_lte_int->Radiance(RayDifferential(Ray(Point3D_d(20,0,0),Vector3D_d(-1,0,0))), NULL, pool);
+      Spectrum_d radiance = p_lte_int->Radiance(RayDifferential(Ray(Point3D_d(0,0,-20),Vector3D_d(0,0,1))), NULL, pool);
 
       // Since the sphere is lighted by the infinity light mock we can compute the radiance analytically.
       Spectrum_d analytical_radiance = (Spectrum_d(10.0)*M_PI) * INV_PI;

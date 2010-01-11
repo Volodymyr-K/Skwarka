@@ -3,8 +3,7 @@
 
 DirectLightingLTEIntegrator::DirectLightingLTEIntegrator(intrusive_ptr<const Scene> ip_scene, intrusive_ptr<VolumeIntegrator> ip_volume_integrator,
                                                                  intrusive_ptr<DirectLightingIntegrator> ip_direct_lighting_integrator, size_t i_max_specular_depth):
-LTEIntegrator(ip_scene, ip_volume_integrator), mp_direct_lighting_integrator(ip_direct_lighting_integrator),
-m_max_specular_depth(i_max_specular_depth)
+LTEIntegrator(ip_scene, ip_volume_integrator), mp_direct_lighting_integrator(ip_direct_lighting_integrator), m_max_specular_depth(i_max_specular_depth)
   {
   ASSERT(ip_direct_lighting_integrator);
   if (m_max_specular_depth > 50)

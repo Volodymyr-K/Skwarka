@@ -88,8 +88,28 @@ Transform MakeMatchDirections(const Vector3D_d &i_source, const Vector3D_d &i_ta
   {
   ASSERT(i_source.IsNormalized() && i_target.IsNormalized());
 
-  Vector3D_d rotation_axis = (i_target^i_source).Normalized();
-  return MakeRotation( -acos(i_target*i_source), rotation_axis);
+  Vector3D_d rotation_axis = i_target^i_source;
+  double length = rotation_axis.Length();
+  if (length < DBL_EPS)
+    {
+    if (i_target*i_source>0)
+      return Transform(); // Return identity transformation if the axis already match.
+    else
+      {
+      // If axis point to opposite directions we rotate around an arbitrary direction.
+      unsigned char smallest_axis_index=0;
+      Vector3D_d smallest_axis(1,0,0);
+      if (fabs(i_target[1]) < fabs(i_target[smallest_axis_index])) {smallest_axis_index=1;smallest_axis=Vector3D_d(0,1,0);}
+      if (fabs(i_target[2]) < fabs(i_target[smallest_axis_index])) {smallest_axis_index=2;smallest_axis=Vector3D_d(0,0,1);}
+
+      return MakeRotation( M_PI, (smallest_axis^i_target).Normalized() );
+      }
+    }
+  else
+    {
+    rotation_axis /= length;
+    return MakeRotation( -acos(i_target*i_source), rotation_axis);
+    }
   }
 
 Transform MakeLookAt(const Point3D_d &i_origin, Vector3D_d i_direction, const Vector3D_d &i_up)

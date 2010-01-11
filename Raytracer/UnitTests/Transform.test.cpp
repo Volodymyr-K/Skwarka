@@ -106,9 +106,21 @@ public:
  void runTest() { suite_TransformTestSuite.test_Transform_MatchDirections(); }
 } testDescription_TransformTestSuite_test_Transform_MatchDirections;
 
+static class TestDescription_TransformTestSuite_test_Transform_MatchDirections_SameAxis : public CxxTest::RealTestDescription {
+public:
+ TestDescription_TransformTestSuite_test_Transform_MatchDirections_SameAxis() : CxxTest::RealTestDescription( Tests_TransformTestSuite, suiteDescription_TransformTestSuite, 186, "test_Transform_MatchDirections_SameAxis" ) {}
+ void runTest() { suite_TransformTestSuite.test_Transform_MatchDirections_SameAxis(); }
+} testDescription_TransformTestSuite_test_Transform_MatchDirections_SameAxis;
+
+static class TestDescription_TransformTestSuite_test_Transform_MatchDirections_OppositeAxis : public CxxTest::RealTestDescription {
+public:
+ TestDescription_TransformTestSuite_test_Transform_MatchDirections_OppositeAxis() : CxxTest::RealTestDescription( Tests_TransformTestSuite, suiteDescription_TransformTestSuite, 197, "test_Transform_MatchDirections_OppositeAxis" ) {}
+ void runTest() { suite_TransformTestSuite.test_Transform_MatchDirections_OppositeAxis(); }
+} testDescription_TransformTestSuite_test_Transform_MatchDirections_OppositeAxis;
+
 static class TestDescription_TransformTestSuite_test_Transform_LookAt : public CxxTest::RealTestDescription {
 public:
- TestDescription_TransformTestSuite_test_Transform_LookAt() : CxxTest::RealTestDescription( Tests_TransformTestSuite, suiteDescription_TransformTestSuite, 186, "test_Transform_LookAt" ) {}
+ TestDescription_TransformTestSuite_test_Transform_LookAt() : CxxTest::RealTestDescription( Tests_TransformTestSuite, suiteDescription_TransformTestSuite, 208, "test_Transform_LookAt" ) {}
  void runTest() { suite_TransformTestSuite.test_Transform_LookAt(); }
 } testDescription_TransformTestSuite_test_Transform_LookAt;
 

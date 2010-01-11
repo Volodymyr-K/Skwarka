@@ -44,7 +44,7 @@ m_direction(i_direction), m_radiance(i_radiance), m_world_bounds(i_world_bounds)
   m_area_CDF[5]=m_bbox_emitting_triangles[5].GetArea()*fabs(i_direction[2]);
 
   for(size_t i=1;i<6;++i) m_area_CDF[i]+=m_area_CDF[i-1];
-  ASSERT(m_area_CDF[5] == m_bbox_projected_area);
+  ASSERT(fabs(m_area_CDF[5]-m_bbox_projected_area) < 1e-10);
 
   for(size_t i=0;i<6;++i) m_area_CDF[i] /= m_area_CDF[5];
   }

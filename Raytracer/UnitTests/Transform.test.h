@@ -183,6 +183,28 @@ class TransformTestSuite : public CxxTest::TestSuite
       CustomAssertDelta(dir2, tranformed, (1e-10));
       }
 
+    void test_Transform_MatchDirections_SameAxis()
+      {
+      Vector3D_d dir1 = Vector3D_d(1,2,3).Normalized();
+      Vector3D_d dir2 = Vector3D_d(1,2,3).Normalized();
+      Transform t=MakeMatchDirections(dir1, dir2);
+
+      Vector3D_d tranformed = t(dir1);
+
+      CustomAssertDelta(dir2, tranformed, (1e-10));
+      }
+
+    void test_Transform_MatchDirections_OppositeAxis()
+      {
+      Vector3D_d dir1 = Vector3D_d(1,2,3).Normalized();
+      Vector3D_d dir2 = Vector3D_d(-1,-2,-3).Normalized();
+      Transform t=MakeMatchDirections(dir1, dir2);
+
+      Vector3D_d tranformed = t(dir1);
+
+      CustomAssertDelta(dir2, tranformed, (1e-10));
+      }
+
     void test_Transform_LookAt()
       {
       Point3D_d origin(3.0,2.0,1.0);
