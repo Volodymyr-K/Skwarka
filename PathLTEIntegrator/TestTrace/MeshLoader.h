@@ -1,0 +1,141 @@
+#ifndef MESH_LOADER_H
+#define MESH_LOADER_H
+
+#pragma warning(disable : 4003)
+#include <Common/Common.h>
+
+#include <Math/Geometry.h>
+#include <Raytracer/Core/TriangleMesh.h>
+#include <Shapes/Sphere.h>
+#include <Math/Transform.h>
+#include <string>
+#include <cstdio>
+#include <vector>
+
+intrusive_ptr<TriangleMesh> LoadMeshFromStl(std::string i_filename, bool i_smooth)
+  {
+  std::vector<Point3D_f> vertices;
+  std::vector<MeshTriangle> triangles;
+  std::vector<float> uv_parameterization;
+
+  std::map< std::pair<float,std::pair<float,float> >, size_t > vertices_tmp;
+#pragma warning(disable : 4996)
+  FILE *fp=fopen(i_filename.c_str(),"r");
+
+  Vector3D_f normal;
+  Point3D_f v1,v2,v3;
+  size_t ind=0,num_ver=0;
+  while(true)
+    {
+    char buf[1024];
+    if ( !fgets(buf,1024,fp) ) break;
+
+    std::string s=buf;
+    if (s.find("normal")!=-1)
+      {
+      std::stringstream sstream;
+      sstream << s;
+
+      std::string dummy;
+      float x,y,z;
+      sstream >> dummy >> dummy >> x >> y >> z;
+      normal=Vector3D_f(x,y,z);
+      }
+    if (s.find("vertex")!=-1)
+      {
+      std::stringstream sstream;
+      sstream << s;
+
+      std::string dummy;
+      float x,y,z;
+      sstream >> dummy >> x >> y >> z;
+      if (num_ver==0) v1=Point3D_f(x,y,z);
+      if (num_ver==1) v2=Point3D_f(x,y,z);
+      if (num_ver==2) v3=Point3D_f(x,y,z);
+      ++num_ver;
+      }
+
+    size_t ind1,ind2,ind3;
+    if (num_ver==3)
+      {
+      num_ver=0;
+      std::pair<float,std::pair<float,float> > vertex1=std::make_pair(v1[0],std::make_pair(v1[1],v1[2]));
+      std::pair<float,std::pair<float,float> > vertex2=std::make_pair(v2[0],std::make_pair(v2[1],v2[2]));
+      std::pair<float,std::pair<float,float> > vertex3=std::make_pair(v3[0],std::make_pair(v3[1],v3[2]));
+      if (vertices_tmp.find(vertex1)==vertices_tmp.end()) {vertices.push_back(v1);vertices_tmp[vertex1]=ind1=ind++;} else ind1=vertices_tmp[vertex1];
+      if (vertices_tmp.find(vertex2)==vertices_tmp.end()) {vertices.push_back(v2);vertices_tmp[vertex2]=ind2=ind++;} else ind2=vertices_tmp[vertex2];
+      if (vertices_tmp.find(vertex3)==vertices_tmp.end()) {vertices.push_back(v3);vertices_tmp[vertex3]=ind3=ind++;} else ind3=vertices_tmp[vertex3];
+
+      if ( (Vector3D_f(v2-v1)^Vector3D_f(v3-v1))*normal < 0.0) std::swap(ind1,ind2);
+      MeshTriangle tr;
+      tr.m_vertices[0]=ind1;tr.m_vertices[1]=ind2;tr.m_vertices[2]=ind3;
+      if (ind1!=ind2 && ind1!=ind3 && ind2!=ind3) triangles.push_back(tr);
+      }
+
+    }
+  fclose(fp);
+
+  return intrusive_ptr<TriangleMesh>( new TriangleMesh(vertices, triangles, i_smooth) );
+  }
+
+
+intrusive_ptr<TriangleMesh> LoadMeshFromPbrt(std::string i_vertices_filename, std::string i_triangles_filename)
+  {
+  std::vector<Point3D_f> vertices;
+  std::vector<MeshTriangle> triangles;
+  std::vector<float> uv_parameterization;
+
+  std::map<std::pair<std::pair<float,float>,float>,size_t> uniq;
+  std::vector<size_t> repl;
+  #pragma warning(disable : 4996)
+  FILE *fp=fopen(i_vertices_filename.c_str(),"r");
+  //FILE *fp2=fopen("vertices3.txt","w");
+  int ver=0;
+  while(true)
+  {
+  // if(++ver>100000) break;
+  float x,y,z;
+  int read = fscanf(fp,"%f %f %f",&x,&y,&z);
+  //fprintf(fp2,"%f %f %f\n",-1100+5000*z,5000*x-500,-200+5000*y);
+
+  if (read<=0) break;
+  vertices.push_back(Point3D_f(x,y,z));
+
+  if (uniq.find(std::make_pair(std::make_pair(x,y),z))==uniq.end())
+  {
+  uniq[std::make_pair(std::make_pair(x,y),z)]=vertices.size()-1;
+  repl.push_back(vertices.size()-1);
+  }
+  else
+  {
+  repl.push_back(uniq[std::make_pair(std::make_pair(x,y),z)]);
+  }
+  }
+  fclose(fp);
+  //fclose(fp2);
+
+  int num_tr=0;
+  fp=fopen(i_triangles_filename.c_str(),"r");
+  int tr=0;
+  while(true)
+  {
+  size_t v1,v2,v3;
+  // if(++tr>10000) break;
+  int read = fscanf(fp,"%d %d %d",&v1,&v2,&v3);
+  if (read<=0) break;
+
+  v1=repl[v1];
+  v2=repl[v2];
+  v3=repl[v3];
+  if (v1==v2 || v1==v3 || v2==v3)
+  continue;
+
+  MeshTriangle tr(v1,v2,v3);
+  triangles.push_back(tr);
+  }
+  fclose(fp);
+
+  return intrusive_ptr<TriangleMesh>( new TriangleMesh(vertices, triangles, true) );
+  }
+
+#endif // MESH_LOADER_H
