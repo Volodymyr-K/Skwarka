@@ -54,22 +54,27 @@ class RandomGenerator
     /**
     * Cached value used to normalize random values produced by the underlying random generator.
     */
-    const double m_inv_max;
+    double m_inv_max;
   };
 
 /////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename ResultType, typename UnderlyingRandomGenerator>
-RandomGenerator<ResultType,UnderlyingRandomGenerator>::RandomGenerator():
-m_inv_max(1.0/std::numeric_limits<typename UnderlyingRandomGenerator::result_type>::max())
+RandomGenerator<ResultType,UnderlyingRandomGenerator>::RandomGenerator()
   {
+  // We add 1.0 to the divider to prevent the random generator from returning upper bound of the input range in operator() methods.
+  m_inv_max = 1.0 / (1.0+std::numeric_limits<typename UnderlyingRandomGenerator::result_type>::max());
+  ASSERT(m_inv_max < 1.0/std::numeric_limits<typename UnderlyingRandomGenerator::result_type>::max());
   }
 
 template<typename ResultType, typename UnderlyingRandomGenerator>
 RandomGenerator<ResultType,UnderlyingRandomGenerator>::RandomGenerator(typename UnderlyingRandomGenerator::result_type i_seed):
-m_generator(i_seed), m_inv_max(1.0/std::numeric_limits<typename UnderlyingRandomGenerator::result_type>::max())
+m_generator(i_seed)
   {
+  // We add 1.0 to the divider to prevent the random generator from returning upper bound of the input range in operator() methods.
+  m_inv_max = 1.0 / (1.0+std::numeric_limits<typename UnderlyingRandomGenerator::result_type>::max());
+  ASSERT(m_inv_max < 1.0/std::numeric_limits<typename UnderlyingRandomGenerator::result_type>::max());
   }
 
 template<typename ResultType, typename UnderlyingRandomGenerator>

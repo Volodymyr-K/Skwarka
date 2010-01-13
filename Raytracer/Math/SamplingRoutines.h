@@ -377,7 +377,7 @@ namespace SamplingRoutines
     else
       for (size_t i = 0; i < i_samples_num; ++i)
         {
-        unsigned int other = RandomInt(i_samples_num);
+        unsigned int other = (unsigned int) RandomInt((int)i_samples_num);
         std::swap(*(i_begin+i), *(i_begin+other));
         }
     }

@@ -58,7 +58,7 @@ class ThreadSafeRandomGenerator
     /**
     * Cached value used to normalize random values produced by the underlying random generator.
     */
-    const double m_inv_max;
+    double m_inv_max;
   };
 
 /**
@@ -102,9 +102,11 @@ unsigned int RandomUInt();
 
 template<typename UnderlyingRandomGenerator>
 ThreadSafeRandomGenerator<UnderlyingRandomGenerator>::ThreadSafeRandomGenerator(bool i_decorrelate_thread_generators):
-m_decorrelate_thread_generators(i_decorrelate_thread_generators),
-m_inv_max(1.0/INT_MAX)
+m_decorrelate_thread_generators(i_decorrelate_thread_generators)
   {
+  // We add 1.0 to the divider to prevent the random generator from returning upper bound of the input range in operator() methods.
+  m_inv_max = 1.0 / (1.0+INT_MAX);
+  ASSERT(m_inv_max < 1.0/INT_MAX);
   }
 
 template<typename UnderlyingRandomGenerator>
