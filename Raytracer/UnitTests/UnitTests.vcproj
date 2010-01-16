@@ -368,6 +368,10 @@
 						>
 					</File>
 					<File
+						RelativePath=".\KDTree.test.h"
+						>
+					</File>
+					<File
 						RelativePath=".\LTEIntegrator.test.h"
 						>
 					</File>
@@ -679,6 +683,10 @@
 			</File>
 			<File
 				RelativePath=".\IrradianceLightsSampling.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\KDTree.test.cpp"
 				>
 			</File>
 			<File

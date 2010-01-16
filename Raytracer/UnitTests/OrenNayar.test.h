@@ -84,24 +84,24 @@ class OrenNayarTestSuite : public CxxTest::TestSuite
       {
       shared_ptr<BxDF> bxdf = shared_ptr<BxDF>( new OrenNayar(Spectrum_d(0.9),0.1) );
 
-      size_t num_samples=10000;
-      std::vector<Point2D_d> samples(num_samples);
-      SamplingRoutines::LatinHypercubeSampling2D(samples.begin(),num_samples,true);
+      size_t num_samples=100;
+      std::vector<Point2D_d> samples(num_samples*num_samples);
+      SamplingRoutines::StratifiedSampling2D(samples.begin(),num_samples,num_samples,true);
 
       Spectrum_d total=bxdf->TotalScattering(Vector3D_d(0.5,0.5,0.5).Normalized(), SamplesSequence2D(&samples[0], (&samples[0]) + samples.size()));
-      CustomAssertDelta(total, Spectrum_d(0.8974), (1e-3)); // This is an empirical value.
+      CustomAssertDelta(total, Spectrum_d(0.8974), 0.001); // This is an empirical value.
       }
 
     void test_OrenNayar_TotalScattering2()
       {
       shared_ptr<BxDF> bxdf = shared_ptr<BxDF>( new OrenNayar(Spectrum_d(0.9),0.1) );
 
-      size_t num_samples=100000;
-      std::vector<Point2D_d> samples(num_samples);
-      SamplingRoutines::LatinHypercubeSampling2D(samples.begin(),num_samples,true);
+      size_t num_samples=400;
+      std::vector<Point2D_d> samples(num_samples*num_samples);
+      SamplingRoutines::StratifiedSampling2D(samples.begin(),num_samples,num_samples,true);
 
       Spectrum_d total=bxdf->TotalScattering(true, SamplesSequence2D(&samples[0], (&samples[0]) + samples.size()));
-      CustomAssertDelta(total, Spectrum_d(0.8954), 0.005); // This is an empirical value.
+      CustomAssertDelta(total, Spectrum_d(0.888), 0.002); // This is an empirical value.
       }
   };
 

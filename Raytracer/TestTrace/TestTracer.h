@@ -40,7 +40,6 @@
 #include <Raytracer/LightSources/ParallelLight.h>
 #include <Raytracer/LightSources/DiffuseAreaLightSource.h>
 #include <Raytracer/LTEIntegrators/DirectLightingLTEIntegrator.h>
-#include <Raytracer/LTEIntegrators/PathLTEIntegrator.h>
 #include <UnitTests/Mocks/InfiniteLightSourceMock.h>
 #include <UnitTests/Mocks/VolumeIntegratorMock.h>
 #include <Raytracer/LightsSamplingStrategies/IrradianceLightsSampling.h>
@@ -53,6 +52,9 @@
 #include <Raytracer/Materials/Metal.h>
 #include <Raytracer/Core/Fresnel.h>
 #include "EasyBMP.h"
+
+#include <set>
+#include <Raytracer/Core/KDTree.h>
 
 class TestTracer
   {
@@ -151,7 +153,7 @@ intrusive_ptr<Primitive> LoadMetalPrimitive(std::string i_filename, bool i_smoot
 inline void TestTracer::LoadMesh()
   {
   std::vector<intrusive_ptr<const Primitive> > primitives;
-/*
+
   //primitives.push_back(LoadWallsPrimitive("stls/walls.stl", false));
   primitives.push_back(LoadDiffusePrimitive("stls/walls.stl", false, Spectrum_d(248,244,180)/255.0));
   primitives.push_back(LoadDiffusePrimitive("stls/floor.stl", false, Spectrum_d(248,244,180)/255.0));
@@ -185,7 +187,7 @@ inline void TestTracer::LoadMesh()
 
   primitives.push_back(LoadDiffusePrimitive("stls/cooker_plate.stl", false, Spectrum_d(50,50,50)/255.0));
   primitives.push_back(LoadDiffusePrimitive("stls/saucepan_handles.stl", false, Spectrum_d(50,50,50)/255.0));
-  primitives.push_back(LoadMetalPrimitive("stls/saucepan.stl", true, Spectrum_d(184,115,51)/255.0, 0.1));
+  primitives.push_back(LoadMetalPrimitive("stls/saucepan.stl", true, Spectrum_d(240,240,240)/255.0, 0.1));
   primitives.push_back(LoadMetalPrimitive("stls/teapot.stl", true, Spectrum_d(255,215,0)/255.0, 0.1));
   primitives.push_back(LoadMetalPrimitive("stls/teapot2.stl", true, Spectrum_d(255,215,0)/255.0, 0.1));
   primitives.push_back(LoadMetalPrimitive("stls/extractor_fan.stl", true, Spectrum_d(201,192,187)/255.0, 0.1));
@@ -204,28 +206,6 @@ inline void TestTracer::LoadMesh()
   lights.m_delta_light_sources.push_back(p_parallel_light);
 
   mp_scene.reset(new Scene(primitives, lights));
-*/
-
-
-  Sphere s;
-  s.SetParameter("Center","0 0 0");
-  s.SetParameter("Radius","100");
-  s.SetParameter("Subdivisions","7");
-
-  intrusive_ptr<TriangleMesh> p_mesh = s.BuildMesh();
-  intrusive_ptr<Texture<Spectrum_d> > p_reflectance(new ConstantTexture<Spectrum_d> (Spectrum_d(0.9,0.8,0.7)));
-  intrusive_ptr<Texture<double> > p_sigma(new ConstantTexture<double> (0.0));
-  intrusive_ptr<Material> p_material(new Matte(p_reflectance, p_sigma));
-
-  intrusive_ptr<AreaLightSource> p_area_light (new DiffuseAreaLightSource(Spectrum_d(20.0), p_mesh));
-  intrusive_ptr<Primitive> p_primitive(new Primitive(p_mesh, p_material, p_area_light));
-
-  primitives.push_back(p_primitive);
-
-  LightSources lights;
-  lights.m_area_light_sources.push_back(p_area_light);
-
-  mp_scene.reset(new Scene(primitives, lights));
   }
 
 inline void TestTracer::RenderImage()
@@ -233,7 +213,7 @@ inline void TestTracer::RenderImage()
   FilmFilter *filter = new BoxFilter(0.5,0.5);
   //intrusive_ptr<InteractiveFilm> p_film(new InteractiveFilm(GetImageWidth(), GetImageHeight(), intrusive_ptr<FilmFilter>(filter)));
   intrusive_ptr<ImageFilm> p_film(new ImageFilm(GetImageWidth(), GetImageHeight(), intrusive_ptr<FilmFilter>(filter)));
-  p_film->SetCropWindow(Point2D_i(40,40),Point2D_i(43,43));
+  //p_film->SetCropWindow(Point2D_i(0,100),Point2D_i(347,200));
 
   Point2D_i window_begin,window_end;
   p_film->GetSamplingExtent(window_begin, window_end);
@@ -241,27 +221,22 @@ inline void TestTracer::RenderImage()
   //Vector3D_d direction = Vector3D_d(-2441-831,38+4831,1342-1194-2200).Normalized();
   //intrusive_ptr<Camera> p_camera( new PerspectiveCamera( MakeLookAt(Point3D_d(-600,-1783,778)-direction*500,direction,Vector3D_d(0,0,1)), p_film, 0.001*12.000, 1300, 1.3) );
 
-  //Vector3D_d direction = Vector3D_d(-2441-831,-590+4331,1342-1194).Normalized();
-  //intrusive_ptr<Camera> p_camera( new PerspectiveCamera( MakeLookAt(Point3D_d(831,-4331,1194),direction,Vector3D_d(0,0,1)), p_film, 0.001*12.000, 1300, 1.35) );
-
-  // for sphere
-  Vector3D_d direction = Vector3D_d(1,0,0).Normalized();
-  intrusive_ptr<Camera> p_camera( new PerspectiveCamera( MakeLookAt(Point3D_d(0,0,0),direction,Vector3D_d(0,0,1)), p_film, 0, 1300, 1.35) );
+  Vector3D_d direction = Vector3D_d(-2441-831,-590+4331,1342-1194).Normalized();
+  intrusive_ptr<Camera> p_camera( new PerspectiveCamera( MakeLookAt(Point3D_d(831,-4331,1194),direction,Vector3D_d(0,0,1)), p_film, 0.001*12.000, 1300, 1.35) );
 
   //intrusive_ptr<ImagePixelsOrder> pixel_order(new UniformImagePixelsOrder);
   //intrusive_ptr<ImagePixelsOrder> pixel_order(new RandomBlockedImagePixelsOrder);
   intrusive_ptr<ImagePixelsOrder> pixel_order(new ConsecutiveImagePixelsOrder);
 
   //intrusive_ptr<Sampler> p_sampler( new StratifiedSampler(window_begin, window_end, 2, 2/*, pixel_order*/) );
-  intrusive_ptr<Sampler> p_sampler( new LDSampler(window_begin, window_end, 256*4*64/*4*8*4*16*/, pixel_order) );
+  intrusive_ptr<Sampler> p_sampler( new LDSampler(window_begin, window_end, 64, pixel_order) );
   //intrusive_ptr<Sampler> p_sampler( new RandomSampler(window_begin, window_end, 1/*, pixel_order*/) );
 
   intrusive_ptr<LightsSamplingStrategy> p_sampling_strategy( new IrradianceLightsSampling(mp_scene->GetLightSources()) );
 
   //intrusive_ptr<VolumeIntegrator> p_volume_int( new VolumeIntegratorMock() );
   intrusive_ptr<DirectLightingIntegrator> p_direct_int( new DirectLightingIntegrator(mp_scene, NULL, 1, 1, /*121, 25,*/ p_sampling_strategy) );
-  //intrusive_ptr<LTEIntegrator> p_lte_int( new DirectLightingLTEIntegrator(mp_scene, NULL, p_direct_int, 6) );
-  intrusive_ptr<LTEIntegrator> p_lte_int( new PathLTEIntegrator(mp_scene, NULL, p_direct_int, 50) );
+  intrusive_ptr<LTEIntegrator> p_lte_int( new DirectLightingLTEIntegrator(mp_scene, NULL, p_direct_int, 6) );
 
   intrusive_ptr<SamplerBasedRenderer> p_renderer( new SamplerBasedRenderer(p_lte_int, p_sampler) );
   p_renderer->SetDisplayUpdateCallback(mp_callback, 10.0);

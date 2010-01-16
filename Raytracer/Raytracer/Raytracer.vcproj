@@ -202,6 +202,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\Core\KDTree.h"
+					>
+				</File>
+				<File
 					RelativePath=".\Core\LightSources.h"
 					>
 				</File>
