@@ -277,6 +277,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\CompressedDirection.test.h"
+					>
+				</File>
+				<File
 					RelativePath=".\MathRoutines.test.h"
 					>
 				</File>
@@ -635,6 +639,10 @@
 			</File>
 			<File
 				RelativePath=".\Camera.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\CompressedDirection.test.cpp"
 				>
 			</File>
 			<File
