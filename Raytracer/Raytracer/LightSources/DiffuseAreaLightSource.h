@@ -61,7 +61,7 @@ class DiffuseAreaLightSource: public AreaLightSource
     * @param i_direction_sample 2D sample used to sample photon ray direction. Should be in [0;1)^2 range.
     * @param[out] o_photon_ray Sampled ray.
     * @param[out] o_pdf PDF value for the sampled light ray. The returned value should be greater or equal than zero.
-    * @return Radiance value.
+    * @return Irradiance value.
     */
     virtual Spectrum_d SamplePhoton(double i_triangle_sample, const Point2D_d &i_position_sample, const Point2D_d &i_direction_sample, Ray &o_photon_ray, double &o_pdf) const;
 

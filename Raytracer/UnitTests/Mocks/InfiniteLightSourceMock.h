@@ -67,14 +67,13 @@ inline Spectrum_d InfiniteLightSourceMock::SamplePhoton(const Point2D_d &i_posit
   Point3D_d center = (m_world_bounds.m_max+m_world_bounds.m_min)/2.0;
 
   Point3D_d ray_origin = center+SamplingRoutines::UniformSphereSampling(i_position_sample)*radius;
-  Vector3D_d ray_direction = SamplingRoutines::UniformSphereSampling(i_direction_sample);
-
-  // Revert ray direction to point inside the world sphere.
-  if (ray_direction * Vector3D_d(ray_origin-center) > 0.0)
-    ray_direction *= -1.0;
+  Point3D_d point2 = center+SamplingRoutines::UniformSphereSampling(i_direction_sample)*radius;
+  Vector3D_d ray_direction = Vector3D_d(point2 - ray_origin).Normalized();
 
   o_photon_ray=Ray(ray_origin, ray_direction);
-  o_pdf=2.0*SamplingRoutines::UniformSpherePDF()/(M_PI*radius*radius);
+  double cos_theta = Vector3D_d(center - ray_origin).Normalized() * ray_direction;
+
+  o_pdf = cos_theta / ((4.0 * M_PI * radius * radius));
   return m_radiance;
   }
 

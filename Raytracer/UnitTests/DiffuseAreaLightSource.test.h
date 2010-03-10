@@ -152,7 +152,7 @@ class DiffuseAreaLightSourceTestSuite : public CxxTest::TestSuite
         {
         Ray photon_ray;
         double pdf;
-        Spectrum_d sampled_radiance = mp_area_light->SamplePhoton(RandomDouble(1.0), Point2D_d(RandomDouble(1.0), RandomDouble(1.0)), Point2D_d(RandomDouble(1.0), RandomDouble(1.0)), photon_ray, pdf);
+        Spectrum_d sampled_irradiance = mp_area_light->SamplePhoton(RandomDouble(1.0), Point2D_d(RandomDouble(1.0), RandomDouble(1.0)), Point2D_d(RandomDouble(1.0), RandomDouble(1.0)), photon_ray, pdf);
 
         if (pdf<0.0)
           {
@@ -174,9 +174,10 @@ class DiffuseAreaLightSourceTestSuite : public CxxTest::TestSuite
           break;
           }
 
-        if (sampled_radiance != Spectrum_d(1.0))
+        double cos_value = normal*photon_ray.m_direction;
+        if (sampled_irradiance != Spectrum_d(1.0)*cos_value)
           {
-          TS_FAIL("Sampled light is incorrect.");
+          TS_FAIL("Sampled irradiance is incorrect.");
           break;
           }
 

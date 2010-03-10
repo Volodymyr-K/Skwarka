@@ -34,7 +34,7 @@ class DeltaLightSource: public ReferenceCounted
     * @param i_sample 2D sample. Should be in [0;1)^2 range.
     * @param[out] o_photon_ray Sampled ray. The direction component of the ray should be normalized.
     * @param[out] o_pdf PDF value for the sampled light ray. The returned value should be greater or equal than zero.
-    * @return Radiance value.
+    * @return Irradiance value.
     */
     virtual Spectrum_d SamplePhoton(const Point2D_d &i_sample, Ray &o_photon_ray, double &o_pdf) const = 0;
 
@@ -119,7 +119,7 @@ class InfiniteLightSource: public ReferenceCounted
     * @param i_direction_sample 2D sample used to sample photon ray direction. Should be in [0;1)^2 range.
     * @param[out] o_photon_ray Sampled ray. The direction component of the ray should be normalized.
     * @param[out] o_pdf PDF value for the sampled light ray. The returned value should be greater or equal than zero.
-    * @return Radiance value.
+    * @return Irradiance value.
     */
     virtual Spectrum_d SamplePhoton(const Point2D_d &i_position_sample, const Point2D_d &i_direction_sample, Ray &o_photon_ray, double &o_pdf) const = 0;
 
@@ -212,7 +212,7 @@ class AreaLightSource: public ReferenceCounted
     * @param i_direction_sample 2D sample used to sample photon ray direction. Should be in [0;1)^2 range.
     * @param[out] o_photon_ray Sampled ray. The direction component of the ray should be normalized.
     * @param[out] o_pdf PDF value for the sampled light ray. The returned value should be greater or equal than zero.
-    * @return Radiance value.
+    * @return Irradiance value.
     */
     virtual Spectrum_d SamplePhoton(double i_triangle_sample, const Point2D_d &i_position_sample, const Point2D_d &i_direction_sample, Ray &o_photon_ray, double &o_pdf) const = 0;
 

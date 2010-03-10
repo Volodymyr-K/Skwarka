@@ -55,11 +55,11 @@ class ParallelLightTestSuite : public CxxTest::TestSuite
         Point2D_d sample(RandomDouble(1.0), RandomDouble(1.0));
         Ray photon_ray;
         double pdf;
-        Spectrum_d radiance = p_light->SamplePhoton(sample, photon_ray, pdf);
+        Spectrum_d sampled_irradiance = p_light->SamplePhoton(sample, photon_ray, pdf);
 
-        if (radiance != radiance)
+        if (sampled_irradiance != radiance)
           {
-          TS_FAIL("Wrong radiance value.");
+          TS_FAIL("Wrong irradiance value.");
           break;
           }
 

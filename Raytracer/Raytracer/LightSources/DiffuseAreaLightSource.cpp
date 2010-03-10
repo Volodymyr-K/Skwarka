@@ -114,15 +114,21 @@ Spectrum_d DiffuseAreaLightSource::SamplePhoton(double i_triangle_sample, const 
   Vector3D_d light_normal;
   _SampleArea(i_triangle_sample, i_position_sample, sampled_point, light_normal);
 
-  o_photon_ray = Ray(sampled_point, SamplingRoutines::UniformSphereSampling(i_direction_sample));
+  // Epsilon is used to avoid intersection with the area light at the same point.
+  o_photon_ray = Ray(sampled_point, SamplingRoutines::UniformSphereSampling(i_direction_sample), (1e-4));
 
   // Flip photon ray direction if needed.
-  if (o_photon_ray.m_direction * light_normal < 0.0)
+  double dot = o_photon_ray.m_direction * light_normal;
+  if (dot < 0.0)
+    {
     o_photon_ray.m_direction *= -1.0;
+    dot = -dot;
+    }
 
   o_pdf = SamplingRoutines::UniformHemispherePDF() / m_area;
 
-  return m_radiance;
+  // We multiply radiance value by cosine because what we actually need to return is irradiance, not radiance.
+  return m_radiance * dot;
   }
 
 void DiffuseAreaLightSource::_SampleArea(double i_triangle_sample, const Point2D_d &i_sample, Point3D_d &o_sampled_point, Vector3D_d &o_geometric_normal) const
