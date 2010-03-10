@@ -16,7 +16,7 @@
 *
 * The template parameter is a 3D point type. The type must support operator[] which must return floating point type.
 */
-template<class TPoint3D>
+template<typename TPoint3D>
 class KDTree
   {
   public:
@@ -51,22 +51,51 @@ class KDTree
     * @param i_max_distance Maximum distance from i_point to search points within.
     * @return Pointer to the nearest point or NULL if there are no points within the specified radius.
     */
-    const TPoint3D *GetNearestPoint(const Point3D_d &i_point, double i_max_distance = DBL_INF);
+    const TPoint3D *GetNearestPoint(const Point3D_d &i_point, double i_max_distance = DBL_INF) const;
+
+    /**
+    * Returns point nearest to the specified one with the custom filter.
+    * The custom filter must define "bool operator()(const TPoint3D &i_point) const" method. Only points for which this method returns true will be considered.
+    * If there's no point within the specified search radius (i_max_distance parameter) the method returns NULL.
+    * @param i_point Input point to perform lookup for.
+    * @param i_filter Custom points filter.
+    * @param i_max_distance Maximum distance from i_point to search points within.
+    * @return Pointer to the nearest point or NULL if there are no points within the specified radius.
+    */
+    template<typename PointsFilter>
+    const TPoint3D *GetNearestPoint(const Point3D_d &i_point, const PointsFilter &i_filter, double i_max_distance = DBL_INF) const;
 
     /**
     * Finds first N points nearest to the specified one.
     * @param i_point Input point to perform lookup for.
     * @param i_points_to_lookup Number of nearest points to lookup.
-    * @param[out] op_nearest_points Pointer to the vector where the resulting points will be written to. Should not be NULL.
+    * @param[out] op_nearest_points Pointer to the allocated array where the resulting points will be written to. Should not be NULL.
     * @param i_max_distance Maximum distance from i_point to search points within.
+    * @return Number of points found.
     */
-    void GetNearestPoints(const Point3D_d &i_point, size_t i_points_to_lookup, std::vector<NearestPoint> *op_nearest_points, double i_max_distance = DBL_INF);
+    size_t GetNearestPoints(const Point3D_d &i_point, size_t i_points_to_lookup, NearestPoint *op_nearest_points, double i_max_distance = DBL_INF) const;
+
+    /**
+    * Finds first N points nearest to the specified one with the custom filter.
+    * The custom filter must define "bool operator()(const TPoint3D &i_point) const" method. Only points for which this method returns true will be considered.
+    * @param i_point Input point to perform lookup for.
+    * @param i_points_to_lookup Number of nearest points to lookup.
+    * @param[out] op_nearest_points Pointer to the allocated array where the resulting points will be written to. Should not be NULL.
+    * @param i_filter Custom points filter.
+    * @param i_max_distance Maximum distance from i_point to search points within.
+    * @return Number of points found.
+    */
+    template<typename PointsFilter>
+    size_t GetNearestPoints(const Point3D_d &i_point, size_t i_points_to_lookup, NearestPoint *op_nearest_points, const PointsFilter &i_filter, double i_max_distance = DBL_INF) const;
 
   private:
     struct Node;
     struct PointsComparator;
 
+    template<typename PointsFilter>
     class NearestPointProc;
+
+    template<typename PointsFilter>
     class NearestPointsProc;
 
   private:
@@ -98,11 +127,15 @@ class KDTree
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////// NearestPoint /////////////////////////////////////////////////
-template<class TPoint3D>
+template<typename TPoint3D>
 struct KDTree<TPoint3D>::NearestPoint
   {
   const TPoint3D *mp_point;
   double m_distance_sqr;
+
+  NearestPoint()
+    {
+    }
 
   NearestPoint(const TPoint3D *ip_point, double i_distance_sqr): mp_point(ip_point), m_distance_sqr(i_distance_sqr)
     {
@@ -121,7 +154,7 @@ struct KDTree<TPoint3D>::NearestPoint
 * Each internal node can have up to two children. Since all nodes are stored in a continuous array the left child (if present) is always located immediately after the parent node.
 * The right node index is stored in the parent node.
 */
-template<class TPoint3D>
+template<typename TPoint3D>
 struct KDTree<TPoint3D>::Node
   {
   // Coordinate of the split the node represents.
@@ -187,7 +220,7 @@ struct KDTree<TPoint3D>::Node
 /**
 * The helper class used to sort the 3D point by a specified axis (X,Y or Z).
 */
-template<class TPoint3D>
+template<typename TPoint3D>
 struct KDTree<TPoint3D>::PointsComparator
   {
   unsigned char m_split_axis;
@@ -203,16 +236,36 @@ struct KDTree<TPoint3D>::PointsComparator
     }
   };
 
+//////////////////////////////////////// DefaultPointsFilter /////////////////////////////////////////////
+
+/**
+* Void filter implementation that returns always returns true.
+*/
+template<typename TPoint3D>
+class DefaultPointsFilter
+  {
+  public:
+    DefaultPointsFilter()
+      {
+      }
+
+    bool operator()(const TPoint3D &i_point) const
+      {
+      return true;
+      }
+  };
+
 ///////////////////////////////////////// NearestPointProc //////////////////////////////////////////////
 
 /**
 * Used to find 3D point nearest to the specified one.
 */
-template<class TPoint3D>
+template<typename TPoint3D>
+template<typename PointsFilter>
 class KDTree<TPoint3D>::NearestPointProc
   {
   public:
-    NearestPointProc()
+    NearestPointProc(const PointsFilter &i_filter): m_filter(i_filter)
       {
       mp_nearest_point = NULL;
       }
@@ -221,6 +274,9 @@ class KDTree<TPoint3D>::NearestPointProc
     // it definitely is. We just need to update the search radius.
     void operator()(const TPoint3D &i_node_point, double i_distance_sqr, double &io_max_distance_sqr)
       {
+      if (m_filter(i_node_point)==false)
+        return;
+
       ASSERT(i_distance_sqr <= io_max_distance_sqr);
       mp_nearest_point = &i_node_point;
       io_max_distance_sqr = i_distance_sqr;
@@ -233,6 +289,7 @@ class KDTree<TPoint3D>::NearestPointProc
 
   private:
     const TPoint3D *mp_nearest_point;
+    PointsFilter m_filter;
   };
 
 ///////////////////////////////////////// NearestPointsProc //////////////////////////////////////////////
@@ -241,17 +298,17 @@ class KDTree<TPoint3D>::NearestPointProc
 * Used to find N closest points.
 * The class uses binary heap to effectively update N nearest points when a closer point is found.
 */
-template<class TPoint3D>
+template<typename TPoint3D>
+template<typename PointsFilter>
 class KDTree<TPoint3D>::NearestPointsProc
   {
   public:
-    NearestPointsProc(const Point3D_d &i_point, size_t i_points_to_lookup, std::vector<NearestPoint> *ip_nearest_points):
-    m_point(i_point), m_points_to_lookup(i_points_to_lookup), mp_nearest_points(ip_nearest_points)
+    NearestPointsProc(const Point3D_d &i_point, size_t i_points_to_lookup, NearestPoint *ip_nearest_points, const PointsFilter &i_filter):
+    m_point(i_point), m_points_to_lookup(i_points_to_lookup), mp_nearest_points(ip_nearest_points), m_filter(i_filter)
       {
       ASSERT(i_points_to_lookup>0);
       ASSERT(ip_nearest_points);
-      mp_nearest_points->clear();
-      mp_nearest_points->reserve(i_points_to_lookup);
+      m_current_size = 0;
       }
 
     /*
@@ -260,39 +317,48 @@ class KDTree<TPoint3D>::NearestPointsProc
     */
     void operator()(const TPoint3D &i_node_point, double i_distance_sqr, double &io_max_distance_sqr)
       {
+      if (m_filter(i_node_point)==false)
+        return;
+
       // If we have not found requested number of points yet we just add them to unordered vector.
-      if (mp_nearest_points->size() < m_points_to_lookup)
+      if (m_current_size < m_points_to_lookup)
         {
         // Add point to unordered array of points.
-        mp_nearest_points->push_back(NearestPoint(&i_node_point,i_distance_sqr));
+        mp_nearest_points[m_current_size++] = NearestPoint(&i_node_point,i_distance_sqr);
 
         // If we found enough points we make a heap from them.
-        if (mp_nearest_points->size() == m_points_to_lookup)
+        if (m_current_size == m_points_to_lookup)
           {
-          std::make_heap(mp_nearest_points->begin(), mp_nearest_points->end());
-          io_max_distance_sqr = mp_nearest_points->front().m_distance_sqr;
+          std::make_heap(mp_nearest_points, mp_nearest_points+m_current_size);
+          io_max_distance_sqr = mp_nearest_points[0].m_distance_sqr;
           }
         }
       else
         {
         // Remove most distant point from heap and add new point.
-        std::pop_heap(mp_nearest_points->begin(), mp_nearest_points->end());
-        (*mp_nearest_points)[m_points_to_lookup-1] = NearestPoint(&i_node_point,i_distance_sqr);
-        std::push_heap(mp_nearest_points->begin(), mp_nearest_points->end());
-        io_max_distance_sqr = mp_nearest_points->front().m_distance_sqr;
+        std::pop_heap(mp_nearest_points, mp_nearest_points+m_current_size);
+        mp_nearest_points[m_points_to_lookup-1] = NearestPoint(&i_node_point,i_distance_sqr);
+        std::push_heap(mp_nearest_points, mp_nearest_points+m_current_size);
+        io_max_distance_sqr = mp_nearest_points[0].m_distance_sqr;
         }
+      }
+
+    size_t GetCurrentSize() const
+      {
+      return m_current_size;
       }
 
   private:
     Point3D_d m_point;
 
-    std::vector<NearestPoint> *mp_nearest_points;
-    size_t m_points_to_lookup;
+    NearestPoint *mp_nearest_points;
+    PointsFilter m_filter;
+    size_t m_points_to_lookup, m_current_size;
   };
 
 ////////////////////////////////////////////// KDTree ////////////////////////////////////////////////////
 
-template<class TPoint3D>
+template<typename TPoint3D>
 KDTree<TPoint3D>::KDTree(const std::vector<TPoint3D> &i_points)
   {
   size_t points_num = i_points.size();
@@ -313,7 +379,7 @@ KDTree<TPoint3D>::KDTree(const std::vector<TPoint3D> &i_points)
   delete[] p_points_refs;
   }
 
-template<class TPoint3D>
+template<typename TPoint3D>
 void KDTree<TPoint3D>::_Build(size_t i_node_index, size_t i_begin, size_t i_end, const TPoint3D **ip_points_refs, unsigned int &io_next_free_node_index)
   {
   ASSERT(i_begin<i_end);
@@ -368,7 +434,7 @@ void KDTree<TPoint3D>::_Build(size_t i_node_index, size_t i_begin, size_t i_end,
     m_nodes[i_node_index].SetRightChild((1<<29)-1); // Initialize with the maximum value which means that the right child is not present.
   }
 
-template<class TPoint3D>
+template<typename TPoint3D>
 template<typename LookupProc>
 void KDTree<TPoint3D>::Lookup(const Point3D_d &i_point, LookupProc &i_proc, double i_max_distance = DBL_INF) const
   {
@@ -377,28 +443,58 @@ void KDTree<TPoint3D>::Lookup(const Point3D_d &i_point, LookupProc &i_proc, doub
   _Lookup(0, i_point, i_proc, max_dist_sqr);
   }
 
-template<class TPoint3D>
-const TPoint3D *KDTree<TPoint3D>::GetNearestPoint(const Point3D_d &i_point, double i_max_distance = DBL_INF)
+template<typename TPoint3D>
+const TPoint3D *KDTree<TPoint3D>::GetNearestPoint(const Point3D_d &i_point, double i_max_distance = DBL_INF) const
   {
   ASSERT(i_max_distance>=0);
-  NearestPointProc proc;
+
+  DefaultPointsFilter<TPoint3D> default_filer;
+  NearestPointProc<DefaultPointsFilter<TPoint3D> > proc(default_filer);
   this->Lookup(i_point, proc, i_max_distance);
   return proc.GetNearestPoint();
   }
 
-template<class TPoint3D>
-void KDTree<TPoint3D>::GetNearestPoints(const Point3D_d &i_point, size_t i_points_to_lookup, std::vector<NearestPoint> *op_nearest_points, double i_max_distance = DBL_INF)
+template<typename TPoint3D>
+template<typename PointsFilter>
+const TPoint3D *KDTree<TPoint3D>::GetNearestPoint(const Point3D_d &i_point, const PointsFilter &i_filter, double i_max_distance = DBL_INF) const
+  {
+  ASSERT(i_max_distance>=0);
+  NearestPointProc<PointsFilter> proc(i_filter);
+  this->Lookup(i_point, proc, i_max_distance);
+  return proc.GetNearestPoint();
+  }
+
+template<typename TPoint3D>
+size_t KDTree<TPoint3D>::GetNearestPoints(const Point3D_d &i_point, size_t i_points_to_lookup,
+                                        NearestPoint *op_nearest_points, double i_max_distance = DBL_INF) const
   {
   ASSERT(i_max_distance>=0);
   ASSERT(op_nearest_points);
   if (i_points_to_lookup == 0)
-    return;
+    return 0;
 
-  NearestPointsProc proc(i_point, i_points_to_lookup, op_nearest_points);
+  NearestPointsProc<DefaultPointsFilter<TPoint3D> > proc(i_point, i_points_to_lookup, op_nearest_points, DefaultPointsFilter<TPoint3D>());
   this->Lookup(i_point, proc, i_max_distance);
+
+  return proc.GetCurrentSize();
   }
 
-template<class TPoint3D>
+template<typename TPoint3D>
+template<typename PointsFilter>
+size_t KDTree<TPoint3D>::GetNearestPoints(const Point3D_d &i_point, size_t i_points_to_lookup, NearestPoint *op_nearest_points, const PointsFilter &i_filter, double i_max_distance = DBL_INF) const
+  {
+  ASSERT(i_max_distance>=0);
+  ASSERT(op_nearest_points);
+  if (i_points_to_lookup == 0)
+    return 0;
+
+  NearestPointsProc<PointsFilter> proc(i_point, i_points_to_lookup, op_nearest_points, i_filter);
+  this->Lookup(i_point, proc, i_max_distance);
+
+  return proc.GetCurrentSize();
+  }
+
+template<typename TPoint3D>
 template<typename LookupProc>
 void KDTree<TPoint3D>::_Lookup(size_t i_node_index, const Point3D_d &i_point, LookupProc &i_proc, double &io_max_distance_sqr) const
   {
