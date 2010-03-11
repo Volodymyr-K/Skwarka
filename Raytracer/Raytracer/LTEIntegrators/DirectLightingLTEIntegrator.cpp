@@ -23,7 +23,9 @@ Spectrum_d DirectLightingLTEIntegrator::_SurfaceRadiance(const RayDifferential &
     radiance = p_light_source->Radiance(i_intersection.m_dg, i_intersection.m_triangle_index, i_ray.m_base_ray.m_direction*(-1.0));
 
   // Compute direct lighting.
-  radiance += mp_direct_lighting_integrator->ComputeDirectLighting(i_intersection, i_ray.m_base_ray.m_direction*(-1.0), p_bsdf, ip_sample, i_pool);
+  bool has_non_specular = p_bsdf->GetComponentsNum( BxDFType(BSDF_ALL & ~BSDF_SPECULAR) ) > 0;
+  if (has_non_specular)
+    radiance += mp_direct_lighting_integrator->ComputeDirectLighting(i_intersection, i_ray.m_base_ray.m_direction*(-1.0), p_bsdf, ip_sample, i_pool);
 
   // Trace rays for specular reflection and refraction.
   if (i_ray.m_specular_depth <= m_max_specular_depth)

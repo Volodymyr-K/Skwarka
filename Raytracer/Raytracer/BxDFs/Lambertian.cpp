@@ -21,7 +21,7 @@ Spectrum_d Lambertian::TotalScattering(const Vector3D_d &i_incident, SamplesSequ
   return m_reflectance;
   }
 
-Spectrum_d Lambertian::TotalScattering(bool i_hemisphere, SamplesSequence2D i_samples) const
+Spectrum_d Lambertian::TotalScattering(bool i_hemisphere, SamplesSequence2D i_samples1, SamplesSequence2D i_samples2) const
   {
   return m_reflectance;
   }

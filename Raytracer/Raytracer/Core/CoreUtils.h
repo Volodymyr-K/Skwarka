@@ -83,6 +83,7 @@ namespace CoreUtils
     double eta = i_refractive_index;
     if (i_incident_ray.m_base_ray.m_direction * i_dg.m_shading_normal < 0.0)
       {
+      // If the ray enters the refractive object.
       eta = 1.0 / i_refractive_index;
       Z_sign = -1.0;
       }

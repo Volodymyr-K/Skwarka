@@ -72,7 +72,8 @@ Spectrum_d LTEIntegrator::_SpecularReflect(const RayDifferential &i_ray, const I
 
     CoreUtils::SetReflectedDifferentials(i_ray, dg, rd);
 
-    return this->Radiance(rd, ip_sample, i_pool) * brdf * fabs(incident*dg.m_shading_normal);
+    // No need to multiply by the cosine value because the specular BRDF already accounts for that.
+    return this->Radiance(rd, ip_sample, i_pool) * brdf;
     }
   else
     return Spectrum_d();
@@ -89,6 +90,10 @@ Spectrum_d LTEIntegrator::_SpecularTransmit(const RayDifferential &i_ray, const 
   Vector3D_d incident = i_ray.m_base_ray.m_direction*(-1.0);
   ASSERT(incident.IsNormalized());
 
+  // Check if the incident ray is perpendicular to the normal, in that case we return zero spectrum to avoid numerical errors in SpecularTransmission::Sample() method.
+  if (fabs(incident*dg.m_shading_normal)<DBL_EPS)
+    return Spectrum_d();
+
   Spectrum_d btdf = ip_bsdf->Sample(incident, exitant, pdf, sampled_type, BxDFType(BSDF_TRANSMISSION | BSDF_SPECULAR));
   ASSERT(sampled_type==BxDFType(BSDF_TRANSMISSION | BSDF_SPECULAR) || sampled_type==BSDF_NONE);
 
@@ -97,9 +102,13 @@ Spectrum_d LTEIntegrator::_SpecularTransmit(const RayDifferential &i_ray, const 
     RayDifferential rd( Ray(dg.m_point, exitant, CoreUtils::GetNextMinT(i_intersection, exitant)) );
     rd.m_specular_depth = i_ray.m_specular_depth + 1;
 
-    CoreUtils::SetTransmittedDifferentials(i_ray, dg, ip_bsdf->GetRefractiveIndex(), rd);
+    double refractive_index = ip_bsdf->GetRefractiveIndex();
+    CoreUtils::SetTransmittedDifferentials(i_ray, dg, refractive_index, rd);
 
-    return this->Radiance(rd, ip_sample, i_pool) * btdf * fabs(incident*dg.m_shading_normal);
+    double eta = (incident*dg.m_shading_normal > 0.0) ? 1.0 / refractive_index : refractive_index;
+
+    // No need to multiply by the cosine value because the specular BTDF already accounts for that.
+    return this->Radiance(rd, ip_sample, i_pool) * btdf * (eta*eta);
     }
   else
     return Spectrum_d();

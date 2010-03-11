@@ -112,15 +112,16 @@ class BxDF
 
     /**
     * Returns total scattering (i.e. fraction of scattered light) assuming a light coming uniformly from the specified hemisphere.
+    * The method takes two 2D samples sequences that must have the same number of elements.
     * Default implementation uses Monte Carlo integration to estimate the total scattering value.
-    * Each sample of the integral requires two 2D samples so the input samples sequence should have twice the number of needed samples.
     * @param i_hemisphere Defines the hemisphere of the incoming light.
     * Value true corresponds to the hemisphere above XY plane (i.e. with positive Z coordinate) and
     * value false corresponds to the hemisphere below XY plane (i.e. with negative Z coordinate).
-    * @param i_samples 2D Samples sequence to be used for sampling the hemisphere. Should have at least two samples.
+    * @param i_samples1 First samples sequence. Should have the same number of elements that i_samples2 has.
+    * @param i_samples2 Second samples sequence. Should have the same number of elements that i_samples1 has.
     * @return Total scattering value. Each spectrum component will be in [0;1] range.
     */
-    virtual Spectrum_d TotalScattering(bool i_hemisphere, SamplesSequence2D i_samples) const;
+    virtual Spectrum_d TotalScattering(bool i_hemisphere, SamplesSequence2D i_samples1, SamplesSequence2D i_samples2) const;
 
   protected:
     /**

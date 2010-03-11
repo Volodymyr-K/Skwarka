@@ -34,7 +34,7 @@ class SpecularTransmission: public BxDF
     * @param[out] o_exitant Exitant direction. The returned value should be normalized.
     * @param i_sample 2D sample. Should be in [0;1]^2 range.
     * @param[out] o_pdf PDF value for the sampled exitant direction. Always equal to 1.0.
-    * @return Sampled BxDF value.
+    * @return Sampled BxDF value. The value does not account for the radiance change due to the refractive index. The calling code must take care of that.
     */
     virtual Spectrum_d Sample(const Vector3D_d &i_incident, Vector3D_d &o_exitant, const Point2D_d &i_sample, double &o_pdf) const;
 
@@ -57,14 +57,16 @@ class SpecularTransmission: public BxDF
 
     /**
     * Returns total scattering (i.e. fraction of scattered light) assuming a light coming uniformly from the specified hemisphere.
+    * The method takes two 2D samples sequences that must have the same number of elements.
     * The implementation uses Monte Carlo integration to estimate the total scattering value.
     * @param i_hemisphere Defines the hemisphere of the incoming light.
     * Value true corresponds to the hemisphere above XY plane (i.e. with positive Z coordinate) and
     * value false corresponds to the hemisphere below XY plane (i.e. with negative Z coordinate).
-    * @param i_samples 2D Samples sequence to be used for sampling the hemisphere. Should have at least one sample.
+    * @param i_samples1 First samples sequence. Should have the same number of elements that i_samples2 has.
+    * @param i_samples2 Second samples sequence. Should have the same number of elements that i_samples1 has.
     * @return Total scattering value. Each spectrum component will be in [0;1] range.
     */
-    virtual Spectrum_d TotalScattering(bool i_hemisphere, SamplesSequence2D i_samples) const;
+    virtual Spectrum_d TotalScattering(bool i_hemisphere, SamplesSequence2D i_samples1, SamplesSequence2D i_samples2) const;
 
   private:
     Spectrum_d m_transmittance;

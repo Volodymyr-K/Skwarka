@@ -55,13 +55,13 @@ public:
 
 static class TestDescription_SpecularTransmissionTestSuite_test_SpecularTransmission_TotalScattering3 : public CxxTest::RealTestDescription {
 public:
- TestDescription_SpecularTransmissionTestSuite_test_SpecularTransmission_TotalScattering3() : CxxTest::RealTestDescription( Tests_SpecularTransmissionTestSuite, suiteDescription_SpecularTransmissionTestSuite, 102, "test_SpecularTransmission_TotalScattering3" ) {}
+ TestDescription_SpecularTransmissionTestSuite_test_SpecularTransmission_TotalScattering3() : CxxTest::RealTestDescription( Tests_SpecularTransmissionTestSuite, suiteDescription_SpecularTransmissionTestSuite, 106, "test_SpecularTransmission_TotalScattering3" ) {}
  void runTest() { suite_SpecularTransmissionTestSuite.test_SpecularTransmission_TotalScattering3(); }
 } testDescription_SpecularTransmissionTestSuite_test_SpecularTransmission_TotalScattering3;
 
 static class TestDescription_SpecularTransmissionTestSuite_test_SpecularTransmission_TotalScatteringWithReflection : public CxxTest::RealTestDescription {
 public:
- TestDescription_SpecularTransmissionTestSuite_test_SpecularTransmission_TotalScatteringWithReflection() : CxxTest::RealTestDescription( Tests_SpecularTransmissionTestSuite, suiteDescription_SpecularTransmissionTestSuite, 115, "test_SpecularTransmission_TotalScatteringWithReflection" ) {}
+ TestDescription_SpecularTransmissionTestSuite_test_SpecularTransmission_TotalScatteringWithReflection() : CxxTest::RealTestDescription( Tests_SpecularTransmissionTestSuite, suiteDescription_SpecularTransmissionTestSuite, 123, "test_SpecularTransmission_TotalScatteringWithReflection" ) {}
  void runTest() { suite_SpecularTransmissionTestSuite.test_SpecularTransmission_TotalScatteringWithReflection(); }
 } testDescription_SpecularTransmissionTestSuite_test_SpecularTransmission_TotalScatteringWithReflection;
 

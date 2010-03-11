@@ -37,10 +37,11 @@ class Lambertian: public BxDF
     * @param i_hemisphere Defines the hemisphere of the incoming light.
     * Value true corresponds to the hemisphere above XY plane (i.e. with positive Z coordinate) and
     * value false corresponds to the hemisphere below XY plane (i.e. with negative Z coordinate).
-    * @param i_samples 2D Samples sequence to be used for sampling the hemisphere. Should have at least two samples.
+    * @param i_samples1 First samples sequence. Should have the same number of elements that i_samples2 has.
+    * @param i_samples2 Second samples sequence. Should have the same number of elements that i_samples1 has.
     * @return Total scattering value.
     */
-    virtual Spectrum_d TotalScattering(bool i_hemisphere, SamplesSequence2D i_samples) const;
+    virtual Spectrum_d TotalScattering(bool i_hemisphere, SamplesSequence2D i_samples1, SamplesSequence2D i_samples2) const;
 
   private:
     Spectrum_d m_reflectance, m_reflectance_inv_pi;

@@ -319,7 +319,10 @@ void* SamplerBasedRenderer::SamplesGeneratorFilter::operator()(void*)
     return p_chunk;
     }
   else
+    {
+    p_chunk->Release();
     return NULL;
+    }
   }
 
 ////////////////////////////////////////// IntegratorFilter ///////////////////////////////////////////////

@@ -49,9 +49,9 @@ class PointLightTestSuite : public CxxTest::TestSuite
         Point2D_d sample(RandomDouble(1.0), RandomDouble(1.0));
         Ray photon_ray;
         double pdf;
-        Spectrum_d radiance = p_light->SamplePhoton(sample, photon_ray, pdf);
+        Spectrum_d sampled_irradiance = p_light->SamplePhoton(sample, photon_ray, pdf);
 
-        if (radiance != intensity)
+        if (sampled_irradiance != intensity)
           {
           TS_FAIL("Wrong radiance value.");
           break;

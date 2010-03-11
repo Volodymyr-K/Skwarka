@@ -191,8 +191,14 @@ class BSDFTestSuite : public CxxTest::TestSuite
       mp_bsdf->AddBxDF(&bxdf2);
       mp_bsdf->AddBxDF(&bxdf3);
 
+      size_t num_samples=30;
+      std::vector<Point2D_d> samples(num_samples*num_samples);
+      SamplingRoutines::StratifiedSampling2D(samples.begin(),num_samples,num_samples,true);
+
+      SamplesSequence2D sequence(&samples[0], (&samples[0]) + samples.size());
+
       Vector3D_d incident=Vector3D_d(0.5,0.5,0.5).Normalized();
-      Spectrum_d total = mp_bsdf->TotalScattering(incident,1000);
+      Spectrum_d total = mp_bsdf->TotalScattering(incident,sequence);
 
       TS_ASSERT(total[0]<=1.0 && total[1]<=1.0 && total[2]<=1.0);
       CustomAssertDelta(total, Spectrum_d(0.8,0.8,0.8), 0.00001);
@@ -208,7 +214,15 @@ class BSDFTestSuite : public CxxTest::TestSuite
       mp_bsdf->AddBxDF(&bxdf2);
       mp_bsdf->AddBxDF(&bxdf3);
 
-      Spectrum_d total = mp_bsdf->TotalScattering(true,10000);
+      size_t num_samples=100;
+      std::vector<Point2D_d> samples1(num_samples*num_samples), samples2(num_samples*num_samples);
+      SamplingRoutines::StratifiedSampling2D(samples1.begin(),num_samples,num_samples,true);
+      SamplingRoutines::StratifiedSampling2D(samples2.begin(),num_samples,num_samples,true);
+
+      SamplesSequence2D sequence1(&samples1[0], (&samples1[0]) + samples1.size());
+      SamplesSequence2D sequence2(&samples2[0], (&samples2[0]) + samples2.size());
+
+      Spectrum_d total = mp_bsdf->TotalScattering(true, sequence1, sequence2);
 
       TS_ASSERT(total[0]<=1.0 && total[1]<=1.0 && total[2]<=1.0);
       CustomAssertDelta(total, Spectrum_d(0.8,0.8,0.8), 0.01);

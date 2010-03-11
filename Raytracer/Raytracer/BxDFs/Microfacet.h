@@ -86,7 +86,7 @@ Spectrum_d Microfacet<Fresnel,MicrofacetDistribution>::Evaluate(const Vector3D_d
   half_angle.Normalize();
 
   double cosine_half_angle = i_exitant*half_angle;
-  Spectrum_d fresnel = m_fresnel(i_exitant*half_angle);
+  Spectrum_d fresnel = m_fresnel(cosine_half_angle);
 
   return (m_reflectance * fresnel) *
     (m_distribution.Evaluate(half_angle) * _GeometricAttenuation(i_incident, i_exitant, half_angle) / (4.0 * cos_theta_incident * cos_theta_exitant));
@@ -125,7 +125,7 @@ double Microfacet<Fresnel,MicrofacetDistribution>::_GeometricAttenuation(const V
   double cos_theta_half_angle = fabs(i_half_angle[2]);
   double cos_theta_incident = fabs(i_incident[2]);
   double cos_theta_exitant = fabs(i_exitant[2]);
-  double tmp = 2.0 * cos_theta_half_angle/(i_incident*i_half_angle);
+  double tmp = 2.0 * cos_theta_half_angle/fabs(i_incident*i_half_angle);
   return std::min(1.0, std::min(cos_theta_incident * tmp, cos_theta_exitant * tmp) );
   }
 

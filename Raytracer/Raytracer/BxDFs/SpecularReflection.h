@@ -57,14 +57,16 @@ class SpecularReflection: public BxDF
 
     /**
     * Returns total scattering (i.e. fraction of scattered light) assuming a light coming uniformly from the specified hemisphere.
+    * The method takes two 2D samples sequences that must have the same number of elements.
     * The implementation uses Monte Carlo integration to estimate the total scattering value.
     * @param i_hemisphere Defines the hemisphere of the incoming light.
     * Value true corresponds to the hemisphere above XY plane (i.e. with positive Z coordinate) and
     * value false corresponds to the hemisphere below XY plane (i.e. with negative Z coordinate).
-    * @param i_samples 2D Samples sequence to be used for sampling the hemisphere. Should have at least one sample.
+    * @param i_samples1 First samples sequence. Should have the same number of elements that i_samples2 has.
+    * @param i_samples2 Second samples sequence. Should have the same number of elements that i_samples1 has.
     * @return Total scattering value. Each spectrum component will be in [0;1] range.
     */
-    virtual Spectrum_d TotalScattering(bool i_hemisphere, SamplesSequence2D i_samples) const;
+    virtual Spectrum_d TotalScattering(bool i_hemisphere, SamplesSequence2D i_samples1, SamplesSequence2D i_samples2) const;
 
   private:
     Spectrum_d m_reflectance;
@@ -103,7 +105,7 @@ Spectrum_d SpecularReflection<Fresnel>::Sample(const Vector3D_d &i_incident, Vec
   Spectrum_d fresnel = m_fresnel(i_incident[2]);
   ASSERT(InRange(fresnel,0.0,1.0));
 
-  return m_reflectance * fresnel / fabs(i_incident[2]);
+  return m_reflectance * fresnel;
   }
 
 template<typename Fresnel>
@@ -127,16 +129,16 @@ Spectrum_d SpecularReflection<Fresnel>::TotalScattering(const Vector3D_d &i_inci
   }
 
 template<typename Fresnel>
-Spectrum_d SpecularReflection<Fresnel>::TotalScattering(bool i_hemisphere, SamplesSequence2D i_samples) const
+Spectrum_d SpecularReflection<Fresnel>::TotalScattering(bool i_hemisphere, SamplesSequence2D i_samples1, SamplesSequence2D i_samples2) const
   {
   // Here we don't really need two samples for one integral's sample since specular reflection defines the reflected direction uniquely.
-  size_t num_samples = std::distance(i_samples.m_begin, i_samples.m_end);
+  size_t num_samples = std::distance(i_samples1.m_begin, i_samples1.m_end);
   ASSERT(num_samples > 0);
 
   double Z_sign = i_hemisphere ? 1.0 : -1.0;
 
   Spectrum_d ret;
-  SamplesSequence2D::Iterator it=i_samples.m_begin;
+  SamplesSequence2D::Iterator it=i_samples1.m_begin;
   for(size_t i=0;i<num_samples;++i)
     {
     Point2D_d sample_incident = *(it++);

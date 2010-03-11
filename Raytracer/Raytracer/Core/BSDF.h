@@ -105,26 +105,26 @@ class BSDF
 
     /**
     * Returns total scattering (i.e. fraction of scattered light) assuming a unit of light coming from the specified incident direction.
-    * The method generates Latin Hypercube samples sequences for each of the BxDF components.
     * Only BxDF components matching specified flags are considered.
     * @param i_incident Incident direction. Should be normalized.
-    * @param i_samples_num Number of samples to be generated for each matching BxDF component. Should be greater than zero.
+    * @param i_samples Samples sequence which is to be used for all matching BxDf component. Should have at least one element.
     * @param i_flags Specifies the subset of BxDF components.
     * @return Total scattering value. Each spectrum component will be in [0;1] range.
     */
-    Spectrum_d TotalScattering(const Vector3D_d &i_incident, size_t i_samples_num, BxDFType i_flags=BSDF_ALL) const;
+    Spectrum_d TotalScattering(const Vector3D_d &i_incident, SamplesSequence2D i_samples, BxDFType i_flags=BSDF_ALL) const;
 
     /**
     * Returns total scattering (i.e. fraction of scattered light) assuming a light coming uniformly from the specified hemisphere.
-    * The method generates Latin Hypercube samples sequences for each of the BxDF components.
+    * The method takes two 2D samples sequences that must have the same number of elements.
     * Only BxDF components matching specified flags are considered.
     * @param i_hemisphere Defines the hemisphere of the incoming light.
     * Value true corresponds to the hemisphere above the surface and value false corresponds to the hemisphere below the surface.
-    * @param i_samples_num Number of samples to be generated for each matching BxDF component. Should be greater than zero.
+    * @param i_samples1 First samples sequence to be used for all matching BxDf component. Should have the same number of elements that i_samples2 has.
+    * @param i_samples2 Second samples sequence to be used for all matching BxDf component. Should have the same number of elements that i_samples1 has.
     * @param i_flags Specifies the subset of BxDF components.
     * @return Total scattering value. Each spectrum component will be in [0;1] range.
     */
-    Spectrum_d TotalScattering(bool i_hemisphere, size_t i_samples_num, BxDFType i_flags=BSDF_ALL) const;
+    Spectrum_d TotalScattering(bool i_hemisphere, SamplesSequence2D i_samples1, SamplesSequence2D i_samples2, BxDFType i_flags=BSDF_ALL) const;
 
   private:
     /**
@@ -136,6 +136,12 @@ class BSDF
     * A helper method that converts a vector in the local coordinate system to the world one.
     */
     Vector3D_d LocalToWorld(const Vector3D_d &i_vector) const;
+
+    /**
+    * A helper method that samples only specular components of the BSDF based on the luminance values of specular BxDFs.
+    */
+    Spectrum_d _SampleSpecularOnly(const Vector3D_d &i_incident, Vector3D_d &o_exitant,
+      const Point2D_d &i_sample, double i_component_sample, double &o_pdf, BxDFType &o_sampled_type, BxDFType i_flags) const;
 
   private:
     static const size_t MAX_BXDFS_NUM = 8;

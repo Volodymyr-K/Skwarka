@@ -55,7 +55,7 @@ Spectrum_d SpecularTransmission::Sample(const Vector3D_d &i_incident, Vector3D_d
   Spectrum_d fresnel = m_fresnel(i_incident[2]);
   ASSERT(InRange(fresnel,0.0,1.0));
 
-  return ((Spectrum_d(1.0)-fresnel) * m_transmittance) * (refractive_index_inner*refractive_index_inner)/(refractive_index_outer*refractive_index_outer) / cos_theta_exitant;
+  return ((Spectrum_d(1.0)-fresnel) * m_transmittance);
   }
 
 double SpecularTransmission::PDF(const Vector3D_d &i_incident, const Vector3D_d &i_exitant) const
@@ -86,10 +86,10 @@ Spectrum_d SpecularTransmission::TotalScattering(const Vector3D_d &i_incident, S
   return (Spectrum_d(1.0)-fresnel) * m_transmittance;
   }
 
-Spectrum_d SpecularTransmission::TotalScattering(bool i_hemisphere, SamplesSequence2D i_samples) const
+Spectrum_d SpecularTransmission::TotalScattering(bool i_hemisphere, SamplesSequence2D i_samples1, SamplesSequence2D i_samples2) const
   {
   // Here we don't really need two samples for one integral's sample since specular transmission defines the reflected direction uniquely.
-  size_t num_samples = std::distance(i_samples.m_begin, i_samples.m_end);
+  size_t num_samples = std::distance(i_samples1.m_begin, i_samples1.m_end);
   ASSERT(num_samples > 0);
 
   double eta, Z_sign;
@@ -107,7 +107,7 @@ Spectrum_d SpecularTransmission::TotalScattering(bool i_hemisphere, SamplesSeque
   double eta_sqr = eta*eta;
 
   Spectrum_d ret;
-  SamplesSequence2D::Iterator it=i_samples.m_begin;
+  SamplesSequence2D::Iterator it=i_samples1.m_begin;
   for(size_t i=0;i<num_samples;++i)
     {
     Point2D_d sample_incident = *(it++);

@@ -97,10 +97,14 @@ class OrenNayarTestSuite : public CxxTest::TestSuite
       shared_ptr<BxDF> bxdf = shared_ptr<BxDF>( new OrenNayar(Spectrum_d(0.9),0.1) );
 
       size_t num_samples=400;
-      std::vector<Point2D_d> samples(num_samples*num_samples);
-      SamplingRoutines::StratifiedSampling2D(samples.begin(),num_samples,num_samples,true);
+      std::vector<Point2D_d> samples1(num_samples*num_samples), samples2(num_samples*num_samples);
+      SamplingRoutines::StratifiedSampling2D(samples1.begin(),num_samples,num_samples,true);
+      SamplingRoutines::StratifiedSampling2D(samples2.begin(),num_samples,num_samples,true);
 
-      Spectrum_d total=bxdf->TotalScattering(true, SamplesSequence2D(&samples[0], (&samples[0]) + samples.size()));
+      SamplesSequence2D sequence1(&samples1[0], (&samples1[0]) + samples1.size());
+      SamplesSequence2D sequence2(&samples2[0], (&samples2[0]) + samples2.size());
+
+      Spectrum_d total=bxdf->TotalScattering(true, sequence1, sequence2);
       CustomAssertDelta(total, Spectrum_d(0.888), 0.002); // This is an empirical value.
       }
   };

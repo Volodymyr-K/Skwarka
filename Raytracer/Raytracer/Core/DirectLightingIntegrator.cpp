@@ -123,15 +123,16 @@ Spectrum_d DirectLightingIntegrator::ComputeDirectLighting(const Intersection &i
     }
   else
     {
-    std::vector<double, MemoryPoolAllocator<double> > samples_1D(m_lights_samples_num+m_bsdf_samples_num, 0.0, MemoryPoolAllocator<double>(i_pool));
-    std::vector<Point2D_d, MemoryPoolAllocator<Point2D_d> > samples_2D(m_lights_samples_num+m_bsdf_samples_num, Point2D_d(), MemoryPoolAllocator<Point2D_d>(i_pool));
+    size_t total_samples = m_lights_samples_num+m_bsdf_samples_num;
+    double *samples_1D = (double *)i_pool.Alloc( total_samples * sizeof(double) );
+    Point2D_d *samples_2D = (Point2D_d *)i_pool.Alloc( total_samples * sizeof(Point2D_d) );
 
     DirectLightingSamples samples;
-    samples.m_light_1D_samples=SamplesSequence1D(&samples_1D[0], (&samples_1D[0])+m_lights_samples_num);
-    samples.m_bsdf_1D_samples=SamplesSequence1D((&samples_1D[0])+m_lights_samples_num, (&samples_1D[0])+samples_1D.size() );
+    samples.m_light_1D_samples=SamplesSequence1D(samples_1D, samples_1D+m_lights_samples_num);
+    samples.m_bsdf_1D_samples=SamplesSequence1D(samples_1D+m_lights_samples_num, samples_1D+total_samples );
 
-    samples.m_light_2D_samples=SamplesSequence2D(&samples_2D[0], (&samples_2D[0])+m_lights_samples_num);
-    samples.m_bsdf_2D_samples=SamplesSequence2D((&samples_2D[0])+m_lights_samples_num, (&samples_2D[0])+samples_2D.size() );
+    samples.m_light_2D_samples=SamplesSequence2D(samples_2D, samples_2D+m_lights_samples_num);
+    samples.m_bsdf_2D_samples=SamplesSequence2D(samples_2D+m_lights_samples_num, samples_2D+total_samples );
 
     SamplingRoutines::StratifiedSampling1D(samples.m_light_1D_samples.m_begin, m_lights_samples_num, true);
     SamplingRoutines::StratifiedSampling1D(samples.m_bsdf_1D_samples.m_begin,  m_bsdf_samples_num,   true);
@@ -183,7 +184,7 @@ Spectrum_d DirectLightingIntegrator::_SampleLights(const Intersection &i_interse
 
       if (light_pdf>0.0 && light.IsBlack()==false)
         {
-        light *= ip_bsdf->Evaluate(lighting_ray.m_direction, i_view_direction);
+        light *= ip_bsdf->Evaluate(i_view_direction, lighting_ray.m_direction);
 
         double bsdf_pdf = ip_bsdf->PDF(i_view_direction, lighting_ray.m_direction);
 
@@ -207,7 +208,7 @@ Spectrum_d DirectLightingIntegrator::_SampleLights(const Intersection &i_interse
       if (light_pdf>0.0 && light.IsBlack()==false)
         {
         lighting_ray.m_max_t -= (1e-4); // To avoid intersection with the area light.
-        light *= ip_bsdf->Evaluate(lighting_ray.m_direction, i_view_direction);
+        light *= ip_bsdf->Evaluate(i_view_direction, lighting_ray.m_direction);
 
         double bsdf_pdf = ip_bsdf->PDF(i_view_direction, lighting_ray.m_direction);
 
@@ -250,7 +251,7 @@ Spectrum_d DirectLightingIntegrator::_SampleBSDF(const Intersection &i_intersect
 
   SamplesSequence1D::Iterator component_iterator = i_samples.m_bsdf_1D_samples.m_begin;
   SamplesSequence2D::Iterator bxdf_iterator = i_samples.m_bsdf_2D_samples.m_begin;
-   for(size_t i=0;i<m_bsdf_samples_num;++i)
+  for(size_t i=0;i<m_bsdf_samples_num;++i)
     {
     double component_sample = *component_iterator;
     Point2D_d bxdf_sample = *bxdf_iterator;
