@@ -160,6 +160,48 @@ class SamplingRoutinesTestSuite : public CxxTest::TestSuite
         }
       }
 
+    void test_UniformConeSampling_Range()
+      {
+      const size_t num_samples = 1000;
+
+      for(size_t i=0;i<num_samples;++i)
+        {
+        Point2D_d point(RandomDouble(1.0),RandomDouble(1.0));
+        double cos_theta_max = RandomDouble(1.0);
+        Vector3D_d sampled = SamplingRoutines::UniformConeSampling(point, cos_theta_max);
+
+        if (sampled.IsNormalized()==false)
+          {
+          TS_FAIL("Sampled direction vector is not normalized.");
+          break;
+          }
+
+        if (sampled[2] < cos_theta_max)
+          {
+          TS_FAIL("Sampled direction vector is not inside the cone.");
+          break;
+          }
+        }
+      }
+
+    void test_UniformConePDF()
+      {
+      const size_t num_samples = 1000;
+
+      for(size_t i=0;i<num_samples;++i)
+        {
+        double cos_theta_max = RandomDouble(1.0);;
+        double pdf = SamplingRoutines::UniformConePDF(cos_theta_max);
+
+        double cone_solid_angle = 2.0*M_PI*(1.0-cos_theta_max);
+        if (fabs(pdf*cone_solid_angle-1.0)>DBL_EPS)
+          {
+          TS_FAIL("PDF is incorrect.");
+          break;
+          }
+        }
+      }
+
     void test_UniformTriangleSampling_Range()
       {
       const size_t num_samples = 1000;
@@ -407,6 +449,56 @@ class SamplingRoutinesTestSuite : public CxxTest::TestSuite
           TS_FAIL("Sobol2 sequence stratification test failed.");
           return;
           }
+        }
+      }
+
+    void test_RadicalInverse_Range()
+      {
+      for(size_t base=2;base<20;++base)
+        {
+        for(size_t i=0;i<1000;++i)
+          {
+          double val=SamplingRoutines::RadicalInverse(i,base);
+          if (val<0.0 || val>1.0)
+            {
+            TS_FAIL("RadicalInverse sequence is out of [0;1] range.");
+            return;
+            }
+          }
+        }
+      }
+
+    // Tests that each aligned sub-region of RadicalInverse sequence (for any base) with length that is a power of the base is stratified.
+    // (Actually aligned sub-region of any length should be reasonably stratified but the stratification is most when the length is a power of the base).
+    void test_RadicalInverse_Stratification()
+      {
+      size_t N = 10000;
+      for(size_t base=2;base<20;++base)
+        {
+        std::vector<double> values;
+        for(size_t i=0;i<N;++i)
+          values.push_back(SamplingRoutines::RadicalInverse(i,base));
+
+        for(size_t i=base;i<N;i*=base)
+          {
+          // Test that first i samples are well distributed.
+          std::sort(values.begin(), values.begin()+i);
+
+          // Find largest distance between adjacent samples.
+          double mx = values[0];
+          for(size_t j=1;j<i;++j)
+            if (values[j]-values[j-1]>mx) mx=values[j]-values[j-1];
+          if (1.0-values[i-1]>mx) mx=1.0-values[i-1];
+
+          if (mx > 1.0/i + DBL_EPS)
+            {
+            TS_FAIL("RadicalInverse sequence stratification test failed.");
+            printf("%d %d\n", base,i);
+            printf("%.6lf %.6lf\n", mx,1.0/i);
+            return;
+            }
+          }
+
         }
       }
 

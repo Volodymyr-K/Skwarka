@@ -60,8 +60,25 @@ namespace SamplingRoutines
   /**
   * Returns PDF value for hemisphere cosine sampling for the specified theta angle cosine.
   * @param i_cos_theta Cosine of the theta angle. Should be in [0;1] range.
+  * @return PDF value.
   */
   double CosineHemispherePDF(double i_cos_theta);
+
+  /**
+  * Maps 2D sample in [0;1]^2 to a direction lying inside of the cone with specified opening angle.
+  * The axis of the cone is equal to Z axis.
+  * @param i_sample Input 2D sample in [0;1]^2.
+  * @param i_cos_theta_max Cosine of the cone opening angle. Should be in [0;1) range.
+  * @return Resulting 3D vector inside the cone. Should be normalized.
+  */
+  Vector3D_d UniformConeSampling(const Point2D_d i_sample, double i_cos_theta_max);
+
+  /**
+  * Returns PDF value for uniform cone sampling for the specified specified opening angle.
+  * @param i_cos_theta_max Cosine of the cone opening angle. Should be in [0;1) range.
+  * @return PDF value.
+  */
+  double UniformConePDF(double i_cos_theta_max);
 
   /**
   * Maps 2D sample in [0;1]^2 to a triangle point uniformly.
@@ -148,6 +165,14 @@ namespace SamplingRoutines
   * @return Sample value. Should be in [0;1] range.
   */
   double Sobol2(unsigned int i_n, unsigned int i_scramble);
+
+  /**
+  * Generates low-discrepancy sample values with a radical inverse function in the specified base.
+  * @param i_n Index of the sample value.
+  * @param i_base Base value. Should be greater or equal than 2.
+  * @return Sample value. Should be in [0;1] range.
+  */
+  double RadicalInverse(unsigned int i_n, unsigned int i_base);
   };
 
 /////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
@@ -256,6 +281,23 @@ namespace SamplingRoutines
     ASSERT(i_cos_theta>=0.0 && i_cos_theta<=1.0);
 
     return i_cos_theta * INV_PI;
+    }
+
+  inline Vector3D_d UniformConeSampling(const Point2D_d i_sample, double i_cos_theta_max)
+    {
+    ASSERT(i_cos_theta_max >= 0.0 && i_cos_theta_max < 1.0);
+
+    double cos_theta = (1.0 - i_sample[0]) + i_sample[0] * i_cos_theta_max;
+    double sin_theta = sqrt(1.0 - cos_theta*cos_theta);
+    double phi = i_sample[1] * 2.0 * M_PI;
+
+    return Vector3D_d(sin_theta*cos(phi), sin_theta*sin(phi), cos_theta);
+    }
+
+  inline double UniformConePDF(double i_cos_theta_max)
+    {
+    ASSERT(i_cos_theta_max >= 0.0 && i_cos_theta_max < 1.0);
+    return 1.0 / (2.0 * M_PI * (1.0 - i_cos_theta_max));
     }
 
   inline void UniformTriangleSampling(const Point2D_d i_sample, double &o_b1, double &o_b2)
@@ -430,6 +472,24 @@ namespace SamplingRoutines
       if (i_n & 0x1) i_scramble ^= v;
 
     return (double)i_scramble / (double)0x100000000LL;
+    }
+
+  inline double RadicalInverse(unsigned int i_n, unsigned int i_base)
+    {
+    ASSERT(i_base>=2);
+
+    double ret = 0.0;
+    double inv_base = 1.0/i_base, inv = inv_base;
+    while (i_n > 0)
+      {
+      // Compute next digit of radical inverse.
+      int d_i = (i_n % i_base);
+      ret += d_i * inv;
+      i_n /= i_base;
+      inv *= inv_base;
+      }
+
+    return ret;
     }
 
   };

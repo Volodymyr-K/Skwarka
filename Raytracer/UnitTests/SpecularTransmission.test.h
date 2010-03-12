@@ -128,17 +128,17 @@ class SpecularTransmissionTestSuite : public CxxTest::TestSuite
       FresnelDielectric fresnel(1.5, 1.0);
       shared_ptr<BxDF> reflectance = shared_ptr<BxDF>( new SpecularDielectric(Spectrum_d(1.0), fresnel) );
 
-      size_t num_samples=50000;
-      std::vector<Point2D_d> samples1(num_samples), samples2(num_samples);
-      SamplingRoutines::LatinHypercubeSampling2D(samples1.begin(),num_samples,true);
-      SamplingRoutines::LatinHypercubeSampling2D(samples2.begin(),num_samples,true);
+      size_t num_samples_sqrt=500;
+      std::vector<Point2D_d> samples1(num_samples_sqrt*num_samples_sqrt), samples2(num_samples_sqrt*num_samples_sqrt);
+      SamplingRoutines::StratifiedSampling2D(samples1.begin(),num_samples_sqrt,num_samples_sqrt,true);
+      SamplingRoutines::StratifiedSampling2D(samples2.begin(),num_samples_sqrt,num_samples_sqrt,true);
 
       SamplesSequence2D sequence1(&samples1[0], (&samples1[0]) + samples1.size());
       SamplesSequence2D sequence2(&samples2[0], (&samples2[0]) + samples2.size());
 
       Spectrum_d total_1=transmittance->TotalScattering(false, sequence1, sequence2);
-      Spectrum_d total_2=reflectance->TotalScattering(false, sequence1, sequence2);
-      CustomAssertDelta(total_1+total_2, Spectrum_d(1.0), (1e-6)); // This is an empirical value.
+      Spectrum_d total_2=reflectance->TotalScattering(false, sequence2, sequence1);
+      CustomAssertDelta(total_1+total_2, Spectrum_d(1.0), (1e-4)); // This is an empirical value.
       }
 
   };
