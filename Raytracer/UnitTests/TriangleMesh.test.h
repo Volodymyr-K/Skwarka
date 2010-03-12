@@ -44,6 +44,25 @@ class TriangleMeshTestSuite : public CxxTest::TestSuite
       TS_ASSERT_EQUALS(p_mesh->GetBounds().m_max, bbox.m_max);
       }
 
+    void test_TriangleMesh_GetArea()
+      {
+      intrusive_ptr<TriangleMesh> p_mesh=TriangleMeshHelper::ConstructTetrahedron();
+
+      float area = 0.f;
+      for(size_t i=0;i<p_mesh->GetNumberOfTriangles();++i)
+        {
+        MeshTriangle triangle = p_mesh->GetTriangle(i);
+        Point3D_f vertices[3] = {
+          p_mesh->GetVertex(triangle.m_vertices[0]),
+          p_mesh->GetVertex(triangle.m_vertices[1]),
+          p_mesh->GetVertex(triangle.m_vertices[2])};
+
+          area += (Vector3D_f(vertices[1]-vertices[0])^Vector3D_f(vertices[2]-vertices[0])).Length() * 0.5f;
+        }
+
+      TS_ASSERT_DELTA(area, p_mesh->GetArea(), FLT_EPS);
+      }
+
     // Tests a case when the mesh is solid.
     void test_TriangleMesh_SolidTopologyInfo()
       {
@@ -92,11 +111,10 @@ class TriangleMeshTestSuite : public CxxTest::TestSuite
       }
 
     // Tests that geometric normals (not shaded ones) are correct.
+    // The test case also tests inverted normals.
     void test_TriangleMesh_TriangleNormals()
       {
       intrusive_ptr<TriangleMesh> p_mesh( TriangleMeshHelper::ConstructTetrahedron() );
-      bool normals_correct=true;
-
       for(size_t i=0;i<p_mesh->GetNumberOfTriangles();++i)
         {
         MeshTriangle triangle = p_mesh->GetTriangle(i);
@@ -105,11 +123,27 @@ class TriangleMeshTestSuite : public CxxTest::TestSuite
           p_mesh->GetVertex(triangle.m_vertices[1]),
           p_mesh->GetVertex(triangle.m_vertices[2])};
 
+        p_mesh->SetInvertNormals(false);
         Vector3D_f normal = (Vector3D_f(vertices[1]-vertices[0])^Vector3D_f(vertices[2]-vertices[0])).Normalized();
         Vector3D_f normal2 = p_mesh->GetTriangleNormal(i);
-        if ((normal-normal2).Length()>(1e-6)) normals_correct=false;
+        if ((normal-normal2).Length()>(1e-6))
+          {
+          TS_FAIL("Triangle normals are incorrect.");
+          return;
+          }
+
+        // Test inverted normals.
+        p_mesh->SetInvertNormals(true);
+
+        normal *= -1.0;
+        normal2 = p_mesh->GetTriangleNormal(i);
+        if ((normal-normal2).Length()>(1e-6))
+          {
+          TS_FAIL("Inverted triangle normals are incorrect.");
+          return;
+          }
+
         }
-      TS_ASSERT(normals_correct);
       }
 
     // Tests DifferentialGeometry() method for a case when UV parameterization is not set, shading normals are not used and the ray has no differentials.

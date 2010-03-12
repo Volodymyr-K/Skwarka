@@ -60,13 +60,19 @@ class TriangleMesh: public ReferenceCounted
     * @param i_vertices Vertices coordinates.
     * @param i_triangles Mesh triangles.
     * @param i_use_shading_normals true if normals need to be interpolated inside the triangles.
+    * @param i_invert_normals true if triangle normals need to be inverted.
     */
-    TriangleMesh(const std::vector<Point3D_f> &i_vertices, const std::vector<MeshTriangle> &i_triangles, bool i_use_shading_normals=true);
+    TriangleMesh(const std::vector<Point3D_f> &i_vertices, const std::vector<MeshTriangle> &i_triangles, bool i_use_shading_normals=true, bool i_invert_normals=false);
 
     /**
     * Sets whether the normals should be interpolated inside the triangles.
     */
     void SetUseShadingNormals(bool i_use_shading_normals);
+
+    /**
+    * Sets whether to invert all triangle normals.
+    */
+    void SetInvertNormals(bool i_invert_normals);
 
     size_t GetNumberOfVertices() const;
 
@@ -83,7 +89,15 @@ class TriangleMesh: public ReferenceCounted
     */
     void ComputeDifferentialGeometry(size_t i_triangle_index, const RayDifferential &i_ray, DifferentialGeometry &o_dg) const;
 
+    /**
+    * Returns bounding box of the triangle mesh.
+    */
     BBox3D_f GetBounds() const;
+
+    /**
+    * Returns sum of the areas of all triangles of the mesh.
+    */
+    float GetArea() const;
 
     TopologyInfo GetTopologyInfo() const;
 
@@ -111,9 +125,11 @@ class TriangleMesh: public ReferenceCounted
     std::vector<MeshTriangle> m_triangles;
     std::vector<Vector3D_f> m_shading_normals;
 
-    bool m_use_shading_normals;
+    bool m_use_shading_normals, m_invert_normals;
 
     BBox3D_f m_bbox;
+    float m_area;
+
     TopologyInfo m_topology_info;
   };
 
@@ -151,12 +167,20 @@ inline Vector3D_f TriangleMesh::GetTriangleNormal(size_t i_triangle_index) const
     m_vertices[triangle.m_vertices[1]],
     m_vertices[triangle.m_vertices[2]]};
 
-  return (Vector3D_f(vertices[1]-vertices[0])^Vector3D_f(vertices[2]-vertices[0])).Normalized();
+  if (m_invert_normals)
+    return (Vector3D_f(vertices[2]-vertices[0])^Vector3D_f(vertices[1]-vertices[0])).Normalized();
+  else
+    return (Vector3D_f(vertices[1]-vertices[0])^Vector3D_f(vertices[2]-vertices[0])).Normalized();
   }
 
 inline BBox3D_f TriangleMesh::GetBounds() const
   {
   return m_bbox;
+  }
+
+inline float TriangleMesh::GetArea() const
+  {
+  return m_area;
   }
 
 inline TopologyInfo TriangleMesh::GetTopologyInfo() const

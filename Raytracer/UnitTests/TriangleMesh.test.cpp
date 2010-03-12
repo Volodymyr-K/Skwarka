@@ -35,51 +35,57 @@ public:
  void runTest() { suite_TriangleMeshTestSuite.test_TriangleMesh_GetBounds(); }
 } testDescription_TriangleMeshTestSuite_test_TriangleMesh_GetBounds;
 
+static class TestDescription_TriangleMeshTestSuite_test_TriangleMesh_GetArea : public CxxTest::RealTestDescription {
+public:
+ TestDescription_TriangleMeshTestSuite_test_TriangleMesh_GetArea() : CxxTest::RealTestDescription( Tests_TriangleMeshTestSuite, suiteDescription_TriangleMeshTestSuite, 47, "test_TriangleMesh_GetArea" ) {}
+ void runTest() { suite_TriangleMeshTestSuite.test_TriangleMesh_GetArea(); }
+} testDescription_TriangleMeshTestSuite_test_TriangleMesh_GetArea;
+
 static class TestDescription_TriangleMeshTestSuite_test_TriangleMesh_SolidTopologyInfo : public CxxTest::RealTestDescription {
 public:
- TestDescription_TriangleMeshTestSuite_test_TriangleMesh_SolidTopologyInfo() : CxxTest::RealTestDescription( Tests_TriangleMeshTestSuite, suiteDescription_TriangleMeshTestSuite, 48, "test_TriangleMesh_SolidTopologyInfo" ) {}
+ TestDescription_TriangleMeshTestSuite_test_TriangleMesh_SolidTopologyInfo() : CxxTest::RealTestDescription( Tests_TriangleMeshTestSuite, suiteDescription_TriangleMeshTestSuite, 67, "test_TriangleMesh_SolidTopologyInfo" ) {}
  void runTest() { suite_TriangleMeshTestSuite.test_TriangleMesh_SolidTopologyInfo(); }
 } testDescription_TriangleMeshTestSuite_test_TriangleMesh_SolidTopologyInfo;
 
 static class TestDescription_TriangleMeshTestSuite_test_TriangleMesh_NonSolidTopologyInfo : public CxxTest::RealTestDescription {
 public:
- TestDescription_TriangleMeshTestSuite_test_TriangleMesh_NonSolidTopologyInfo() : CxxTest::RealTestDescription( Tests_TriangleMeshTestSuite, suiteDescription_TriangleMeshTestSuite, 57, "test_TriangleMesh_NonSolidTopologyInfo" ) {}
+ TestDescription_TriangleMeshTestSuite_test_TriangleMesh_NonSolidTopologyInfo() : CxxTest::RealTestDescription( Tests_TriangleMeshTestSuite, suiteDescription_TriangleMeshTestSuite, 76, "test_TriangleMesh_NonSolidTopologyInfo" ) {}
  void runTest() { suite_TriangleMeshTestSuite.test_TriangleMesh_NonSolidTopologyInfo(); }
 } testDescription_TriangleMeshTestSuite_test_TriangleMesh_NonSolidTopologyInfo;
 
 static class TestDescription_TriangleMeshTestSuite_test_TriangleMesh_NonManifoldTopologyInfo : public CxxTest::RealTestDescription {
 public:
- TestDescription_TriangleMeshTestSuite_test_TriangleMesh_NonManifoldTopologyInfo() : CxxTest::RealTestDescription( Tests_TriangleMeshTestSuite, suiteDescription_TriangleMeshTestSuite, 75, "test_TriangleMesh_NonManifoldTopologyInfo" ) {}
+ TestDescription_TriangleMeshTestSuite_test_TriangleMesh_NonManifoldTopologyInfo() : CxxTest::RealTestDescription( Tests_TriangleMeshTestSuite, suiteDescription_TriangleMeshTestSuite, 94, "test_TriangleMesh_NonManifoldTopologyInfo" ) {}
  void runTest() { suite_TriangleMeshTestSuite.test_TriangleMesh_NonManifoldTopologyInfo(); }
 } testDescription_TriangleMeshTestSuite_test_TriangleMesh_NonManifoldTopologyInfo;
 
 static class TestDescription_TriangleMeshTestSuite_test_TriangleMesh_TriangleNormals : public CxxTest::RealTestDescription {
 public:
- TestDescription_TriangleMeshTestSuite_test_TriangleMesh_TriangleNormals() : CxxTest::RealTestDescription( Tests_TriangleMeshTestSuite, suiteDescription_TriangleMeshTestSuite, 95, "test_TriangleMesh_TriangleNormals" ) {}
+ TestDescription_TriangleMeshTestSuite_test_TriangleMesh_TriangleNormals() : CxxTest::RealTestDescription( Tests_TriangleMeshTestSuite, suiteDescription_TriangleMeshTestSuite, 115, "test_TriangleMesh_TriangleNormals" ) {}
  void runTest() { suite_TriangleMeshTestSuite.test_TriangleMesh_TriangleNormals(); }
 } testDescription_TriangleMeshTestSuite_test_TriangleMesh_TriangleNormals;
 
 static class TestDescription_TriangleMeshTestSuite_test_TriangleMesh_DifferentialGeometry1 : public CxxTest::RealTestDescription {
 public:
- TestDescription_TriangleMeshTestSuite_test_TriangleMesh_DifferentialGeometry1() : CxxTest::RealTestDescription( Tests_TriangleMeshTestSuite, suiteDescription_TriangleMeshTestSuite, 116, "test_TriangleMesh_DifferentialGeometry1" ) {}
+ TestDescription_TriangleMeshTestSuite_test_TriangleMesh_DifferentialGeometry1() : CxxTest::RealTestDescription( Tests_TriangleMeshTestSuite, suiteDescription_TriangleMeshTestSuite, 150, "test_TriangleMesh_DifferentialGeometry1" ) {}
  void runTest() { suite_TriangleMeshTestSuite.test_TriangleMesh_DifferentialGeometry1(); }
 } testDescription_TriangleMeshTestSuite_test_TriangleMesh_DifferentialGeometry1;
 
 static class TestDescription_TriangleMeshTestSuite_test_TriangleMesh_DifferentialGeometry2 : public CxxTest::RealTestDescription {
 public:
- TestDescription_TriangleMeshTestSuite_test_TriangleMesh_DifferentialGeometry2() : CxxTest::RealTestDescription( Tests_TriangleMeshTestSuite, suiteDescription_TriangleMeshTestSuite, 146, "test_TriangleMesh_DifferentialGeometry2" ) {}
+ TestDescription_TriangleMeshTestSuite_test_TriangleMesh_DifferentialGeometry2() : CxxTest::RealTestDescription( Tests_TriangleMeshTestSuite, suiteDescription_TriangleMeshTestSuite, 180, "test_TriangleMesh_DifferentialGeometry2" ) {}
  void runTest() { suite_TriangleMeshTestSuite.test_TriangleMesh_DifferentialGeometry2(); }
 } testDescription_TriangleMeshTestSuite_test_TriangleMesh_DifferentialGeometry2;
 
 static class TestDescription_TriangleMeshTestSuite_test_TriangleMesh_DifferentialGeometry3 : public CxxTest::RealTestDescription {
 public:
- TestDescription_TriangleMeshTestSuite_test_TriangleMesh_DifferentialGeometry3() : CxxTest::RealTestDescription( Tests_TriangleMeshTestSuite, suiteDescription_TriangleMeshTestSuite, 173, "test_TriangleMesh_DifferentialGeometry3" ) {}
+ TestDescription_TriangleMeshTestSuite_test_TriangleMesh_DifferentialGeometry3() : CxxTest::RealTestDescription( Tests_TriangleMeshTestSuite, suiteDescription_TriangleMeshTestSuite, 207, "test_TriangleMesh_DifferentialGeometry3" ) {}
  void runTest() { suite_TriangleMeshTestSuite.test_TriangleMesh_DifferentialGeometry3(); }
 } testDescription_TriangleMeshTestSuite_test_TriangleMesh_DifferentialGeometry3;
 
 static class TestDescription_TriangleMeshTestSuite_test_TriangleMesh_ShadingNormal : public CxxTest::RealTestDescription {
 public:
- TestDescription_TriangleMeshTestSuite_test_TriangleMesh_ShadingNormal() : CxxTest::RealTestDescription( Tests_TriangleMeshTestSuite, suiteDescription_TriangleMeshTestSuite, 207, "test_TriangleMesh_ShadingNormal" ) {}
+ TestDescription_TriangleMeshTestSuite_test_TriangleMesh_ShadingNormal() : CxxTest::RealTestDescription( Tests_TriangleMeshTestSuite, suiteDescription_TriangleMeshTestSuite, 241, "test_TriangleMesh_ShadingNormal" ) {}
  void runTest() { suite_TriangleMeshTestSuite.test_TriangleMesh_ShadingNormal(); }
 } testDescription_TriangleMeshTestSuite_test_TriangleMesh_ShadingNormal;
 

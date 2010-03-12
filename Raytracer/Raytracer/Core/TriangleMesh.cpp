@@ -123,10 +123,11 @@ bool TriangleMesh::IllegalTrianglePredicate::operator()(const MeshTriangle &i_tr
 
 /////////////// TriangleMesh ////////////////
 
-TriangleMesh::TriangleMesh(const std::vector<Point3D_f> &i_vertices, const std::vector<MeshTriangle> &i_triangles, bool i_use_shading_normals):
+TriangleMesh::TriangleMesh(const std::vector<Point3D_f> &i_vertices, const std::vector<MeshTriangle> &i_triangles, bool i_use_shading_normals, bool i_invert_normals):
 m_vertices(i_vertices.begin(),i_vertices.end()),
 m_triangles(i_triangles.begin(), i_triangles.end()),
-m_use_shading_normals(i_use_shading_normals)
+m_use_shading_normals(i_use_shading_normals),
+m_invert_normals(i_invert_normals)
   {
   bool invalid_triangles_exist=false;
   for(size_t i=0;i<m_triangles.size();++i)
@@ -152,12 +153,17 @@ m_use_shading_normals(i_use_shading_normals)
   else
     {
     m_bbox = BBox3D_f();
+    m_area = 0.f;
     for(size_t i=0;i<m_triangles.size();++i)
       {
       const MeshTriangle &triangle = m_triangles[i];
-      m_bbox = Union(m_bbox, GetVertex(triangle.m_vertices[0]));
-      m_bbox = Union(m_bbox, GetVertex(triangle.m_vertices[1]));
-      m_bbox = Union(m_bbox, GetVertex(triangle.m_vertices[2]));
+      Triangle3D_f triangle_3D = Triangle3D_f(GetVertex(triangle.m_vertices[0]), GetVertex(triangle.m_vertices[1]), GetVertex(triangle.m_vertices[2]));
+
+      m_bbox = Union(m_bbox, triangle_3D[0]);
+      m_bbox = Union(m_bbox, triangle_3D[1]);
+      m_bbox = Union(m_bbox, triangle_3D[2]);
+
+      m_area += triangle_3D.GetArea();
       }
     }
 
@@ -401,14 +407,23 @@ void TriangleMesh::ComputeDifferentialGeometry(size_t i_triangle_index, const Ra
   b0 = 1.0 - b1 - b2;
   o_dg.m_uv=b0*uv[0] + b1*uv[1] + b2*uv[2];
 
-  o_dg.m_geometric_normal=Vector3D_d(vertices[1]-vertices[0])^Vector3D_d(vertices[2]-vertices[0]);
-  o_dg.m_geometric_normal.Normalize();
-
   // Get shading normals at the vertices.
   Vector3D_d vertex_normals[3] = {
     Convert<double>(m_shading_normals[triangle.m_vertices[0]]),
     Convert<double>(m_shading_normals[triangle.m_vertices[1]]),
     Convert<double>(m_shading_normals[triangle.m_vertices[2]])};
+
+  if (m_invert_normals)
+    {
+    o_dg.m_geometric_normal=Vector3D_d(vertices[2]-vertices[0])^Vector3D_d(vertices[1]-vertices[0]);
+    vertex_normals[0] *= -1.0;
+    vertex_normals[1] *= -1.0;
+    vertex_normals[2] *= -1.0;
+    }
+  else
+    o_dg.m_geometric_normal=Vector3D_d(vertices[1]-vertices[0])^Vector3D_d(vertices[2]-vertices[0]);
+
+  o_dg.m_geometric_normal.Normalize();
 
   // Compute shading normal.
   if (m_use_shading_normals)
@@ -455,5 +470,10 @@ void TriangleMesh::ComputeDifferentialGeometry(size_t i_triangle_index, const Ra
 
 void TriangleMesh::SetUseShadingNormals(bool i_use_shading_normals)
   {
-  m_use_shading_normals=i_use_shading_normals;
+  m_use_shading_normals = i_use_shading_normals;
+  }
+
+void TriangleMesh::SetInvertNormals(bool i_invert_normals)
+  {
+  m_invert_normals = i_invert_normals;
   }
