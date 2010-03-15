@@ -53,6 +53,9 @@ void StratifiedSubSampler::_GetSample(const Point2D_i &i_current_pixel, size_t i
     {
     SamplesSequence1D sequence = op_sample->GetSamplesSequence1D(i);
     SamplingRoutines::StratifiedSampling1D(sequence.m_begin, std::distance(sequence.m_begin, sequence.m_end), true, p_rng);
+
+    // Shuffle samples to de-correlate them from other sample sequences.
+    SamplingRoutines::Shuffle(sequence.m_begin, std::distance(sequence.m_begin, sequence.m_end), p_rng);
     }
 
   for(size_t i=0;i<op_sample->GetNumberOfSamplesSequences2D();++i)
@@ -63,6 +66,9 @@ void StratifiedSubSampler::_GetSample(const Point2D_i &i_current_pixel, size_t i
     ASSERT(samples_num_sqrt*samples_num_sqrt == std::distance(sequence.m_begin, sequence.m_end));
 
     SamplingRoutines::StratifiedSampling2D(sequence.m_begin, samples_num_sqrt, samples_num_sqrt, true, p_rng);
+
+    // Shuffle samples to de-correlate them from other sample sequences.
+    SamplingRoutines::Shuffle(sequence.m_begin, std::distance(sequence.m_begin, sequence.m_end), p_rng);
     }
   }
 
