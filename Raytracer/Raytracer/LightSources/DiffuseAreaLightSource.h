@@ -56,6 +56,7 @@ class DiffuseAreaLightSource: public AreaLightSource
 
     /**
     * Samples outgoing light ray.
+    * The direction sampling PDF is proportional to theta angle cosine.
     * @param i_triangle_sample 1D sample value used to select the light source triangle. Should be in [0;1) range.
     * @param i_position_sample 2D sample used to sample photon ray origin. Should be in [0;1)^2 range.
     * @param i_direction_sample 2D sample used to sample photon ray direction. Should be in [0;1)^2 range.
