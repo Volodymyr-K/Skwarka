@@ -580,6 +580,14 @@
 						>
 					</File>
 				</Filter>
+				<Filter
+					Name="LTEIntegrators"
+					>
+					<File
+						RelativePath=".\PhotonLTEIntegrator.test.h"
+						>
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="Shapes"
@@ -762,6 +770,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\PhotonLTEIntegrator.test.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Point2D.test.cpp"
 				>
 			</File>
@@ -846,7 +858,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ThreadSafeRandom.Test.cpp"
+				RelativePath=".\ThreadSafeRandom.test.cpp"
 				>
 			</File>
 			<File

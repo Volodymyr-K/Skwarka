@@ -635,6 +635,10 @@
 					RelativePath=".\LTEIntegrators\DirectLightingLTEIntegrator.h"
 					>
 				</File>
+				<File
+					RelativePath=".\LTEIntegrators\PhotonLTEIntegrator.h"
+					>
+				</File>
 			</Filter>
 			<Filter
 				Name="Source Files"
@@ -643,6 +647,22 @@
 					RelativePath=".\LTEIntegrators\DirectLightingLTEIntegrator.cpp"
 					>
 				</File>
+				<Filter
+					Name="PhotonLTEIntegrator"
+					>
+					<File
+						RelativePath=".\LTEIntegrators\PhotonLTEIntegrator\PhotonInternalTypes.h"
+						>
+					</File>
+					<File
+						RelativePath=".\LTEIntegrators\PhotonLTEIntegrator\PhotonLTEIntegrator.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\LTEIntegrators\PhotonLTEIntegrator\PhotonShootingPipeline.cpp"
+						>
+					</File>
+				</Filter>
 			</Filter>
 		</Filter>
 		<Filter

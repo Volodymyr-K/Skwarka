@@ -42,11 +42,18 @@ class KDTreeTestSuite : public CxxTest::TestSuite
         m_points.push_back(m_points[i]);
 
       mp_kdtree.reset(new KDTree<Point3D_d>(m_points));
+
+      m_number_of_points = N + 100;
       }
 
     void tearDown()
       {
       // Nothing to clear.
+      }
+
+    void test_KDTree_GetNumberOfPoints()
+      {
+      TS_ASSERT_EQUALS(mp_kdtree->GetNumberOfPoints(), m_number_of_points);
       }
 
     void test_KDTree_NearestPoint()
@@ -227,6 +234,22 @@ class KDTreeTestSuite : public CxxTest::TestSuite
         }
       }
 
+
+    void test_KDTree_EmptyTree()
+      {
+      std::vector<Point3D_d> points;
+
+      shared_ptr<KDTree<Point3D_d> > p_kdtree (new KDTree<Point3D_d>(points));
+      TS_ASSERT_EQUALS(p_kdtree->GetNumberOfPoints(), 0);
+
+      const Point3D_d *p_nearest = p_kdtree->GetNearestPoint(Point3D_d());
+      TS_ASSERT(p_nearest == NULL);
+
+      std::vector<KDTree<Point3D_d>::NearestPoint> nearest_points(10);
+      size_t found = p_kdtree->GetNearestPoints(Point3D_d(), 10, &(nearest_points[0]));
+      TS_ASSERT_EQUALS(found, 0);
+      }
+
     // This test just tests that KDTree can be instantiated with any type that has operator[] returning double.
     void test_KDTree_VectorType()
       {
@@ -252,6 +275,8 @@ class KDTreeTestSuite : public CxxTest::TestSuite
   private:
     shared_ptr<KDTree<Point3D_d> > mp_kdtree;
     std::vector<Point3D_d> m_points;
+
+    size_t m_number_of_points;
   };
 
 #endif // KDTREE_TEST_H

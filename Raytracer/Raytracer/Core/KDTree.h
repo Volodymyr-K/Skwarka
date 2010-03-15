@@ -31,6 +31,11 @@ class KDTree
     KDTree(const std::vector<TPoint3D> &i_points);
 
     /**
+    * Returns number of points stored in the tree.
+    */
+    size_t GetNumberOfPoints() const;
+
+    /**
     * Performs generic lookup operation on the tree for the specified 3D point.
     * The template parameter defines the callback class which is called on each point within the specified range. The LookupProc type must define the following method:
     * void operator()(const TPoint3D &i_node_point, double i_distance_sqr, double &io_max_distance_sqr)
@@ -365,6 +370,9 @@ KDTree<TPoint3D>::KDTree(const std::vector<TPoint3D> &i_points)
   m_nodes.assign(points_num, Node());
   m_points.assign(points_num, TPoint3D());
 
+  if (points_num == 0)
+    return;
+
   // We use array of pointers for doing an effective sorting. We swap pointers instead of actual values.
   typedef const TPoint3D *TPoint3D_Ptr;
   TPoint3D_Ptr *p_points_refs = new TPoint3D_Ptr[points_num];
@@ -377,6 +385,12 @@ KDTree<TPoint3D>::KDTree(const std::vector<TPoint3D> &i_points)
   ASSERT(next_free_node_index == points_num);
 
   delete[] p_points_refs;
+  }
+
+template<typename TPoint3D>
+size_t KDTree<TPoint3D>::GetNumberOfPoints() const
+  {
+  return m_points.size();
   }
 
 template<typename TPoint3D>
@@ -499,6 +513,9 @@ template<typename LookupProc>
 void KDTree<TPoint3D>::_Lookup(size_t i_node_index, const Point3D_d &i_point, LookupProc &i_proc, double &io_max_distance_sqr) const
   {
   ASSERT(io_max_distance_sqr >= 0.0);
+  if (m_nodes.size()==0)
+    return;
+
   const Node *p_node = &m_nodes[i_node_index];
   const TPoint3D &node_point = m_points[i_node_index];
 

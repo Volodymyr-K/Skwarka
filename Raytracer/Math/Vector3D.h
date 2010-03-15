@@ -265,7 +265,8 @@ Vector3D<T> Vector3D<T>::Normalized() const
 template<typename T>
 bool Vector3D<T>::IsNormalized() const
   {
-  return fabs(LengthSqr()-1.0)<DBL_3D_EPS;
+  // The epsilon value has been increased to account for the rounding error when converting vectors between float and double.
+  return fabs(LengthSqr()-1.0) < (3e-7);
   }
 
 template<typename T>
