@@ -165,7 +165,7 @@ void* PhotonLTEIntegrator::PhotonsShootingFilter::operator()(void* ip_chunk)
         /*
         Important!
         We deposit indirect photons even on specular surfaces.
-        These are used later at the final gathering step when specular surface are approximated by a lambertian one.
+        These are used later at the final gathering step when specular surfaces are approximated by a lambertian one.
         Although this brings error to the final image it is usually not so bad since indirect photons are pretty equally distributed in the scene.
         This is probably the fastest method to deal with this kind of problem (e.g. pbrt does not account for this at all by returning black radiance for such final gather rays).
         */

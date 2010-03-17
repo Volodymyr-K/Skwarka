@@ -9,16 +9,6 @@ mp_scene(ip_scene), mp_volume_integrator(ip_volume_integrator), m_lights_samples
   {
   ASSERT(ip_scene);
 
-  if (i_lights_samples_num>=0)
-    m_lights_samples_num = i_lights_samples_num;
-  else
-    m_lights_samples_num = 0;
-
-  if (i_bsdf_samples_num>=0)
-    m_bsdf_samples_num = i_bsdf_samples_num;
-  else
-    m_bsdf_samples_num = 0;
-
   if (ip_lights_sampling_strategy)
     mp_lights_sampling_strategy = ip_lights_sampling_strategy;
   else

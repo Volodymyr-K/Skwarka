@@ -41,14 +41,13 @@ class PhotonLTEIntegratorTestSuite : public CxxTest::TestSuite
       intrusive_ptr<Scene> p_scene( new Scene(primitives, lights) );
       intrusive_ptr<Sampler> p_sampler = _CreaterSampler();
 
-      intrusive_ptr<DirectLightingIntegrator> p_direct_lighting_integrator( new DirectLightingIntegrator(p_scene, NULL, 4096, 4096) );
-
       PhotonLTEIntegratorParams params;
-      params.m_gather_samples=1024*16;
+      params.m_direct_light_samples_num=4096;
+      params.m_gather_samples_num=1024*16;
       params.m_caustic_lookup_photons_num=100; // no need to set caustic-related fields actually
       params.m_max_caustic_lookup_dist=0.01;
       params.m_max_specular_depth=6; // no need since there's no specular objects actually
-      intrusive_ptr<PhotonLTEIntegrator> p_photon_lte_integrator( new PhotonLTEIntegrator(p_scene, NULL, p_direct_lighting_integrator, params) );
+      intrusive_ptr<PhotonLTEIntegrator> p_photon_lte_integrator( new PhotonLTEIntegrator(p_scene, NULL, params) );
       p_photon_lte_integrator->ShootPhotons(0,20000,100000);
 
       p_photon_lte_integrator->RequestSamples(p_sampler);
@@ -82,14 +81,13 @@ class PhotonLTEIntegratorTestSuite : public CxxTest::TestSuite
       intrusive_ptr<Scene> p_scene( new Scene(primitives, lights) );
       intrusive_ptr<Sampler> p_sampler = _CreaterSampler();
 
-      intrusive_ptr<DirectLightingIntegrator> p_direct_lighting_integrator( new DirectLightingIntegrator(p_scene, NULL, 4096, 4096) );
-
       PhotonLTEIntegratorParams params;
-      params.m_gather_samples=1024*16;
+      params.m_direct_light_samples_num=4096;
+      params.m_gather_samples_num=1024*16;
       params.m_caustic_lookup_photons_num=100; // no need to set caustic-related fields actually
       params.m_max_caustic_lookup_dist=0.01;
       params.m_max_specular_depth=6; // no need since there's no specular objects actually
-      intrusive_ptr<PhotonLTEIntegrator> p_photon_lte_integrator( new PhotonLTEIntegrator(p_scene, NULL, p_direct_lighting_integrator, params) );
+      intrusive_ptr<PhotonLTEIntegrator> p_photon_lte_integrator( new PhotonLTEIntegrator(p_scene, NULL, params) );
       p_photon_lte_integrator->ShootPhotons(0,20000,100000);
 
       p_photon_lte_integrator->RequestSamples(p_sampler);
@@ -126,14 +124,13 @@ class PhotonLTEIntegratorTestSuite : public CxxTest::TestSuite
       intrusive_ptr<Scene> p_scene( new Scene(primitives, lights) );
       intrusive_ptr<Sampler> p_sampler = _CreaterSampler();
 
-      intrusive_ptr<DirectLightingIntegrator> p_direct_lighting_integrator( new DirectLightingIntegrator(p_scene, NULL, 4096, 4096) );
-
       PhotonLTEIntegratorParams params;
-      params.m_gather_samples=1024*16;
+      params.m_direct_light_samples_num=4096;
+      params.m_gather_samples_num=1024*16;
       params.m_caustic_lookup_photons_num=100; // no need to set caustic-related fields actually
       params.m_max_caustic_lookup_dist=0.01;
       params.m_max_specular_depth=6; // no need since there's no specular objects actually
-      intrusive_ptr<PhotonLTEIntegrator> p_photon_lte_integrator( new PhotonLTEIntegrator(p_scene, NULL, p_direct_lighting_integrator, params) );
+      intrusive_ptr<PhotonLTEIntegrator> p_photon_lte_integrator( new PhotonLTEIntegrator(p_scene, NULL, params) );
       p_photon_lte_integrator->ShootPhotons(0,20000,20000);
 
       p_photon_lte_integrator->RequestSamples(p_sampler);

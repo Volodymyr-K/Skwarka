@@ -25,13 +25,13 @@ public:
 
 static class TestDescription_PhotonLTEIntegratorTestSuite_test_PhotonLTEIntegrator_PointLightInSphere : public CxxTest::RealTestDescription {
 public:
- TestDescription_PhotonLTEIntegratorTestSuite_test_PhotonLTEIntegrator_PointLightInSphere() : CxxTest::RealTestDescription( Tests_PhotonLTEIntegratorTestSuite, suiteDescription_PhotonLTEIntegratorTestSuite, 71, "test_PhotonLTEIntegrator_PointLightInSphere" ) {}
+ TestDescription_PhotonLTEIntegratorTestSuite_test_PhotonLTEIntegrator_PointLightInSphere() : CxxTest::RealTestDescription( Tests_PhotonLTEIntegratorTestSuite, suiteDescription_PhotonLTEIntegratorTestSuite, 70, "test_PhotonLTEIntegrator_PointLightInSphere" ) {}
  void runTest() { suite_PhotonLTEIntegratorTestSuite.test_PhotonLTEIntegrator_PointLightInSphere(); }
 } testDescription_PhotonLTEIntegratorTestSuite_test_PhotonLTEIntegrator_PointLightInSphere;
 
 static class TestDescription_PhotonLTEIntegratorTestSuite_test_PhotonLTEIntegrator_InfinityLight : public CxxTest::RealTestDescription {
 public:
- TestDescription_PhotonLTEIntegratorTestSuite_test_PhotonLTEIntegrator_InfinityLight() : CxxTest::RealTestDescription( Tests_PhotonLTEIntegratorTestSuite, suiteDescription_PhotonLTEIntegratorTestSuite, 112, "test_PhotonLTEIntegrator_InfinityLight" ) {}
+ TestDescription_PhotonLTEIntegratorTestSuite_test_PhotonLTEIntegrator_InfinityLight() : CxxTest::RealTestDescription( Tests_PhotonLTEIntegratorTestSuite, suiteDescription_PhotonLTEIntegratorTestSuite, 110, "test_PhotonLTEIntegrator_InfinityLight" ) {}
  void runTest() { suite_PhotonLTEIntegratorTestSuite.test_PhotonLTEIntegrator_InfinityLight(); }
 } testDescription_PhotonLTEIntegratorTestSuite_test_PhotonLTEIntegrator_InfinityLight;
 

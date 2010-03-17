@@ -6,6 +6,24 @@
 #include <Raytracer/Core/DirectLightingIntegrator.h>
 
 /**
+* DTO for parameters for DirectLightingLTEIntegrator.
+* @sa DirectLightingLTEIntegrator
+*/
+struct DirectLightingLTEIntegratorParams
+  {
+  /**
+  * Number of samples for direct lighting estimation.
+  * The actual number of shadow rays traced will be twice the number because we sample both BSDF and light sources.
+  */
+  size_t m_direct_light_samples_num;
+
+  /**
+  * Maximum specular depth for specular reflections and refractions.
+  */
+  size_t m_max_specular_depth;
+  };
+
+/**
 * LTEIntegrator implementation that accounts for direct lighting only, i.e. for the light coming from all light sources
 * that are not occluded by any object in the scene (except for volume regions).
 * The class uses DirectLightingIntegrator class to compute the direct lighting and traces rays for specular reflection and specular refraction.
@@ -17,11 +35,9 @@ class DirectLightingLTEIntegrator: public LTEIntegrator
     * Creates DirectLightingLTEIntegrator instance.
     * @param ip_scene Scene instance. Should not be NULL.
     * @param ip_volume_integrator Volume integrator for computing volume radiance and transmittance. Can be NULL in which case it is assumed there is no participating media.
-    * @param ip_direct_lighting_integrator DirectLightingIntegrator for computing direct illumination. Should not be NULL.
-    * @param i_max_specular_depth Maximum specular depth.
+    * @param i_params Integrator parameters.
     */
-    DirectLightingLTEIntegrator(intrusive_ptr<const Scene> ip_scene, intrusive_ptr<VolumeIntegrator> ip_volume_integrator,
-      intrusive_ptr<DirectLightingIntegrator> ip_direct_lighting_integrator, size_t i_max_specular_depth = 6);
+    DirectLightingLTEIntegrator(intrusive_ptr<const Scene> ip_scene, intrusive_ptr<VolumeIntegrator> ip_volume_integrator, DirectLightingLTEIntegratorParams i_params);
 
   private:
     /**
@@ -44,7 +60,7 @@ class DirectLightingLTEIntegrator: public LTEIntegrator
   private:
     intrusive_ptr<DirectLightingIntegrator> mp_direct_lighting_integrator;
 
-    size_t m_max_specular_depth;
+    DirectLightingLTEIntegratorParams m_params;
   };
 
 #endif // DIRECT_LIGHTING_LTE_INTEGRATOR_H

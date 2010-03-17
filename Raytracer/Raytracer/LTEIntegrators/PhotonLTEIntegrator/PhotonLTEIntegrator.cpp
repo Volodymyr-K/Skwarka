@@ -10,13 +10,12 @@
 const double PhotonLTEIntegrator::MAX_NORMAL_DEVIATION_COS = 0.87;
 
 //////////////////////////////////////// PhotonLTEIntegrator /////////////////////////////////////////////
-PhotonLTEIntegrator::PhotonLTEIntegrator(intrusive_ptr<const Scene> ip_scene, intrusive_ptr<VolumeIntegrator> ip_volume_integrator,
-                                         intrusive_ptr<DirectLightingIntegrator> ip_direct_lighting_integrator,
-                                         PhotonLTEIntegratorParams i_params):
-LTEIntegrator(ip_scene, ip_volume_integrator), mp_scene(ip_scene), mp_direct_lighting_integrator(ip_direct_lighting_integrator), m_params(i_params)
+PhotonLTEIntegrator::PhotonLTEIntegrator(intrusive_ptr<const Scene> ip_scene, intrusive_ptr<VolumeIntegrator> ip_volume_integrator, PhotonLTEIntegratorParams i_params):
+LTEIntegrator(ip_scene, ip_volume_integrator), mp_scene(ip_scene), m_params(i_params)
   {
   ASSERT(ip_scene);
-  ASSERT(ip_direct_lighting_integrator);
+
+  mp_direct_lighting_integrator.reset(new DirectLightingIntegrator(ip_scene, ip_volume_integrator, i_params.m_direct_light_samples_num, i_params.m_direct_light_samples_num));
 
   if (m_params.m_max_specular_depth > 50)
     m_params.m_max_specular_depth = 50;
@@ -32,18 +31,18 @@ void PhotonLTEIntegrator::_RequestSamples(intrusive_ptr<Sampler> ip_sampler)
   ASSERT(ip_sampler);
   mp_direct_lighting_integrator->RequestSamples(ip_sampler);
 
-  if (m_params.m_gather_samples>0)
+  if (m_params.m_gather_samples_num>0)
     {
-    size_t gather_samples = m_params.m_gather_samples;
+    size_t gather_samples_num = m_params.m_gather_samples_num;
 
-    m_bsdf_1D_samples_id = ip_sampler->AddSamplesSequence1D(gather_samples, &gather_samples);
-    m_bsdf_2D_samples_id = ip_sampler->AddSamplesSequence2D(gather_samples, &gather_samples);
+    m_bsdf_1D_samples_id = ip_sampler->AddSamplesSequence1D(gather_samples_num, &gather_samples_num);
+    m_bsdf_2D_samples_id = ip_sampler->AddSamplesSequence2D(gather_samples_num, &gather_samples_num);
 
-    m_direction_1D_samples_id = ip_sampler->AddSamplesSequence1D(gather_samples, &gather_samples);
-    m_direction_2D_samples_id = ip_sampler->AddSamplesSequence2D(gather_samples, &gather_samples);
+    m_direction_1D_samples_id = ip_sampler->AddSamplesSequence1D(gather_samples_num, &gather_samples_num);
+    m_direction_2D_samples_id = ip_sampler->AddSamplesSequence2D(gather_samples_num, &gather_samples_num);
 
-    ASSERT(gather_samples >= m_params.m_gather_samples);
-    m_params.m_gather_samples = gather_samples;
+    ASSERT(gather_samples_num >= m_params.m_gather_samples_num);
+    m_params.m_gather_samples_num = gather_samples_num;
     }
   }
 
@@ -310,7 +309,7 @@ Spectrum_d PhotonLTEIntegrator::_FinalGather(const Intersection &i_intersection,
   const double cone_pdf = SamplingRoutines::UniformConePDF(cos_gather_angle);
 
   BxDFType non_specular = BxDFType(BSDF_REFLECTION | BSDF_TRANSMISSION | BSDF_DIFFUSE | BSDF_GLOSSY);
-  size_t gather_samples = m_params.m_gather_samples;
+  size_t gather_samples = m_params.m_gather_samples_num;
   if (gather_samples == 0)
     return Spectrum_d();
 

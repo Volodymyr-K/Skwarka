@@ -35,7 +35,8 @@ class DirectLightingIntegrator: public ReferenceCounted
     * @param i_bsdf_samples_num Number of BSDF samples. Should be equal or greater than zero.
     * @param ip_lights_sampling_strategy Light sampling strategy implementation. If NULL, the default irradiance-based implementation will be used.
     */
-    DirectLightingIntegrator(intrusive_ptr<const Scene> ip_scene, intrusive_ptr<VolumeIntegrator> ip_volume_integrator, size_t i_lights_samples_num, size_t i_bsdf_samples_num, intrusive_ptr<const LightsSamplingStrategy> ip_lights_sampling_strategy = NULL);
+    DirectLightingIntegrator(intrusive_ptr<const Scene> ip_scene, intrusive_ptr<VolumeIntegrator> ip_volume_integrator,
+      size_t i_lights_samples_num, size_t i_bsdf_samples_num, intrusive_ptr<const LightsSamplingStrategy> ip_lights_sampling_strategy = NULL);
 
     /**
     * Requests 1D and 2D samples sequences needed for the direct lighting integrator.

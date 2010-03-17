@@ -13,6 +13,12 @@
 struct PhotonLTEIntegratorParams
   {
   /**
+  * Number of samples for direct lighting estimation.
+  * The actual number of shadow rays traced will be twice the number because we sample both BSDF and light sources.
+  */
+  size_t m_direct_light_samples_num;
+
+  /**
   * Number of nearby caustic photons to be interpolated when estimating caustic radiance.
   */
   size_t m_caustic_lookup_photons_num;
@@ -26,7 +32,7 @@ struct PhotonLTEIntegratorParams
   * Number of final gather rays.
   * The actual number of rays traced is actually twice the number because we sample both BSDF and nearby (indirect) photons for final gather directions.
   */
-  size_t m_gather_samples;
+  size_t m_gather_samples_num;
 
   /**
   * Maximum specular depth for specular reflections and refractions.
@@ -56,11 +62,9 @@ class PhotonLTEIntegrator: public LTEIntegrator
     * Creates PhotonLTEIntegrator instance.
     * @param ip_scene Scene instance. Should not be NULL.
     * @param ip_volume_integrator Volume integrator for computing volume radiance and transmittance. Can be NULL in which case it is assumed there is no participating media.
-    * @param ip_direct_lighting_integrator DirectLightingIntegrator for computing direct illumination. Should not be NULL.
     * @param i_params Integrator parameters.
     */
-    PhotonLTEIntegrator(intrusive_ptr<const Scene> ip_scene, intrusive_ptr<VolumeIntegrator> ip_volume_integrator,
-      intrusive_ptr<DirectLightingIntegrator> ip_direct_lighting_integrator, PhotonLTEIntegratorParams i_params);
+    PhotonLTEIntegrator(intrusive_ptr<const Scene> ip_scene, intrusive_ptr<VolumeIntegrator> ip_volume_integrator, PhotonLTEIntegratorParams i_params);
 
     /**
     * Shoot photons and construct photon maps.

@@ -55,9 +55,6 @@
 #include <Math/CompressedDirection.h>
 #include "EasyBMP.h"
 
-#include <set>
-#include <Raytracer/Core/KDTree.h>
-
 class TestTracer
   {
   public:
@@ -155,7 +152,7 @@ intrusive_ptr<Primitive> LoadMetalPrimitive(std::string i_filename, bool i_smoot
 inline void TestTracer::LoadMesh()
   {
   std::vector<intrusive_ptr<const Primitive> > primitives;
-
+/*
   primitives.push_back(LoadWallsPrimitive("stls/walls.stl", false));
   //primitives.push_back(LoadDiffusePrimitive("stls/walls.stl", false, Spectrum_d(248,244,180)/255.0));
   primitives.push_back(LoadDiffusePrimitive("stls/floor.stl", false, Spectrum_d(51,51,153)/255.0));
@@ -197,52 +194,74 @@ inline void TestTracer::LoadMesh()
   primitives.push_back(LoadDiffusePrimitive("stls/frying_pan2_handle.stl", false, Spectrum_d(50,50,50)/255.0));
   primitives.push_back(LoadMetalPrimitive("stls/frying_pan1.stl", true, Spectrum_d(240,40,50)/255.0, 0.1));
   primitives.push_back(LoadMetalPrimitive("stls/frying_pan2.stl", true, Spectrum_d(201,192,187)/255.0, 0.1));
+*/
+
+  intrusive_ptr<const Primitive> p_primitive = LoadDiffusePrimitive("sponza/sponza.stl", false, Spectrum_d(200,200,200)/255.0);
+  primitives.push_back(p_primitive);
+  BBox3D_d bbox = Convert<double>(p_primitive->GetTriangleMesh()->GetBounds());
+
+    {
+    intrusive_ptr<Texture<Spectrum_d> > p_refrlection(new ConstantTexture<Spectrum_d> (Spectrum_d(0.95)));
+    intrusive_ptr<Texture<double> > p_roughness(new ConstantTexture<double> (0.001));
+    intrusive_ptr<Material> p_material(new Metal(p_refrlection, p_roughness));
+
+    Sphere s;
+    s.SetParameter("Center","2 0 1.51");
+    s.SetParameter("Radius","1.5");
+    s.SetParameter("Subdivisions","7");
+    intrusive_ptr<TriangleMesh> p_sphere( s.BuildMesh() );
+    intrusive_ptr<Primitive> p_sphere_primitive(new Primitive(p_sphere, p_material, NULL));
+
+    primitives.push_back(p_sphere_primitive);
+    }
+
 
   LightSources lights;
 
-
-  intrusive_ptr<InfiniteLightSource> p_inf_light( new InfiniteLightSourceMock(0.9*Spectrum_d(200.0,220.0,250.0), BBox3D_d(Point3D_d(-3000,-5000,-500),Point3D_d(1500,1000,3500) ) ) );
-  //lights.m_infinitiy_light_sources.push_back(p_inf_light);
-
-/*
-  intrusive_ptr<DeltaLightSource> p_parallel_light( new ParallelLight(Vector3D_d(-0.3,-0.5,-0.2).Normalized(), 1.0*Spectrum_d(M_PI*500.0), BBox3D_d(Point3D_d(-3000,-5000,-500),Point3D_d(1500,1000,3500) ) ) );
-  lights.m_delta_light_sources.push_back(p_parallel_light);
-*/
+  intrusive_ptr<InfiniteLightSource> p_inf_light( new InfiniteLightSourceMock(5.5*Spectrum_d(200.0,220.0,250.0), bbox ) );
+  lights.m_infinitiy_light_sources.push_back(p_inf_light);
 
 
-  {
-  intrusive_ptr<Texture<Spectrum_d> > p_reflectance(new ConstantTexture<Spectrum_d> (Spectrum_d(212,175,55)/255.0*0.8));
-  intrusive_ptr<Texture<double> > p_sigma(new ConstantTexture<double> (0.04));
-  intrusive_ptr<Material> p_material(new Matte(p_reflectance, p_sigma));
+  intrusive_ptr<DeltaLightSource> p_parallel_light( new ParallelLight(Vector3D_d(-0.1,0.3,-1.0).Normalized(), 1.0*Spectrum_d(M_PI*300.0), bbox ) );
+//  lights.m_delta_light_sources.push_back(p_parallel_light);
 
-  Sphere s;
-  s.SetParameter("Center","-545 -1691 2130");
-  s.SetParameter("Radius","30");
-  s.SetParameter("Subdivisions","3");
-  intrusive_ptr<TriangleMesh> p_sphere( s.BuildMesh() );
-  intrusive_ptr<AreaLightSource> p_area_light( new DiffuseAreaLightSource(Spectrum_d(200000), p_sphere) );
-  intrusive_ptr<Primitive> p_sphere_primitive(new Primitive(p_sphere, p_material, p_area_light));
 
-  primitives.push_back(p_sphere_primitive);
-  lights.m_area_light_sources.push_back(p_area_light);
-  }
+  for(size_t x=0;x<4;++x) for(size_t y=0;y<2;++y)
+    {
+    intrusive_ptr<Texture<Spectrum_d> > p_reflectance(new ConstantTexture<Spectrum_d> (Spectrum_d(0.9)));
+    intrusive_ptr<Texture<double> > p_sigma(new ConstantTexture<double> (0.04));
+    intrusive_ptr<Material> p_material(new Matte(p_reflectance, p_sigma));
 
-  {
-  intrusive_ptr<Texture<Spectrum_d> > p_reflectance(new ConstantTexture<Spectrum_d> (Spectrum_d(212,175,55)/255.0*0.8));
-  intrusive_ptr<Texture<double> > p_sigma(new ConstantTexture<double> (0.04));
-  intrusive_ptr<Material> p_material(new Matte(p_reflectance, p_sigma));
+    std::string coord;
+    if (x==0) coord = "-4.3 ";
+    if (x==1) coord = "0.0 ";
+    if (x==2) coord = "4.4 ";
+    if (x==3) coord = "-8.8 ";
 
-  Sphere s;
-  s.SetParameter("Center","-1709 -600 1830");
-  s.SetParameter("Radius","30");
-  s.SetParameter("Subdivisions","3");
-  intrusive_ptr<TriangleMesh> p_sphere( s.BuildMesh() );
-  intrusive_ptr<AreaLightSource> p_area_light( new DiffuseAreaLightSource(Spectrum_d(300000), p_sphere) );
-  intrusive_ptr<Primitive> p_sphere_primitive(new Primitive(p_sphere, p_material, p_area_light));
+    if (y==0) coord = coord + "5.2 ";
+    if (y==1) coord = coord + "-5.2 ";
 
-  primitives.push_back(p_sphere_primitive);
-  lights.m_area_light_sources.push_back(p_area_light);
-  }
+    coord = coord + "4.4";
+
+    Spectrum_d color;
+    if (((x+y)%6)==0) color = Spectrum_d(1.0,0.4,0.4);
+    if (((x+y)%6)==1) color = Spectrum_d(0.4,1.0,0.4);
+    if (((x+y)%6)==2) color = Spectrum_d(0.4,0.4,1.0);
+    if (((x+y)%6)==3) color = Spectrum_d(1.0,1.0,0.4);
+    if (((x+y)%6)==4) color = Spectrum_d(0.4,1.0,1.0);
+    if (((x+y)%6)==5) color = Spectrum_d(1.0,0.4,1.0);
+
+    Sphere s;
+    s.SetParameter("Center",coord.c_str());
+    s.SetParameter("Radius","0.1");
+    s.SetParameter("Subdivisions","3");
+    intrusive_ptr<TriangleMesh> p_sphere( s.BuildMesh() );
+    intrusive_ptr<AreaLightSource> p_area_light( new DiffuseAreaLightSource(15000*color, p_sphere) );
+    intrusive_ptr<Primitive> p_sphere_primitive(new Primitive(p_sphere, p_material, p_area_light));
+
+    primitives.push_back(p_sphere_primitive);
+    lights.m_area_light_sources.push_back(p_area_light);
+    }
 
   mp_scene.reset(new Scene(primitives, lights));
   }
@@ -252,55 +271,38 @@ inline void TestTracer::RenderImage()
   FilmFilter *filter = new BoxFilter(0.5,0.5);
   //intrusive_ptr<InteractiveFilm> p_film(new InteractiveFilm(GetImageWidth(), GetImageHeight(), intrusive_ptr<FilmFilter>(filter)));
   intrusive_ptr<ImageFilm> p_film(new ImageFilm(GetImageWidth(), GetImageHeight(), intrusive_ptr<FilmFilter>(filter)));
-  //p_film->SetCropWindow(Point2D_i(40*2,40*2),Point2D_i(210*2,160*2));
+  //p_film->SetCropWindow(Point2D_i(290,300),Point2D_i(600,550));
 
   Point2D_i window_begin,window_end;
   p_film->GetSamplingExtent(window_begin, window_end);
 
-//  Vector3D_d direction = Vector3D_d(-2441-831,38+4831,1342-1194-2200).Normalized();
-//  intrusive_ptr<Camera> p_camera( new PerspectiveCamera( MakeLookAt(Point3D_d(-600,-1783,778)-direction*500,direction,Vector3D_d(0,0,1)), p_film, 0.001*12.000, 1300, 1.3) );
-
   // normal
-  Vector3D_d direction = Vector3D_d(-2441-831,-590+4331,1342-1194).Normalized();
-  intrusive_ptr<Camera> p_camera( new PerspectiveCamera( MakeLookAt(Point3D_d(831,-4331,1194),direction,Vector3D_d(0,0,1)), p_film, 0.001*12.000, 1300, 1.35) );
+  Point3D_d camera_pos(12,-1,7);
+  Point3D_d look_at(-4,.2,1.5);
+  Vector3D_d direction = Vector3D_d(look_at-camera_pos).Normalized();
+  intrusive_ptr<Camera> p_camera( new PerspectiveCamera( MakeLookAt(camera_pos,direction,Vector3D_d(0,0,1)), p_film, 0.001*12.000, 6, 1.22) );
 
-  // form the ceiling
-  //Vector3D_d direction = Vector3D_d(-2441-831,-590+4331,-170).Normalized();
-  //intrusive_ptr<Camera> p_camera( new PerspectiveCamera( MakeLookAt(Point3D_d(831,-4331,2900),direction,Vector3D_d(0,0,1)), p_film, 0.001*12.000, 1300, 1.35) );
-
-  // look at the back wall
-  //Vector3D_d direction = Vector3D_d(1,0.0,0).Normalized();
-  //intrusive_ptr<Camera> p_camera( new PerspectiveCamera( MakeLookAt(Point3D_d(-2100,-2500,1300),direction,Vector3D_d(0,0,1)), p_film, 0.001*12.000, 1300, 1.35) );
-
-  //intrusive_ptr<ImagePixelsOrder> pixel_order(new UniformImagePixelsOrder);
-  //intrusive_ptr<ImagePixelsOrder> pixel_order(new RandomBlockedImagePixelsOrder);
   intrusive_ptr<ImagePixelsOrder> pixel_order(new ConsecutiveImagePixelsOrder);
+  //intrusive_ptr<ImagePixelsOrder> pixel_order(new RandomBlockedImagePixelsOrder);
 
-  //intrusive_ptr<Sampler> p_sampler( new StratifiedSampler(window_begin, window_end, 2, 2/*, pixel_order*/) );
-  intrusive_ptr<Sampler> p_sampler( new LDSampler(window_begin, window_end, 8, pixel_order) );
-  //intrusive_ptr<Sampler> p_sampler( new RandomSampler(window_begin, window_end, 1/*, pixel_order*/) );
-
-  intrusive_ptr<LightsSamplingStrategy> p_sampling_strategy( new IrradianceLightsSampling(mp_scene->GetLightSources()) );
-
-  //intrusive_ptr<VolumeIntegrator> p_volume_int( new VolumeIntegratorMock() );
-  intrusive_ptr<DirectLightingIntegrator> p_direct_int( new DirectLightingIntegrator(mp_scene, NULL, 64, 16, /*121, 25,*/ p_sampling_strategy) );
-  //intrusive_ptr<LTEIntegrator> p_lte_int( new DirectLightingLTEIntegrator(mp_scene, NULL, p_direct_int, 6) );
+  intrusive_ptr<Sampler> p_sampler( new LDSampler(window_begin, window_end, 32, pixel_order) );
 
   PhotonLTEIntegratorParams params;
-  params.m_gather_samples=128/4;
+  params.m_direct_light_samples_num=128;
+  params.m_gather_samples_num=128*2;
   params.m_caustic_lookup_photons_num=100;
   params.m_max_caustic_lookup_dist=30;
   params.m_max_specular_depth=8;
-  intrusive_ptr<PhotonLTEIntegrator> p_lte_int( new PhotonLTEIntegrator(mp_scene, NULL, p_direct_int, params) );
-  //intrusive_ptr<DirectLightingLTEIntegrator> p_lte_int( new DirectLightingLTEIntegrator(mp_scene, NULL, p_direct_int, 6) );
+  intrusive_ptr<PhotonLTEIntegrator> p_lte_int( new PhotonLTEIntegrator(mp_scene, NULL, params) );
+  //intrusive_ptr<DirectLightingLTEIntegrator> p_lte_int( new DirectLightingLTEIntegrator(mp_scene, NULL, 6) );
 
   tbb::tick_count t0 = tbb::tick_count::now();
-  p_lte_int->ShootPhotons(4000000/1000, 1000000/3, 6000000/3);
+  p_lte_int->ShootPhotons(0, 1000000, 6000000);
   tbb::tick_count t1 = tbb::tick_count::now();
   printf("Shooting: %lf\n", (t1-t0).seconds());
 
   intrusive_ptr<SamplerBasedRenderer> p_renderer( new SamplerBasedRenderer(p_lte_int, p_sampler) );
-  p_renderer->SetDisplayUpdateCallback(mp_callback, 20.0);
+  p_renderer->SetDisplayUpdateCallback(mp_callback, 10.0);
 
   tbb::task_scheduler_init init;
   t0 = tbb::tick_count::now();
