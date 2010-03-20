@@ -140,12 +140,145 @@ PhotonLTEIntegrator::_LookupPhotonIrradiance(const Point3D_d &i_point, const Vec
   return std::make_pair(Convert<float>(external_irradiance * inv), Convert<float>(internal_irradiance * inv) );
   }
 
+void PhotonLTEIntegrator::_ConstructIrradiancePhotonMap(const PhotonLTEIntegrator::PhotonMaps &i_maps)
+  {
+  mp_irradiance_map.reset((KDTree<IrradiancePhoton>*)NULL);
+  if (i_maps.m_indirect_photons.empty())
+    return;
+
+  /*
+  The method selects 10% of indirect photons as positions for irradiance photons.
+  The indirect photons are selected so that they are distributed uniformly across the scene.
+  The idea is the following. The method first selects 1% of all of the indirect photons and adds them to the set of irradiance photons.
+
+  After that the whole range of indirect photons is subdivided in equal blocks. All blocks are processed one-be-one.
+  After processing each block a fixed fraction(10%) of the photons from this block is added to the set of irradiance photons.
+  The photons that get added from each block are the most distant ones from the current set of irradiance photons.
+  Here "distance" means the distance from indirect photon to the nearest irradiance photon from the set.
+  The reason we needed initial set of irradiance photon (1%) is that we used it for processing the very first block (otherwise the initial set would be empty).
+  
+  Doing so ensures that irradiance photons are not clumped and are distributed as evenly as possible.
+  We subdivide the indirect map in 10 blocks and select 10% of photons form each block (so that irradiance map has 10% of photons of the indirect map).
+  */
+
+  // Construct initial set of irradiance photons - take 1% of all of the indirect photons.
+  std::vector<IrradiancePhoton> irradiance_photons;
+  for(size_t i=0;i<i_maps.m_indirect_photons.size();i+=100)
+    irradiance_photons.push_back( IrradiancePhoton(i_maps.m_indirect_photons[i].m_point, Spectrum_f(), Spectrum_f(), i_maps.m_indirect_photons[i].m_normal) );
+
+  size_t block_size = std::max(i_maps.m_indirect_photons.size()/10, (size_t)1);
+  size_t photons_per_block = std::max(block_size/10, (size_t)1);
+  std::vector<double> min_squared_dists(block_size);
+  for(size_t j=0;j*block_size < i_maps.m_indirect_photons.size();++j)
+    {
+    // Construct KDTree with the current set of irradiance photons.
+    shared_ptr<const KDTree<IrradiancePhoton> > p_irradiance_map( new KDTree<IrradiancePhoton>(irradiance_photons) );
+
+    // Process all photons from the block and find the most distant ones. We use heap to do that efficiently.
+    std::vector<double> heap;
+    for(size_t i=0;i<block_size && j*block_size+i<i_maps.m_indirect_photons.size();++i)
+      {
+      size_t index = j*block_size+i;
+      Point3D_d photon_position = Convert<double>( i_maps.m_indirect_photons[index].m_point );
+      Vector3D_d photon_normal = i_maps.m_indirect_photons[index].m_normal.ToVector3D<double>();
+
+      IrradiancePhotonFilter filter(photon_position, photon_normal, MAX_NORMAL_DEVIATION_COS);
+      const IrradiancePhoton *p_irradiance_photon = p_irradiance_map->GetNearestPoint(photon_position, filter);
+
+      min_squared_dists[i] = p_irradiance_photon ? Vector3D_d(photon_position - Convert<double>(p_irradiance_photon->m_point)).LengthSqr() : DBL_INF;
+      if (heap.size()<photons_per_block)
+        {
+        heap.push_back(min_squared_dists[i]);
+
+        // If we found enough photons we make a heap from them.
+        if (heap.size() == photons_per_block)
+          std::make_heap(heap.begin(), heap.end(), std::greater<double>());
+        }
+      else
+        if (min_squared_dists[i]>heap[0])
+          {
+          // Remove the nearest photon from the heap and add new photon.
+          std::pop_heap(heap.begin(), heap.end(), std::greater<double>());
+          heap.back() = min_squared_dists[i];
+          std::push_heap(heap.begin(), heap.end(), std::greater<double>());
+          }
+      }
+
+    // Now that we know the distance threshold value (the very first element in the heap) we can pick the most distant photons.
+    double threshold = heap[0];
+    for(size_t i=0;i<block_size && j*block_size+i<i_maps.m_indirect_photons.size();++i)
+      if (min_squared_dists[i]>=threshold)
+        irradiance_photons.push_back( IrradiancePhoton(i_maps.m_indirect_photons[j*block_size+i].m_point, Spectrum_f(), Spectrum_f(), i_maps.m_indirect_photons[j*block_size+i].m_normal) );
+    }
+
+  if (irradiance_photons.empty())
+    return;
+
+  // Estimate lookup radius so that the corresponding area will contain required number of photons (in average).
+  // We multiply m_scene_total_area by 2 because each surface has two sides.
+  double direct_photon_area = i_maps.m_direct_photons.empty() ? 0.0 : 2.0*m_scene_total_area / i_maps.m_direct_photons.size();
+  double max_direct_lookup_dist = sqrt(direct_photon_area*LOOKUP_PHOTONS_NUM_FOR_IRRADIANCE*INV_PI);
+
+  double indirect_photon_area = i_maps.m_indirect_photons.empty() ? 0.0 : 2.0*m_scene_total_area / i_maps.m_indirect_photons.size();
+  double max_indirect_lookup_dist = sqrt(indirect_photon_area*LOOKUP_PHOTONS_NUM_FOR_IRRADIANCE*INV_PI);
+
+  // Not sure what's a better way to estimate caustic lookup radius.
+  double max_caustic_lookup_dist = std::max(max_direct_lookup_dist, max_indirect_lookup_dist);
+
+  // Compute irradiance value for each of the irradiance photons.
+  // We do that in multiple threads since all photons can be processed independently.
+  IrradiancePhotonProcess process(this, irradiance_photons, max_caustic_lookup_dist, max_direct_lookup_dist, max_indirect_lookup_dist);
+  tbb::parallel_for(tbb::blocked_range<size_t>(0,irradiance_photons.size()), process);
+
+  mp_irradiance_map.reset( new KDTree<IrradiancePhoton>(irradiance_photons) );
+
+  /*
+  Estimate maximum lookup distance for the irradiance photons.
+  We do that by finding the set of the most distant indirect photons to the set of irradiance photons.
+  The set contains 0.1% of all of the indirect photons. After we have the distances we take the smallest one from this set and use it as the maximum lookup distance.
+  That way we can say that for 99.9% of all points in the scene the nearest irradiance photon can be found within this distance.
+  Again, we use heap to keep the set of most distant photons.
+  */
+  std::vector<double> heap;
+  size_t max_heap_size = std::max(i_maps.m_indirect_photons.size()/1000, (size_t)1);
+  for(size_t i=0;i<i_maps.m_indirect_photons.size();++i)
+    {
+    Point3D_d photon_position = Convert<double>( i_maps.m_indirect_photons[i].m_point );
+    Vector3D_d photon_normal = i_maps.m_indirect_photons[i].m_normal.ToVector3D<double>();
+
+    IrradiancePhotonFilter filter(photon_position, photon_normal, MAX_NORMAL_DEVIATION_COS);
+    const IrradiancePhoton *p_irradiance_photon = mp_irradiance_map->GetNearestPoint(photon_position, filter);
+    double dist_sqr = p_irradiance_photon ? Vector3D_d(photon_position - Convert<double>(p_irradiance_photon->m_point)).LengthSqr() : DBL_INF;
+
+    if (heap.size()<max_heap_size)
+      {
+      heap.push_back(dist_sqr);
+
+      // If we found enough photons we make a heap from them.
+      if (heap.size() == max_heap_size)
+        std::make_heap(heap.begin(), heap.end(), std::greater<double>());
+      }
+    else
+      if (dist_sqr>heap[0])
+        {
+        // Remove the nearest photon from heap and add new photon.
+        std::pop_heap(heap.begin(), heap.end(), std::greater<double>());
+        heap.back() = dist_sqr;
+        std::push_heap(heap.begin(), heap.end(), std::greater<double>());
+        }
+    }
+
+  if (heap.empty())
+    m_max_irradiance_lookup_dist = DBL_INF;
+  else
+    m_max_irradiance_lookup_dist = sqrt(heap[0]);
+  }
+
 void PhotonLTEIntegrator::ShootPhotons(size_t i_caustic_photons, size_t i_direct_photons, size_t i_indirect_photons)
   {
   mp_caustic_map.reset((KDTree<Photon>*)NULL);
   mp_direct_map.reset((KDTree<Photon>*)NULL);
   mp_indirect_map.reset((KDTree<Photon>*)NULL);
-  mp_irradiance_map.reset((KDTree<IrradiancePhoton>*)NULL);
 
   const LightSources &lights = mp_scene->GetLightSources();
   if (lights.m_delta_light_sources.size() + lights.m_area_light_sources.size() + lights.m_infinitiy_light_sources.size() == 0)
@@ -184,56 +317,7 @@ void PhotonLTEIntegrator::ShootPhotons(size_t i_caustic_photons, size_t i_direct
   m_direct_paths = photon_maps.m_direct_paths;
   m_indirect_paths = photon_maps.m_indirect_paths;
 
-  // Select positions for irradiance photons.
-  // We pick each 10th photon from each photon map.
-  std::vector<IrradiancePhoton> irradiance_photons;
-  for(size_t i=0;i<photon_maps.m_caustic_photons.size();i+=10)
-    irradiance_photons.push_back( IrradiancePhoton(photon_maps.m_caustic_photons[i].m_point, Spectrum_f(), Spectrum_f(), photon_maps.m_caustic_photons[i].m_normal) );
-
-  for(size_t i=0;i<photon_maps.m_direct_photons.size();i+=10)
-    irradiance_photons.push_back( IrradiancePhoton(photon_maps.m_direct_photons[i].m_point, Spectrum_f(), Spectrum_f(), photon_maps.m_direct_photons[i].m_normal) );
-
-  for(size_t i=0;i<photon_maps.m_indirect_photons.size();i+=10)
-    irradiance_photons.push_back( IrradiancePhoton(photon_maps.m_indirect_photons[i].m_point, Spectrum_f(), Spectrum_f(), photon_maps.m_indirect_photons[i].m_normal) );
-
-  // Estimate lookup radius so that the corresponding area will hold required number of photons (in average).
-  // We multiply m_scene_total_area by 2 because each surface has two sides.
-  double direct_photon_area = photon_maps.m_direct_photons.empty() ? 0.0 : 2.0*m_scene_total_area / photon_maps.m_direct_photons.size();
-  double max_direct_lookup_dist = sqrt(direct_photon_area*LOOKUP_PHOTONS_NUM_FOR_IRRADIANCE*INV_PI);
-
-  double indirect_photon_area = photon_maps.m_indirect_photons.empty() ? 0.0 : 2.0*m_scene_total_area / photon_maps.m_indirect_photons.size();
-  double max_indirect_lookup_dist = sqrt(indirect_photon_area*LOOKUP_PHOTONS_NUM_FOR_IRRADIANCE*INV_PI);
-
-  // Not sure what's a better way to estimate caustic lookup radius.
-  double max_caustic_lookup_dist = std::max(max_direct_lookup_dist, max_indirect_lookup_dist);
-
-  NearestPhoton *p_nearest_photons = new NearestPhoton[LOOKUP_PHOTONS_NUM_FOR_IRRADIANCE];
-  for(size_t i=0;i<irradiance_photons.size();++i)
-    {
-    Point3D_d point = Convert<double>(irradiance_photons[i].m_point);
-    Vector3D_d normal = irradiance_photons[i].m_normal.ToVector3D<double>();
-
-    std::pair<Spectrum_f, Spectrum_f> caustic_irradiance  =
-      _LookupPhotonIrradiance(point, normal, mp_caustic_map, m_caustic_paths, LOOKUP_PHOTONS_NUM_FOR_IRRADIANCE, max_caustic_lookup_dist, p_nearest_photons);
-
-    std::pair<Spectrum_f, Spectrum_f> direct_irradiance   =
-      _LookupPhotonIrradiance(point, normal, mp_direct_map, m_direct_paths, LOOKUP_PHOTONS_NUM_FOR_IRRADIANCE, max_direct_lookup_dist, p_nearest_photons);
-
-    std::pair<Spectrum_f, Spectrum_f> indirect_irradiance =
-      _LookupPhotonIrradiance(point, normal, mp_indirect_map, m_indirect_paths, LOOKUP_PHOTONS_NUM_FOR_IRRADIANCE, max_indirect_lookup_dist, p_nearest_photons);
-
-    irradiance_photons[i].m_external_irradiance = caustic_irradiance.first+direct_irradiance.first+indirect_irradiance.first;
-    irradiance_photons[i].m_internal_irradiance = caustic_irradiance.second+direct_irradiance.second+indirect_irradiance.second;
-    }
-
-  // Free memory before building a new KDTree.
-  delete[] p_nearest_photons;
-  photon_maps.m_caustic_photons.swap(std::vector<Photon>());
-  photon_maps.m_direct_photons.swap(std::vector<Photon>());
-  photon_maps.m_indirect_photons.swap(std::vector<Photon>());
-
-  if (irradiance_photons.empty()==false)
-    mp_irradiance_map.reset( new KDTree<IrradiancePhoton>(irradiance_photons) );
+  _ConstructIrradiancePhotonMap(photon_maps);
   }
 
 Spectrum_d PhotonLTEIntegrator::_SurfaceRadiance(const RayDifferential &i_ray, const Intersection &i_intersection, const Sample *ip_sample, MemoryPool &i_pool) const
@@ -268,7 +352,7 @@ Spectrum_d PhotonLTEIntegrator::_SurfaceRadiance(const RayDifferential &i_ray, c
     SamplingRoutines::StratifiedSampling2D(bsdf_scattering_sequence.m_begin, samples_num_sqrt, samples_num_sqrt, false);
 
     IrradiancePhotonFilter filter(i_intersection.m_dg.m_point, i_intersection.m_dg.m_shading_normal, MAX_NORMAL_DEVIATION_COS);
-    const IrradiancePhoton *p_irradiance_photon = mp_irradiance_map->GetNearestPoint(i_intersection.m_dg.m_point, filter);
+    const IrradiancePhoton *p_irradiance_photon = mp_irradiance_map->GetNearestPoint(i_intersection.m_dg.m_point, filter, 0.005);
     if (p_irradiance_photon)
       {
       Spectrum_d tmp;
@@ -283,7 +367,7 @@ Spectrum_d PhotonLTEIntegrator::_SurfaceRadiance(const RayDifferential &i_ray, c
         tmp += p_bsdf->TotalScattering(incident, bsdf_scattering_sequence, BxDFType(BSDF_ALL_TRANSMISSION))*Convert<double>(p_irradiance_photon->m_external_irradiance);
         }
 
-      tmp *= INV_PI;
+      tmp *= INV_PI * 100;
       radiance += tmp;
       }
 */
@@ -463,7 +547,7 @@ Spectrum_d PhotonLTEIntegrator::_FinalGather(const Intersection &i_intersection,
       const BSDF *p_gather_BSDF = gather_isect.mp_primitive->GetBSDF(gather_isect.m_dg, gather_isect.m_triangle_index, i_pool);
 
       IrradiancePhotonFilter filter(gather_isect.m_dg.m_point, gather_isect.m_dg.m_shading_normal, MAX_NORMAL_DEVIATION_COS);
-      const IrradiancePhoton *p_irradiance_photon = mp_irradiance_map->GetNearestPoint(gather_isect.m_dg.m_point, filter);
+      const IrradiancePhoton *p_irradiance_photon = mp_irradiance_map->GetNearestPoint(gather_isect.m_dg.m_point, filter, m_max_irradiance_lookup_dist);
       if (p_irradiance_photon == NULL)
         continue;
 

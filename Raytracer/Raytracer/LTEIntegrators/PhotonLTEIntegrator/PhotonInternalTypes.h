@@ -9,6 +9,7 @@
 #include <MAth/CompressedDirection.h>
 #include <Raytracer/Core/Spectrum.h>
 #include <tbb/pipeline.h>
+#include <tbb/tbb.h>
 #include <vector>
 
 ////////////////////////////////////////////// Photon ///////////////////////////////////////////////////
@@ -155,6 +156,73 @@ class PhotonLTEIntegrator::IrradiancePhotonFilter
     Point3D_d m_surface_point;
     Vector3D_d m_surface_normal;
     double m_cos_threshold, m_sin_threshold;
+  };
+
+/////////////////////////////////////// IrradiancePhotonProcess ///////////////////////////////////////////
+
+/**
+* This class is a functor used by the TBB loop for estimating irradiance values for irradiance photons.
+*/
+class PhotonLTEIntegrator::IrradiancePhotonProcess
+  {
+  public:
+    IrradiancePhotonProcess(
+      const PhotonLTEIntegrator *ip_integrator, std::vector<IrradiancePhoton> &i_irradiance_photons,
+      double i_max_caustic_lookup_dist, double i_max_direct_lookup_dist, double i_max_indirect_lookup_dist):
+    mp_integrator(ip_integrator), m_irradiance_photons(i_irradiance_photons),
+    m_max_caustic_lookup_dist(i_max_caustic_lookup_dist), m_max_direct_lookup_dist(i_max_direct_lookup_dist), m_max_indirect_lookup_dist(i_max_indirect_lookup_dist)
+      {
+      ASSERT(ip_integrator);
+
+      mp_nearest_photons = new NearestPhoton[PhotonLTEIntegrator::LOOKUP_PHOTONS_NUM_FOR_IRRADIANCE];
+      }
+
+    /**
+    * Copy constructor.
+    * Each copy should have its own mp_nearest_photons array since it can't be shared by multiple threads.
+    */
+    IrradiancePhotonProcess(const IrradiancePhotonProcess &i_process):
+    mp_integrator(i_process.mp_integrator), m_irradiance_photons(i_process.m_irradiance_photons),
+    m_max_caustic_lookup_dist(i_process.m_max_caustic_lookup_dist), m_max_direct_lookup_dist(i_process.m_max_direct_lookup_dist), m_max_indirect_lookup_dist(i_process.m_max_indirect_lookup_dist)
+      {
+      mp_nearest_photons = new NearestPhoton[PhotonLTEIntegrator::LOOKUP_PHOTONS_NUM_FOR_IRRADIANCE];
+      }
+
+    void operator()(const tbb::blocked_range<size_t> &i_range) const
+      {
+      for(size_t i=i_range.begin();i!=i_range.end();++i)
+        {
+        Point3D_d point = Convert<double>(m_irradiance_photons[i].m_point);
+        Vector3D_d normal = m_irradiance_photons[i].m_normal.ToVector3D<double>();
+
+        std::pair<Spectrum_f, Spectrum_f> caustic_irradiance  =
+          mp_integrator->_LookupPhotonIrradiance(point, normal, mp_integrator->mp_caustic_map, mp_integrator->m_caustic_paths, LOOKUP_PHOTONS_NUM_FOR_IRRADIANCE, m_max_caustic_lookup_dist, mp_nearest_photons);
+
+        std::pair<Spectrum_f, Spectrum_f> direct_irradiance   =
+          mp_integrator->_LookupPhotonIrradiance(point, normal, mp_integrator->mp_direct_map, mp_integrator->m_direct_paths, LOOKUP_PHOTONS_NUM_FOR_IRRADIANCE, m_max_direct_lookup_dist, mp_nearest_photons);
+
+        std::pair<Spectrum_f, Spectrum_f> indirect_irradiance =
+          mp_integrator->_LookupPhotonIrradiance(point, normal, mp_integrator->mp_indirect_map, mp_integrator->m_indirect_paths, LOOKUP_PHOTONS_NUM_FOR_IRRADIANCE, m_max_indirect_lookup_dist, mp_nearest_photons);
+
+        m_irradiance_photons[i].m_external_irradiance = caustic_irradiance.first+direct_irradiance.first+indirect_irradiance.first;
+        m_irradiance_photons[i].m_internal_irradiance = caustic_irradiance.second+direct_irradiance.second+indirect_irradiance.second;
+        }
+      }
+
+    ~IrradiancePhotonProcess()
+      {
+      delete[] mp_nearest_photons;
+      }
+
+  private:
+    const PhotonLTEIntegrator *mp_integrator;
+    std::vector<IrradiancePhoton> &m_irradiance_photons;
+
+    // This array is used for storing nearest photons returned by the KDTree.
+    // This array is NOT shared by different copies of the functor.
+    NearestPhoton *mp_nearest_photons;
+
+    double m_max_caustic_lookup_dist, m_max_direct_lookup_dist, m_max_indirect_lookup_dist;
   };
 
 ///////////////////////////////////////////// PhotonMaps //////////////////////////////////////////////////

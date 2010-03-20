@@ -78,6 +78,20 @@ class PhotonLTEIntegrator: public LTEIntegrator
     void ShootPhotons(size_t i_caustic_photons, size_t i_direct_photons, size_t i_indirect_photons);
 
   private:
+    class PhotonFilter;
+    class IrradiancePhotonFilter;
+
+    // Used by multi-threaded TBB loop for estimating irradiance values for irradiance photons.
+    class IrradiancePhotonProcess;
+
+    // Private types, used for multi-threaded photon shooting.
+    struct PhotonMaps;
+    struct PhotonsChunk;
+    class PhotonsInputFilter;
+    class PhotonsShootingFilter;
+    class PhotonsMergingFilter;
+
+  private:
     /**
     * Requests 1D and 2D samples sequences needed for the surface part of the LTE integration.
     * The method requests samples sequences needed for final gathering.
@@ -126,16 +140,13 @@ class PhotonLTEIntegrator: public LTEIntegrator
     std::pair<Spectrum_f, Spectrum_f> _LookupPhotonIrradiance(const Point3D_d &i_point, const Vector3D_d &i_normal,
       shared_ptr<const KDTree<Photon> > ip_photon_map, size_t i_photon_paths, size_t i_lookup_photons_num, double i_max_lookup_dist, NearestPhoton *ip_nearest_photons) const;
 
-  private:    
-    class PhotonFilter;
-    class IrradiancePhotonFilter;
-
-    // Private types, used for multi-threaded photon shooting.
-    struct PhotonMaps;
-    struct PhotonsChunk;
-    class PhotonsInputFilter;
-    class PhotonsShootingFilter;
-    class PhotonsMergingFilter;
+    /**
+    * Creates irradiance photons and constructs KDTree for them.
+    * The method selects a fraction (10%) of all of the indirect photons as irradiance photons positions.
+    * The indirect photons are selected so that they are distributed as uniform across the scene as much as possible.
+    * The method also estimates maximum lookup distance for irradiance photons.  
+    */
+    void _ConstructIrradiancePhotonMap(const PhotonMaps &i_maps);
 
   private:
     /**
@@ -164,6 +175,8 @@ class PhotonLTEIntegrator: public LTEIntegrator
     * The value is precomputed once in constructor and used later for estimating maximum search radius.
     */
     double m_scene_total_area;
+
+    double m_max_irradiance_lookup_dist;
 
     intrusive_ptr<DirectLightingIntegrator> mp_direct_lighting_integrator;
 
