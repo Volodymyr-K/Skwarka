@@ -56,6 +56,12 @@ class KDTreeTestSuite : public CxxTest::TestSuite
       TS_ASSERT_EQUALS(mp_kdtree->GetNumberOfPoints(), m_number_of_points);
       }
 
+    void test_KDTree_GetAllPoints()
+      {
+      const std::vector<Point3D_d> &points = mp_kdtree->GetAllPoints();
+      TS_ASSERT_EQUALS(points.size(), m_number_of_points);
+      }
+
     void test_KDTree_NearestPoint()
       {
       size_t T=1000;

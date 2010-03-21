@@ -9,10 +9,10 @@
 ///////////////////////////////////////// PhotonsInputFilter //////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-PhotonLTEIntegrator::PhotonsInputFilter::PhotonsInputFilter(PhotonMaps *ip_photon_maps, size_t i_caustic_photons_num, size_t i_direct_photons_num, size_t i_indirect_photons_num,
+PhotonLTEIntegrator::PhotonsInputFilter::PhotonsInputFilter(PhotonMaps *ip_photon_maps, size_t i_caustic_photons_required, size_t i_direct_photons_required, size_t i_indirect_photons_required,
                                                             size_t i_number_of_chunks, size_t i_paths_per_chunk):
 filter(serial_out_of_order), mp_photon_maps(ip_photon_maps),
-m_caustic_photons_num(i_caustic_photons_num), m_direct_photons_num(i_direct_photons_num), m_indirect_photons_num(i_indirect_photons_num),
+m_caustic_photons_required(i_caustic_photons_required), m_direct_photons_required(i_direct_photons_required), m_indirect_photons_required(i_indirect_photons_required),
 m_paths_per_chunk(i_paths_per_chunk), m_next_chunk_index(0), m_total_paths(0)
   {
   ASSERT(ip_photon_maps);
@@ -32,9 +32,9 @@ PhotonLTEIntegrator::PhotonsInputFilter::~PhotonsInputFilter()
 void* PhotonLTEIntegrator::PhotonsInputFilter::operator()(void*)
   {
   // We don't get the size by calling std::vector::size() method because it is not thread-safe.
-  bool caustic_done = mp_photon_maps->m_caustic_size >= m_caustic_photons_num;
-  bool direct_done = mp_photon_maps->m_direct_size >= m_direct_photons_num;
-  bool indirect_done = mp_photon_maps->m_indirect_size >= m_indirect_photons_num;
+  bool caustic_done = mp_photon_maps->GetNumberOfCausticPhotons() >= m_caustic_photons_required;
+  bool direct_done = mp_photon_maps->GetNumberOfDirectPhotons() >= m_direct_photons_required;
+  bool indirect_done = mp_photon_maps->GetNumberOfIndirectPhotons() >= m_indirect_photons_required;
 
   if (caustic_done && direct_done && indirect_done)
     return NULL;
@@ -48,6 +48,8 @@ void* PhotonLTEIntegrator::PhotonsInputFilter::operator()(void*)
     m_next_chunk_index = (m_next_chunk_index+1) % m_chunks.size();
 
   PhotonsChunk *p_chunk = m_chunks[m_next_chunk_index];
+  m_next_chunk_index = (m_next_chunk_index+1) % m_chunks.size();
+
   p_chunk->m_available = false;
   p_chunk->m_paths_num = m_paths_per_chunk;
   p_chunk->m_first_path_index = m_total_paths;
@@ -61,11 +63,6 @@ void* PhotonLTEIntegrator::PhotonsInputFilter::operator()(void*)
   p_chunk->m_indirect_done = indirect_done;
 
   m_total_paths += m_paths_per_chunk;
-  m_next_chunk_index = (m_next_chunk_index+1) % m_chunks.size();
-
-  if (caustic_done == false) mp_photon_maps->m_caustic_paths += m_paths_per_chunk;
-  if (direct_done == false) mp_photon_maps->m_direct_paths += m_paths_per_chunk;
-  if (indirect_done == false) mp_photon_maps->m_indirect_paths += m_paths_per_chunk;
 
   return p_chunk;
   }
@@ -241,18 +238,147 @@ void* PhotonLTEIntegrator::PhotonsMergingFilter::operator()(void* ip_chunk)
   {
   PhotonsChunk *p_chunk = static_cast<PhotonsChunk*>(ip_chunk);
 
-  // Merge photons.
-  mp_photon_maps->m_caustic_photons.insert(mp_photon_maps->m_caustic_photons.end(), p_chunk->m_caustic_photons.begin(), p_chunk->m_caustic_photons.end());
-  mp_photon_maps->m_direct_photons.insert(mp_photon_maps->m_direct_photons.end(), p_chunk->m_direct_photons.begin(), p_chunk->m_direct_photons.end());
-  mp_photon_maps->m_indirect_photons.insert(mp_photon_maps->m_indirect_photons.end(), p_chunk->m_indirect_photons.begin(), p_chunk->m_indirect_photons.end());
+  if (p_chunk->m_caustic_done==false)
+    mp_photon_maps->AddCausticPhotons(p_chunk->m_caustic_photons, p_chunk->m_paths_num);
 
-  // Update number of photons in the shared repository.
-  mp_photon_maps->m_caustic_size = mp_photon_maps->m_caustic_photons.size();
-  mp_photon_maps->m_direct_size = mp_photon_maps->m_direct_photons.size();
-  mp_photon_maps->m_indirect_size = mp_photon_maps->m_indirect_photons.size();
+  if (p_chunk->m_direct_done==false)
+    mp_photon_maps->AddDirectPhotons(p_chunk->m_direct_photons, p_chunk->m_paths_num);
+
+  if (p_chunk->m_indirect_done==false)
+    mp_photon_maps->AddIndirectPhotons(p_chunk->m_indirect_photons, p_chunk->m_paths_num);
 
   // Release the chunk.
   p_chunk->m_available = true;
 
   return NULL;
+  }
+
+///////////////////////////////////////////// PhotonMaps //////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+PhotonLTEIntegrator::PhotonMaps::PhotonMaps()
+  {
+  m_caustic_photons_found = 0;
+  m_direct_photons_found = 0;
+  m_indirect_photons_found = 0;
+  m_caustic_paths = m_direct_paths = m_indirect_paths = 0;
+  }
+
+size_t PhotonLTEIntegrator::PhotonMaps::GetNumberOfCausticPhotons() const
+  {
+  return m_caustic_photons_found;
+  }
+
+size_t PhotonLTEIntegrator::PhotonMaps::GetNumberOfDirectPhotons() const
+  {
+  return m_direct_photons_found;
+  }
+
+size_t PhotonLTEIntegrator::PhotonMaps::GetNumberOfIndirectPhotons() const
+  {
+  return m_indirect_photons_found;
+  }
+
+void PhotonLTEIntegrator::PhotonMaps::AddCausticPhotons(const std::vector<Photon> &i_photons, size_t i_paths)
+  {
+  m_caustic_paths += i_paths;
+  m_caustic_photons_found += i_photons.size();
+
+  if (mp_caustic_map)
+    _AddPhotonsToKDTree(mp_caustic_map, i_photons);
+  else
+    if (m_caustic_photons_found >= PhotonLTEIntegrator::PhotonMaps::MAX_PHOTONS_IN_MAP)
+      {
+      mp_caustic_map.reset( new KDTree<Photon>(m_caustic_photons) );
+      m_caustic_photons.swap(std::vector<Photon>());
+
+      _AddPhotonsToKDTree(mp_caustic_map, i_photons);
+      }
+    else
+      m_caustic_photons.insert(m_caustic_photons.end(), i_photons.begin(), i_photons.end());
+  }
+
+void PhotonLTEIntegrator::PhotonMaps::AddDirectPhotons(const std::vector<Photon> &i_photons, size_t i_paths)
+  {
+  m_direct_paths += i_paths;
+  m_direct_photons_found += i_photons.size();
+
+  if (mp_direct_map)
+    _AddPhotonsToKDTree(mp_direct_map, i_photons);
+  else
+    if (m_direct_photons_found >= PhotonLTEIntegrator::PhotonMaps::MAX_PHOTONS_IN_MAP)
+      {
+      mp_direct_map.reset( new KDTree<Photon>(m_direct_photons) );
+      m_direct_photons.swap(std::vector<Photon>());
+
+      _AddPhotonsToKDTree(mp_direct_map, i_photons);
+      }
+    else
+      m_direct_photons.insert(m_direct_photons.end(), i_photons.begin(), i_photons.end());
+  }
+
+void PhotonLTEIntegrator::PhotonMaps::AddIndirectPhotons(const std::vector<Photon> &i_photons, size_t i_paths)
+  {
+  m_indirect_paths += i_paths;
+  m_indirect_photons_found += i_photons.size();
+
+  if (mp_indirect_map)
+    _AddPhotonsToKDTree(mp_indirect_map, i_photons);
+  else
+    if (m_indirect_photons_found >= PhotonLTEIntegrator::PhotonMaps::MAX_PHOTONS_IN_MAP)
+      {
+      mp_indirect_map.reset( new KDTree<Photon>(m_indirect_photons) );
+      m_indirect_photons.swap(std::vector<Photon>());
+
+      _AddPhotonsToKDTree(mp_indirect_map, i_photons);
+      }
+    else
+      m_indirect_photons.insert(m_indirect_photons.end(), i_photons.begin(), i_photons.end());
+  }
+
+shared_ptr<const KDTree<PhotonLTEIntegrator::Photon> > PhotonLTEIntegrator::PhotonMaps::GetCausticMap()
+  {
+  if (mp_caustic_map==NULL)
+    {
+    mp_caustic_map.reset( new KDTree<Photon>(m_caustic_photons) );
+    m_caustic_photons.swap(std::vector<Photon>());
+    }
+  return mp_caustic_map;
+  }
+
+shared_ptr<const KDTree<PhotonLTEIntegrator::Photon> > PhotonLTEIntegrator::PhotonMaps::GetDirectMap()
+  {
+  if (mp_direct_map==NULL)
+    {
+    mp_direct_map.reset( new KDTree<Photon>(m_direct_photons) );
+    m_direct_photons.swap(std::vector<Photon>());
+    }
+  return mp_direct_map;
+  }
+
+shared_ptr<const KDTree<PhotonLTEIntegrator::Photon> > PhotonLTEIntegrator::PhotonMaps::GetIndirectMap()
+  {
+  if (mp_indirect_map==NULL)
+    {
+    mp_indirect_map.reset( new KDTree<Photon>(m_indirect_photons) );
+    m_indirect_photons.swap(std::vector<Photon>());
+    }
+  return mp_indirect_map;
+  }
+
+void PhotonLTEIntegrator::PhotonMaps::_AddPhotonsToKDTree(shared_ptr<KDTree<Photon> > ip_map, const std::vector<Photon> &i_photons) const
+  {
+  ASSERT(ip_map);
+
+  for(size_t i=0;i<i_photons.size();++i)
+    {
+    const Photon &photon = i_photons[i];
+
+    PhotonFilter filter(Convert<double>(photon.m_point), photon.m_normal.ToVector3D<double>(), PhotonLTEIntegrator::MAX_NORMAL_DEVIATION_COS);
+    const Photon *p_nearest_photon = ip_map->GetNearestPoint(Convert<double>(photon.m_point), filter);
+    if (p_nearest_photon == NULL)
+      continue;
+
+    const_cast<Photon*>(p_nearest_photon)->m_weight += photon.m_weight;
+    }
   }

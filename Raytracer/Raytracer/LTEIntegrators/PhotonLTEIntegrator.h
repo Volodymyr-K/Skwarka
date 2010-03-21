@@ -67,10 +67,11 @@ class PhotonLTEIntegrator: public LTEIntegrator
     PhotonLTEIntegrator(intrusive_ptr<const Scene> ip_scene, intrusive_ptr<VolumeIntegrator> ip_volume_integrator, PhotonLTEIntegratorParams i_params);
 
     /**
-    * Shoot photons and construct photon maps.
+    * Shoots photons and construct photon maps.
     * The method takes number of photons of each type and traces photons until specified number of photons of each type is store.
-    * The method also constructs irradiance photon map.
-    * The old maps are cleared.
+    * The method also constructs irradiance photon map. The old maps are cleared.
+    * There is no upper bound on the number of photons. After certain number of photons of each type is found no new photons are added to the map,
+    * instead the existing photon's weights are getting updated. The maximum number of unique photons in the map is 6 000 000.
     * @param i_caustic_photons Minimum number of caustic photons to be stored.
     * @param i_direct_photons Minimum number of direct photons to be stored.
     * @param i_indirect_photons Minimum number of indirect photons to be stored.
@@ -85,7 +86,7 @@ class PhotonLTEIntegrator: public LTEIntegrator
     class IrradiancePhotonProcess;
 
     // Private types, used for multi-threaded photon shooting.
-    struct PhotonMaps;
+    class PhotonMaps;
     struct PhotonsChunk;
     class PhotonsInputFilter;
     class PhotonsShootingFilter;
@@ -146,7 +147,7 @@ class PhotonLTEIntegrator: public LTEIntegrator
     * The indirect photons are selected so that they are distributed as uniform across the scene as much as possible.
     * The method also estimates maximum lookup distance for irradiance photons.  
     */
-    void _ConstructIrradiancePhotonMap(const PhotonMaps &i_maps);
+    void _ConstructIrradiancePhotonMap();
 
   private:
     /**

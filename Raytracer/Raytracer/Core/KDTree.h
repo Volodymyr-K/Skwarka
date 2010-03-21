@@ -36,6 +36,11 @@ class KDTree
     size_t GetNumberOfPoints() const;
 
     /**
+    * Returns constant reference to a vector containing all points in the tree.
+    */
+    const std::vector<TPoint3D> &GetAllPoints() const;
+
+    /**
     * Performs generic lookup operation on the tree for the specified 3D point.
     * The template parameter defines the callback class which is called on each point within the specified range. The LookupProc type must define the following method:
     * void operator()(const TPoint3D &i_node_point, double i_distance_sqr, double &io_max_distance_sqr)
@@ -391,6 +396,12 @@ template<typename TPoint3D>
 size_t KDTree<TPoint3D>::GetNumberOfPoints() const
   {
   return m_points.size();
+  }
+
+template<typename TPoint3D>
+const std::vector<TPoint3D> &KDTree<TPoint3D>::GetAllPoints() const
+  {
+  return m_points;
   }
 
 template<typename TPoint3D>

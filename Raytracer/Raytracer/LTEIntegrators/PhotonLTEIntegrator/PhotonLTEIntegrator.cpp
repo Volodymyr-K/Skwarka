@@ -140,11 +140,10 @@ PhotonLTEIntegrator::_LookupPhotonIrradiance(const Point3D_d &i_point, const Vec
   return std::make_pair(Convert<float>(external_irradiance * inv), Convert<float>(internal_irradiance * inv) );
   }
 
-void PhotonLTEIntegrator::_ConstructIrradiancePhotonMap(const PhotonLTEIntegrator::PhotonMaps &i_maps)
+void PhotonLTEIntegrator::_ConstructIrradiancePhotonMap()
   {
+  ASSERT(mp_direct_map && mp_indirect_map && mp_caustic_map);
   mp_irradiance_map.reset((KDTree<IrradiancePhoton>*)NULL);
-  if (i_maps.m_indirect_photons.empty())
-    return;
 
   /*
   The method selects 10% of indirect photons as positions for irradiance photons.
@@ -161,26 +160,29 @@ void PhotonLTEIntegrator::_ConstructIrradiancePhotonMap(const PhotonLTEIntegrato
   We subdivide the indirect map in 10 blocks and select 10% of photons form each block (so that irradiance map has 10% of photons of the indirect map).
   */
 
+  const std::vector<Photon> &direct_photons = mp_direct_map->GetAllPoints();
+  const std::vector<Photon> &indirect_photons = mp_indirect_map->GetAllPoints();
+
   // Construct initial set of irradiance photons - take 1% of all of the indirect photons.
   std::vector<IrradiancePhoton> irradiance_photons;
-  for(size_t i=0;i<i_maps.m_indirect_photons.size();i+=100)
-    irradiance_photons.push_back( IrradiancePhoton(i_maps.m_indirect_photons[i].m_point, Spectrum_f(), Spectrum_f(), i_maps.m_indirect_photons[i].m_normal) );
+  for(size_t i=0;i<indirect_photons.size();i+=100)
+    irradiance_photons.push_back( IrradiancePhoton(indirect_photons[i].m_point, Spectrum_f(), Spectrum_f(), indirect_photons[i].m_normal) );
 
-  size_t block_size = std::max(i_maps.m_indirect_photons.size()/10, (size_t)1);
+  size_t block_size = std::max(indirect_photons.size()/10, (size_t)1);
   size_t photons_per_block = std::max(block_size/10, (size_t)1);
   std::vector<double> min_squared_dists(block_size);
-  for(size_t j=0;j*block_size < i_maps.m_indirect_photons.size();++j)
+  for(size_t j=0;j*block_size < indirect_photons.size();++j)
     {
     // Construct KDTree with the current set of irradiance photons.
     shared_ptr<const KDTree<IrradiancePhoton> > p_irradiance_map( new KDTree<IrradiancePhoton>(irradiance_photons) );
 
     // Process all photons from the block and find the most distant ones. We use heap to do that efficiently.
     std::vector<double> heap;
-    for(size_t i=0;i<block_size && j*block_size+i<i_maps.m_indirect_photons.size();++i)
+    for(size_t i=0;i<block_size && j*block_size+i<indirect_photons.size();++i)
       {
       size_t index = j*block_size+i;
-      Point3D_d photon_position = Convert<double>( i_maps.m_indirect_photons[index].m_point );
-      Vector3D_d photon_normal = i_maps.m_indirect_photons[index].m_normal.ToVector3D<double>();
+      Point3D_d photon_position = Convert<double>( indirect_photons[index].m_point );
+      Vector3D_d photon_normal = indirect_photons[index].m_normal.ToVector3D<double>();
 
       IrradiancePhotonFilter filter(photon_position, photon_normal, MAX_NORMAL_DEVIATION_COS);
       const IrradiancePhoton *p_irradiance_photon = p_irradiance_map->GetNearestPoint(photon_position, filter);
@@ -206,9 +208,9 @@ void PhotonLTEIntegrator::_ConstructIrradiancePhotonMap(const PhotonLTEIntegrato
 
     // Now that we know the distance threshold value (the very first element in the heap) we can pick the most distant photons.
     double threshold = heap[0];
-    for(size_t i=0;i<block_size && j*block_size+i<i_maps.m_indirect_photons.size();++i)
+    for(size_t i=0;i<block_size && j*block_size+i<indirect_photons.size();++i)
       if (min_squared_dists[i]>=threshold)
-        irradiance_photons.push_back( IrradiancePhoton(i_maps.m_indirect_photons[j*block_size+i].m_point, Spectrum_f(), Spectrum_f(), i_maps.m_indirect_photons[j*block_size+i].m_normal) );
+        irradiance_photons.push_back( IrradiancePhoton(indirect_photons[j*block_size+i].m_point, Spectrum_f(), Spectrum_f(), indirect_photons[j*block_size+i].m_normal) );
     }
 
   if (irradiance_photons.empty())
@@ -216,10 +218,10 @@ void PhotonLTEIntegrator::_ConstructIrradiancePhotonMap(const PhotonLTEIntegrato
 
   // Estimate lookup radius so that the corresponding area will contain required number of photons (in average).
   // We multiply m_scene_total_area by 2 because each surface has two sides.
-  double direct_photon_area = i_maps.m_direct_photons.empty() ? 0.0 : 2.0*m_scene_total_area / i_maps.m_direct_photons.size();
+  double direct_photon_area = direct_photons.empty() ? 0.0 : 2.0*m_scene_total_area / direct_photons.size();
   double max_direct_lookup_dist = sqrt(direct_photon_area*LOOKUP_PHOTONS_NUM_FOR_IRRADIANCE*INV_PI);
 
-  double indirect_photon_area = i_maps.m_indirect_photons.empty() ? 0.0 : 2.0*m_scene_total_area / i_maps.m_indirect_photons.size();
+  double indirect_photon_area = indirect_photons.empty() ? 0.0 : 2.0*m_scene_total_area / indirect_photons.size();
   double max_indirect_lookup_dist = sqrt(indirect_photon_area*LOOKUP_PHOTONS_NUM_FOR_IRRADIANCE*INV_PI);
 
   // Not sure what's a better way to estimate caustic lookup radius.
@@ -240,11 +242,11 @@ void PhotonLTEIntegrator::_ConstructIrradiancePhotonMap(const PhotonLTEIntegrato
   Again, we use heap to keep the set of most distant photons.
   */
   std::vector<double> heap;
-  size_t max_heap_size = std::max(i_maps.m_indirect_photons.size()/1000, (size_t)1);
-  for(size_t i=0;i<i_maps.m_indirect_photons.size();++i)
+  size_t max_heap_size = std::max(indirect_photons.size()/1000, (size_t)1);
+  for(size_t i=0;i<indirect_photons.size();++i)
     {
-    Point3D_d photon_position = Convert<double>( i_maps.m_indirect_photons[i].m_point );
-    Vector3D_d photon_normal = i_maps.m_indirect_photons[i].m_normal.ToVector3D<double>();
+    Point3D_d photon_position = Convert<double>( indirect_photons[i].m_point );
+    Vector3D_d photon_normal = indirect_photons[i].m_normal.ToVector3D<double>();
 
     IrradiancePhotonFilter filter(photon_position, photon_normal, MAX_NORMAL_DEVIATION_COS);
     const IrradiancePhoton *p_irradiance_photon = mp_irradiance_map->GetNearestPoint(photon_position, filter);
@@ -288,9 +290,6 @@ void PhotonLTEIntegrator::ShootPhotons(size_t i_caustic_photons, size_t i_direct
   _GetLightsPowerCDF(lights, lights_CDF);
 
   PhotonMaps photon_maps;
-  photon_maps.m_caustic_photons.reserve(i_caustic_photons);
-  photon_maps.m_direct_photons.reserve(i_direct_photons);
-  photon_maps.m_indirect_photons.reserve(i_indirect_photons);
 
   PhotonsInputFilter input_filter(&photon_maps, i_caustic_photons, i_direct_photons, i_indirect_photons, MAX_PIPELINE_TOKENS_NUM, 4096);
   PhotonsShootingFilter shooting_filter(this, mp_scene, lights_CDF);
@@ -304,20 +303,15 @@ void PhotonLTEIntegrator::ShootPhotons(size_t i_caustic_photons, size_t i_direct
   pipeline.run(MAX_PIPELINE_TOKENS_NUM);
   pipeline.clear();
 
-  if (photon_maps.m_caustic_photons.empty()==false)
-    mp_caustic_map.reset( new KDTree<Photon>(photon_maps.m_caustic_photons) );
+  mp_caustic_map = photon_maps.GetCausticMap();
+  mp_direct_map = photon_maps.GetDirectMap();
+  mp_indirect_map = photon_maps.GetIndirectMap();
 
-  if (photon_maps.m_direct_photons.empty()==false)
-    mp_direct_map.reset( new KDTree<Photon>(photon_maps.m_direct_photons) );
+  m_caustic_paths = photon_maps.GetNumberOfCausticPaths();
+  m_direct_paths = photon_maps.GetNumberOfDirectPaths();
+  m_indirect_paths = photon_maps.GetNumberOfIndirectPaths();
 
-  if (photon_maps.m_indirect_photons.empty()==false)
-    mp_indirect_map.reset( new KDTree<Photon>(photon_maps.m_indirect_photons) );
-
-  m_caustic_paths = photon_maps.m_caustic_paths;
-  m_direct_paths = photon_maps.m_direct_paths;
-  m_indirect_paths = photon_maps.m_indirect_paths;
-
-  _ConstructIrradiancePhotonMap(photon_maps);
+  _ConstructIrradiancePhotonMap();
   }
 
 Spectrum_d PhotonLTEIntegrator::_SurfaceRadiance(const RayDifferential &i_ray, const Intersection &i_intersection, const Sample *ip_sample, MemoryPool &i_pool) const
