@@ -62,8 +62,8 @@ class DirectLightingIntegratorTestSuite : public CxxTest::TestSuite
       std::vector<intrusive_ptr<const Primitive> > primitives(1,p_primitive);
 
       LightSources lights;
-      lights.m_infinitiy_light_sources.push_back(intrusive_ptr<InfiniteLightSource>(new InfiniteLightSourceMock(Spectrum_d(1), m_world_bbox)) );
-      lights.m_infinitiy_light_sources.push_back(intrusive_ptr<InfiniteLightSource>(new InfiniteLightSourceMock(Spectrum_d(2), m_world_bbox)) );
+      lights.m_infinite_light_sources.push_back(intrusive_ptr<InfiniteLightSource>(new InfiniteLightSourceMock(Spectrum_d(1), m_world_bbox)) );
+      lights.m_infinite_light_sources.push_back(intrusive_ptr<InfiniteLightSource>(new InfiniteLightSourceMock(Spectrum_d(2), m_world_bbox)) );
 
       intrusive_ptr<Scene> p_scene( new Scene(primitives, lights) );
       intrusive_ptr<Sampler> p_sampler = _CreaterSampler();
@@ -129,8 +129,8 @@ class DirectLightingIntegratorTestSuite : public CxxTest::TestSuite
       primitives.push_back( _CreatePrimitive(m_spheres[2], _CreateAreaLight(m_spheres[2], Spectrum_d(20))) );
 
       LightSources lights;
-      lights.m_infinitiy_light_sources.push_back(intrusive_ptr<InfiniteLightSource>(new InfiniteLightSourceMock(Spectrum_d(5), m_world_bbox)) );
-      lights.m_infinitiy_light_sources.push_back(intrusive_ptr<InfiniteLightSource>(new InfiniteLightSourceMock(Spectrum_d(15), m_world_bbox)) );
+      lights.m_infinite_light_sources.push_back(intrusive_ptr<InfiniteLightSource>(new InfiniteLightSourceMock(Spectrum_d(5), m_world_bbox)) );
+      lights.m_infinite_light_sources.push_back(intrusive_ptr<InfiniteLightSource>(new InfiniteLightSourceMock(Spectrum_d(15), m_world_bbox)) );
       lights.m_area_light_sources.push_back(primitives[1]->GetAreaLightSource());
       lights.m_area_light_sources.push_back(primitives[2]->GetAreaLightSource());
 
@@ -165,8 +165,8 @@ class DirectLightingIntegratorTestSuite : public CxxTest::TestSuite
       primitives.push_back( _CreatePrimitive(m_spheres[2], _CreateAreaLight(m_spheres[2], Spectrum_d(20))) );
 
       LightSources lights;
-      lights.m_infinitiy_light_sources.push_back(intrusive_ptr<InfiniteLightSource>(new InfiniteLightSourceMock(Spectrum_d(5), m_world_bbox)) );
-      lights.m_infinitiy_light_sources.push_back(intrusive_ptr<InfiniteLightSource>(new InfiniteLightSourceMock(Spectrum_d(15), m_world_bbox)) );
+      lights.m_infinite_light_sources.push_back(intrusive_ptr<InfiniteLightSource>(new InfiniteLightSourceMock(Spectrum_d(5), m_world_bbox)) );
+      lights.m_infinite_light_sources.push_back(intrusive_ptr<InfiniteLightSource>(new InfiniteLightSourceMock(Spectrum_d(15), m_world_bbox)) );
       lights.m_area_light_sources.push_back(primitives[1]->GetAreaLightSource());
       lights.m_area_light_sources.push_back(primitives[2]->GetAreaLightSource());
 

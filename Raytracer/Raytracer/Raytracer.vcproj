@@ -674,11 +674,11 @@
 				Name="Header Files"
 				>
 				<File
-					RelativePath=".\LightsSamplingStrategies\IrradianceLightsSampling.h"
+					RelativePath=".\LightsSamplingStrategies\IrradianceLightsSamplingStrategy.h"
 					>
 				</File>
 				<File
-					RelativePath=".\LightsSamplingStrategies\PowerLightsSampling.h"
+					RelativePath=".\LightsSamplingStrategies\PowerLightsSamplingStrategy.h"
 					>
 				</File>
 			</Filter>
@@ -686,11 +686,11 @@
 				Name="Source Files"
 				>
 				<File
-					RelativePath=".\LightsSamplingStrategies\IrradianceLightsSampling.cpp"
+					RelativePath=".\LightsSamplingStrategies\IrradianceLightsSamplingStrategy.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\LightsSamplingStrategies\PowerLightsSampling.cpp"
+					RelativePath=".\LightsSamplingStrategies\PowerLightsSamplingStrategy.cpp"
 					>
 				</File>
 			</Filter>

@@ -1,5 +1,5 @@
 #include "DirectLightingIntegrator.h"
-#include <Raytracer/LightsSamplingStrategies/IrradianceLightsSampling.h>
+#include <Raytracer/LightsSamplingStrategies/IrradianceLightsSamplingStrategy.h>
 #include <Math/SamplingRoutines.h>
 #include "CoreUtils.h"
 
@@ -12,7 +12,7 @@ mp_scene(ip_scene), mp_volume_integrator(ip_volume_integrator), m_lights_samples
   if (ip_lights_sampling_strategy)
     mp_lights_sampling_strategy = ip_lights_sampling_strategy;
   else
-    mp_lights_sampling_strategy.reset( new IrradianceLightsSampling(mp_scene->GetLightSources()) );
+    mp_lights_sampling_strategy.reset( new IrradianceLightsSamplingStrategy(mp_scene->GetLightSources()) );
   
   // Sort and cache area lights. This is needed for a quick search of the area light's index by a pointer.
   const LightSources &light_sources = mp_scene->GetLightSources();
@@ -56,7 +56,7 @@ Spectrum_d DirectLightingIntegrator::ComputeDirectLighting(const Intersection &i
   Spectrum_d radiance;
   const LightSources &light_sources = mp_scene->GetLightSources();
   size_t delta_light_sources_num = light_sources.m_delta_light_sources.size();
-  size_t infinity_light_sources_num = light_sources.m_infinitiy_light_sources.size();
+  size_t infinity_light_sources_num = light_sources.m_infinite_light_sources.size();
   size_t area_light_sources_num = light_sources.m_area_light_sources.size();
 
   // Compute direct lighting from delta lights.
@@ -142,7 +142,7 @@ Spectrum_d DirectLightingIntegrator::_SampleLights(const Intersection &i_interse
   Spectrum_d radiance;
 
   const LightSources &light_sources = mp_scene->GetLightSources();
-  size_t infinity_light_sources_num = light_sources.m_infinitiy_light_sources.size();
+  size_t infinity_light_sources_num = light_sources.m_infinite_light_sources.size();
   size_t area_light_sources_num = light_sources.m_area_light_sources.size();
   size_t light_sources_num = infinity_light_sources_num + area_light_sources_num;
   if (m_lights_samples_num==0 || light_sources_num==0)
@@ -169,7 +169,7 @@ Spectrum_d DirectLightingIntegrator::_SampleLights(const Intersection &i_interse
       {
       // If infinity light is sampled.
       double light_pdf=0.0;
-      Spectrum_d light = light_sources.m_infinitiy_light_sources[sampled_index]->SampleLighting(i_intersection.m_dg.m_point,
+      Spectrum_d light = light_sources.m_infinite_light_sources[sampled_index]->SampleLighting(i_intersection.m_dg.m_point,
         i_intersection.m_dg.m_shading_normal, position_sample, lighting_ray, light_pdf);
 
       if (light_pdf>0.0 && light.IsBlack()==false)
@@ -230,7 +230,7 @@ Spectrum_d DirectLightingIntegrator::_SampleBSDF(const Intersection &i_intersect
   Spectrum_d radiance;
 
   const LightSources &light_sources = mp_scene->GetLightSources();
-  size_t infinity_light_sources_num = light_sources.m_infinitiy_light_sources.size();
+  size_t infinity_light_sources_num = light_sources.m_infinite_light_sources.size();
   size_t area_light_sources_num = light_sources.m_area_light_sources.size();
   size_t light_sources_num = infinity_light_sources_num + area_light_sources_num;
   if (m_bsdf_samples_num==0 || light_sources_num==0)
@@ -289,8 +289,8 @@ Spectrum_d DirectLightingIntegrator::_SampleBSDF(const Intersection &i_intersect
           bsdf_pdf *= light_component_pdf*inv_infinity_lights_probability;
           ASSERT(bsdf_pdf > 0.0);
 
-          double light_pdf = light_sources.m_infinitiy_light_sources[sampled_index]->LightingPDF(i_intersection.m_dg.m_point,i_intersection.m_dg.m_shading_normal,lighting_direction);
-          Spectrum_d light = light_sources.m_infinitiy_light_sources[sampled_index]->Radiance(RayDifferential(lighting_ray));
+          double light_pdf = light_sources.m_infinite_light_sources[sampled_index]->LightingPDF(i_intersection.m_dg.m_point,i_intersection.m_dg.m_shading_normal,lighting_direction);
+          Spectrum_d light = light_sources.m_infinite_light_sources[sampled_index]->Radiance(RayDifferential(lighting_ray));
           if (light_pdf > 0.0 && light.IsBlack()==false)
             {
             // Compute weighting coefficient for the multiple importance sampling.

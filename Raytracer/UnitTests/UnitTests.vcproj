@@ -558,11 +558,11 @@
 					Name="LightsSamplingStrategies"
 					>
 					<File
-						RelativePath=".\IrradianceLightsSampling.test.h"
+						RelativePath=".\IrradianceLightsSamplingStrategy.test.h"
 						>
 					</File>
 					<File
-						RelativePath=".\PowerLightsSampling.test.h"
+						RelativePath=".\PowerLightsSamplingStrategy.test.h"
 						>
 					</File>
 				</Filter>
@@ -700,7 +700,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\IrradianceLightsSampling.test.cpp"
+				RelativePath=".\IrradianceLightsSamplingStrategy.test.cpp"
 				>
 			</File>
 			<File
@@ -788,7 +788,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\PowerLightsSampling.test.cpp"
+				RelativePath=".\PowerLightsSamplingStrategy.test.cpp"
 				>
 			</File>
 			<File

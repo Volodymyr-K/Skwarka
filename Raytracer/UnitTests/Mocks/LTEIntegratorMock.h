@@ -75,12 +75,12 @@ inline Spectrum_d LTEIntegratorMock::_SurfaceRadiance(const RayDifferential &i_r
     if (pdf>0.0)
       {
       double cs = fabs(exitant * i_intersection.m_dg.m_shading_normal);
-      for(size_t j = 0; j<lights.m_infinitiy_light_sources.size();++j)
+      for(size_t j = 0; j<lights.m_infinite_light_sources.size();++j)
         {
         if (mp_scene->IntersectTest(Ray(i_intersection.m_dg.m_point, exitant, 1e-5, DBL_INF))==false)
           {
           Ray lighting_ray(i_intersection.m_dg.m_point, exitant);
-          Spectrum_d Li = lights.m_infinitiy_light_sources[j]->Radiance(RayDifferential(lighting_ray));
+          Spectrum_d Li = lights.m_infinite_light_sources[j]->Radiance(RayDifferential(lighting_ray));
           Spectrum_d transmittance = _VolumeTransmittance(lighting_ray, ip_sample);
 
           infinity_light += (f * Li * transmittance) * cs / pdf;

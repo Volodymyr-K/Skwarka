@@ -49,9 +49,9 @@ void PhotonLTEIntegrator::_RequestSamples(intrusive_ptr<Sampler> ip_sampler)
 void PhotonLTEIntegrator::_GetLightsPowerCDF(const LightSources &i_light_sources, std::vector<double> &o_lights_CDF)
   {
   size_t delta_lights_num = i_light_sources.m_delta_light_sources.size();
-  size_t infinity_lights_num = i_light_sources.m_infinitiy_light_sources.size();
+  size_t infinite_lights_num = i_light_sources.m_infinite_light_sources.size();
   size_t area_lights_num = i_light_sources.m_area_light_sources.size();
-  size_t lights_num = delta_lights_num+infinity_lights_num + area_lights_num;
+  size_t lights_num = delta_lights_num+infinite_lights_num + area_lights_num;
 
   o_lights_CDF.resize(lights_num, 0.0);
   if (lights_num == 0)
@@ -65,10 +65,10 @@ void PhotonLTEIntegrator::_GetLightsPowerCDF(const LightSources &i_light_sources
       o_lights_CDF[i] += o_lights_CDF[i-1];
     }
 
-  for(size_t i=0;i<infinity_lights_num;++i)
+  for(size_t i=0;i<infinite_lights_num;++i)
     {
     size_t j=delta_lights_num+i;
-    o_lights_CDF[j] = i_light_sources.m_infinitiy_light_sources[i]->Power().Luminance();
+    o_lights_CDF[j] = i_light_sources.m_infinite_light_sources[i]->Power().Luminance();
     ASSERT(o_lights_CDF[j] >= 0.0);
     if (j>0)
       o_lights_CDF[j] += o_lights_CDF[j-1];
@@ -76,7 +76,7 @@ void PhotonLTEIntegrator::_GetLightsPowerCDF(const LightSources &i_light_sources
 
   for(size_t i=0;i<area_lights_num;++i)
     {
-    size_t j=delta_lights_num+infinity_lights_num+i;
+    size_t j=delta_lights_num+infinite_lights_num+i;
     o_lights_CDF[j] = i_light_sources.m_area_light_sources[i]->Power().Luminance();
     ASSERT(o_lights_CDF[j] >= 0.0);
 
@@ -283,7 +283,7 @@ void PhotonLTEIntegrator::ShootPhotons(size_t i_caustic_photons, size_t i_direct
   mp_indirect_map.reset((KDTree<Photon>*)NULL);
 
   const LightSources &lights = mp_scene->GetLightSources();
-  if (lights.m_delta_light_sources.size() + lights.m_area_light_sources.size() + lights.m_infinitiy_light_sources.size() == 0)
+  if (lights.m_delta_light_sources.size() + lights.m_area_light_sources.size() + lights.m_infinite_light_sources.size() == 0)
     return;
 
   std::vector<double> lights_CDF;

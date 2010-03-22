@@ -4,27 +4,27 @@
 #include <cxxtest/TestSuite.h>
 #include "CustomValueTraits.h"
 #include <Common/Common.h>
-#include <Raytracer/LightsSamplingStrategies/PowerLightsSampling.h>
+#include <Raytracer/LightsSamplingStrategies/PowerLightsSamplingStrategy.h>
 #include "TriangleMeshTestHelper.h"
 #include <Raytracer/Core/TriangleMesh.h>
 #include <Raytracer/LightSources/DiffuseAreaLightSource.h>
 #include <Raytracer/LightSources/PointLight.h>
 #include "Mocks/InfiniteLightSourceMock.h"
 
-class PowerLightsSamplingTestSuite : public CxxTest::TestSuite
+class PowerLightsSamplingStrategyTestSuite : public CxxTest::TestSuite
   {
   public:
     void setUp()
       {
       m_light_sources.m_delta_light_sources.clear();
-      m_light_sources.m_infinitiy_light_sources.clear();
+      m_light_sources.m_infinite_light_sources.clear();
       m_light_sources.m_area_light_sources.clear();
 
       intrusive_ptr<DeltaLightSource> p_delta_light( new PointLight(Point3D_d(1.0,2.0,3.0), Spectrum_d(10.5,20.5,30.5)) );
       m_light_sources.m_delta_light_sources.push_back(p_delta_light);
 
       intrusive_ptr<InfiniteLightSource> p_infinity_light( new InfiniteLightSourceMock(Spectrum_d(0.001,0.005,0.002), BBox3D_d(Point3D_d(-1,-1,-1),Point3D_d(50,50,50))));
-      m_light_sources.m_infinitiy_light_sources.push_back(p_infinity_light);
+      m_light_sources.m_infinite_light_sources.push_back(p_infinity_light);
 
       for(size_t i=0;i<5;++i)
         {
@@ -33,7 +33,7 @@ class PowerLightsSamplingTestSuite : public CxxTest::TestSuite
         m_light_sources.m_area_light_sources.push_back(p_area_light);
         }
 
-      mp_light_sampling.reset( new PowerLightsSampling(m_light_sources) );
+      mp_light_sampling.reset( new PowerLightsSamplingStrategy(m_light_sources) );
       }
 
     void tearDown()
@@ -41,11 +41,11 @@ class PowerLightsSamplingTestSuite : public CxxTest::TestSuite
       // Nothing to clear.
       }
 
-    void test_PowerLightsSampling_WithoutNormal()
+    void test_PowerLightsSamplingStrategy_WithoutNormal()
       {
       double cdf[100]; // 100 should be enough.
 
-      size_t infinity_lights_num = m_light_sources.m_infinitiy_light_sources.size();
+      size_t infinity_lights_num = m_light_sources.m_infinite_light_sources.size();
       size_t area_lights_num = m_light_sources.m_area_light_sources.size();
       size_t lights_num = infinity_lights_num+area_lights_num;
 
@@ -61,12 +61,12 @@ class PowerLightsSamplingTestSuite : public CxxTest::TestSuite
       TS_ASSERT_EQUALS(cdf[lights_num-1], 1.0);
       }
 
-    void test_PowerLightsSampling_WithNormal()
+    void test_PowerLightsSamplingStrategy_WithNormal()
       {
       double cdf1[100]; // 100 should be enough.
       double cdf2[100]; // 100 should be enough.
 
-      size_t infinity_lights_num = m_light_sources.m_infinitiy_light_sources.size();
+      size_t infinity_lights_num = m_light_sources.m_infinite_light_sources.size();
       size_t area_lights_num = m_light_sources.m_area_light_sources.size();
       size_t lights_num = infinity_lights_num+area_lights_num;
 
@@ -81,12 +81,12 @@ class PowerLightsSamplingTestSuite : public CxxTest::TestSuite
           }
       }
 
-    void test_PowerLightsSampling_NoLights()
+    void test_PowerLightsSamplingStrategy_NoLights()
       {
       m_light_sources.m_delta_light_sources.clear();
-      m_light_sources.m_infinitiy_light_sources.clear();
+      m_light_sources.m_infinite_light_sources.clear();
       m_light_sources.m_area_light_sources.clear();
-      mp_light_sampling.reset( new PowerLightsSampling(m_light_sources) );
+      mp_light_sampling.reset( new PowerLightsSamplingStrategy(m_light_sources) );
 
       double cdf[100]; // 100 should be enough.
       cdf[0]=-1.0;

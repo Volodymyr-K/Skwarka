@@ -32,7 +32,7 @@ class LTEIntegratorTestSuite : public CxxTest::TestSuite
       intrusive_ptr<DeltaLightSource> p_delta_light( new PointLight(Point3D_d(0, 0.0, 0.0), Spectrum_d(100.0)) );
       intrusive_ptr<InfiniteLightSource> p_infinite_light( new InfiniteLightSourceMock(Spectrum_d(10.0), BBox3D_d(Point3D_d(-1,-1,-1),Point3D_d(1,1,1))) );
       lights.m_delta_light_sources.push_back(p_delta_light);
-      lights.m_infinitiy_light_sources.push_back(p_infinite_light);
+      lights.m_infinite_light_sources.push_back(p_infinite_light);
       //////////////////////
 
       mp_scene.reset( new Scene(m_primitives, lights) );

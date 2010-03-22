@@ -24,7 +24,7 @@ class SceneTestSuite : public CxxTest::TestSuite
         m_primitives.push_back(_CreateDummyPrimitive(Point3D_f(0.f,0.f,i*1.f)));
 
       m_light_sources.m_delta_light_sources.clear();
-      m_light_sources.m_infinitiy_light_sources.clear();
+      m_light_sources.m_infinite_light_sources.clear();
       m_light_sources.m_area_light_sources.clear();
 
       intrusive_ptr<DeltaLightSource> delta_light( new PointLight(Point3D_d(1.0,2.0,3.0), Spectrum_d(1.5,2.5,3.5)) );

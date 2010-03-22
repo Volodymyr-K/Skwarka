@@ -119,7 +119,7 @@ class PhotonLTEIntegratorTestSuite : public CxxTest::TestSuite
       lights.m_delta_light_sources.push_back(p_light);
 
       BBox3D_d bbox = Convert<double>(mp_sphere->GetBounds());
-      lights.m_infinitiy_light_sources.push_back(intrusive_ptr<InfiniteLightSource>(new InfiniteLightSourceMock(light_radiance, bbox)) );
+      lights.m_infinite_light_sources.push_back(intrusive_ptr<InfiniteLightSource>(new InfiniteLightSourceMock(light_radiance, bbox)) );
 
       intrusive_ptr<Scene> p_scene( new Scene(primitives, lights) );
       intrusive_ptr<Sampler> p_sampler = _CreaterSampler();

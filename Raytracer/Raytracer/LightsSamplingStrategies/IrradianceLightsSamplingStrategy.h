@@ -1,20 +1,23 @@
-#ifndef POWER_LIGHTS_SAMPLING_H
-#define POWER_LIGHTS_SAMPLING_H
+#ifndef IRRADIANCE_LIGHTS_SAMPLING_H
+#define IRRADIANCE_LIGHTS_SAMPLING_H
 
 #include <Common/Common.h>
+#include <Math/Geometry.h>
 #include <Raytracer/Core/LightsSamplingStrategy.h>
 #include <Raytracer/Core/LightSources.h>
+#include <vector>
 
 /**
-* The power-based LightsSamplingStrategy implementation. The probability of each light to be sampled is proportional to the luminance of its power.
+* The irradiance-based LightsSamplingStrategy implementation.
+* The probability of each light source to be sampled is proportional to the (estimated) irradiance from the light source at the point.
 */
-class PowerLightsSampling: public LightsSamplingStrategy
+class IrradianceLightsSamplingStrategy: public LightsSamplingStrategy
   {
   public:
     /**
-    * Creates PowerLightsSampling instance for the specified light sources.
+    * Creates IrradianceLightsSamplingStrategy instance for the specified light sources.
     */
-    PowerLightsSampling(const LightSources &i_light_sources);
+    IrradianceLightsSamplingStrategy(const LightSources &i_light_sources);
 
     /**
     * Returns CDF for the infinity and area lights at the specified 3D point being shaded.
@@ -39,11 +42,14 @@ class PowerLightsSampling: public LightsSamplingStrategy
     */
     virtual void GetLightsCDF(const Point3D_d &i_point, const Vector3D_d &i_normal, double *o_lights_CDF) const;
 
-    ~PowerLightsSampling();
+  private:
+    void _Weights_To_CDF(double *io_lights_CDF) const;
 
   private:
-    size_t m_lights_num;
-    double *mp_lights_CDF;
+    const LightSources &m_light_sources;
+    size_t m_infinity_lights_num, m_area_lights_num, m_total_lights_num;
+
+    std::vector<double> m_area_lights_intensities;
   };
 
-#endif // POWER_LIGHTS_SAMPLING_H
+#endif // IRRADIANCE_LIGHTS_SAMPLING_H

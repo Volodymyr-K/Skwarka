@@ -1,9 +1,9 @@
-#include "PowerLightsSampling.h"
+#include "PowerLightsSamplingStrategy.h"
 #include <cstring>
 
-PowerLightsSampling::PowerLightsSampling(const LightSources &i_light_sources): LightsSamplingStrategy()
+PowerLightsSamplingStrategy::PowerLightsSamplingStrategy(const LightSources &i_light_sources): LightsSamplingStrategy()
   {
-  size_t infinity_lights_num = i_light_sources.m_infinitiy_light_sources.size();
+  size_t infinity_lights_num = i_light_sources.m_infinite_light_sources.size();
   size_t area_lights_num = i_light_sources.m_area_light_sources.size();
   m_lights_num = infinity_lights_num + area_lights_num;
 
@@ -17,7 +17,7 @@ PowerLightsSampling::PowerLightsSampling(const LightSources &i_light_sources): L
 
   for(size_t i=0;i<infinity_lights_num;++i)
     {
-    mp_lights_CDF[i] = i_light_sources.m_infinitiy_light_sources[i]->Power().Luminance();
+    mp_lights_CDF[i] = i_light_sources.m_infinite_light_sources[i]->Power().Luminance();
     ASSERT(mp_lights_CDF[i] >= 0.0);
     if (i>0)
       mp_lights_CDF[i] += mp_lights_CDF[i-1];
@@ -45,19 +45,19 @@ PowerLightsSampling::PowerLightsSampling(const LightSources &i_light_sources): L
     }
   }
 
-PowerLightsSampling::~PowerLightsSampling()
+PowerLightsSamplingStrategy::~PowerLightsSamplingStrategy()
   {
   delete[] mp_lights_CDF;
   }
 
-void PowerLightsSampling::GetLightsCDF(const Point3D_d &i_point, double *o_lights_CDF) const
+void PowerLightsSamplingStrategy::GetLightsCDF(const Point3D_d &i_point, double *o_lights_CDF) const
   {
   ASSERT(o_lights_CDF);
 
   memcpy(o_lights_CDF, mp_lights_CDF, m_lights_num*sizeof(double));
   }
 
-void PowerLightsSampling::GetLightsCDF(const Point3D_d &i_point, const Vector3D_d &i_normal, double *o_lights_CDF) const
+void PowerLightsSamplingStrategy::GetLightsCDF(const Point3D_d &i_point, const Vector3D_d &i_normal, double *o_lights_CDF) const
   {
   ASSERT(o_lights_CDF);
   ASSERT(i_normal.IsNormalized());

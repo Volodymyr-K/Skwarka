@@ -31,8 +31,8 @@ Spectrum_d LTEIntegrator::Radiance(const RayDifferential &i_ray, const Sample *i
       {
       // Add contribution of infinite light sources for an unbounded ray that does not intersect any primitive.
       const LightSources &lights = mp_scene->GetLightSources();
-      for (size_t i = 0; i < lights.m_infinitiy_light_sources.size(); ++i)
-        radiance += lights.m_infinitiy_light_sources[i]->Radiance(i_ray);
+      for (size_t i = 0; i < lights.m_infinite_light_sources.size(); ++i)
+        radiance += lights.m_infinite_light_sources[i]->Radiance(i_ray);
       }
 
   Spectrum_d transmittance(1.0);

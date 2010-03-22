@@ -1,11 +1,11 @@
-#include "IrradianceLightsSampling.h"
+#include "IrradianceLightsSamplingStrategy.h"
 #include <Math/MathRoutines.h>
 #include <cstring>
 
-IrradianceLightsSampling::IrradianceLightsSampling(const LightSources &i_light_sources): LightsSamplingStrategy(),
+IrradianceLightsSamplingStrategy::IrradianceLightsSamplingStrategy(const LightSources &i_light_sources): LightsSamplingStrategy(),
 m_light_sources(i_light_sources)
   {
-  m_infinity_lights_num = i_light_sources.m_infinitiy_light_sources.size();
+  m_infinity_lights_num = i_light_sources.m_infinite_light_sources.size();
   m_area_lights_num = i_light_sources.m_area_light_sources.size();
   m_total_lights_num = m_infinity_lights_num+m_area_lights_num;
 
@@ -17,7 +17,7 @@ m_light_sources(i_light_sources)
     }
   }
 
-void IrradianceLightsSampling::GetLightsCDF(const Point3D_d &i_point, double *o_lights_CDF) const
+void IrradianceLightsSamplingStrategy::GetLightsCDF(const Point3D_d &i_point, double *o_lights_CDF) const
   {
   ASSERT(o_lights_CDF);
 
@@ -25,7 +25,7 @@ void IrradianceLightsSampling::GetLightsCDF(const Point3D_d &i_point, double *o_
     return;
 
   for(size_t i=0;i<m_infinity_lights_num;++i)
-    o_lights_CDF[i] = m_light_sources.m_infinitiy_light_sources[i]->Irradiance().Luminance();
+    o_lights_CDF[i] = m_light_sources.m_infinite_light_sources[i]->Irradiance().Luminance();
 
   for(size_t i=0;i<m_area_lights_num;++i)
     {
@@ -39,7 +39,7 @@ void IrradianceLightsSampling::GetLightsCDF(const Point3D_d &i_point, double *o_
   _Weights_To_CDF(o_lights_CDF);
   }
 
-void IrradianceLightsSampling::GetLightsCDF(const Point3D_d &i_point, const Vector3D_d &i_normal, double *o_lights_CDF) const
+void IrradianceLightsSamplingStrategy::GetLightsCDF(const Point3D_d &i_point, const Vector3D_d &i_normal, double *o_lights_CDF) const
   {
   ASSERT(o_lights_CDF);
   ASSERT(i_normal.IsNormalized());
@@ -48,7 +48,7 @@ void IrradianceLightsSampling::GetLightsCDF(const Point3D_d &i_point, const Vect
     return;
 
   for(size_t i=0;i<m_infinity_lights_num;++i)
-    o_lights_CDF[i] = m_light_sources.m_infinitiy_light_sources[i]->Irradiance(i_normal).Luminance();
+    o_lights_CDF[i] = m_light_sources.m_infinite_light_sources[i]->Irradiance(i_normal).Luminance();
 
   for(size_t i=0;i<m_area_lights_num;++i)
     {
@@ -75,7 +75,7 @@ void IrradianceLightsSampling::GetLightsCDF(const Point3D_d &i_point, const Vect
         /*
         Due to the ad-hoc way we used to estimate cosine value it may differ from the correct one. Too low cosine values can lead to a big variance in certain cases.
         To avoid that we clamp it by 0.1 and thus allow only one order of magnitude of difference between max and min cosine values.
-        This can cause over-estimation of lights near the horizon but it is much better than underestimating the other lights.
+        This can cause over-estimation of lights near the horizon but it is much better than underestimating other lights.
         */
         if (average_cosine < 0.1) average_cosine = 0.1;
 
@@ -90,7 +90,7 @@ void IrradianceLightsSampling::GetLightsCDF(const Point3D_d &i_point, const Vect
   _Weights_To_CDF(o_lights_CDF);
   }
 
-void IrradianceLightsSampling::_Weights_To_CDF(double *io_lights_CDF) const
+void IrradianceLightsSamplingStrategy::_Weights_To_CDF(double *io_lights_CDF) const
   {
   ASSERT(m_total_lights_num>0);
 

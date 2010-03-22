@@ -88,8 +88,8 @@ void* PhotonLTEIntegrator::PhotonsShootingFilter::operator()(void* ip_chunk)
 
   size_t delta_lights = lights.m_delta_light_sources.size();
   size_t area_lights = lights.m_area_light_sources.size();
-  size_t infinitiy_lights = lights.m_infinitiy_light_sources.size();
-  size_t num_lights = delta_lights+area_lights+infinitiy_lights;
+  size_t infinite_lights = lights.m_infinite_light_sources.size();
+  size_t num_lights = delta_lights+area_lights+infinite_lights;
   ASSERT(num_lights == m_lights_CDF.size());
 
   if (num_lights == 0)
@@ -120,10 +120,10 @@ void* PhotonLTEIntegrator::PhotonsShootingFilter::operator()(void* ip_chunk)
 
     if (light_index < delta_lights)
       weight = lights.m_delta_light_sources[light_index]->SamplePhoton(direction_sample, photon_ray, photon_pdf);
-    else if (light_index < delta_lights+infinitiy_lights)
-      weight = lights.m_infinitiy_light_sources[light_index-delta_lights]->SamplePhoton(position_sample, direction_sample, photon_ray, photon_pdf);
+    else if (light_index < delta_lights+infinite_lights)
+      weight = lights.m_infinite_light_sources[light_index-delta_lights]->SamplePhoton(position_sample, direction_sample, photon_ray, photon_pdf);
     else
-      weight = lights.m_area_light_sources[light_index-delta_lights-infinitiy_lights]->SamplePhoton((*p_rng)(1.0), position_sample, direction_sample, photon_ray, photon_pdf);
+      weight = lights.m_area_light_sources[light_index-delta_lights-infinite_lights]->SamplePhoton((*p_rng)(1.0), position_sample, direction_sample, photon_ray, photon_pdf);
 
     if (photon_pdf == 0.0 || weight.IsBlack())
       continue;
@@ -379,6 +379,12 @@ void PhotonLTEIntegrator::PhotonMaps::_AddPhotonsToKDTree(shared_ptr<KDTree<Phot
     if (p_nearest_photon == NULL)
       continue;
 
+    /*
+    Yes, we use the "dirty" trick with the const_cast.
+    This looks to be the best option since KDTree can not provide a method that returns non-constant reference to a point
+    because the calling code will be able to change it's coordinates (which will invalidate the tree).
+    Since we do not change the photon's position and only change it's weight it is relatively safe to use the const_cast.
+    */
     const_cast<Photon*>(p_nearest_photon)->m_weight += photon.m_weight;
     }
   }

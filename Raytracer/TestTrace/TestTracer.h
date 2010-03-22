@@ -43,8 +43,8 @@
 #include <Raytracer/LTEIntegrators/PhotonLTEIntegrator.h>
 #include <UnitTests/Mocks/InfiniteLightSourceMock.h>
 #include <UnitTests/Mocks/VolumeIntegratorMock.h>
-#include <Raytracer/LightsSamplingStrategies/IrradianceLightsSampling.h>
-#include <Raytracer/LightsSamplingStrategies/PowerLightsSampling.h>
+#include <Raytracer/LightsSamplingStrategies/IrradianceLightsSamplingStrategy.h>
+#include <Raytracer/LightsSamplingStrategies/PowerLightsSamplingStrategy.h>
 #include <Raytracer/Core/MIPMap.h>
 #include <Raytracer/Textures/ImageTexture.h>
 #include <Raytracer/Mappings/SphericalMapping2D.h>
@@ -254,7 +254,7 @@ inline void TestTracer::LoadMesh()
   LightSources lights;
 
   intrusive_ptr<InfiniteLightSource> p_inf_light( new InfiniteLightSourceMock(5.5*Spectrum_d(200.0,220.0,250.0), bbox ) );
-  //lights.m_infinitiy_light_sources.push_back(p_inf_light);
+  lights.m_infinite_light_sources.push_back(p_inf_light);
 
 
   for(size_t x=0;x<4;++x) for(size_t y=0;y<2;++y)
@@ -303,7 +303,7 @@ inline void TestTracer::RenderImage()
   FilmFilter *filter = new BoxFilter(0.5,0.5);
   //intrusive_ptr<InteractiveFilm> p_film(new InteractiveFilm(GetImageWidth(), GetImageHeight(), intrusive_ptr<FilmFilter>(filter)));
   intrusive_ptr<ImageFilm> p_film(new ImageFilm(GetImageWidth(), GetImageHeight(), intrusive_ptr<FilmFilter>(filter)));
-  //p_film->SetCropWindow(Point2D_i(290,300),Point2D_i(600,550));
+  //p_film->SetCropWindow(Point2D_i(330-3,400-28),Point2D_i(492-3,527-28));
 
   Point2D_i window_begin,window_end;
   p_film->GetSamplingExtent(window_begin, window_end);
@@ -329,7 +329,7 @@ inline void TestTracer::RenderImage()
   intrusive_ptr<ImagePixelsOrder> pixel_order(new ConsecutiveImagePixelsOrder);
   //intrusive_ptr<ImagePixelsOrder> pixel_order(new RandomBlockedImagePixelsOrder);
 
-  intrusive_ptr<Sampler> p_sampler( new LDSampler(window_begin, window_end, 8*8, pixel_order) );
+  intrusive_ptr<Sampler> p_sampler( new LDSampler(window_begin, window_end, 4, pixel_order) );
 
   PhotonLTEIntegratorParams params;
   params.m_direct_light_samples_num=32;
@@ -341,12 +341,12 @@ inline void TestTracer::RenderImage()
   //intrusive_ptr<DirectLightingLTEIntegrator> p_lte_int( new DirectLightingLTEIntegrator(mp_scene, NULL, 6) );
 
   tbb::tick_count t0 = tbb::tick_count::now();
-  p_lte_int->ShootPhotons(1000000/1000*0, 1000000, 6000000);
+  p_lte_int->ShootPhotons(1000000/1000*0, 100000, 6000000/30);
   tbb::tick_count t1 = tbb::tick_count::now();
   printf("Shooting: %lf\n", (t1-t0).seconds());
 
   intrusive_ptr<SamplerBasedRenderer> p_renderer( new SamplerBasedRenderer(p_lte_int, p_sampler) );
-  p_renderer->SetDisplayUpdateCallback(mp_callback, 60.0);
+  p_renderer->SetDisplayUpdateCallback(mp_callback, 10.0);
 
   tbb::task_scheduler_init init;
   t0 = tbb::tick_count::now();
