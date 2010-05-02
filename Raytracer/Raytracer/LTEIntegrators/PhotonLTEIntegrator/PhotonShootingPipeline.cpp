@@ -107,11 +107,9 @@ void* PhotonLTEIntegrator::PhotonsShootingFilter::operator()(void* ip_chunk)
     Point2D_d direction_sample(SamplingRoutines::RadicalInverse((unsigned int)path_index+1, 5), SamplingRoutines::RadicalInverse((unsigned int)path_index+1, 7));
 
     // Binary search for the sampled light source.
-    size_t light_index = MathRoutines::BinarySearchCDF(m_lights_CDF.begin(), m_lights_CDF.end(), SamplingRoutines::RadicalInverse((unsigned int)path_index+1, 11)) - m_lights_CDF.begin();
+    double light_pdf;
+    size_t light_index = MathRoutines::BinarySearchCDF(m_lights_CDF.begin(), m_lights_CDF.end(), SamplingRoutines::RadicalInverse((unsigned int)path_index+1, 11), &light_pdf) - m_lights_CDF.begin();
     ASSERT(light_index>=0 && light_index<num_lights);
-
-    // This is the probability of the sampled light source to be sampled.
-    double light_pdf = light_index==0 ? m_lights_CDF[0] : m_lights_CDF[light_index]-m_lights_CDF[light_index-1];
     ASSERT(light_pdf > 0.0);
 
     double photon_pdf = 0.0;

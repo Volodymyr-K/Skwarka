@@ -22,14 +22,14 @@ InfiniteLightSource::~InfiniteLightSource()
   {
   }
 
-Spectrum_d InfiniteLightSource::SampleLighting(const Point3D_d &i_point, const Vector3D_d &i_normal, const Point2D_d &i_sample, Ray &o_lighting_ray, double &o_pdf) const
+Spectrum_d InfiniteLightSource::SampleLighting(const Vector3D_d &i_normal, const Point2D_d &i_sample, Vector3D_d &o_lighting_direction, double &o_pdf) const
   {
-  return SampleLighting(i_point, i_sample, o_lighting_ray, o_pdf);
+  return SampleLighting(i_sample, o_lighting_direction, o_pdf);
   }
 
-double InfiniteLightSource::LightingPDF(const Point3D_d &i_point, const Vector3D_d &i_normal, const Vector3D_d &i_lighting_direction) const
+double InfiniteLightSource::LightingPDF(const Vector3D_d &i_normal, const Vector3D_d &i_lighting_direction) const
   {
-  return LightingPDF(i_point, i_lighting_direction);
+  return LightingPDF(i_lighting_direction);
   }
 
 ////////////////////////////////////////// AreaLightSource ////////////////////////////////////////////////

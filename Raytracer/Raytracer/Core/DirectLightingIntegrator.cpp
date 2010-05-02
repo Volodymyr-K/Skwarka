@@ -150,6 +150,19 @@ Spectrum_d DirectLightingIntegrator::_SampleLights(const Intersection &i_interse
 
   double inv_infinity_lights_probability = infinity_light_sources_num>0 ? 1.0/ip_lights_CDF[infinity_light_sources_num-1] : 0.0;
 
+  // Determine the (hemi)sphere to be sampled.
+  Vector3D_d normal;
+  bool sample_entire_sphere = false;
+  if (ip_bsdf->GetComponentsNum( BxDFType(BSDF_DIFFUSE | BSDF_GLOSSY | BSDF_REFLECTION) )==0)
+    // The BSDF has only transmission components, so need to sample only lights in the opposite hemisphere.
+    normal = (i_view_direction*i_intersection.m_dg.m_shading_normal <= 0.0) ? i_intersection.m_dg.m_shading_normal : i_intersection.m_dg.m_shading_normal*(-1.0);
+  else if (ip_bsdf->GetComponentsNum( BxDFType(BSDF_DIFFUSE | BSDF_GLOSSY | BSDF_TRANSMISSION) )==0)
+    // The BSDF has only reflection components, so need to sample only lights in the same hemisphere.
+    normal = (i_view_direction*i_intersection.m_dg.m_shading_normal >= 0.0) ? i_intersection.m_dg.m_shading_normal : i_intersection.m_dg.m_shading_normal*(-1.0);
+  else
+    // The BSDF has reflection and transmission components, so need to sample lights in both hemispheres.
+    sample_entire_sphere = true;
+
   Ray lighting_ray;
   SamplesSequence1D::Iterator component_iterator = i_samples.m_light_1D_samples.m_begin;
   SamplesSequence2D::Iterator position_iterator = i_samples.m_light_2D_samples.m_begin;
@@ -159,18 +172,18 @@ Spectrum_d DirectLightingIntegrator::_SampleLights(const Intersection &i_interse
     Point2D_d position_sample = *position_iterator;
 
     // Binary search for the sampled light source.
-    size_t sampled_index = MathRoutines::BinarySearchCDF(ip_lights_CDF, ip_lights_CDF+light_sources_num, component_sample) - ip_lights_CDF;
+    double light_component_pdf;
+    size_t sampled_index = MathRoutines::BinarySearchCDF(ip_lights_CDF, ip_lights_CDF+light_sources_num, component_sample, &light_component_pdf) - ip_lights_CDF;
     ASSERT(sampled_index>=0 && sampled_index<light_sources_num);
-
-    // This is the probability of the sampled light source to be sampled.
-    double component_pdf = sampled_index==0 ? ip_lights_CDF[0] : ip_lights_CDF[sampled_index]-ip_lights_CDF[sampled_index-1];
 
     if (sampled_index<infinity_light_sources_num)
       {
       // If infinity light is sampled.
       double light_pdf=0.0;
-      Spectrum_d light = light_sources.m_infinite_light_sources[sampled_index]->SampleLighting(i_intersection.m_dg.m_point,
-        i_intersection.m_dg.m_shading_normal, position_sample, lighting_ray, light_pdf);
+      Vector3D_d sampled_direction;
+      Spectrum_d light = sample_entire_sphere ? light_sources.m_infinite_light_sources[sampled_index]->SampleLighting(position_sample, sampled_direction, light_pdf) :
+        light_sources.m_infinite_light_sources[sampled_index]->SampleLighting(normal, position_sample, sampled_direction, light_pdf);
+      lighting_ray = Ray(i_intersection.m_dg.m_point, sampled_direction);
 
       if (light_pdf>0.0 && light.IsBlack()==false)
         {
@@ -179,8 +192,8 @@ Spectrum_d DirectLightingIntegrator::_SampleLights(const Intersection &i_interse
         double bsdf_pdf = ip_bsdf->PDF(i_view_direction, lighting_ray.m_direction);
 
         // Compute weighting coefficient for the multiple importance sampling.
-        double weight = SamplingRoutines::PowerHeuristic(m_lights_samples_num, light_pdf*component_pdf, m_bsdf_samples_num, bsdf_pdf*component_pdf*inv_infinity_lights_probability);
-        weight *= fabs(lighting_ray.m_direction*i_intersection.m_dg.m_shading_normal) / (light_pdf*component_pdf);
+        double weight = SamplingRoutines::PowerHeuristic(m_lights_samples_num, light_pdf*light_component_pdf, m_bsdf_samples_num, bsdf_pdf*light_component_pdf*inv_infinity_lights_probability);
+        weight *= fabs(lighting_ray.m_direction*i_intersection.m_dg.m_shading_normal) / (light_pdf*light_component_pdf);
 
         lighting_ray.m_min_t = CoreUtils::GetNextMinT(i_intersection, lighting_ray.m_direction);
         if (weight>0.0 && light.IsBlack()==false && mp_scene->IntersectTest(lighting_ray)==false)
@@ -191,7 +204,7 @@ Spectrum_d DirectLightingIntegrator::_SampleLights(const Intersection &i_interse
       {
       // If area light is sampled.
       double light_pdf=0.0;
-      double triangle_sample = (sampled_index==0 ? component_sample : component_sample-ip_lights_CDF[sampled_index-1]) / component_pdf;
+      double triangle_sample = (sampled_index==0 ? component_sample : component_sample-ip_lights_CDF[sampled_index-1]) / light_component_pdf;
       Spectrum_d light = light_sources.m_area_light_sources[sampled_index-infinity_light_sources_num]->SampleLighting(i_intersection.m_dg.m_point, triangle_sample,
         position_sample, lighting_ray, light_pdf);
 
@@ -208,8 +221,8 @@ Spectrum_d DirectLightingIntegrator::_SampleLights(const Intersection &i_interse
         This is because when sampling the BSDF there is exactly one area light and exactly one triangle contributing to the direct lighting along this direction.
         If the light source (or triangle) currently being sampled is not the nearest one it will contribute zero radiance to the direct lighting along this direction.
         */
-        double weight = SamplingRoutines::PowerHeuristic(m_lights_samples_num, light_pdf*component_pdf, m_bsdf_samples_num, bsdf_pdf);
-        weight *= fabs(lighting_ray.m_direction*i_intersection.m_dg.m_shading_normal) / (light_pdf*component_pdf);
+        double weight = SamplingRoutines::PowerHeuristic(m_lights_samples_num, light_pdf*light_component_pdf, m_bsdf_samples_num, bsdf_pdf);
+        weight *= fabs(lighting_ray.m_direction*i_intersection.m_dg.m_shading_normal) / (light_pdf*light_component_pdf);
 
         lighting_ray.m_min_t = CoreUtils::GetNextMinT(i_intersection, lighting_ray.m_direction);
         if (weight>0.0 && light.IsBlack()==false && mp_scene->IntersectTest(lighting_ray)==false)
@@ -239,6 +252,19 @@ Spectrum_d DirectLightingIntegrator::_SampleBSDF(const Intersection &i_intersect
   double infinity_lights_probability = infinity_light_sources_num>0 ? ip_lights_CDF[infinity_light_sources_num-1] : 0.0;
   double inv_infinity_lights_probability = infinity_light_sources_num>0 ? 1.0/ip_lights_CDF[infinity_light_sources_num-1] : 0.0;
 
+  // Determine the (hemi)sphere to be sampled.
+  Vector3D_d normal;
+  bool sample_entire_sphere = false;
+  if (ip_bsdf->GetComponentsNum( BxDFType(BSDF_DIFFUSE | BSDF_GLOSSY | BSDF_REFLECTION) )==0)
+    // The BSDF has only transmission components, so need to sample only lights in the opposite hemisphere.
+    normal = (i_view_direction*i_intersection.m_dg.m_shading_normal <= 0.0) ? i_intersection.m_dg.m_shading_normal : i_intersection.m_dg.m_shading_normal*(-1.0);
+  else if (ip_bsdf->GetComponentsNum( BxDFType(BSDF_DIFFUSE | BSDF_GLOSSY | BSDF_TRANSMISSION) )==0)
+    // The BSDF has only reflection components, so need to sample only lights in the same hemisphere.
+    normal = (i_view_direction*i_intersection.m_dg.m_shading_normal >= 0.0) ? i_intersection.m_dg.m_shading_normal : i_intersection.m_dg.m_shading_normal*(-1.0);
+  else
+    // The BSDF has reflection and transmission components, so need to sample lights in both hemispheres.
+    sample_entire_sphere = true;
+
   SamplesSequence1D::Iterator component_iterator = i_samples.m_bsdf_1D_samples.m_begin;
   SamplesSequence2D::Iterator bxdf_iterator = i_samples.m_bsdf_2D_samples.m_begin;
   for(size_t i=0;i<m_bsdf_samples_num;++i)
@@ -264,10 +290,10 @@ Spectrum_d DirectLightingIntegrator::_SampleBSDF(const Intersection &i_intersect
         const AreaLightSource *p_area_light = isect.mp_primitive->GetAreaLightSource_RawPtr();
         if (p_area_light)
           {
-          double light_pdf = p_area_light->LightingPDF(lighting_ray, isect.m_triangle_index);
           Spectrum_d light = p_area_light->Radiance(isect.m_dg, isect.m_triangle_index, lighting_ray.m_direction*(-1.0));
-          if (light_pdf > 0.0 && light.IsBlack()==false)
+          if (light.IsBlack()==false)
             {
+            double light_pdf = p_area_light->LightingPDF(lighting_ray, isect.m_triangle_index);
             size_t light_index = _GetAreaLightIndex(p_area_light) + infinity_light_sources_num;
             double light_component_pdf = light_index==0 ? ip_lights_CDF[0] : ip_lights_CDF[light_index]-ip_lights_CDF[light_index-1];
 
@@ -283,16 +309,18 @@ Spectrum_d DirectLightingIntegrator::_SampleBSDF(const Intersection &i_intersect
         if (infinity_light_sources_num > 0)
           {
           // Select a random infinity light based on the CDF.
-          size_t sampled_index = MathRoutines::BinarySearchCDF(ip_lights_CDF, ip_lights_CDF+infinity_light_sources_num, RandomDouble(infinity_lights_probability)) - ip_lights_CDF;
+          double light_component_pdf;
+          size_t sampled_index = MathRoutines::BinarySearchCDF(ip_lights_CDF, ip_lights_CDF+infinity_light_sources_num, RandomDouble(infinity_lights_probability), &light_component_pdf) - ip_lights_CDF;
           ASSERT(sampled_index>=0 && sampled_index<infinity_light_sources_num);
-          double light_component_pdf = sampled_index==0 ? ip_lights_CDF[0] : ip_lights_CDF[sampled_index]-ip_lights_CDF[sampled_index-1];
           bsdf_pdf *= light_component_pdf*inv_infinity_lights_probability;
           ASSERT(bsdf_pdf > 0.0);
 
-          double light_pdf = light_sources.m_infinite_light_sources[sampled_index]->LightingPDF(i_intersection.m_dg.m_point,i_intersection.m_dg.m_shading_normal,lighting_direction);
           Spectrum_d light = light_sources.m_infinite_light_sources[sampled_index]->Radiance(RayDifferential(lighting_ray));
-          if (light_pdf > 0.0 && light.IsBlack()==false)
+          if (light.IsBlack()==false)
             {
+            double light_pdf = sample_entire_sphere ? light_sources.m_infinite_light_sources[sampled_index]->LightingPDF(lighting_direction) : 
+              light_sources.m_infinite_light_sources[sampled_index]->LightingPDF(normal, lighting_direction);
+
             // Compute weighting coefficient for the multiple importance sampling.
             double weight = SamplingRoutines::PowerHeuristic(m_bsdf_samples_num, bsdf_pdf, m_lights_samples_num, light_component_pdf*light_pdf);
             weight *= fabs(lighting_ray.m_direction*i_intersection.m_dg.m_shading_normal) / bsdf_pdf;

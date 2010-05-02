@@ -42,8 +42,8 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/MP"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\;..\..\..\ThirdParty\;..\..\..\ThirdParty\boost\1.40\;..\..\..\ThirdParty\TBB\2.2\include;..\..\..\ThirdParty\EasyBMP\1.06"
-				PreprocessorDefinitions="TBB_USE_DEBUG;WIN32;_DEBUG;_WINDOWS;NOMINMAX"
+				AdditionalIncludeDirectories="..\;..\..\..\ThirdParty\;..\..\..\ThirdParty\boost\1.40\;..\..\..\ThirdParty\TBB\2.2\include;..\..\..\ThirdParty\EasyBMP\1.06;..\..\..\ThirdParty\OpenEXR\Deploy\include"
+				PreprocessorDefinitions="TBB_USE_DEBUG;WIN32;_DEBUG;_WINDOWS;NOMINMAX;OPENEXR_DLL"
 				MinimalRebuild="false"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -64,10 +64,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="tbb_debug.lib"
+				AdditionalDependencies="tbb_debug.lib Half.lib Iex.lib IlmImf.lib IlmThread.lib Imath.lib zdll.lib"
 				OutputFile="$(OutDir)\$(ProjectName)d.exe"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="..\..\..\ThirdParty\TBB\2.2\ia32\vc9\lib"
+				AdditionalLibraryDirectories="..\..\..\ThirdParty\TBB\2.2\ia32\vc9\lib;..\..\..\ThirdParty\OpenEXR\Deploy\lib\Debug"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				RandomizedBaseAddress="1"
@@ -95,7 +95,7 @@
 			<Tool
 				Name="VCPostBuildEventTool"
 				Description="Copying TBB DLLs and PDBs"
-				CommandLine="copy &quot;..\..\..\ThirdParty\TBB\2.2\ia32\vc9\bin\tbb_debug.dll&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;copy  &quot;..\..\..\ThirdParty\TBB\2.2\ia32\vc9\bin\tbb_debug.pdb&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;"
+				CommandLine="copy &quot;..\..\..\ThirdParty\TBB\2.2\ia32\vc9\bin\tbb_debug.dll&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;copy  &quot;..\..\..\ThirdParty\TBB\2.2\ia32\vc9\bin\tbb_debug.pdb&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;copy  &quot;..\..\..\ThirdParty\OpenEXR\Deploy\bin\Debug\IlmImf.dll&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;copy  &quot;..\..\..\ThirdParty\OpenEXR\Deploy\bin\Debug\Half.dll&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;copy  &quot;..\..\..\ThirdParty\OpenEXR\Deploy\bin\Debug\Iex.dll&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;copy  &quot;..\..\..\ThirdParty\OpenEXR\Deploy\bin\Debug\IlmThread.dll&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;copy  &quot;..\..\..\ThirdParty\OpenEXR\Deploy\bin\Debug\zlib1.dll&quot; &quot;$(OutDir)&quot;"
 			/>
 		</Configuration>
 		<Configuration
@@ -128,8 +128,8 @@
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
-				AdditionalIncludeDirectories="..\;..\..\..\ThirdParty\;..\..\..\ThirdParty\boost\1.40\;..\..\..\ThirdParty\TBB\2.2\include;..\..\..\ThirdParty\EasyBMP\1.06"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;NOMINMAX;_SECURE_SCL=0"
+				AdditionalIncludeDirectories="..\;..\..\..\ThirdParty\;..\..\..\ThirdParty\boost\1.40\;..\..\..\ThirdParty\TBB\2.2\include;..\..\..\ThirdParty\EasyBMP\1.06;..\..\..\ThirdParty\OpenEXR\Deploy\include"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;NOMINMAX;_SECURE_SCL=0;OPENEXR_DLL"
 				RuntimeLibrary="2"
 				EnableEnhancedInstructionSet="2"
 				FloatingPointModel="0"
@@ -151,9 +151,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="tbb.lib"
+				AdditionalDependencies="tbb.lib Half.lib Iex.lib IlmImf.lib IlmThread.lib Imath.lib zdll.lib"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\..\..\ThirdParty\TBB\2.2\ia32\vc9\lib"
+				AdditionalLibraryDirectories="..\..\..\ThirdParty\TBB\2.2\ia32\vc9\lib;..\..\..\ThirdParty\OpenEXR\Deploy\lib\Release"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -184,7 +184,7 @@
 			<Tool
 				Name="VCPostBuildEventTool"
 				Description="Copying TBB DLLs and PDBs"
-				CommandLine="copy &quot;..\..\..\ThirdParty\TBB\2.2\ia32\vc9\bin\tbb.dll&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;copy  &quot;..\..\..\ThirdParty\TBB\2.2\ia32\vc9\bin\tbb.pdb&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;"
+				CommandLine="copy &quot;..\..\..\ThirdParty\TBB\2.2\ia32\vc9\bin\tbb.dll&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;copy  &quot;..\..\..\ThirdParty\TBB\2.2\ia32\vc9\bin\tbb.pdb&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;copy  &quot;..\..\..\ThirdParty\OpenEXR\Deploy\bin\Release\IlmImf.dll&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;copy  &quot;..\..\..\ThirdParty\OpenEXR\Deploy\bin\Release\Half.dll&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;copy  &quot;..\..\..\ThirdParty\OpenEXR\Deploy\bin\Release\Iex.dll&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;copy  &quot;..\..\..\ThirdParty\OpenEXR\Deploy\bin\Release\IlmThread.dll&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;copy  &quot;..\..\..\ThirdParty\OpenEXR\Deploy\bin\Release\zlib1.dll&quot; &quot;$(OutDir)&quot;"
 			/>
 		</Configuration>
 	</Configurations>

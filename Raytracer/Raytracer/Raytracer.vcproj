@@ -582,6 +582,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\LightSources\ImageEnvironmentalLight.h"
+					>
+				</File>
+				<File
 					RelativePath=".\LightSources\ParallelLight.h"
 					>
 				</File>
@@ -595,6 +599,10 @@
 				>
 				<File
 					RelativePath=".\LightSources\DiffuseAreaLightSource.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\LightSources\ImageEnvironmentalLight.cpp"
 					>
 				</File>
 				<File

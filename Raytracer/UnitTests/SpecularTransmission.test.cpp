@@ -61,7 +61,7 @@ public:
 
 static class TestDescription_SpecularTransmissionTestSuite_test_SpecularTransmission_TotalScatteringWithReflection : public CxxTest::RealTestDescription {
 public:
- TestDescription_SpecularTransmissionTestSuite_test_SpecularTransmission_TotalScatteringWithReflection() : CxxTest::RealTestDescription( Tests_SpecularTransmissionTestSuite, suiteDescription_SpecularTransmissionTestSuite, 123, "test_SpecularTransmission_TotalScatteringWithReflection" ) {}
+ TestDescription_SpecularTransmissionTestSuite_test_SpecularTransmission_TotalScatteringWithReflection() : CxxTest::RealTestDescription( Tests_SpecularTransmissionTestSuite, suiteDescription_SpecularTransmissionTestSuite, 125, "test_SpecularTransmission_TotalScatteringWithReflection" ) {}
  void runTest() { suite_SpecularTransmissionTestSuite.test_SpecularTransmission_TotalScatteringWithReflection(); }
 } testDescription_SpecularTransmissionTestSuite_test_SpecularTransmission_TotalScatteringWithReflection;
 

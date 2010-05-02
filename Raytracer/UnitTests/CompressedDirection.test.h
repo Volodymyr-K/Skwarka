@@ -36,6 +36,20 @@ class CompressedDirectionTestSuite : public CxxTest::TestSuite
               }
       }
 
+    void test_CompressedDirection_ID()
+      {
+      for (size_t i=0;i<(1<<16);++i)
+        {
+        CompressedDirection dir = CompressedDirection::FromID((unsigned short)i);
+        unsigned short j = dir.GetID();
+        if (i!=j)
+          {
+          TS_FAIL("IDs do not match.");
+          return;
+          }
+        }
+      }
+
   };
 
 #endif // COMPRESSED_DIRECTION_TEST_H

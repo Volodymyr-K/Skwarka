@@ -32,9 +32,10 @@ namespace MathRoutines
   * Given the CDF and a sample value the method finds the sampled item.
   * The CDF is given by the range specified by the two random-access iterators.
   * The specified range can be a sub-range of an original CDF but the sample value needs to be in the specified range. 
+  * The probability of sampling this item is written to op_pdf (if not NULL).
   */
   template<typename Iterator>
-  Iterator BinarySearchCDF(Iterator i_begin, Iterator i_end, double i_sample);
+  Iterator BinarySearchCDF(Iterator i_begin, Iterator i_end, double i_sample, double *op_pdf = NULL);
 
   /**
   * Returns true if the integer is a power of 2.
@@ -119,6 +120,12 @@ namespace MathRoutines
   */
   template<typename T>
   T SphericalPhi(const Vector3D<T> &i_vector);
+
+  /**
+  * Returns directions for the specified phi and theta angles.
+  */
+  template<typename T>
+  Vector3D<T> SphericalDirection(double i_phi, double i_theta);
   };
 
 /////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
@@ -158,23 +165,32 @@ namespace MathRoutines
     }
 
   template<typename Iterator>
-  Iterator BinarySearchCDF(Iterator i_begin, Iterator i_end, double i_sample)
+  Iterator BinarySearchCDF(Iterator i_begin, Iterator i_end, double i_sample, double *op_pdf)
     {
     ASSERT(i_begin<i_end);
     ASSERT(i_sample>=0 && i_sample<1.0);
 
-    --i_end;
-    while(i_begin<i_end)
-      {
-      ASSERT((*i_begin) <= (*i_end) && i_sample < (*i_end));
+    Iterator begin = i_begin, end = i_end;
 
-      Iterator medium = i_begin + std::distance(i_begin,i_end)/2;
+    --end;
+    while(begin<end)
+      {
+      ASSERT((*begin) <= (*end) && i_sample < (*end));
+
+      Iterator medium = begin + std::distance(begin,end)/2;
       if ((*medium) <= i_sample)
-        i_begin = medium+1;
+        begin = medium+1;
       else
-        i_end = medium;
+        end = medium;
       }
-    return i_begin;
+
+    if (op_pdf)
+      if (begin == i_begin)
+        *op_pdf = *begin;
+      else
+        *op_pdf = *begin - *(begin-1);
+
+    return begin;
     }
 
   inline bool IsPowerOf2(unsigned int i_value)
@@ -386,6 +402,13 @@ namespace MathRoutines
 
     double p = atan2(i_vector[1], i_vector[0]);
     return (T) ( (p < 0.0) ? p + 2.0*M_PI : p );
+    }
+
+  template<typename T>
+  Vector3D<T> SphericalDirection(double i_phi, double i_theta)
+    {
+    double sint = sin(i_theta), cost = cos(i_theta);
+    return Vector3D<T>((T)(sint*cos(i_phi)), (T)(sint*sin(i_phi)), (T)(cost));
     }
 
   }

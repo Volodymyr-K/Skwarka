@@ -78,6 +78,81 @@ intrusive_ptr<TriangleMesh> LoadMeshFromStl(std::string i_filename, bool i_smoot
   return intrusive_ptr<TriangleMesh>( new TriangleMesh(vertices, triangles, i_smooth) );
   }
 
+intrusive_ptr<TriangleMesh> LoadMeshFromPLY(std::string i_filename, bool i_smooth)
+  {
+  std::vector<Point3D_f> vertices;
+  std::vector<MeshTriangle> triangles;
+  std::vector<float> uv_parameterization;
+
+#pragma warning(disable : 4996)
+  FILE *fp=fopen(i_filename.c_str(),"r");
+
+  bool header_done=false;
+  size_t vertices_num, triangles_num;
+  size_t i=0;
+  while(true)
+    {
+    char buf[1024];
+    if ( !fgets(buf,1024,fp) ) break;
+
+    std::string s=buf;
+    if (s.find("element vertex")!=-1)
+      {
+      std::stringstream sstream;
+      sstream << s;
+
+      std::string dummy;
+      sstream >> dummy >> dummy >> vertices_num;
+      }
+    if (s.find("element face")!=-1)
+      {
+      std::stringstream sstream;
+      sstream << s;
+
+      std::string dummy;
+      sstream >> dummy >> dummy >> triangles_num;
+      }
+    if (s.find("end_header")!=-1)
+      {
+      header_done=true;
+      continue;
+      }
+    if (header_done==false) continue;
+
+    if (i<vertices_num)
+      {
+      std::stringstream sstream;
+      sstream << s;
+
+      float x,y,z;
+      sstream >> x >> y >> z;
+      //vertices.push_back(Point3D_f(x,y,z));
+      vertices.push_back(Point3D_f(-x,-z,y));
+      }
+    else
+      {
+      std::stringstream sstream;
+      sstream << s;
+
+      std::string dummy;
+      size_t n,v1,v2,v3;
+      sstream >> n;
+      if (n==3)
+        {
+        sstream >> v1 >> v2 >> v3;
+        MeshTriangle tr;
+        tr.m_vertices[0]=v1;tr.m_vertices[1]=v2;tr.m_vertices[2]=v3;
+        if (v1!=v2 && v1!=v3 && v2!=v3) triangles.push_back(tr);
+        }
+      }
+
+    ++i;
+    }
+  fclose(fp);
+
+  return intrusive_ptr<TriangleMesh>( new TriangleMesh(vertices, triangles, i_smooth) );
+  }
+
 
 intrusive_ptr<TriangleMesh> LoadMeshFromPbrt(std::string i_vertices_filename, std::string i_triangles_filename)
   {

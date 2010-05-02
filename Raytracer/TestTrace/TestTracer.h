@@ -54,6 +54,12 @@
 #include <Raytracer/Core/Fresnel.h>
 #include <Math/CompressedDirection.h>
 #include "EasyBMP.h"
+#include <Raytracer/LightSources/ImageEnvironmentalLight.h>
+
+#include <ImfRgbaFile.h>
+#include <ImfStringAttribute.h>
+#include <ImfMatrixAttribute.h>
+#include <ImfArray.h>
 
 class TestTracer
   {
@@ -148,9 +154,42 @@ intrusive_ptr<Primitive> LoadMetalPrimitive(std::string i_filename, bool i_smoot
   return p_primitive;
   }
 
+void
+readRgba1 (const char fileName[],
+           Imf::Array2D<Imf::Rgba> &pixels,
+           int &width,
+           int &height)
+  {
+  Imf::RgbaInputFile file (fileName);
+  Imath::Box2i dw = file.dataWindow();
+
+  width  = dw.max.x - dw.min.x + 1;
+  height = dw.max.y - dw.min.y + 1;
+  pixels.resizeErase (height, width);
+
+  file.setFrameBuffer (&pixels[0][0] - dw.min.x - dw.min.y * width, 1, width);
+  file.readPixels (dw.min.y, dw.max.y);
+  }
 
 inline void TestTracer::LoadMesh()
   {
+/*
+    {
+    int height=0, width=0;
+    Imf::Array2D<Imf::Rgba> image(height, width);
+    readRgba1("env_lights/grace-new.exr", image, width, height);
+
+    std::vector<std::vector<Spectrum_d> > values(height, width);
+    for( int j=0 ; j < height ; j++)
+      for( int i=0 ; i < width ; i++)
+        values[j][i] = 1000*Spectrum_d(static_cast<float>(image[j][i].r), static_cast<float>(image[j][i].g), static_cast<float>(image[j][i].b));
+
+    values.assign(4,std::vector<Spectrum_d>(1,Spectrum_d(300.0)));
+
+    intrusive_ptr<InfiniteLightSource> p_inf_light( new ImageEnvironmentalLight(BBox3D_d(Point3D_d(0,0,0),Point3D_d(1,1,1)), values) );
+
+    }
+*/
   std::vector<intrusive_ptr<const Primitive> > primitives;
 /*
   primitives.push_back(LoadWallsPrimitive("stls/walls.stl", false));
@@ -232,6 +271,7 @@ inline void TestTracer::LoadMesh()
   }
 */
 
+  /*
   intrusive_ptr<const Primitive> p_primitive = LoadDiffusePrimitive("sponza/sponza.stl", false, Spectrum_d(200,200,200)/255.0);
   primitives.push_back(p_primitive);
   BBox3D_d bbox = Convert<double>(p_primitive->GetTriangleMesh()->GetBounds());
@@ -254,6 +294,15 @@ inline void TestTracer::LoadMesh()
   LightSources lights;
 
   intrusive_ptr<InfiniteLightSource> p_inf_light( new InfiniteLightSourceMock(5.5*Spectrum_d(200.0,220.0,250.0), bbox ) );
+
+  //BMP Input;
+  //Input.ReadFromFile("env.bmp");
+  //std::vector<std::vector<Spectrum_d> > values(Input.TellHeight(),std::vector<Spectrum_d>(Input.TellWidth()));
+  //for( int j=0 ; j < Input.TellHeight() ; j++)
+  //  for( int i=0 ; i < Input.TellWidth() ; i++)
+  //    values[j][i]=Spectrum_d(Input(i,j)->Red,Input(i,j)->Green,Input(i,j)->Blue)*1.0;
+  //intrusive_ptr<InfiniteLightSource> p_inf_light( new ImageEnvironmentalLight(bbox, values) );
+  
   lights.m_infinite_light_sources.push_back(p_inf_light);
 
 
@@ -293,13 +342,66 @@ inline void TestTracer::LoadMesh()
     primitives.push_back(p_sphere_primitive);
     lights.m_area_light_sources.push_back(p_area_light);
     }
+*/
 
+//  intrusive_ptr<TriangleMesh> p_mesh( LoadMeshFromPLY("dragon/dragon.ply", false) );
+
+  Sphere s;
+  s.SetParameter("Center","0 0 0.1");
+  s.SetParameter("Radius","0.08");
+  s.SetParameter("Subdivisions","7");
+  intrusive_ptr<TriangleMesh> p_mesh( s.BuildMesh() );
+
+  /*
+  intrusive_ptr<Texture<Spectrum_d> > p_refrlection(new ConstantTexture<Spectrum_d> (Spectrum_d(1.0,223.0/255,0)));
+  intrusive_ptr<Texture<double> > p_roughness(new ConstantTexture<double> (0.03));
+  intrusive_ptr<Material> p_material(new Metal(p_refrlection, p_roughness));
+*/
+
+  intrusive_ptr<Texture<Spectrum_d> > p_reflectance(new ConstantTexture<Spectrum_d> (Spectrum_d(0.2)));
+  intrusive_ptr<Texture<double> > p_sigma(new ConstantTexture<double> (0.35));
+  intrusive_ptr<Material> p_material(new Matte(p_reflectance, p_sigma));
+  BBox3D_d bbox = Convert<double>(p_mesh->GetBounds());
+
+  intrusive_ptr<Primitive> p_primitive(new Primitive(p_mesh, p_material));
+  primitives.push_back(p_primitive);
+
+  LightSources lights;
+
+  //intrusive_ptr<InfiniteLightSource> p_inf_light( new InfiniteLightSourceMock(Spectrum_d(200.0,220.0,250.0), bbox ) );
+/*
+  BMP Input;
+  Input.ReadFromFile("env.bmp");
+  std::vector<std::vector<Spectrum_d> > values(Input.TellHeight(),std::vector<Spectrum_d>(Input.TellWidth()));
+  for( int j=0 ; j < Input.TellHeight() ; j++)
+    for( int i=0 ; i < Input.TellWidth() ; i++)
+      values[j][i]=Spectrum_d(Input(i,j)->Red,Input(i,j)->Green,Input(i,j)->Blue)*1.5;
+  intrusive_ptr<InfiniteLightSource> p_inf_light( new ImageEnvironmentalLight(bbox, values) );
+*/
+  int height=0, width=0;
+  Imf::Array2D<Imf::Rgba> image(height, width);
+  readRgba1("env_lights/grace-new.exr", image, width, height);
+
+  std::vector<std::vector<Spectrum_f> > values(height, width);
+  for( int j=0 ; j < height ; j++)
+    for( int i=0 ; i < width ; i++)
+      values[j][i] = 2500*Spectrum_f(static_cast<float>(image[j][i].r), static_cast<float>(image[j][i].g), static_cast<float>(image[j][i].b));
+
+  //values.assign(100,std::vector<Spectrum_f>(100,Spectrum_f(300.0)));
+
+  tbb::tick_count t0 = tbb::tick_count::now();
+  intrusive_ptr<InfiniteLightSource> p_inf_light( new ImageEnvironmentalLight(bbox, Transform(), values) );
+  tbb::tick_count t1 = tbb::tick_count::now();
+  printf("Creating light: %lf\n", (t1-t0).seconds());
+
+  lights.m_infinite_light_sources.push_back(p_inf_light);
 
   mp_scene.reset(new Scene(primitives, lights));
   }
 
 inline void TestTracer::RenderImage()
   {
+  tbb::tick_count t0, t1;
   FilmFilter *filter = new BoxFilter(0.5,0.5);
   //intrusive_ptr<InteractiveFilm> p_film(new InteractiveFilm(GetImageWidth(), GetImageHeight(), intrusive_ptr<FilmFilter>(filter)));
   intrusive_ptr<ImageFilm> p_film(new ImageFilm(GetImageWidth(), GetImageHeight(), intrusive_ptr<FilmFilter>(filter)));
@@ -308,29 +410,33 @@ inline void TestTracer::RenderImage()
   Point2D_i window_begin,window_end;
   p_film->GetSamplingExtent(window_begin, window_end);
 
-/*
-  // from floor
-  Vector3D_d direction = Vector3D_d(-2441-831,-590+4331,1342-1194).Normalized();
-  direction[2]+=0.35;
-  direction.Normalize();
-  intrusive_ptr<Camera> p_camera( new PerspectiveCamera( MakeLookAt(Point3D_d(831,-4331,394) + Vector3D_d(-2441-831,-590+4331,1342-1194).Normalized()*900,direction,Vector3D_d(0,0,1)), p_film, 0.001*12.000, 1300, 1.35) );
-*/
-  // normal
+  // kitchen
   //Vector3D_d direction = Vector3D_d(-2441-831,-590+4331,1342-1194).Normalized();
   //intrusive_ptr<Camera> p_camera( new PerspectiveCamera( MakeLookAt(Point3D_d(831,-4331,1194),direction,Vector3D_d(0,0,1)), p_film, 0.001*12.000, 1300, 1.35) );
 
+  /*
   // sponza
   Point3D_d camera_pos(12,-1,7);
   Point3D_d look_at(-4,.2,1.5);
   Vector3D_d direction = Vector3D_d(look_at-camera_pos).Normalized();
-  intrusive_ptr<Camera> p_camera( new PerspectiveCamera( MakeLookAt(camera_pos,direction,Vector3D_d(0,0,1)), p_film, 0.001*12.000, 6, 1.22) );
+  intrusive_ptr<Camera> p_camera( new PerspectiveCamera( MakeLookAt(camera_pos-direction*90,direction,Vector3D_d(0,0,1)), p_film, 0.001*12.000, 6, 1.22) );
+  */
 
+  // dragon
+  /*
+  Vector3D_d direction = Vector3D_d(0.1,1,-0.17).Normalized();
+  intrusive_ptr<Camera> p_camera( new PerspectiveCamera( MakeLookAt(Point3D_d(-0.036,-0.3,0.155),direction,Vector3D_d(0,0,1)), p_film, 0*0.01, 0.3, 1.1) );
+  */
+
+  Vector3D_d direction = Vector3D_d(0.1,1,-0.17).Normalized();
+  intrusive_ptr<Camera> p_camera( new PerspectiveCamera( MakeLookAt(Point3D_d(-0.036,-0.3,0.155),direction,Vector3D_d(0,0,1)), p_film, 0*0.01, 0.3, 1.1) );
 
   intrusive_ptr<ImagePixelsOrder> pixel_order(new ConsecutiveImagePixelsOrder);
   //intrusive_ptr<ImagePixelsOrder> pixel_order(new RandomBlockedImagePixelsOrder);
 
-  intrusive_ptr<Sampler> p_sampler( new LDSampler(window_begin, window_end, 4, pixel_order) );
+  intrusive_ptr<Sampler> p_sampler( new LDSampler(window_begin, window_end, 2, pixel_order) );
 
+ /*
   PhotonLTEIntegratorParams params;
   params.m_direct_light_samples_num=32;
   params.m_gather_samples_num=128/4;
@@ -338,16 +444,21 @@ inline void TestTracer::RenderImage()
   params.m_max_caustic_lookup_dist=30;
   params.m_max_specular_depth=8;
   intrusive_ptr<PhotonLTEIntegrator> p_lte_int( new PhotonLTEIntegrator(mp_scene, NULL, params) );
-  //intrusive_ptr<DirectLightingLTEIntegrator> p_lte_int( new DirectLightingLTEIntegrator(mp_scene, NULL, 6) );
 
+  */
+  DirectLightingLTEIntegratorParams params;
+  params.m_direct_light_samples_num=4*2;
+  params.m_max_specular_depth=6;
+  intrusive_ptr<DirectLightingLTEIntegrator> p_lte_int( new DirectLightingLTEIntegrator(mp_scene, NULL, params) );
+/*
   tbb::tick_count t0 = tbb::tick_count::now();
-  p_lte_int->ShootPhotons(1000000/1000*0, 100000, 6000000/30);
+  p_lte_int->ShootPhotons(1000000/1000*0, 1000000, 6000000);
   tbb::tick_count t1 = tbb::tick_count::now();
   printf("Shooting: %lf\n", (t1-t0).seconds());
-
+*/
   intrusive_ptr<SamplerBasedRenderer> p_renderer( new SamplerBasedRenderer(p_lte_int, p_sampler) );
-  p_renderer->SetDisplayUpdateCallback(mp_callback, 10.0);
-
+  p_renderer->SetDisplayUpdateCallback(mp_callback, 30.0);
+ 
   tbb::task_scheduler_init init;
   t0 = tbb::tick_count::now();
   p_renderer->Render(p_camera);
@@ -357,6 +468,24 @@ inline void TestTracer::RenderImage()
   p_film->ClearFilm();
   p_sampler->Reset();
 
+/*
+  std::vector<Point2D_d> samples(128*128);
+  SamplingRoutines::StratifiedSampling2D(samples.begin(),128,128,true);
+
+  for(size_t i=0;i<samples.size();++i)
+    {
+    Vector3D_d dir;
+    double pdf;
+    mp_scene->GetLightSources().m_infinite_light_sources[0]->SampleLighting(samples[i], dir, pdf);
+
+    double theta = MathRoutines::SphericalTheta(dir);
+    double phi = MathRoutines::SphericalPhi(dir);
+
+    p_film->AddSample(Point2D_d(phi*INV_2PI*p_film->GetXResolution(), theta*INV_PI*p_film->GetYResolution()), Spectrum_d(250,250,250));
+    }
+
+  mp_callback->Update(p_film);
+*/
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
   
   }

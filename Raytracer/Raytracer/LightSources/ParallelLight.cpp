@@ -43,7 +43,7 @@ m_direction(i_direction), m_radiance(i_radiance), m_world_bounds(i_world_bounds)
   m_area_CDF[4]=m_bbox_emitting_triangles[4].GetArea()*fabs(i_direction[2]);
   m_area_CDF[5]=m_bbox_emitting_triangles[5].GetArea()*fabs(i_direction[2]);
 
-  for(size_t i=1;i<6;++i) m_area_CDF[i]+=m_area_CDF[i-1];
+  for(size_t i=1;i<6;++i) m_area_CDF[i] += m_area_CDF[i-1];
   ASSERT(fabs(m_area_CDF[5]-m_bbox_projected_area) < 1e-10);
 
   for(size_t i=0;i<6;++i) m_area_CDF[i] /= m_area_CDF[5];
@@ -69,14 +69,16 @@ Spectrum_d ParallelLight::SamplePhoton(const Point2D_d &i_sample, Ray &o_photon_
   {
   Point2D_d sample = i_sample;
 
-  const double *p_sampled = MathRoutines::BinarySearchCDF(&(m_area_CDF[0]), (&m_area_CDF[5])+1, sample[0]);
+  double pdf;
+  const double *p_sampled = MathRoutines::BinarySearchCDF(&(m_area_CDF[0]), (&m_area_CDF[5])+1, sample[0], &pdf);
   int index = p_sampled-&(m_area_CDF[0]);
   ASSERT(index>=0 && index<6);
 
   if (index>0)
-    sample[0] = (sample[0]-m_area_CDF[index-1])/(m_area_CDF[index]-m_area_CDF[index-1]);
+    sample[0] = (sample[0]-m_area_CDF[index-1])/pdf;
   else
-    sample[0] = sample[0]/m_area_CDF[index];
+    sample[0] = sample[0]/pdf;
+  ASSERT(sample[0]>=0.0 && sample[0]<1.0);
 
   double b1, b2, b0;
   SamplingRoutines::UniformTriangleSampling(sample, b1, b2);

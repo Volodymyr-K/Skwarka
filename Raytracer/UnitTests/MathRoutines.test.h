@@ -4,6 +4,7 @@
 #include <cxxtest/TestSuite.h>
 #include "CustomValueTraits.h"
 #include <Math/MathRoutines.h>
+#include <Math/ThreadSafeRandom.h>
 #include <vector>
 
 class MathRoutinesTestSuite : public CxxTest::TestSuite
@@ -90,6 +91,36 @@ class MathRoutinesTestSuite : public CxxTest::TestSuite
       TS_ASSERT_EQUALS(MathRoutines::BinarySearchCDF(cdf.begin(), cdf.end(), 0.0), cdf.begin()+0);
       TS_ASSERT_EQUALS(MathRoutines::BinarySearchCDF(cdf.begin(), cdf.end(), 0.25), cdf.begin()+1);
       TS_ASSERT_EQUALS(MathRoutines::BinarySearchCDF(cdf.begin(), cdf.end(), 0.8), cdf.begin()+3);
+      }
+
+    // Test the PDF value returned.
+    void test_BinarySearchCDF3()
+      {
+      std::vector<double> cdf;
+
+      size_t N=97;
+      for(size_t i=0;i<N;++i)
+        {
+        cdf.push_back(RandomDouble(1.0));
+        if (i>0) cdf[cdf.size()-1] += cdf[cdf.size()-2];
+        }
+
+      for(size_t i=0;i<N;++i)
+        cdf[i] /= cdf.back();
+
+      for(double p=0;p<1;p+=0.001)
+        {
+        double pdf;
+        size_t index = MathRoutines::BinarySearchCDF(cdf.begin(), cdf.end(), p, &pdf) - cdf.begin();
+
+        double pdf2 = index>0 ? cdf[index]-cdf[index-1] : cdf[index];
+        if (pdf != pdf2)
+          {
+          TS_FAIL("The PDF values do not match.");
+          return;
+          }
+        }
+
       }
 
     // Tests for a special case when 0 is passed.
@@ -312,6 +343,26 @@ class MathRoutinesTestSuite : public CxxTest::TestSuite
 
       double theta = MathRoutines::SphericalPhi(v);
       TS_ASSERT_DELTA(theta, 2.0*M_PI-acos(v[0]/sqrt(v[0]*v[0]+v[1]*v[1])), (1e-10));
+      }
+
+    void test_SphericalDirection()
+      {
+      for(double phi=-10.0;phi<=10.0;phi+=0.1)
+        for(double theta=-5.0;theta<=5.0;theta+=0.1)
+          {
+          Vector3D_d v = MathRoutines::SphericalDirection<double>(phi, theta);
+
+          double phi2 = MathRoutines::SphericalPhi(v);
+          double theta2 = MathRoutines::SphericalTheta(v);
+
+          Vector3D_d v2 = MathRoutines::SphericalDirection<double>(phi2, theta2);
+
+          if (fabs(v[0]-v2[0])>(1e-9) || fabs(v[1]-v2[1])>(1e-9) || fabs(v[2]-v2[2])>(1e-9))
+            {
+            TS_FAIL("Vectors do not match.");
+            return;
+            }
+          }
       }
 
   private:

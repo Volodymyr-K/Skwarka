@@ -56,10 +56,10 @@ class DeltaLightSource: public ReferenceCounted
 * @sa DeltaLightSource, AreaLightSource
 */
 class InfiniteLightSource: public ReferenceCounted
-  { 
+  {
   public:
     /**
-    * Returns the light source radiance for the specified camera ray.
+    * Returns the light source radiance for the specified ray.
     * @param i_ray The ray pointing to the light source.
     * @return Light radiance.
     */
@@ -73,45 +73,41 @@ class InfiniteLightSource: public ReferenceCounted
 
     /**
     * Samples direct lighting at the specified point.
-    * @param i_point Lighted point.
     * @param i_sample 2D sample. Should be in [0;1)^2 range.
-    * @param[out] o_lighting_ray Ray to the light source from the specified point. The direction component of the ray should be normalized. The ray is unbounded.
+    * @param[out] o_lighting_direction Direction to the light source from the specified point. Should be normalized.
     * @param[out] o_pdf PDF value for the sampled direction. The returned value should be greater or equal than zero.
     * @return Radiance value.
     */
-    virtual Spectrum_d SampleLighting(const Point3D_d &i_point, const Point2D_d &i_sample, Ray &o_lighting_ray, double &o_pdf) const = 0;
+    virtual Spectrum_d SampleLighting(const Point2D_d &i_sample, Vector3D_d &o_lighting_direction, double &o_pdf) const = 0;
 
     /**
     * Returns PDF value for the specified point and lighting direction.
     * Implementation of this method should be consistent with implementation of SampleLighting() method so that they both use the same sampling distribution.
-    * @param i_point Lighted point.
     * @param i_lighting_direction Direction to the light source from the specified point. The vector is normalized.
     * @return PDF value for the sampled direction. The returned value should be greater or equal than zero.
     */
-    virtual double LightingPDF(const Point3D_d &i_point, const Vector3D_d &i_lighting_direction) const = 0;
+    virtual double LightingPDF(const Vector3D_d &i_lighting_direction) const = 0;
 
     /**
     * Samples direct lighting at the specified point with the specified surface normal.
     * Default implementation just calls SampleLighting() method without the normal information.
-    * @param i_point Lighted point.
     * @param i_normal Surface normal vector at the specified point. Should be normalized.
     * @param i_sample 2D sample. Should be in [0;1)^2 range.
-    * @param[out] o_lighting_ray Ray to the light source from the specified point. The direction component of the ray should be normalized. The ray is unbounded.
+    * @param[out] o_lighting_direction Direction to the light source from the specified point. Should be normalized.
     * @param[out] o_pdf PDF value for the sampled direction. The returned value should be greater or equal than zero.
     * @return Radiance value.
     */
-    virtual Spectrum_d SampleLighting(const Point3D_d &i_point, const Vector3D_d &i_normal, const Point2D_d &i_sample, Ray &o_lighting_ray, double &o_pdf) const;
+    virtual Spectrum_d SampleLighting(const Vector3D_d &i_normal, const Point2D_d &i_sample, Vector3D_d &o_lighting_direction, double &o_pdf) const;
 
     /**
     * Returns PDF value for the specified point, surface normal vector and lighting direction.
     * Implementation of this method should be consistent with implementation of SampleLighting() method so that they both use the same sampling distribution.
     * Default implementation just calls LightingPDF() method without the normal information.
-    * @param i_point Lighted point.
     * @param i_normal Surface normal vector at the specified point. Should be normalized.
     * @param i_lighting_direction Direction to the light source from the specified point. The vector is normalized.
     * @return PDF value for the sampled direction. The returned value should be greater or equal than zero.
     */
-    virtual double LightingPDF(const Point3D_d &i_point, const Vector3D_d &i_normal, const Vector3D_d &i_lighting_direction) const;
+    virtual double LightingPDF(const Vector3D_d &i_normal, const Vector3D_d &i_lighting_direction) const;
 
     /**
     * Samples outgoing light ray.
@@ -135,7 +131,7 @@ class InfiniteLightSource: public ReferenceCounted
     /**
     * Returns irradiance value at a point assuming there's no objects in the scene blocking the light.
     * The method does not take the surface normal so it accounts for the light coming from the entire sphere.
-    * Strictly speaking, the returned value is not an irradiance because it is not multiplied by the cosine factor.
+    * Strictly speaking, the returned value is not an irradiance because there's no surface.
     * The method can return an approximation rather than the exact value.
     * @return Irradiance value.
     */

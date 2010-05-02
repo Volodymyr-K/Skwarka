@@ -35,6 +35,16 @@ class CompressedDirection
     template<typename T>
     Vector3D<T> ToVector3D() const;
 
+    /**
+    * Returns ID of the compressed direction which can be used as an unique ID for the direction.
+    */
+    unsigned short GetID() const;
+
+    /**
+    * Returns CompressedDirection for the specified ID.
+    */
+    static CompressedDirection FromID(unsigned short i_id);
+
   private:
     static const unsigned int X_SIGN_MASK = 1<<13;
     static const unsigned int Y_SIGN_MASK = 1<<14;
@@ -97,6 +107,18 @@ template<typename T>
 Vector3D<T> CompressedDirection::ToVector3D() const
   {
   return Convert<T>(m_vectors[m_data]);
+  }
+
+inline unsigned short CompressedDirection::GetID() const
+  {
+  return m_data;
+  }
+
+inline CompressedDirection CompressedDirection::FromID(unsigned short i_id)
+  {
+  CompressedDirection ret;
+  ret.m_data = i_id;
+  return ret;
   }
 
 #endif // COMPRESSED_DIRECTION_H

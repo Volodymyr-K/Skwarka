@@ -22,3 +22,9 @@ public:
  void runTest() { suite_CompressedDirectionTestSuite.test_CompressedDirection_ConversionAccuracyTest(); }
 } testDescription_CompressedDirectionTestSuite_test_CompressedDirection_ConversionAccuracyTest;
 
+static class TestDescription_CompressedDirectionTestSuite_test_CompressedDirection_ID : public CxxTest::RealTestDescription {
+public:
+ TestDescription_CompressedDirectionTestSuite_test_CompressedDirection_ID() : CxxTest::RealTestDescription( Tests_CompressedDirectionTestSuite, suiteDescription_CompressedDirectionTestSuite, 39, "test_CompressedDirection_ID" ) {}
+ void runTest() { suite_CompressedDirectionTestSuite.test_CompressedDirection_ID(); }
+} testDescription_CompressedDirectionTestSuite_test_CompressedDirection_ID;
+

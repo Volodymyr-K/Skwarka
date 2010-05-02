@@ -73,7 +73,7 @@ class MIPMap: public ReferenceCounted
     /**
     * Private method that resamples original input image so that its width and height are both powers of 2.
     */
-    void _ResampleImage(const std::vector<std::vector<T> > &i_values, std::vector<std::vector<T> > &o_resampled_values) const;
+    BlockedArray<T> * _ResampleImage(const std::vector<std::vector<T> > &i_values) const;
 
     /**
     * Private method that computes EWA filter weights. This method is called once in the constructor.
@@ -122,15 +122,15 @@ MIPMap<T>::MIPMap(const std::vector<std::vector<T> > &i_values, bool i_repeat, d
   m_max_anisotropy = std::max(i_max_anisotropy, 1.0);
 
   // Resample original image so that it's width and height are both powers of 2.
-  std::vector<std::vector<T> > resampled_values;
-  _ResampleImage(i_values, resampled_values);
+  BlockedArray<T> *p_resampled_image = _ResampleImage(i_values);
 
-  m_height = resampled_values.size();
-  m_width = resampled_values[0].size();
+  m_height = p_resampled_image->GetSizeU();
+  m_width = p_resampled_image->GetSizeV();
+
   m_num_levels = MathRoutines::FloorLog2( (unsigned int)std::max(m_width,m_height) )+1;
   ASSERT(m_num_levels>0);
   
-  m_levels.push_back(new BlockedArray<T>(resampled_values));
+  m_levels.push_back(p_resampled_image);
   for(size_t level=1;level<m_num_levels;++level)
     {
     size_t size_y = std::max(m_levels.back()->GetSizeU()/2, (size_t)1);
@@ -181,7 +181,7 @@ MIPMap<T>::~MIPMap()
   }
 
 template <typename T>
-void MIPMap<T>::_ResampleImage(const std::vector<std::vector<T> > &i_values, std::vector<std::vector<T> > &o_resampled_values) const
+BlockedArray<T> *MIPMap<T>::_ResampleImage(const std::vector<std::vector<T> > &i_values) const
   {
   ASSERT(i_values.size()>0 && i_values[0].size()>0);
 
@@ -190,14 +190,16 @@ void MIPMap<T>::_ResampleImage(const std::vector<std::vector<T> > &i_values, std
 
   // Compute new width and height.
   size_t rounded_size_x = MathRoutines::RoundUpPow2((unsigned int)size_x), rounded_size_y = MathRoutines::RoundUpPow2((unsigned int)size_y);
+  BlockedArray<T> *p_array = new BlockedArray<T>(rounded_size_y, rounded_size_x);
 
   if (size_x==rounded_size_x && size_y==rounded_size_y)
     {
-    o_resampled_values=i_values;
-    return;
-    }
+    for (size_t y=0;y<size_y;++y)
+      for (size_t x=0;x<size_x;++x)
+        p_array->Get(y,x) = i_values[y][x];
 
-  o_resampled_values.assign(rounded_size_y, std::vector<T>(rounded_size_x));
+    return p_array;
+    }
 
   // First, we resample the image in X dimension (width). We can resample the dimensions separately because the used filter (Lanczos) is separable.
   std::vector<ResampleWeight> weights = _ComputeResampleWeights(size_x, rounded_size_x);
@@ -207,7 +209,7 @@ void MIPMap<T>::_ResampleImage(const std::vector<std::vector<T> > &i_values, std
     for (size_t x=0;x<rounded_size_x;++x)
       {
       double weigths_sum=0.0;
-      o_resampled_values[y][x] = T();
+      p_array->Get(y,x) = T();
       for (unsigned char j = 0; j < 4; ++j)
         {
         int original_x = weights[x].m_first_texel + j;
@@ -217,13 +219,13 @@ void MIPMap<T>::_ResampleImage(const std::vector<std::vector<T> > &i_values, std
         if (original_x >= 0 && original_x < (int)size_x)
           {
           weigths_sum += weights[x].m_weights[j];
-          o_resampled_values[y][x] += weights[x].m_weights[j] * i_values[y][original_x];
+          p_array->Get(y,x) += weights[x].m_weights[j] * i_values[y][original_x];
           }
         }
 
       // Normalize filter weights for texel resampling.
       ASSERT(weigths_sum > 0.0);
-      o_resampled_values[y][x] /= weigths_sum;
+      p_array->Get(y,x) /= weigths_sum;
       }
     }
 
@@ -246,7 +248,7 @@ void MIPMap<T>::_ResampleImage(const std::vector<std::vector<T> > &i_values, std
         if (original_y >= 0 && original_y < (int)size_y)
           {
           weigths_sum += weights[y].m_weights[j];
-          tmp[y] += weights[y].m_weights[j] * o_resampled_values[original_y][x];
+          tmp[y] += weights[y].m_weights[j] * p_array->Get(original_y,x);
           }
         }
 
@@ -256,8 +258,10 @@ void MIPMap<T>::_ResampleImage(const std::vector<std::vector<T> > &i_values, std
       }
 
     for (size_t y=0;y<rounded_size_y;++y)
-      o_resampled_values[y][x] = tmp[y];
+      p_array->Get(y,x) = tmp[y];
     }
+
+  return p_array;
   }
 
 template <typename T>
