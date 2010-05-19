@@ -474,6 +474,10 @@
 					Name="BxDFs"
 					>
 					<File
+						RelativePath=".\FresnelBlend.test.h"
+						>
+					</File>
+					<File
 						RelativePath=".\Lambertian.test.h"
 						>
 					</File>
@@ -515,6 +519,10 @@
 					</File>
 					<File
 						RelativePath=".\Metal.test.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Substrate.test.h"
 						>
 					</File>
 					<File
@@ -692,6 +700,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\FresnelBlend.test.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\ImageEnvironmentalLight.test.cpp"
 				>
 			</File>
@@ -865,6 +877,10 @@
 			</File>
 			<File
 				RelativePath=".\StratifiedSampler.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Substrate.test.cpp"
 				>
 			</File>
 			<File

@@ -1,29 +1,27 @@
-#ifndef MICROFACET_TEST_H
-#define MICROFACET_TEST_H
+#ifndef FRESNEL_BLEND_TEST_H
+#define FRESNEL_BLEND_TEST_H
 
 #include <cxxtest/TestSuite.h>
 #include "CustomValueTraits.h"
 #include <Common/Common.h>
 #include <Math/Geometry.h>
 #include <Math/Constants.h>
-#include <Raytracer/BxDFs/Microfacet.h>
+#include <Raytracer/BxDFs/FresnelBlend.h>
 #include <Raytracer/MicrofacetDistributions/BlinnDistribution.h>
 #include <Raytracer/Core/Fresnel.h>
 #include <Math/SamplingRoutines.h>
 #include <vector>
 
-// Tests Microfacet BxDF with BlinnDistribution.
-class MicrofacetTestSuite : public CxxTest::TestSuite
+// Tests FresnelBlend BxDF with BlinnDistribution.
+class FresnelBlendTestSuite : public CxxTest::TestSuite
   {
   public:
     void setUp()
       {
-      // These settings are for gold.
-      FresnelConductor fresnel(Spectrum_d(0.37), Spectrum_d(2.82));
       BlinnDistribution blinn(20.0);
-      typedef Microfacet<FresnelConductor,BlinnDistribution> Metal;
+      typedef FresnelBlend<BlinnDistribution> BlinnFresnelBlend;
 
-      mp_bxdf = shared_ptr<BxDF>( new Metal(Spectrum_d(1.0), fresnel, blinn) );
+      mp_bxdf = shared_ptr<BxDF>( new BlinnFresnelBlend(Spectrum_d(0.5), Spectrum_d(0.3), blinn) );
       }
 
     void tearDown()
@@ -31,14 +29,14 @@ class MicrofacetTestSuite : public CxxTest::TestSuite
       // Nothing to clear.
       }
 
-    void test_Microfacet_Type()
+    void test_FresnelBlend_Type()
       {
       TS_ASSERT(mp_bxdf->GetType() == (BSDF_REFLECTION | BSDF_GLOSSY));
       }
 
-    void test_Microfacet_Reciprocity()
+    void test_FresnelBlend_Reciprocity()
       {
-      Vector3D_d v1=Vector3D_d(0.2,0.5,0.8).Normalized();
+      Vector3D_d v1=Vector3D_d(0.2,0.5,0.8).Normalized(); 
       Vector3D_d v2=Vector3D_d(-0.1,-0.3,0.9).Normalized();
       Spectrum_d val1 = mp_bxdf->Evaluate(v1, v2);
       Spectrum_d val2 = mp_bxdf->Evaluate(v2, v1);
@@ -46,7 +44,7 @@ class MicrofacetTestSuite : public CxxTest::TestSuite
       TS_ASSERT_EQUALS(val1,val2);
       }
 
-    void test_Microfacet_Sample()
+    void test_FresnelBlend_Sample()
       {
       size_t num_samples=1000;
 
@@ -61,14 +59,14 @@ class MicrofacetTestSuite : public CxxTest::TestSuite
 
         if (pdf<0.0)
           correct=false;
-        if (sp[0]<0.0 || sp[1]<0.0 || sp[2]<0.0)
+        if (InRange(sp, 0.0, DBL_INF)==false)
           correct=false;
         }
 
       TS_ASSERT(correct);
       }
 
-    void test_Microfacet_PDF()
+    void test_FresnelBlend_PDF()
       {
       size_t num_samples=1000;
 
@@ -90,12 +88,12 @@ class MicrofacetTestSuite : public CxxTest::TestSuite
       TS_ASSERT(pdf_correct);
       }
 
-    void test_Microfacet_PDFSum()
+    void test_FresnelBlend_PDFSum()
       {
       size_t num_samples_sqrt = 300;
       Vector3D_d incident=Vector3D_d(0.5,0.5,0.5).Normalized();
       double sum=0;
-      
+
       std::vector<Point2D_d> samples(num_samples_sqrt*num_samples_sqrt);
       SamplingRoutines::StratifiedSampling2D(samples.begin(), num_samples_sqrt, num_samples_sqrt, true);
       for(size_t i=0;i<num_samples_sqrt*num_samples_sqrt;++i)
@@ -110,21 +108,21 @@ class MicrofacetTestSuite : public CxxTest::TestSuite
         sum+=pdf2*2.0*M_PI/(num_samples_sqrt*num_samples_sqrt);
         }
 
-      // For some reason the PDF does not really sum up to 1.0 but rather to ~1.047. Don't know why...
-      TS_ASSERT_DELTA(sum, 1.0, 0.07);
+      // For some reason the PDF does not really sum up to 1.0 but rather to ~0.97. Don't know why...
+      TS_ASSERT_DELTA(sum, 1.0, 0.03);
       }
 
-    void test_Microfacet_TotalScattering1()
+    void test_FresnelBlend_TotalScattering1()
       {
       size_t num_samples_sqrt=200;
       std::vector<Point2D_d> samples(num_samples_sqrt*num_samples_sqrt);
       SamplingRoutines::StratifiedSampling2D(samples.begin(),num_samples_sqrt,num_samples_sqrt,true);
 
       Spectrum_d total=mp_bxdf->TotalScattering(Vector3D_d(0.5,0.5,0.5).Normalized(), SamplesSequence2D(&samples[0], (&samples[0]) + samples.size()));
-      CustomAssertDelta(total, Spectrum_d(0.7551), 0.001); // This is an empirical value.
+      CustomAssertDelta(total, Spectrum_d(0.5059), 0.0004); // This is an empirical value.
       }
 
-    void test_Microfacet_TotalScattering2()
+    void test_FresnelBlend_TotalScattering2()
       {
       size_t num_samples_sqrt=300;
       std::vector<Point2D_d> samples1(num_samples_sqrt*num_samples_sqrt), samples2(num_samples_sqrt*num_samples_sqrt);
@@ -136,11 +134,11 @@ class MicrofacetTestSuite : public CxxTest::TestSuite
       SamplesSequence2D sequence2(&samples2[0], (&samples2[0]) + samples2.size());
 
       Spectrum_d total=mp_bxdf->TotalScattering(true, sequence1, sequence2);
-      CustomAssertDelta(total, Spectrum_d(0.7814), 0.005); // This is an empirical value.
+      CustomAssertDelta(total, Spectrum_d(0.5205), 0.005); // This is an empirical value.
       }
 
   private:
     shared_ptr<BxDF> mp_bxdf;
   };
 
-#endif // MICROFACET_TEST_H
+#endif // FRESNEL_BLEND_TEST_H

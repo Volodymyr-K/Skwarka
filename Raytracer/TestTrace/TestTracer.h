@@ -53,6 +53,9 @@
 #include <Raytracer/Materials/Metal.h>
 #include <Raytracer/Core/Fresnel.h>
 #include <Math/CompressedDirection.h>
+#include <Raytracer/Materials/Substrate.h>
+#include <Raytracer/BxDFs/FresnelBlend.h>
+#include <Raytracer/MicrofacetDistributions/BlinnDistribution.h>
 #include "EasyBMP.h"
 #include <Raytracer/LightSources/ImageEnvironmentalLight.h>
 
@@ -173,221 +176,63 @@ readRgba1 (const char fileName[],
 
 inline void TestTracer::LoadMesh()
   {
-/*
-    {
-    int height=0, width=0;
-    Imf::Array2D<Imf::Rgba> image(height, width);
-    readRgba1("env_lights/grace-new.exr", image, width, height);
-
-    std::vector<std::vector<Spectrum_d> > values(height, width);
-    for( int j=0 ; j < height ; j++)
-      for( int i=0 ; i < width ; i++)
-        values[j][i] = 1000*Spectrum_d(static_cast<float>(image[j][i].r), static_cast<float>(image[j][i].g), static_cast<float>(image[j][i].b));
-
-    values.assign(4,std::vector<Spectrum_d>(1,Spectrum_d(300.0)));
-
-    intrusive_ptr<InfiniteLightSource> p_inf_light( new ImageEnvironmentalLight(BBox3D_d(Point3D_d(0,0,0),Point3D_d(1,1,1)), values) );
-
-    }
-*/
   std::vector<intrusive_ptr<const Primitive> > primitives;
-/*
-  primitives.push_back(LoadWallsPrimitive("stls/walls.stl", false));
-  //primitives.push_back(LoadDiffusePrimitive("stls/walls.stl", false, Spectrum_d(248,244,180)/255.0));
-  primitives.push_back(LoadDiffusePrimitive("stls/floor.stl", false, Spectrum_d(51,51,153)/255.0));
-  primitives.push_back(LoadDiffusePrimitive("stls/ceiling.stl", false, Spectrum_d(230,230,240)/255.0));
-  primitives.push_back(LoadDiffusePrimitive("stls/window.stl", false, Spectrum_d(238,194,121)/255.0));
 
-  primitives.push_back(LoadDiffusePrimitive("stls/door.stl", false, Spectrum_d(238,194,121)/255.0));
-  primitives.push_back(LoadGlassPrimitive("stls/door_glass.stl", false, Spectrum_d(255.0,255.0,255.0)/255.0));
+  /////// Add ground primitive ///
 
-  primitives.push_back(LoadDiffusePrimitive("stls/table.stl", false, Spectrum_d(238,194,121)/255.0));
-  primitives.push_back(LoadDiffusePrimitive("stls/chair1.stl", false, Spectrum_d(127,90,48)/255.0));
-  primitives.push_back(LoadDiffusePrimitive("stls/chair2.stl", false, Spectrum_d(127,90,48)/255.0));
-  primitives.push_back(LoadDiffusePrimitive("stls/chair3.stl", false, Spectrum_d(127,90,48)/255.0));
+  std::vector<Point3D_f> vertices;
+  std::vector<MeshTriangle> triangles;
+  vertices.clear();
+  vertices.push_back(Point3D_f(-2000,-2000,0));vertices.push_back(Point3D_f(8000,-2000,0));
+  vertices.push_back(Point3D_f(8000,8000,0));vertices.push_back(Point3D_f(-2000,8000,0));
+  triangles.clear();
+  triangles.push_back(MeshTriangle(0,1,2));triangles.push_back(MeshTriangle(2,3,0));
+  intrusive_ptr<TriangleMesh> p_ground_mesh = intrusive_ptr<TriangleMesh>( new TriangleMesh(vertices, triangles, true) );
 
-  primitives.push_back(LoadMetalPrimitive("stls/lamp1.stl", false, Spectrum_d(240,240,240)/255.0, 0.05));
-  primitives.push_back(LoadMetalPrimitive("stls/lamp2.stl", false, Spectrum_d(240,240,240)/255.0, 0.05));
+  intrusive_ptr<Texture<Spectrum_d> > p_reflectance(new ConstantTexture<Spectrum_d> (Spectrum_d(200,200,200)/255.0*0.6));
+  intrusive_ptr<Texture<double> > p_sigma(new ConstantTexture<double> (0.35));
+  intrusive_ptr<Material> p_material(new Matte(p_reflectance, p_sigma));
 
-  primitives.push_back(LoadDiffusePrimitive("stls/shelf1.stl", false, Spectrum_d(240,240,240)/255.0));
-  primitives.push_back(LoadDiffusePrimitive("stls/shelf2.stl", false, Spectrum_d(240,240,240)/255.0));
-  primitives.push_back(LoadDiffusePrimitive("stls/upper_shelf.stl", false, Spectrum_d(173,216,230)/255.0));
-
-  primitives.push_back(LoadGlassPrimitive("stls/fruit_plate.stl", true, Spectrum_d(255,255,255)/255.0));
-
-  primitives.push_back(LoadDiffusePrimitive("stls/oranges.stl", true, Spectrum_d(240,165,0)/255.0));
-  primitives.push_back(LoadDiffusePrimitive("stls/strawberry.stl", true, Spectrum_d(255,3,62)/255.0));
-
-  primitives.push_back(LoadGlassPrimitive("stls/bottles.stl", true, Spectrum_d(255,255,255)/255.0));
-  primitives.push_back(LoadDiffusePrimitive("stls/cups.stl", true, Spectrum_d(240,240,240)/255.0));
-  primitives.push_back(LoadDiffusePrimitive("stls/shoes.stl", false, Spectrum_d(240,240,240)/255.0));
-
-  primitives.push_back(LoadDiffusePrimitive("stls/cooker_plate.stl", false, Spectrum_d(50,50,50)/255.0));
-  primitives.push_back(LoadDiffusePrimitive("stls/saucepan_handles.stl", false, Spectrum_d(50,50,50)/255.0));
-  primitives.push_back(LoadMetalPrimitive("stls/saucepan.stl", true, Spectrum_d(240,240,240)/255.0, 0.1));
-  primitives.push_back(LoadMetalPrimitive("stls/teapot.stl", true, Spectrum_d(240,205,0)/255.0, 0.1));
-  primitives.push_back(LoadMetalPrimitive("stls/teapot2.stl", true, Spectrum_d(240,205,0)/255.0, 0.1));
-  primitives.push_back(LoadMetalPrimitive("stls/extractor_fan.stl", true, Spectrum_d(201,192,187)/255.0, 0.1));
-
-  primitives.push_back(LoadDiffusePrimitive("stls/frying_pan1_handle.stl", false, Spectrum_d(50,50,50)/255.0));
-  primitives.push_back(LoadDiffusePrimitive("stls/frying_pan2_handle.stl", false, Spectrum_d(50,50,50)/255.0));
-  primitives.push_back(LoadMetalPrimitive("stls/frying_pan1.stl", true, Spectrum_d(240,40,50)/255.0, 0.1));
-  primitives.push_back(LoadMetalPrimitive("stls/frying_pan2.stl", true, Spectrum_d(201,192,187)/255.0, 0.1));
-
-
-  LightSources lights;
-  {
-    intrusive_ptr<Texture<Spectrum_d> > p_reflectance(new ConstantTexture<Spectrum_d> (Spectrum_d(212,175,55)/255.0*0.8));
-    intrusive_ptr<Texture<double> > p_sigma(new ConstantTexture<double> (0.04));
-    intrusive_ptr<Material> p_material(new Matte(p_reflectance, p_sigma));
-
-    Sphere s;
-    s.SetParameter("Center","-545 -1691 2130");
-    s.SetParameter("Radius","30");
-    s.SetParameter("Subdivisions","3");
-    intrusive_ptr<TriangleMesh> p_sphere( s.BuildMesh() );
-    intrusive_ptr<AreaLightSource> p_area_light( new DiffuseAreaLightSource(Spectrum_d(200000), p_sphere) );
-    intrusive_ptr<Primitive> p_sphere_primitive(new Primitive(p_sphere, p_material, p_area_light));
-
-    primitives.push_back(p_sphere_primitive);
-    lights.m_area_light_sources.push_back(p_area_light);
-  }
-
-  {
-    intrusive_ptr<Texture<Spectrum_d> > p_reflectance(new ConstantTexture<Spectrum_d> (Spectrum_d(212,175,55)/255.0*0.8));
-    intrusive_ptr<Texture<double> > p_sigma(new ConstantTexture<double> (0.04));
-    intrusive_ptr<Material> p_material(new Matte(p_reflectance, p_sigma));
-
-    Sphere s;
-    s.SetParameter("Center","-1709 -600 1830");
-    s.SetParameter("Radius","30");
-    s.SetParameter("Subdivisions","3");
-    intrusive_ptr<TriangleMesh> p_sphere( s.BuildMesh() );
-    intrusive_ptr<AreaLightSource> p_area_light( new DiffuseAreaLightSource(Spectrum_d(300000), p_sphere) );
-    intrusive_ptr<Primitive> p_sphere_primitive(new Primitive(p_sphere, p_material, p_area_light));
-
-    primitives.push_back(p_sphere_primitive);
-    lights.m_area_light_sources.push_back(p_area_light);
-  }
-*/
-
-  /*
-  intrusive_ptr<const Primitive> p_primitive = LoadDiffusePrimitive("sponza/sponza.stl", false, Spectrum_d(200,200,200)/255.0);
+  intrusive_ptr<Primitive> p_primitive(new Primitive(p_ground_mesh, p_material));
   primitives.push_back(p_primitive);
-  BBox3D_d bbox = Convert<double>(p_primitive->GetTriangleMesh()->GetBounds());
 
-    {
-    intrusive_ptr<Texture<Spectrum_d> > p_refrlection(new ConstantTexture<Spectrum_d> (Spectrum_d(0.95)));
-    intrusive_ptr<Texture<double> > p_roughness(new ConstantTexture<double> (0.001));
-    intrusive_ptr<Material> p_material(new Metal(p_refrlection, p_roughness));
+  /////// Add car primitive ///
 
-    Sphere s;
-    s.SetParameter("Center","1 0 1.51");
-    s.SetParameter("Radius","1.5");
-    s.SetParameter("Subdivisions","7");
-    intrusive_ptr<TriangleMesh> p_sphere( s.BuildMesh() );
-    intrusive_ptr<Primitive> p_sphere_primitive(new Primitive(p_sphere, p_material, NULL));
-
-    primitives.push_back(p_sphere_primitive);
-    }
-
-  LightSources lights;
-
-  intrusive_ptr<InfiniteLightSource> p_inf_light( new InfiniteLightSourceMock(5.5*Spectrum_d(200.0,220.0,250.0), bbox ) );
-
-  //BMP Input;
-  //Input.ReadFromFile("env.bmp");
-  //std::vector<std::vector<Spectrum_d> > values(Input.TellHeight(),std::vector<Spectrum_d>(Input.TellWidth()));
-  //for( int j=0 ; j < Input.TellHeight() ; j++)
-  //  for( int i=0 ; i < Input.TellWidth() ; i++)
-  //    values[j][i]=Spectrum_d(Input(i,j)->Red,Input(i,j)->Green,Input(i,j)->Blue)*1.0;
-  //intrusive_ptr<InfiniteLightSource> p_inf_light( new ImageEnvironmentalLight(bbox, values) );
-  
-  lights.m_infinite_light_sources.push_back(p_inf_light);
-
-
-  for(size_t x=0;x<4;++x) for(size_t y=0;y<2;++y)
-    {
-    intrusive_ptr<Texture<Spectrum_d> > p_reflectance(new ConstantTexture<Spectrum_d> (Spectrum_d(0.9)));
-    intrusive_ptr<Texture<double> > p_sigma(new ConstantTexture<double> (0.04));
-    intrusive_ptr<Material> p_material(new Matte(p_reflectance, p_sigma));
-
-    std::string coord;
-    if (x==0) coord = "-4.3 ";
-    if (x==1) coord = "0.0 ";
-    if (x==2) coord = "4.4 ";
-    if (x==3) coord = "-8.8 ";
-
-    if (y==0) coord = coord + "5.2 ";
-    if (y==1) coord = coord + "-5.2 ";
-
-    coord = coord + "4.4";
-
-    Spectrum_d color;
-    if (((x+y)%6)==0) color = Spectrum_d(1.0,0.4,0.4);
-    if (((x+y)%6)==1) color = Spectrum_d(0.4,1.0,0.4);
-    if (((x+y)%6)==2) color = Spectrum_d(0.4,0.4,1.0);
-    if (((x+y)%6)==3) color = Spectrum_d(1.0,1.0,0.4);
-    if (((x+y)%6)==4) color = Spectrum_d(0.4,1.0,1.0);
-    if (((x+y)%6)==5) color = Spectrum_d(1.0,0.4,1.0);
-
-    Sphere s;
-    s.SetParameter("Center",coord.c_str());
-    s.SetParameter("Radius","0.1");
-    s.SetParameter("Subdivisions","3");
-    intrusive_ptr<TriangleMesh> p_sphere( s.BuildMesh() );
-    intrusive_ptr<AreaLightSource> p_area_light( new DiffuseAreaLightSource(5*15000*color, p_sphere) );
-    intrusive_ptr<Primitive> p_sphere_primitive(new Primitive(p_sphere, p_material, p_area_light));
-
-    primitives.push_back(p_sphere_primitive);
-    lights.m_area_light_sources.push_back(p_area_light);
-    }
-*/
-
-//  intrusive_ptr<TriangleMesh> p_mesh( LoadMeshFromPLY("dragon/dragon.ply", false) );
-
-  Sphere s;
-  s.SetParameter("Center","0 0 0.1");
-  s.SetParameter("Radius","0.08");
-  s.SetParameter("Subdivisions","7");
-  intrusive_ptr<TriangleMesh> p_mesh( s.BuildMesh() );
+  //intrusive_ptr<TriangleMesh> p_mesh( LoadMeshFromPLY("dragon/dragon.ply", false) );
+  intrusive_ptr<TriangleMesh> p_mesh( LoadMeshFromStl("car.stl", true) );
 
   /*
   intrusive_ptr<Texture<Spectrum_d> > p_refrlection(new ConstantTexture<Spectrum_d> (Spectrum_d(1.0,223.0/255,0)));
   intrusive_ptr<Texture<double> > p_roughness(new ConstantTexture<double> (0.03));
-  intrusive_ptr<Material> p_material(new Metal(p_refrlection, p_roughness));
+  p_material.reset(new Metal(p_refrlection, p_roughness));
 */
+/*
+  p_reflectance.reset(new ConstantTexture<Spectrum_d> (Spectrum_d(0.4,0.2,0.25)));
+  p_sigma.reset(new ConstantTexture<double> (0.035));
+  p_material.reset(new Matte(p_reflectance, p_sigma));
+  */
 
-  intrusive_ptr<Texture<Spectrum_d> > p_reflectance(new ConstantTexture<Spectrum_d> (Spectrum_d(0.2)));
-  intrusive_ptr<Texture<double> > p_sigma(new ConstantTexture<double> (0.35));
-  intrusive_ptr<Material> p_material(new Matte(p_reflectance, p_sigma));
+  intrusive_ptr<ConstantTexture<Spectrum_d> > diff_refl (new ConstantTexture<Spectrum_d>(Spectrum_d(0.4,0.2,0.25)));
+  intrusive_ptr<ConstantTexture<Spectrum_d> > spec_refl (new  ConstantTexture<Spectrum_d>(Spectrum_d(0.4)));
+  intrusive_ptr<Texture<double> > p_roughness (new ConstantTexture<double> (0.025));
+  p_material.reset(new Substrate(diff_refl, spec_refl, p_roughness));
+
   BBox3D_d bbox = Convert<double>(p_mesh->GetBounds());
+  bbox.Unite(Convert<double>(p_ground_mesh->GetBounds()));
 
-  intrusive_ptr<Primitive> p_primitive(new Primitive(p_mesh, p_material));
+  p_primitive.reset(new Primitive(p_mesh, p_material));
   primitives.push_back(p_primitive);
 
   LightSources lights;
 
-  //intrusive_ptr<InfiniteLightSource> p_inf_light( new InfiniteLightSourceMock(Spectrum_d(200.0,220.0,250.0), bbox ) );
-/*
-  BMP Input;
-  Input.ReadFromFile("env.bmp");
-  std::vector<std::vector<Spectrum_d> > values(Input.TellHeight(),std::vector<Spectrum_d>(Input.TellWidth()));
-  for( int j=0 ; j < Input.TellHeight() ; j++)
-    for( int i=0 ; i < Input.TellWidth() ; i++)
-      values[j][i]=Spectrum_d(Input(i,j)->Red,Input(i,j)->Green,Input(i,j)->Blue)*1.5;
-  intrusive_ptr<InfiniteLightSource> p_inf_light( new ImageEnvironmentalLight(bbox, values) );
-*/
   int height=0, width=0;
   Imf::Array2D<Imf::Rgba> image(height, width);
-  readRgba1("env_lights/grace-new.exr", image, width, height);
+  readRgba1("env_lights/DH041LL.exr", image, width, height);
 
   std::vector<std::vector<Spectrum_f> > values(height, width);
   for( int j=0 ; j < height ; j++)
     for( int i=0 ; i < width ; i++)
-      values[j][i] = 2500*Spectrum_f(static_cast<float>(image[j][i].r), static_cast<float>(image[j][i].g), static_cast<float>(image[j][i].b));
-
-  //values.assign(100,std::vector<Spectrum_f>(100,Spectrum_f(300.0)));
+      values[j][i] = 1.7*Spectrum_f(static_cast<float>(image[j][i].r), static_cast<float>(image[j][i].g), static_cast<float>(image[j][i].b));
 
   tbb::tick_count t0 = tbb::tick_count::now();
   intrusive_ptr<InfiniteLightSource> p_inf_light( new ImageEnvironmentalLight(bbox, Transform(), values) );
@@ -423,37 +268,37 @@ inline void TestTracer::RenderImage()
   */
 
   // dragon
-  /*
-  Vector3D_d direction = Vector3D_d(0.1,1,-0.17).Normalized();
-  intrusive_ptr<Camera> p_camera( new PerspectiveCamera( MakeLookAt(Point3D_d(-0.036,-0.3,0.155),direction,Vector3D_d(0,0,1)), p_film, 0*0.01, 0.3, 1.1) );
-  */
+  //Vector3D_d direction = Vector3D_d(0.1,1,-0.17).Normalized();
+  //intrusive_ptr<Camera> p_camera( new PerspectiveCamera( MakeLookAt(Point3D_d(-0.036,-0.3,0.155),direction,Vector3D_d(0,0,1)), p_film, 0*0.01, 0.3, 1.1) );
 
-  Vector3D_d direction = Vector3D_d(0.1,1,-0.17).Normalized();
-  intrusive_ptr<Camera> p_camera( new PerspectiveCamera( MakeLookAt(Point3D_d(-0.036,-0.3,0.155),direction,Vector3D_d(0,0,1)), p_film, 0*0.01, 0.3, 1.1) );
+  // car
+  Vector3D_d direction = Vector3D_d(0.4,0.25,-0.2).Normalized();
+  intrusive_ptr<Camera> p_camera( new PerspectiveCamera( MakeLookAt(Point3D_d(-1000,-750,600)-direction*1000,direction,Vector3D_d(0,0,1)), intrusive_ptr<Film>(p_film), 0.000, 1000, 1.1) );
 
   intrusive_ptr<ImagePixelsOrder> pixel_order(new ConsecutiveImagePixelsOrder);
   //intrusive_ptr<ImagePixelsOrder> pixel_order(new RandomBlockedImagePixelsOrder);
 
-  intrusive_ptr<Sampler> p_sampler( new LDSampler(window_begin, window_end, 2, pixel_order) );
+  intrusive_ptr<Sampler> p_sampler( new LDSampler(window_begin, window_end, 16, pixel_order) );
 
  /*
   PhotonLTEIntegratorParams params;
-  params.m_direct_light_samples_num=32;
+  params.m_direct_light_samples_num=16;
   params.m_gather_samples_num=128/4;
   params.m_caustic_lookup_photons_num=100;
   params.m_max_caustic_lookup_dist=30;
   params.m_max_specular_depth=8;
   intrusive_ptr<PhotonLTEIntegrator> p_lte_int( new PhotonLTEIntegrator(mp_scene, NULL, params) );
+*/  
 
-  */
   DirectLightingLTEIntegratorParams params;
-  params.m_direct_light_samples_num=4*2;
+  params.m_direct_light_samples_num=8;
   params.m_max_specular_depth=6;
   intrusive_ptr<DirectLightingLTEIntegrator> p_lte_int( new DirectLightingLTEIntegrator(mp_scene, NULL, params) );
-/*
-  tbb::tick_count t0 = tbb::tick_count::now();
-  p_lte_int->ShootPhotons(1000000/1000*0, 1000000, 6000000);
-  tbb::tick_count t1 = tbb::tick_count::now();
+
+  /*
+  t0 = tbb::tick_count::now();
+  p_lte_int->ShootPhotons(1000000/1000*0, 400000, 600000);
+  t1 = tbb::tick_count::now();
   printf("Shooting: %lf\n", (t1-t0).seconds());
 */
   intrusive_ptr<SamplerBasedRenderer> p_renderer( new SamplerBasedRenderer(p_lte_int, p_sampler) );

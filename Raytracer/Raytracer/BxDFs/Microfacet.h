@@ -68,9 +68,7 @@ Microfacet<Fresnel,MicrofacetDistribution>::Microfacet(Spectrum_d i_reflectance,
                                                const MicrofacetDistribution &i_distribution):
 BxDF(BxDFType(BSDF_REFLECTION | BSDF_GLOSSY)), m_reflectance(i_reflectance), m_fresnel(i_fresnel), m_distribution(i_distribution)
   {
-  ASSERT(i_reflectance[0]>=0.0 && i_reflectance[0]<=1.0);
-  ASSERT(i_reflectance[1]>=0.0 && i_reflectance[1]<=1.0);
-  ASSERT(i_reflectance[2]>=0.0 && i_reflectance[2]<=1.0);
+  ASSERT(InRange(i_reflectance, 0.0, 1.0));
   }
 
 template<typename Fresnel, typename MicrofacetDistribution>

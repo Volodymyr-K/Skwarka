@@ -402,6 +402,10 @@
 				Name="Header Files"
 				>
 				<File
+					RelativePath=".\BxDFs\FresnelBlend.h"
+					>
+				</File>
+				<File
 					RelativePath=".\BxDFs\Lambertian.h"
 					>
 				</File>
@@ -425,6 +429,10 @@
 			<Filter
 				Name="Source Files"
 				>
+				<File
+					RelativePath=".\BxDFs\FresnelBlend.cpp"
+					>
+				</File>
 				<File
 					RelativePath=".\BxDFs\Lambertian.cpp"
 					>
@@ -454,6 +462,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\Materials\Substrate.h"
+					>
+				</File>
+				<File
 					RelativePath=".\Materials\Transparent.h"
 					>
 				</File>
@@ -467,6 +479,10 @@
 				</File>
 				<File
 					RelativePath=".\Materials\Metal.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Materials\Substrate.cpp"
 					>
 				</File>
 				<File

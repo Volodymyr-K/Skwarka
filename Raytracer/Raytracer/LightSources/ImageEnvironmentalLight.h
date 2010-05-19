@@ -24,7 +24,7 @@ class ImageEnvironmentalLight: public InfiniteLightSource
     * Constructs ImageEnvironmentalLight.
     * @param i_world_bounds World bounds.
     * @param i_light_to_world Transform object that defines transformation from light space to world space.
-    * @param Image map. Should not be empty, should have the same number of columns for each row.
+    * @param i_image Image map. Should not be empty, should have the same number of columns for each row.
     */
     ImageEnvironmentalLight(const BBox3D_d &i_world_bounds, const Transform &i_light_to_world, const std::vector<std::vector<Spectrum_f> > &i_image);
 
