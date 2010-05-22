@@ -274,7 +274,7 @@ class ImageEnvironmentalLightTestSuite : public CxxTest::TestSuite
       TS_ASSERT_DELTA(power[2],power2[2],power[2]*0.05);
       }
 
-    void test_ImageEnvironmentalLight_Irradiance_WithNormal()
+    void test_ImageEnvironmentalLight_Irradiance()
       {
       size_t N = 10;
       for(size_t t=0;t<N;++t)
@@ -290,7 +290,7 @@ class ImageEnvironmentalLightTestSuite : public CxxTest::TestSuite
         }
       }
 
-    void test_ImageEnvironmentalLight_Irradiance_WithoutNormal()
+    void test_ImageEnvironmentalLight_Fluence()
       {
       Spectrum_d irradiance;
       double d_phi = 2*M_PI/m_width;
@@ -306,7 +306,7 @@ class ImageEnvironmentalLightTestSuite : public CxxTest::TestSuite
           }
         }
 
-      Spectrum_d irradiance2 = mp_light->Irradiance();
+      Spectrum_d irradiance2 = mp_light->Fluence();
       TS_ASSERT_DELTA(irradiance[0],irradiance2[0],irradiance[0]*0.01);
       TS_ASSERT_DELTA(irradiance[1],irradiance2[1],irradiance[1]*0.01);
       TS_ASSERT_DELTA(irradiance[2],irradiance2[2],irradiance[2]*0.01);
@@ -330,7 +330,7 @@ class ImageEnvironmentalLightTestSuite : public CxxTest::TestSuite
           CustomAssertDelta(radiance, Spectrum_d(1.0), (1e-6));
           }
 
-        Spectrum_d irradiance = p_light->Irradiance();
+        Spectrum_d irradiance = p_light->Fluence();
         CustomAssertDelta(irradiance, Spectrum_d(4.0*M_PI), (1e-8));
         }
       }

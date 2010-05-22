@@ -129,13 +129,12 @@ class InfiniteLightSource: public ReferenceCounted
     virtual Spectrum_d Irradiance(const Vector3D_d &i_normal) const = 0;
 
     /**
-    * Returns irradiance value at a point assuming there's no objects in the scene blocking the light.
+    * Returns fluence value at a point (radiance integrated over the sphere) assuming there's no objects in the scene blocking the light.
     * The method does not take the surface normal so it accounts for the light coming from the entire sphere.
-    * Strictly speaking, the returned value is not an irradiance because there's no surface.
     * The method can return an approximation rather than the exact value.
-    * @return Irradiance value.
+    * @return Fluence value.
     */
-    virtual Spectrum_d Irradiance() const = 0;
+    virtual Spectrum_d Fluence() const = 0;
 
     virtual ~InfiniteLightSource();
 

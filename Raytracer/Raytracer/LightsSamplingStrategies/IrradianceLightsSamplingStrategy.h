@@ -9,7 +9,7 @@
 
 /**
 * The irradiance-based LightsSamplingStrategy implementation.
-* The probability of each light source to be sampled is proportional to the (estimated) irradiance from the light source at the point.
+* The probability of each light source to be sampled is proportional to the (estimated) irradiance or fluence from the light source at the point.
 */
 class IrradianceLightsSamplingStrategy: public LightsSamplingStrategy
   {

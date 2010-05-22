@@ -21,7 +21,7 @@ class InfiniteLightSourceMock: public InfiniteLightSource
     virtual double LightingPDF(const Vector3D_d &i_lighting_direction) const;
     virtual Spectrum_d SamplePhoton(const Point2D_d &i_position_sample, const Point2D_d &i_direction_sample, Ray &o_photon_ray, double &o_pdf) const;
     virtual Spectrum_d Irradiance(const Vector3D_d &i_normal) const;
-    virtual Spectrum_d Irradiance() const;
+    virtual Spectrum_d Fluence() const;
 
   private:
     Spectrum_d m_radiance;
@@ -82,7 +82,7 @@ inline Spectrum_d InfiniteLightSourceMock::Irradiance(const Vector3D_d &i_normal
   return M_PI*m_radiance;
   }
 
-inline Spectrum_d InfiniteLightSourceMock::Irradiance() const
+inline Spectrum_d InfiniteLightSourceMock::Fluence() const
   {
   return 4.0*M_PI*m_radiance;
   }

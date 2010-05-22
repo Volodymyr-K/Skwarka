@@ -460,7 +460,7 @@ Spectrum_d ImageEnvironmentalLight::Irradiance(const Vector3D_d &i_normal) const
   return m_irradiances[CompressedDirection(m_world_to_light(i_normal)).GetID()];
   }
 
-Spectrum_d ImageEnvironmentalLight::Irradiance() const
+Spectrum_d ImageEnvironmentalLight::Fluence() const
   {
   ASSERT(m_nodes_num>0);
   return m_nodes[0].m_total_radiance;

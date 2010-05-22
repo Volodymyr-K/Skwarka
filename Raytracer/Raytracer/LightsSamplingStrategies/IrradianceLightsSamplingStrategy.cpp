@@ -25,7 +25,7 @@ void IrradianceLightsSamplingStrategy::GetLightsCDF(const Point3D_d &i_point, do
     return;
 
   for(size_t i=0;i<m_infinity_lights_num;++i)
-    o_lights_CDF[i] = m_light_sources.m_infinite_light_sources[i]->Irradiance().Luminance();
+    o_lights_CDF[i] = m_light_sources.m_infinite_light_sources[i]->Fluence().Luminance();
 
   for(size_t i=0;i<m_area_lights_num;++i)
     {
