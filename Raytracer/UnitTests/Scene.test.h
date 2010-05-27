@@ -34,7 +34,7 @@ class SceneTestSuite : public CxxTest::TestSuite
         if (m_primitives[i]->GetAreaLightSource()!=NULL)
           m_light_sources.m_area_light_sources.push_back( m_primitives[i]->GetAreaLightSource() );
 
-      mp_scene.reset(new Scene(m_primitives, m_light_sources));
+      mp_scene.reset(new Scene(m_primitives, NULL, m_light_sources));
       }
 
     void tearDown()

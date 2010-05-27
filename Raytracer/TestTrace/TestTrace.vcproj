@@ -95,7 +95,7 @@
 			<Tool
 				Name="VCPostBuildEventTool"
 				Description="Copying TBB DLLs and PDBs"
-				CommandLine="copy &quot;..\..\..\ThirdParty\TBB\2.2\ia32\vc9\bin\tbb_debug.dll&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;copy  &quot;..\..\..\ThirdParty\TBB\2.2\ia32\vc9\bin\tbb_debug.pdb&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;copy  &quot;..\..\..\ThirdParty\OpenEXR\Deploy\bin\Debug\IlmImf.dll&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;copy  &quot;..\..\..\ThirdParty\OpenEXR\Deploy\bin\Debug\Half.dll&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;copy  &quot;..\..\..\ThirdParty\OpenEXR\Deploy\bin\Debug\Iex.dll&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;copy  &quot;..\..\..\ThirdParty\OpenEXR\Deploy\bin\Debug\IlmThread.dll&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;copy  &quot;..\..\..\ThirdParty\OpenEXR\Deploy\bin\Debug\zlib1.dll&quot; &quot;$(OutDir)&quot;"
+				CommandLine="copy &quot;..\..\..\ThirdParty\TBB\2.2\ia32\vc9\bin\tbb_debug.dll&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;copy  &quot;..\..\..\ThirdParty\TBB\2.2\ia32\vc9\bin\tbb_debug.pdb&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;copy  &quot;..\..\..\ThirdParty\OpenEXR\Deploy\bin\Debug\IlmImf.dll&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;copy  &quot;..\..\..\ThirdParty\OpenEXR\Deploy\bin\Debug\Half.dll&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;copy  &quot;..\..\..\ThirdParty\OpenEXR\Deploy\bin\Debug\Iex.dll&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;copy  &quot;..\..\..\ThirdParty\OpenEXR\Deploy\bin\Debug\IlmThread.dll&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;copy  &quot;..\..\..\ThirdParty\OpenEXR\Deploy\bin\Debug\zlib1.dll&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
@@ -184,7 +184,7 @@
 			<Tool
 				Name="VCPostBuildEventTool"
 				Description="Copying TBB DLLs and PDBs"
-				CommandLine="copy &quot;..\..\..\ThirdParty\TBB\2.2\ia32\vc9\bin\tbb.dll&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;copy  &quot;..\..\..\ThirdParty\TBB\2.2\ia32\vc9\bin\tbb.pdb&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;copy  &quot;..\..\..\ThirdParty\OpenEXR\Deploy\bin\Release\IlmImf.dll&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;copy  &quot;..\..\..\ThirdParty\OpenEXR\Deploy\bin\Release\Half.dll&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;copy  &quot;..\..\..\ThirdParty\OpenEXR\Deploy\bin\Release\Iex.dll&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;copy  &quot;..\..\..\ThirdParty\OpenEXR\Deploy\bin\Release\IlmThread.dll&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;copy  &quot;..\..\..\ThirdParty\OpenEXR\Deploy\bin\Release\zlib1.dll&quot; &quot;$(OutDir)&quot;"
+				CommandLine="copy &quot;..\..\..\ThirdParty\TBB\2.2\ia32\vc9\bin\tbb.dll&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;copy  &quot;..\..\..\ThirdParty\TBB\2.2\ia32\vc9\bin\tbb.pdb&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;copy  &quot;..\..\..\ThirdParty\OpenEXR\Deploy\bin\Release\IlmImf.dll&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;copy  &quot;..\..\..\ThirdParty\OpenEXR\Deploy\bin\Release\Half.dll&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;copy  &quot;..\..\..\ThirdParty\OpenEXR\Deploy\bin\Release\Iex.dll&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;copy  &quot;..\..\..\ThirdParty\OpenEXR\Deploy\bin\Release\IlmThread.dll&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;copy  &quot;..\..\..\ThirdParty\OpenEXR\Deploy\bin\Release\zlib1.dll&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;"
 			/>
 		</Configuration>
 	</Configurations>

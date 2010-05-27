@@ -41,9 +41,12 @@ class BBox3D
     T Area() const;
 
     /**
-    * Checks if the specified ray intersects the box.
+    * Checks if the specified ray intersects the box and computes ray parametric coordinates of the intersection region.
+    * @param i_ray Input ray.
+    * @param op_t_begin Parametric coordinate of the begin of the intersection region.Can be NULL.
+    * @param op_t_end Parametric coordinate of the end of the intersection region. Can be NULL.
     */
-    bool Intersect(const Ray &i_ray) const;
+    bool Intersect(const Ray &i_ray, double *op_t_begin = NULL, double *op_t_end = NULL) const;
 
     /**
     * Checks if the specified point is inside the box.
@@ -128,7 +131,7 @@ T BBox3D<T>::Area() const
   }
 
 template<typename T>
-bool BBox3D<T>::Intersect(const Ray &i_ray) const
+bool BBox3D<T>::Intersect(const Ray &i_ray, double *op_t_begin, double *op_t_end) const
   {
   double t0 = i_ray.m_min_t, t1 = i_ray.m_max_t;
   for (int i = 0; i < 3; ++i)
@@ -144,6 +147,10 @@ bool BBox3D<T>::Intersect(const Ray &i_ray) const
     t1 = tFar  < t1 ? tFar  : t1;
     if (t0 > t1) return false;
     }
+
+  if (op_t_begin) *op_t_begin = t0;
+  if (op_t_end) *op_t_end = t1;
+
   return true;
   }
 

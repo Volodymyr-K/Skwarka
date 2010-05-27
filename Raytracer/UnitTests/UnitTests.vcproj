@@ -602,6 +602,18 @@
 						>
 					</File>
 				</Filter>
+				<Filter
+					Name="VolumeRegions"
+					>
+					<File
+						RelativePath=".\AggregateVolumeRegion.test.h"
+						>
+					</File>
+					<File
+						RelativePath=".\HomogeneousVolumeRegion.test.h"
+						>
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="Shapes"
@@ -635,6 +647,10 @@
 		<Filter
 			Name="Generated Code"
 			>
+			<File
+				RelativePath=".\AggregateVolumeRegion.test.cpp"
+				>
+			</File>
 			<File
 				RelativePath=".\BBox3D.test.cpp"
 				>
@@ -701,6 +717,10 @@
 			</File>
 			<File
 				RelativePath=".\FresnelBlend.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\HomogeneousVolumeRegion.test.cpp"
 				>
 			</File>
 			<File
@@ -1058,6 +1078,24 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\Mocks\PhaseFunctionMock.h"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
 				RelativePath=".\Mocks\SamplerMock.h"
 				>
 				<FileConfiguration
@@ -1113,6 +1151,24 @@
 			</File>
 			<File
 				RelativePath=".\Mocks\VolumeIntegratorMock.h"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\Mocks\VolumeRegionMock.h"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"

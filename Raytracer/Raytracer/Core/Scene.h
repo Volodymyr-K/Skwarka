@@ -6,22 +6,21 @@
 #include "Primitive.h"
 #include "LightSources.h"
 #include "TriangleAccelerator.h"
+#include "VolumeRegion.h"
 #include <vector>
-
-// TBD: Add volume regions, update docs and unit tests
 
 /**
 * Describes the geometrical, scattering and lighting properties of the scene to be rendered.
-* The class encapsulates all primitives, volume regions and lights in the scene.
+* The class encapsulates all primitives, volume region and lights in the scene.
 * It also constructs accelerating structure for primitives and volume regions and provides methods to compute ray intersections.
 */
 class Scene: public ReferenceCounted
   {
   public:
     /**
-    * Constructs Scene instance with specified primitives and light sources.
+    * Constructs Scene instance with specified primitives, volume region and lights. Volume region can be NULL.
     */
-    Scene(const std::vector<intrusive_ptr<const Primitive> > &i_primitives, const LightSources &i_light_sources);
+    Scene(const std::vector<intrusive_ptr<const Primitive> > &i_primitives, intrusive_ptr<const VolumeRegion> ip_volume_region, const LightSources &i_light_sources);
 
     /**
     * Returns all primitives in the scene.
@@ -29,6 +28,17 @@ class Scene: public ReferenceCounted
     * The calling code should never utilize the reference after the Scene is destroyed.
     */
     const std::vector<intrusive_ptr<const Primitive> > &GetPrimitives() const;
+
+    /**
+    * Returns a pointer to the VolumeRegion of the scene.
+    */
+    intrusive_ptr<const VolumeRegion> GetVolumeRegion() const;
+
+    /**
+    * Returns a pointer to the VolumeRegion of the scene.
+    * @warning The calling code should never utilize the pointer after the Scene is destroyed.
+    */
+    const VolumeRegion *GetVolumeRegion_RawPtr() const;
 
     /**
     * Returns all light sources in the scene.
@@ -67,6 +77,10 @@ class Scene: public ReferenceCounted
 
   private:
     std::vector<intrusive_ptr<const Primitive> > m_primitives;
+    
+    intrusive_ptr<const VolumeRegion> mp_volume_region;
+
+    BBox3D_d m_bounds;
 
     TriangleAccelerator m_triangle_accelerator;
 
@@ -76,14 +90,27 @@ class Scene: public ReferenceCounted
 /////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-inline Scene::Scene(const std::vector<intrusive_ptr<const Primitive> > &i_primitives, const LightSources &i_light_sources):
-m_primitives(i_primitives), m_light_sources(i_light_sources), m_triangle_accelerator(i_primitives)
+inline Scene::Scene(const std::vector<intrusive_ptr<const Primitive> > &i_primitives, intrusive_ptr<const VolumeRegion> ip_volume_region, const LightSources &i_light_sources):
+m_primitives(i_primitives), mp_volume_region(ip_volume_region), m_light_sources(i_light_sources), m_triangle_accelerator(i_primitives)
   {
+  m_bounds = m_triangle_accelerator.GetWorldBounds();
+  if (ip_volume_region)
+    m_bounds.Unite(ip_volume_region->GetBounds());
   }
 
 inline const std::vector<intrusive_ptr<const Primitive> > &Scene::GetPrimitives() const
   {
   return m_primitives;
+  }
+
+inline intrusive_ptr<const VolumeRegion> Scene::GetVolumeRegion() const
+  {
+  return mp_volume_region;
+  }
+
+inline const VolumeRegion *Scene::GetVolumeRegion_RawPtr() const
+  {
+  return mp_volume_region.get();
   }
 
 inline const LightSources &Scene::GetLightSources() const
@@ -93,8 +120,7 @@ inline const LightSources &Scene::GetLightSources() const
 
 inline BBox3D_d Scene::GetWorldBounds() const
   {
-  // TBD: union with volume regions
-  return m_triangle_accelerator.GetWorldBounds();
+  return m_bounds;
   }
 
 inline bool Scene::Intersect(const RayDifferential &i_ray, Intersection &o_intersection, double *o_t) const

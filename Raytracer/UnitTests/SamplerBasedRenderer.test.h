@@ -40,7 +40,7 @@ class SamplerBasedRendererTestSuite : public CxxTest::TestSuite
       lights.m_infinite_light_sources.push_back(p_infinite_light);
       //////////////////////
 
-      mp_scene.reset( new Scene(m_primitives, lights) );
+      mp_scene.reset( new Scene(m_primitives, NULL, lights) );
 
       intrusive_ptr<FilmFilter> p_filter( new BoxFilter(0.5,0.5) );
       intrusive_ptr<Film> p_film( new ImageFilm(10, 10, p_filter) );

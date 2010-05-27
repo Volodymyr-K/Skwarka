@@ -58,6 +58,8 @@
 #include <Raytracer/MicrofacetDistributions/BlinnDistribution.h>
 #include "EasyBMP.h"
 #include <Raytracer/LightSources/ImageEnvironmentalLight.h>
+#include <Raytracer/VolumeRegions/HomogeneousVolumeRegion.h>
+#include <Raytracer/PhaseFunctions/IsotropicPhaseFunction.h>
 
 #include <ImfRgbaFile.h>
 #include <ImfStringAttribute.h>
@@ -253,11 +255,14 @@ inline void TestTracer::LoadMesh()
     lights.m_area_light_sources.push_back(p_area_light);
     }
 
-  mp_scene.reset(new Scene(primitives, lights));
+  mp_scene.reset(new Scene(primitives, NULL, lights));
   }
 
 inline void TestTracer::RenderImage()
   {
+  IsotropicPhaseFunction pf;
+  HomogeneousVolumeRegion<IsotropicPhaseFunction> hvr(BBox3D_d(), Spectrum_d(), Spectrum_d(), Spectrum_d(), pf);
+
   tbb::tick_count t0, t1;
   FilmFilter *filter = new BoxFilter(0.5,0.5);
   //intrusive_ptr<InteractiveFilm> p_film(new InteractiveFilm(GetImageWidth(), GetImageHeight(), intrusive_ptr<FilmFilter>(filter)));

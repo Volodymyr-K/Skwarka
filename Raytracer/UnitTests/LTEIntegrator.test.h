@@ -35,7 +35,7 @@ class LTEIntegratorTestSuite : public CxxTest::TestSuite
       lights.m_infinite_light_sources.push_back(p_infinite_light);
       //////////////////////
 
-      mp_scene.reset( new Scene(m_primitives, lights) );
+      mp_scene.reset( new Scene(m_primitives, NULL, lights) );
       }
 
     void tearDown()

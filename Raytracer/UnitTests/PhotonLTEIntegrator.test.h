@@ -38,7 +38,7 @@ class PhotonLTEIntegratorTestSuite : public CxxTest::TestSuite
       LightSources lights;
       lights.m_area_light_sources.push_back(p_light);
 
-      intrusive_ptr<Scene> p_scene( new Scene(primitives, lights) );
+      intrusive_ptr<Scene> p_scene( new Scene(primitives, NULL, lights) );
       intrusive_ptr<Sampler> p_sampler = _CreaterSampler();
 
       PhotonLTEIntegratorParams params;
@@ -78,7 +78,7 @@ class PhotonLTEIntegratorTestSuite : public CxxTest::TestSuite
       intrusive_ptr<DeltaLightSource> p_light( new PointLight(Point3D_d(0,0,0), light_intentsity) );
       lights.m_delta_light_sources.push_back(p_light);
 
-      intrusive_ptr<Scene> p_scene( new Scene(primitives, lights) );
+      intrusive_ptr<Scene> p_scene( new Scene(primitives, NULL, lights) );
       intrusive_ptr<Sampler> p_sampler = _CreaterSampler();
 
       PhotonLTEIntegratorParams params;
@@ -121,7 +121,7 @@ class PhotonLTEIntegratorTestSuite : public CxxTest::TestSuite
       BBox3D_d bbox = Convert<double>(mp_sphere->GetBounds());
       lights.m_infinite_light_sources.push_back(intrusive_ptr<InfiniteLightSource>(new InfiniteLightSourceMock(light_radiance, bbox)) );
 
-      intrusive_ptr<Scene> p_scene( new Scene(primitives, lights) );
+      intrusive_ptr<Scene> p_scene( new Scene(primitives, NULL, lights) );
       intrusive_ptr<Sampler> p_sampler = _CreaterSampler();
 
       PhotonLTEIntegratorParams params;

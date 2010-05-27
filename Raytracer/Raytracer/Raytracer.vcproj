@@ -271,6 +271,10 @@
 					RelativePath=".\Core\VolumeIntegrator.h"
 					>
 				</File>
+				<File
+					RelativePath=".\Core\VolumeRegion.h"
+					>
+				</File>
 			</Filter>
 			<Filter
 				Name="Source Files"
@@ -735,6 +739,46 @@
 				</File>
 				<File
 					RelativePath=".\Mappings\UVMapping2D.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Source Files"
+				>
+			</Filter>
+		</Filter>
+		<Filter
+			Name="VolumeRegions"
+			>
+			<Filter
+				Name="Header Files"
+				>
+				<File
+					RelativePath=".\VolumeRegions\AggregateVolumeRegion.h"
+					>
+				</File>
+				<File
+					RelativePath=".\VolumeRegions\HomogeneousVolumeRegion.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Source Files"
+				>
+				<File
+					RelativePath=".\VolumeRegions\AggregateVolumeRegion.cpp"
+					>
+				</File>
+			</Filter>
+		</Filter>
+		<Filter
+			Name="PhaseFunctions"
+			>
+			<Filter
+				Name="Header Files"
+				>
+				<File
+					RelativePath=".\PhaseFunctions\IsotropicPhaseFunction.h"
 					>
 				</File>
 			</Filter>

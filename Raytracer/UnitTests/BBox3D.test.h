@@ -129,7 +129,10 @@ class BBox3DTestSuite : public CxxTest::TestSuite
       Vector3D_d direction=Vector3D_d(1.0,1.0,1.0).Normalized();
       Ray ray(origin, direction);
 
-      TS_ASSERT(m_bbox.Intersect(ray));
+      double t0,t1;
+      TS_ASSERT(m_bbox.Intersect(ray, &t0, &t1));
+      TS_ASSERT_EQUALS(ray(t0), Point3D_d(-1.0,-1.0,-1.0));
+      TS_ASSERT_EQUALS(ray(t1),Point3D_d(1.0,1.0,1.0));
       }
 
     // Ray origins inside the box.
@@ -139,7 +142,10 @@ class BBox3DTestSuite : public CxxTest::TestSuite
       Vector3D_d direction=Vector3D_d(1.0,1.0,1.0).Normalized();
       Ray ray(origin, direction);
 
-      TS_ASSERT(m_bbox.Intersect(ray));
+      double t0,t1;
+      TS_ASSERT(m_bbox.Intersect(ray, &t0, &t1));
+      TS_ASSERT_EQUALS(ray(t0), origin);
+      TS_ASSERT_EQUALS(ray(t1), Point3D_d(1.0,1.0,1.0));
       }
 
     // Ray origins in the vertex of the box and point outside.
@@ -149,7 +155,10 @@ class BBox3DTestSuite : public CxxTest::TestSuite
       Vector3D_d direction=Vector3D_d(1.0,1.0,1.0).Normalized();
       Ray ray(origin, direction);
 
-      TS_ASSERT(m_bbox.Intersect(ray));
+      double t0,t1;
+      TS_ASSERT(m_bbox.Intersect(ray, &t0, &t1));
+      TS_ASSERT_EQUALS(ray(t0), origin);
+      TS_ASSERT_EQUALS(ray(t1), origin);
       }
 
     // Ray only touches a vertex of the box but does not intersect the interior.
@@ -159,7 +168,10 @@ class BBox3DTestSuite : public CxxTest::TestSuite
       Vector3D_d direction=Vector3D_d(-1.0,1.0,1.0).Normalized();
       Ray ray(origin, direction);
 
-      TS_ASSERT(m_bbox.Intersect(ray));
+      double t0,t1;
+      TS_ASSERT(m_bbox.Intersect(ray, &t0, &t1));
+      TS_ASSERT_EQUALS(ray(t0), m_bbox.m_max);
+      TS_ASSERT_EQUALS(ray(t1), m_bbox.m_max);
       }
 
     // Ray origins outside of the box and points in the opposite direction.

@@ -35,7 +35,7 @@ class DirectLightingIntegratorTestSuite : public CxxTest::TestSuite
       LightSources lights;
       lights.m_delta_light_sources.push_back( intrusive_ptr<DeltaLightSource>(new PointLight(Point3D_d(10,0,0),Spectrum_d(100))) );
 
-      intrusive_ptr<Scene> p_scene( new Scene(primitives, lights) );
+      intrusive_ptr<Scene> p_scene( new Scene(primitives, NULL, lights) );
       intrusive_ptr<Sampler> p_sampler = _CreaterSampler();
      
       MemoryPool pool;
@@ -65,7 +65,7 @@ class DirectLightingIntegratorTestSuite : public CxxTest::TestSuite
       lights.m_infinite_light_sources.push_back(intrusive_ptr<InfiniteLightSource>(new InfiniteLightSourceMock(Spectrum_d(1), m_world_bbox)) );
       lights.m_infinite_light_sources.push_back(intrusive_ptr<InfiniteLightSource>(new InfiniteLightSourceMock(Spectrum_d(2), m_world_bbox)) );
 
-      intrusive_ptr<Scene> p_scene( new Scene(primitives, lights) );
+      intrusive_ptr<Scene> p_scene( new Scene(primitives, NULL, lights) );
       intrusive_ptr<Sampler> p_sampler = _CreaterSampler();
 
       MemoryPool pool;
@@ -97,7 +97,7 @@ class DirectLightingIntegratorTestSuite : public CxxTest::TestSuite
       lights.m_area_light_sources.push_back(primitives[1]->GetAreaLightSource());
       lights.m_area_light_sources.push_back(primitives[2]->GetAreaLightSource());
 
-      intrusive_ptr<Scene> p_scene( new Scene(primitives, lights) );
+      intrusive_ptr<Scene> p_scene( new Scene(primitives, NULL, lights) );
       intrusive_ptr<Sampler> p_sampler = _CreaterSampler();
 
       MemoryPool pool;
@@ -134,7 +134,7 @@ class DirectLightingIntegratorTestSuite : public CxxTest::TestSuite
       lights.m_area_light_sources.push_back(primitives[1]->GetAreaLightSource());
       lights.m_area_light_sources.push_back(primitives[2]->GetAreaLightSource());
 
-      intrusive_ptr<Scene> p_scene( new Scene(primitives, lights) );
+      intrusive_ptr<Scene> p_scene( new Scene(primitives, NULL, lights) );
       intrusive_ptr<Sampler> p_sampler = _CreaterSampler();
 
       MemoryPool pool;
@@ -170,7 +170,7 @@ class DirectLightingIntegratorTestSuite : public CxxTest::TestSuite
       lights.m_area_light_sources.push_back(primitives[1]->GetAreaLightSource());
       lights.m_area_light_sources.push_back(primitives[2]->GetAreaLightSource());
 
-      intrusive_ptr<Scene> p_scene( new Scene(primitives, lights) );
+      intrusive_ptr<Scene> p_scene( new Scene(primitives, NULL, lights) );
       intrusive_ptr<Sampler> p_sampler = _CreaterSampler();
 
       MemoryPool pool;
