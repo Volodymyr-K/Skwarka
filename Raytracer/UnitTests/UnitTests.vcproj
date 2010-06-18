@@ -610,6 +610,10 @@
 						>
 					</File>
 					<File
+						RelativePath=".\GridDensityVolumeRegion.test.h"
+						>
+					</File>
+					<File
 						RelativePath=".\HomogeneousVolumeRegion.test.h"
 						>
 					</File>
@@ -717,6 +721,10 @@
 			</File>
 			<File
 				RelativePath=".\FresnelBlend.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\GridDensityVolumeRegion.test.cpp"
 				>
 			</File>
 			<File
@@ -1133,24 +1141,6 @@
 			</File>
 			<File
 				RelativePath=".\Mocks\TextureMock.h"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\Mocks\VolumeIntegratorMock.h"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"

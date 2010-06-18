@@ -18,7 +18,7 @@ class HomogeneousVolumeRegion: public VolumeRegion
     * Creates HomogeneousVolumeRegion instance with specified bounding box, emission, absorption and scattering.
     * The constructor also takes ans instance of the phase function.
     */
-    HomogeneousVolumeRegion(BBox3D_d i_bounds, Spectrum_d &i_emission, Spectrum_d &i_absorption, Spectrum_d &i_scattering, const PhaseFunction &i_phase_function);
+    HomogeneousVolumeRegion(const BBox3D_d &i_bounds, Spectrum_d &i_emission, Spectrum_d &i_absorption, Spectrum_d &i_scattering, const PhaseFunction &i_phase_function);
 
     /**
     * Returns bounding box of the volume region.
@@ -68,7 +68,7 @@ class HomogeneousVolumeRegion: public VolumeRegion
     /**
     * Returns optical thickness of the volume region for the specified ray.
     * The method also takes two additional parameters for MonteCarlo integration that are not used by this implementation though.
-    * @param i_ray Ray for which the optical thickness is to be computed.
+    * @param i_ray Ray for which the optical thickness is to be computed. Ray direction should be normalized.
     * @param i_step Step size for the MonteCarlo integration. Should be greater than 0.0. Not used by this implementation.
     * @param i_offset_sample The sample value used for MonteCarlo integration to choose position in the segments for evaluating attenuation value.
     * Should be in [0;1) range. Not used by this implementation.
@@ -88,7 +88,7 @@ class HomogeneousVolumeRegion: public VolumeRegion
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename PhaseFunction>
-HomogeneousVolumeRegion<PhaseFunction>::HomogeneousVolumeRegion(BBox3D_d i_bounds, Spectrum_d &i_emission, Spectrum_d &i_absorption,
+HomogeneousVolumeRegion<PhaseFunction>::HomogeneousVolumeRegion(const BBox3D_d &i_bounds, Spectrum_d &i_emission, Spectrum_d &i_absorption,
                                                                 Spectrum_d &i_scattering, const PhaseFunction &i_phase_function):
 m_bounds(i_bounds), m_emission(i_emission), m_absorption(i_absorption), m_scattering(i_scattering), m_phase_function(i_phase_function)
   {

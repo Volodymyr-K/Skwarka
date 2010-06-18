@@ -61,7 +61,7 @@ class VolumeRegion: public ReferenceCounted
     /**
     * Returns optical thickness of the volume region for the specified ray.
     * The method also takes two additional parameters used by MonteCarlo integration if there's no analytical solution.
-    * @param i_ray Ray for which the optical thickness is to be computed.
+    * @param i_ray Ray for which the optical thickness is to be computed. Ray direction should be normalized.
     * @param i_step Step size for the MonteCarlo integration. Should be greater than 0.0
     * @param i_offset_sample The sample value used for MonteCarlo integration to choose position in the segments for evaluating attenuation value. Should be in [0;1) range.
     * @return Optical thickness.
@@ -92,7 +92,12 @@ class DensityVolumeRegion: public VolumeRegion
     * Creates DensityVolumeRegion instance with specified base emission, absorption and scattering. The real properties are evaluated by multiplying the base values by the density.
     * The constructor also takes ans instance of the phase function.
     */
-    DensityVolumeRegion(Spectrum_d &i_base_emission, Spectrum_d &i_base_absorption, Spectrum_d &i_base_scattering, const PhaseFunction &i_phase_function);
+    DensityVolumeRegion(const BBox3D_d &i_bounds, Spectrum_d &i_base_emission, Spectrum_d &i_base_absorption, Spectrum_d &i_base_scattering, const PhaseFunction &i_phase_function);
+
+    /**
+    * Returns bounding box of the volume region.
+    */
+    BBox3D_d GetBounds() const;
 
     /**
     * Returns emission density of the volume region at the specified point.
@@ -137,15 +142,16 @@ class DensityVolumeRegion: public VolumeRegion
     * @param i_offset_sample The sample value used for MonteCarlo integration to choose position in the segments for evaluating attenuation value. Should be in [0;1) range.
     * @return Optical thickness.
     */
-    Spectrum_d OpticalThickness(const Ray &i_ray, double i_step, double i_offset_sample) const;
+    virtual Spectrum_d OpticalThickness(const Ray &i_ray, double i_step, double i_offset_sample) const;
 
   private:
     /**
     * Private virtual function for the sub-classes to implement that returns density of the media particles at the specified point.
     */
-    double virtual _Density(const Point3D_d &i_point) const = 0;
+    virtual double _Density(const Point3D_d &i_point) const = 0;
 
   private:
+    BBox3D_d m_bounds;
     Spectrum_d m_base_emission, m_base_absorption, m_base_scattering, m_base_attenuation;
 
     PhaseFunction m_phase_function;
@@ -155,15 +161,26 @@ class DensityVolumeRegion: public VolumeRegion
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename PhaseFunction>
-DensityVolumeRegion<PhaseFunction>::DensityVolumeRegion(Spectrum_d &i_base_emission, Spectrum_d &i_base_absorption,
+DensityVolumeRegion<PhaseFunction>::DensityVolumeRegion(const BBox3D_d &i_bounds, Spectrum_d &i_base_emission, Spectrum_d &i_base_absorption,
                                                         Spectrum_d &i_base_scattering, const PhaseFunction &i_phase_function):
-m_base_emission(i_base_emission), m_base_absorption(i_base_absorption), m_base_scattering(i_base_scattering), m_phase_function(i_phase_function)
+m_bounds(i_bounds), m_base_emission(i_base_emission), m_base_absorption(i_base_absorption), m_base_scattering(i_base_scattering), m_phase_function(i_phase_function)
   {
   ASSERT(InRange(i_base_emission, 0.0, DBL_INF));
   ASSERT(InRange(i_base_absorption, 0.0, DBL_INF));
   ASSERT(InRange(i_base_scattering, 0.0, DBL_INF));
 
+  ASSERT(m_bounds.Volume() > 0.0);
+  if (m_bounds.m_min[0] > m_bounds.m_max[0]) std::swap(m_bounds.m_min[0], m_bounds.m_max[0]);
+  if (m_bounds.m_min[1] > m_bounds.m_max[1]) std::swap(m_bounds.m_min[1], m_bounds.m_max[1]);
+  if (m_bounds.m_min[2] > m_bounds.m_max[2]) std::swap(m_bounds.m_min[2], m_bounds.m_max[2]);
+
   m_base_attenuation = m_base_absorption+m_base_scattering;
+  }
+
+template<typename PhaseFunction>
+BBox3D_d DensityVolumeRegion<PhaseFunction>::GetBounds() const
+  {
+  return m_bounds;
   }
 
 template<typename PhaseFunction>
@@ -193,7 +210,7 @@ Spectrum_d DensityVolumeRegion<PhaseFunction>::Attenuation(const Point3D_d &i_po
 template<typename PhaseFunction>
 double DensityVolumeRegion<PhaseFunction>::Phase(const Point3D_d &i_point, const Vector3D_d &i_incoming, const Vector3D_d &i_outgoing) const
   {
-  return m_phase_function(i_incoming, i_outgoing);
+  return m_bounds.Inside(i_point) ? m_phase_function(i_incoming, i_outgoing) : 0.0;
   }
 
 template<typename PhaseFunction>
@@ -203,14 +220,19 @@ Spectrum_d DensityVolumeRegion<PhaseFunction>::OpticalThickness(const Ray &i_ray
   ASSERT(i_step > 0.0 && i_offset_sample >= 0.0 && i_offset_sample < 1.0);
 
   double t_begin, t_end;
-  if (this->IntersectTest(i_ray, &t_begin, &t_end)==false)
+  if (this->Intersect(i_ray, &t_begin, &t_end)==false)
     return Spectrum_d(0.0);
 
-  double optical_thickness;
-  for (double t = t_begin + i_offset_sample * i_step; t<t_end; t += i_step)
-    optical_thickness += _Density( i_ray(t) );
+  double optical_thickness = 0.0;
+  double t = t_begin, step = i_step;
+  while (t<t_end-DBL_EPS)
+    {
+    step = std::min(step, t_end-t);
+    optical_thickness += _Density( i_ray(t+i_offset_sample * step) ) * step;
+    t += step;
+    }
 
-  return (optical_thickness * i_step) * m_base_attenuation;
+  return optical_thickness * m_base_attenuation;
   }
 
 #endif // VOLUME_REGION_H

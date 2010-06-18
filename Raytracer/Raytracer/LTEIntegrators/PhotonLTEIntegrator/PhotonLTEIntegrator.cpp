@@ -10,12 +10,14 @@
 const double PhotonLTEIntegrator::MAX_NORMAL_DEVIATION_COS = 0.87;
 
 //////////////////////////////////////// PhotonLTEIntegrator /////////////////////////////////////////////
-PhotonLTEIntegrator::PhotonLTEIntegrator(intrusive_ptr<const Scene> ip_scene, intrusive_ptr<VolumeIntegrator> ip_volume_integrator, PhotonLTEIntegratorParams i_params):
-LTEIntegrator(ip_scene, ip_volume_integrator), mp_scene(ip_scene), m_params(i_params)
+PhotonLTEIntegrator::PhotonLTEIntegrator(intrusive_ptr<const Scene> ip_scene, PhotonLTEIntegratorParams i_params):
+LTEIntegrator(ip_scene), mp_scene(ip_scene), m_params(i_params)
   {
   ASSERT(ip_scene);
 
-  mp_direct_lighting_integrator.reset(new DirectLightingIntegrator(ip_scene, ip_volume_integrator, i_params.m_direct_light_samples_num, i_params.m_direct_light_samples_num));
+  // We double the media step size for secondary rays to reduce computation time (since the accuracy is less important here).
+  mp_direct_lighting_integrator.reset(new DirectLightingIntegrator(ip_scene, i_params.m_direct_light_samples_num,
+    i_params.m_direct_light_samples_num, 2.0*i_params.m_media_step_size));
 
   if (m_params.m_max_specular_depth > 50)
     m_params.m_max_specular_depth = 50;
@@ -44,6 +46,9 @@ void PhotonLTEIntegrator::_RequestSamples(intrusive_ptr<Sampler> ip_sampler)
     ASSERT(gather_samples_num >= m_params.m_gather_samples_num);
     m_params.m_gather_samples_num = gather_samples_num;
     }
+
+  m_media_offset1_id = ip_sampler->AddSamplesSequence1D(1);
+  m_media_offset2_id = ip_sampler->AddSamplesSequence1D(1);
   }
 
 void PhotonLTEIntegrator::_GetLightsPowerCDF(const LightSources &i_light_sources, std::vector<double> &o_lights_CDF)
@@ -314,12 +319,15 @@ void PhotonLTEIntegrator::ShootPhotons(size_t i_caustic_photons, size_t i_direct
   _ConstructIrradiancePhotonMap();
   }
 
-Spectrum_d PhotonLTEIntegrator::_SurfaceRadiance(const RayDifferential &i_ray, const Intersection &i_intersection, const Sample *ip_sample, MemoryPool &i_pool) const
+Spectrum_d PhotonLTEIntegrator::_SurfaceRadiance(const RayDifferential &i_ray, const Intersection &i_intersection, const Sample *ip_sample, ThreadSpecifics i_ts) const
   {
   ASSERT(i_ray.m_base_ray.m_direction.IsNormalized());
-  Spectrum_d radiance;
+  ASSERT(i_ts.mp_pool && i_ts.mp_random_generator);
+  MemoryPool *p_pool = i_ts.mp_pool;
+  RandomGenerator<double> *p_rng = i_ts.mp_random_generator;
 
-  const BSDF *p_bsdf = i_intersection.mp_primitive->GetBSDF(i_intersection.m_dg, i_intersection.m_triangle_index, i_pool);
+  Spectrum_d radiance;
+  const BSDF *p_bsdf = i_intersection.mp_primitive->GetBSDF(i_intersection.m_dg, i_intersection.m_triangle_index, *p_pool);
   Vector3D_d incident = i_ray.m_base_ray.m_direction*(-1.0);
 
   // Add emitting lighting from the surface (if the surface has light source properties).
@@ -331,19 +339,19 @@ Spectrum_d PhotonLTEIntegrator::_SurfaceRadiance(const RayDifferential &i_ray, c
   if (has_non_specular)
     {
     // Compute direct lighting.
-    radiance += mp_direct_lighting_integrator->ComputeDirectLighting(i_intersection, incident, p_bsdf, ip_sample, i_pool);
+    radiance += mp_direct_lighting_integrator->ComputeDirectLighting(i_intersection, incident, p_bsdf, ip_sample, i_ts);
 
-    radiance += _LookupCausticRadiance(p_bsdf, i_intersection.m_dg, incident, i_pool);
+    radiance += _LookupCausticRadiance(p_bsdf, i_intersection.m_dg, incident, i_ts);
 
     // Compute indirect lighting by shooting final gather rays.
     if (mp_irradiance_map)
-      radiance += _FinalGather(i_intersection, incident, p_bsdf, ip_sample, i_pool);    
+      radiance += _FinalGather(i_intersection, incident, p_bsdf, ip_sample, i_ts);
       
 /*
     const size_t samples_num_sqrt = 5;
     Point2D_d bsdf_scattering_samples[samples_num_sqrt*samples_num_sqrt];
     SamplesSequence2D bsdf_scattering_sequence(bsdf_scattering_samples, bsdf_scattering_samples + samples_num_sqrt*samples_num_sqrt);
-    SamplingRoutines::StratifiedSampling2D(bsdf_scattering_sequence.m_begin, samples_num_sqrt, samples_num_sqrt, false);
+    SamplingRoutines::StratifiedSampling2D(bsdf_scattering_sequence.m_begin, samples_num_sqrt, samples_num_sqrt, true, p_rng);
 
     IrradiancePhotonFilter filter(i_intersection.m_dg.m_point, i_intersection.m_dg.m_shading_normal, MAX_NORMAL_DEVIATION_COS);
     const IrradiancePhoton *p_irradiance_photon = mp_irradiance_map->GetNearestPoint(i_intersection.m_dg.m_point, filter, 0.005);
@@ -370,18 +378,20 @@ Spectrum_d PhotonLTEIntegrator::_SurfaceRadiance(const RayDifferential &i_ray, c
   // Trace rays for specular reflection and refraction.
   if (i_ray.m_specular_depth <= m_params.m_max_specular_depth)
     {
-    radiance += _SpecularReflect(i_ray, i_intersection, p_bsdf, ip_sample, i_pool);
-    radiance += _SpecularTransmit(i_ray, i_intersection, p_bsdf, ip_sample, i_pool);
+    radiance += _SpecularReflect(i_ray, i_intersection, p_bsdf, ip_sample, i_ts);
+    radiance += _SpecularTransmit(i_ray, i_intersection, p_bsdf, ip_sample, i_ts);
     }
 
   return radiance;
   }
 
-Spectrum_d PhotonLTEIntegrator::_FinalGather(const Intersection &i_intersection, const Vector3D_d &i_incident, const BSDF *ip_bsdf, const Sample *ip_sample, MemoryPool &i_pool) const
+Spectrum_d PhotonLTEIntegrator::_FinalGather(const Intersection &i_intersection, const Vector3D_d &i_incident, const BSDF *ip_bsdf, const Sample *ip_sample, ThreadSpecifics i_ts) const
   {
   ASSERT(ip_bsdf);
   ASSERT(mp_irradiance_map);
   ASSERT(i_incident.IsNormalized());
+  MemoryPool *p_pool = i_ts.mp_pool;
+  RandomGenerator<double> *p_rng = i_ts.mp_random_generator;
 
   const double cos_gather_angle = 0.9848; // 10 degrees
   const double cone_pdf = SamplingRoutines::UniformConePDF(cos_gather_angle);
@@ -413,29 +423,29 @@ Spectrum_d PhotonLTEIntegrator::_FinalGather(const Intersection &i_intersection,
     gather_samples = gather_samples_sqrt*gather_samples_sqrt;
 
     // BSDF samples.
-    double *bsdf_samples_1D = (double *)i_pool.Alloc( gather_samples * sizeof(double) );
-    Point2D_d *bsdf_samples_2D = (Point2D_d *)i_pool.Alloc( gather_samples * sizeof(Point2D_d) );
+    double *bsdf_samples_1D = (double *)p_pool->Alloc( gather_samples * sizeof(double) );
+    Point2D_d *bsdf_samples_2D = (Point2D_d *)p_pool->Alloc( gather_samples * sizeof(Point2D_d) );
 
     bsdf_1D_samples = SamplesSequence1D(bsdf_samples_1D, bsdf_samples_1D+gather_samples);
     bsdf_2D_samples = SamplesSequence2D(bsdf_samples_2D, bsdf_samples_2D+gather_samples);
 
-    SamplingRoutines::StratifiedSampling1D(bsdf_1D_samples.m_begin, gather_samples, true);
-    SamplingRoutines::StratifiedSampling2D(bsdf_2D_samples.m_begin, gather_samples_sqrt, gather_samples_sqrt, true);
+    SamplingRoutines::StratifiedSampling1D(bsdf_1D_samples.m_begin, gather_samples, true, p_rng);
+    SamplingRoutines::StratifiedSampling2D(bsdf_2D_samples.m_begin, gather_samples_sqrt, gather_samples_sqrt, true, p_rng);
 
     // Direction samples.
-    double *direction_samples_1D = (double *)i_pool.Alloc( gather_samples * sizeof(double) );
-    Point2D_d *direction_samples_2D = (Point2D_d *)i_pool.Alloc( gather_samples * sizeof(Point2D_d) );
+    double *direction_samples_1D = (double *)p_pool->Alloc( gather_samples * sizeof(double) );
+    Point2D_d *direction_samples_2D = (Point2D_d *)p_pool->Alloc( gather_samples * sizeof(Point2D_d) );
 
     direction_1D_samples = SamplesSequence1D(direction_samples_1D, direction_samples_1D+gather_samples);
     direction_2D_samples = SamplesSequence2D(direction_samples_2D, direction_samples_2D+gather_samples);
 
-    SamplingRoutines::StratifiedSampling1D(direction_1D_samples.m_begin, gather_samples, true);
-    SamplingRoutines::StratifiedSampling2D(direction_2D_samples.m_begin, gather_samples_sqrt, gather_samples_sqrt, true);
+    SamplingRoutines::StratifiedSampling1D(direction_1D_samples.m_begin, gather_samples, true, p_rng);
+    SamplingRoutines::StratifiedSampling2D(direction_2D_samples.m_begin, gather_samples_sqrt, gather_samples_sqrt, true, p_rng);
     }
 
   // Allocate array for the nearest photons.
   size_t photons_found = 0;
-  NearestPhoton *p_nearest_photons = (NearestPhoton*)i_pool.Alloc(32 * sizeof(NearestPhoton));
+  NearestPhoton *p_nearest_photons = (NearestPhoton*)p_pool->Alloc(32 * sizeof(NearestPhoton));
 
   // Search for nearest indirect photons.
   if (mp_indirect_map && mp_indirect_map->GetNumberOfPoints()>0)
@@ -448,13 +458,13 @@ Spectrum_d PhotonLTEIntegrator::_FinalGather(const Intersection &i_intersection,
   double inv_photons_found = (photons_found>0) ? 1.0/photons_found : 0.0;
 
   // Copy photon directions to a local array.
-  Vector3D_d *photon_directions = (Vector3D_d*)i_pool.Alloc(photons_found * sizeof(Vector3D_d));
+  Vector3D_d *photon_directions = (Vector3D_d*)p_pool->Alloc(photons_found * sizeof(Vector3D_d));
   for (size_t i=0;i<photons_found;++i)
     photon_directions[i] = p_nearest_photons[i].mp_point->m_incident_direction.ToVector3D<double>();
 
   size_t gather_rays = 0;
-  Vector3D_d *p_gather_directions = (Vector3D_d*)i_pool.Alloc( 2 * gather_samples * sizeof(Vector3D_d) );
-  Spectrum_d *p_gather_weights = (Spectrum_d*)i_pool.Alloc( 2 * gather_samples * sizeof(Spectrum_d) );
+  Vector3D_d *p_gather_directions = (Vector3D_d*)p_pool->Alloc( 2 * gather_samples * sizeof(Vector3D_d) );
+  Spectrum_d *p_gather_weights = (Spectrum_d*)p_pool->Alloc( 2 * gather_samples * sizeof(Spectrum_d) );
 
   // Sample BSDF.
   SamplesSequence1D::Iterator iterator_1D = bsdf_1D_samples.m_begin;
@@ -538,7 +548,7 @@ Spectrum_d PhotonLTEIntegrator::_FinalGather(const Intersection &i_intersection,
       {
       // Compute exitant radiance at the final gather intersection.
       Vector3D_d gather_direction = bounce_ray.m_direction*(-1.0);
-      const BSDF *p_gather_BSDF = gather_isect.mp_primitive->GetBSDF(gather_isect.m_dg, gather_isect.m_triangle_index, i_pool);
+      const BSDF *p_gather_BSDF = gather_isect.mp_primitive->GetBSDF(gather_isect.m_dg, gather_isect.m_triangle_index, *p_pool);
 
       IrradiancePhotonFilter filter(gather_isect.m_dg.m_point, gather_isect.m_dg.m_shading_normal, MAX_NORMAL_DEVIATION_COS);
       const IrradiancePhoton *p_irradiance_photon = mp_irradiance_map->GetNearestPoint(gather_isect.m_dg.m_point, filter, m_max_irradiance_lookup_dist);
@@ -558,17 +568,18 @@ Spectrum_d PhotonLTEIntegrator::_FinalGather(const Intersection &i_intersection,
         }
 
       tmp *= INV_PI;
-      radiance += tmp * _VolumeTransmittance(bounce_ray, NULL) * p_gather_weights[i];
+      radiance += tmp * _MediaTransmittance(bounce_ray, i_ts) * p_gather_weights[i];
       }
     }
 
   return radiance / gather_samples;
   }
 
-Spectrum_d PhotonLTEIntegrator::_LookupCausticRadiance(const BSDF *ip_bsdf, const DifferentialGeometry &i_dg, const Vector3D_d &i_direction, MemoryPool &i_pool) const
+Spectrum_d PhotonLTEIntegrator::_LookupCausticRadiance(const BSDF *ip_bsdf, const DifferentialGeometry &i_dg, const Vector3D_d &i_direction, ThreadSpecifics i_ts) const
   {
   ASSERT(ip_bsdf);
   ASSERT(i_direction.IsNormalized());
+  MemoryPool *p_pool = i_ts.mp_pool;
 
   if (mp_caustic_map == NULL)
     return Spectrum_d();
@@ -578,7 +589,7 @@ Spectrum_d PhotonLTEIntegrator::_LookupCausticRadiance(const BSDF *ip_bsdf, cons
     return Spectrum_d();
 
   // Allocate array for the nearest photons.
-  NearestPhoton *p_nearest_photons = (NearestPhoton*)i_pool.Alloc(m_params.m_caustic_lookup_photons_num * sizeof(NearestPhoton));
+  NearestPhoton *p_nearest_photons = (NearestPhoton*)p_pool->Alloc(m_params.m_caustic_lookup_photons_num * sizeof(NearestPhoton));
 
   PhotonFilter filter(i_dg.m_point, i_dg.m_shading_normal, MAX_NORMAL_DEVIATION_COS);
   size_t photons_found = mp_caustic_map->GetNearestPoints(i_dg.m_point, m_params.m_caustic_lookup_photons_num, p_nearest_photons, filter, m_params.m_max_caustic_lookup_dist);
@@ -605,7 +616,7 @@ Spectrum_d PhotonLTEIntegrator::_LookupCausticRadiance(const BSDF *ip_bsdf, cons
   else
     /*
     Since the max_dist_sqr is exactly equal to the squared distance to the farthest photon we need to multiply the area by the correcting factor.
-    The easy way to understand it is the following. Think of what would happen if we decrease the radius a little bit.
+    The easy way to understand it is the following. Think of what will happen if we decrease the radius a little bit.
     The farthest photon will drop out while the area won't change significantly. Thus the resulting radiance value would change by the value brought by the farthest photon.
     We need to increase the total area by a half of a single photon's area.
     */
@@ -621,4 +632,17 @@ double PhotonLTEIntegrator::_PhotonKernel(double i_dist_sqr, double i_max_dist_s
   // Simpson’s kernel function is used.
   double tmp = (1.0 - i_dist_sqr / i_max_dist_sqr);
   return 3.0 * INV_PI * tmp * tmp;
+  }
+
+Spectrum_d PhotonLTEIntegrator::_MediaRadianceAndTranmsittance(const RayDifferential &i_ray, const Sample *ip_sample, Spectrum_d &o_transmittance, ThreadSpecifics i_ts) const
+  {
+  // TBD
+  o_transmittance = Spectrum_d(1.0);
+  return Spectrum_d(0.0);
+  }
+
+Spectrum_d PhotonLTEIntegrator::_MediaTransmittance(const Ray &i_ray, ThreadSpecifics i_ts) const
+  {
+  // TBD
+  return Spectrum_d(1.0);
   }

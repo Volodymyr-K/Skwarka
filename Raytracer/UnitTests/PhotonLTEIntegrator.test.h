@@ -21,6 +21,8 @@ class PhotonLTEIntegratorTestSuite : public CxxTest::TestSuite
     PhotonLTEIntegratorTestSuite()
       {
       mp_sphere = TriangleMeshHelper::ConstructSphere(Point3D_d(0,0,0), 1.0, 7);
+      m_ts.mp_pool = &m_pool;
+      m_ts.mp_random_generator = &m_rng;
       }
 
     // The case with a camera placed inside of a self-illuminated sphere with lambertian BSDF.
@@ -46,8 +48,9 @@ class PhotonLTEIntegratorTestSuite : public CxxTest::TestSuite
       params.m_gather_samples_num=1024*16;
       params.m_caustic_lookup_photons_num=100; // no need to set caustic-related fields actually
       params.m_max_caustic_lookup_dist=0.01;
+      params.m_media_step_size=0.01;
       params.m_max_specular_depth=6; // no need since there's no specular objects actually
-      intrusive_ptr<PhotonLTEIntegrator> p_photon_lte_integrator( new PhotonLTEIntegrator(p_scene, NULL, params) );
+      intrusive_ptr<PhotonLTEIntegrator> p_photon_lte_integrator( new PhotonLTEIntegrator(p_scene, params) );
       p_photon_lte_integrator->ShootPhotons(0,20000,100000);
 
       p_photon_lte_integrator->RequestSamples(p_sampler);
@@ -55,10 +58,9 @@ class PhotonLTEIntegratorTestSuite : public CxxTest::TestSuite
       intrusive_ptr<Sample> p_sample = p_sampler->CreateSample();
       p_sampler->GetNextSubSampler(1, &m_rng)->GetNextSample(p_sample);
 
-      MemoryPool pool;
       Ray ray(Point3D_d(0,0,0), Vector3D_d(1,0,0).Normalized());
 
-      Spectrum_d radiance = p_photon_lte_integrator->Radiance(RayDifferential(ray), p_sample.get(), pool);
+      Spectrum_d radiance = p_photon_lte_integrator->Radiance(RayDifferential(ray), p_sample.get(), m_ts);
       TS_ASSERT_DELTA(radiance[0], light_radiance[0]/(1.0-reflectance[0]), 0.02*radiance[0]);
       TS_ASSERT_DELTA(radiance[1], light_radiance[1]/(1.0-reflectance[1]), 0.02*radiance[1]);
       TS_ASSERT_DELTA(radiance[2], light_radiance[2]/(1.0-reflectance[2]), 0.02*radiance[2]);
@@ -86,8 +88,9 @@ class PhotonLTEIntegratorTestSuite : public CxxTest::TestSuite
       params.m_gather_samples_num=1024*16;
       params.m_caustic_lookup_photons_num=100; // no need to set caustic-related fields actually
       params.m_max_caustic_lookup_dist=0.01;
+      params.m_media_step_size=0.01;
       params.m_max_specular_depth=6; // no need since there's no specular objects actually
-      intrusive_ptr<PhotonLTEIntegrator> p_photon_lte_integrator( new PhotonLTEIntegrator(p_scene, NULL, params) );
+      intrusive_ptr<PhotonLTEIntegrator> p_photon_lte_integrator( new PhotonLTEIntegrator(p_scene, params) );
       p_photon_lte_integrator->ShootPhotons(0,20000,100000);
 
       p_photon_lte_integrator->RequestSamples(p_sampler);
@@ -95,10 +98,9 @@ class PhotonLTEIntegratorTestSuite : public CxxTest::TestSuite
       intrusive_ptr<Sample> p_sample = p_sampler->CreateSample();
       p_sampler->GetNextSubSampler(1, &m_rng)->GetNextSample(p_sample);
 
-      MemoryPool pool;
       Ray ray(Point3D_d(0,0,0), Vector3D_d(1,0,0).Normalized());
 
-      Spectrum_d radiance = p_photon_lte_integrator->Radiance(RayDifferential(ray), p_sample.get(), pool);
+      Spectrum_d radiance = p_photon_lte_integrator->Radiance(RayDifferential(ray), p_sample.get(), m_ts);
       TS_ASSERT_DELTA(radiance[0], INV_PI*light_intentsity[0]*reflectance[0]/(1.0-reflectance[0]), 0.02*radiance[0]);
       TS_ASSERT_DELTA(radiance[1], INV_PI*light_intentsity[1]*reflectance[1]/(1.0-reflectance[1]), 0.02*radiance[1]);
       TS_ASSERT_DELTA(radiance[2], INV_PI*light_intentsity[2]*reflectance[2]/(1.0-reflectance[2]), 0.02*radiance[2]);
@@ -129,8 +131,9 @@ class PhotonLTEIntegratorTestSuite : public CxxTest::TestSuite
       params.m_gather_samples_num=1024*16;
       params.m_caustic_lookup_photons_num=100; // no need to set caustic-related fields actually
       params.m_max_caustic_lookup_dist=0.01;
+      params.m_media_step_size=0.01;
       params.m_max_specular_depth=6; // no need since there's no specular objects actually
-      intrusive_ptr<PhotonLTEIntegrator> p_photon_lte_integrator( new PhotonLTEIntegrator(p_scene, NULL, params) );
+      intrusive_ptr<PhotonLTEIntegrator> p_photon_lte_integrator( new PhotonLTEIntegrator(p_scene, params) );
       p_photon_lte_integrator->ShootPhotons(0,20000,20000);
 
       p_photon_lte_integrator->RequestSamples(p_sampler);
@@ -138,10 +141,9 @@ class PhotonLTEIntegratorTestSuite : public CxxTest::TestSuite
       intrusive_ptr<Sample> p_sample = p_sampler->CreateSample();
       p_sampler->GetNextSubSampler(1, &m_rng)->GetNextSample(p_sample);
 
-      MemoryPool pool;
       Ray ray(Point3D_d(2,0,0), Vector3D_d(-1,0,0).Normalized());
 
-      Spectrum_d radiance = p_photon_lte_integrator->Radiance(RayDifferential(ray), p_sample.get(), pool);
+      Spectrum_d radiance = p_photon_lte_integrator->Radiance(RayDifferential(ray), p_sample.get(), m_ts);
       TS_ASSERT_DELTA(radiance[0], light_radiance[0]*reflectance[0], 0.01*radiance[0]);
       TS_ASSERT_DELTA(radiance[1], light_radiance[1]*reflectance[1], 0.01*radiance[1]);
       TS_ASSERT_DELTA(radiance[2], light_radiance[2]*reflectance[2], 0.01*radiance[2]);
@@ -165,6 +167,9 @@ class PhotonLTEIntegratorTestSuite : public CxxTest::TestSuite
   private:
     intrusive_ptr<TriangleMesh> mp_sphere;
     RandomGenerator<double> m_rng;
+    MemoryPool m_pool;
+
+    ThreadSpecifics m_ts;
   };
 
 #endif // PHOTON_LTE_INTEGRATOR_TEST_H

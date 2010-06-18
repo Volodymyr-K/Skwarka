@@ -43,7 +43,7 @@ class ImageEnvironmentalLight: public InfiniteLightSource
     Spectrum_d Power() const;
 
     /**
-    * Samples direct lighting at the specified point.
+    * Samples direct lighting.
     * The direction is sampled with the PDF roughly proportional to the light radiance luminance.
     * @param i_sample 2D sample. Should be in [0;1)^2 range.
     * @param[out] o_lighting_direction Direction to the light source from the specified point. Should be normalized.
@@ -61,7 +61,7 @@ class ImageEnvironmentalLight: public InfiniteLightSource
     double LightingPDF(const Vector3D_d &i_lighting_direction) const;
 
     /**
-    * Samples direct lighting at the specified point with the specified surface normal.
+    * Samples direct lighting for the specified surface normal.
     * The direction is sampled with the PDF roughly proportional to the light radiance luminance multiplied by the cosine factor.
     * @param i_normal Surface normal vector at the specified point. Should be normalized.
     * @param i_sample 2D sample. Should be in [0;1)^2 range.

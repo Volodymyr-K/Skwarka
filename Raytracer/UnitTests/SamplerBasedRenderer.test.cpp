@@ -19,7 +19,7 @@ CxxTest::StaticSuiteDescription suiteDescription_SamplerBasedRendererTestSuite( 
 
 static class TestDescription_SamplerBasedRendererTestSuite_test_SamplerBasedRendererInsideSphere_Render : public CxxTest::RealTestDescription {
 public:
- TestDescription_SamplerBasedRendererTestSuite_test_SamplerBasedRendererInsideSphere_Render() : CxxTest::RealTestDescription( Tests_SamplerBasedRendererTestSuite, suiteDescription_SamplerBasedRendererTestSuite, 60, "test_SamplerBasedRendererInsideSphere_Render" ) {}
+ TestDescription_SamplerBasedRendererTestSuite_test_SamplerBasedRendererInsideSphere_Render() : CxxTest::RealTestDescription( Tests_SamplerBasedRendererTestSuite, suiteDescription_SamplerBasedRendererTestSuite, 62, "test_SamplerBasedRendererInsideSphere_Render" ) {}
  void runTest() { suite_SamplerBasedRendererTestSuite.test_SamplerBasedRendererInsideSphere_Render(); }
 } testDescription_SamplerBasedRendererTestSuite_test_SamplerBasedRendererInsideSphere_Render;
 

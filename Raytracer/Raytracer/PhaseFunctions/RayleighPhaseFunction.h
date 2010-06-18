@@ -1,14 +1,15 @@
-#ifndef ISOTROPIC_PHASE_FUNCTION_H
-#define ISOTROPIC_PHASE_FUNCTION_H
+#ifndef RAYLEIGH_PHASE_FUNCTION_H
+#define RAYLEIGH_PHASE_FUNCTION_H
 
 #include <Common/Common.h>
 #include <Math/Geometry.h>
 #include <Raytracer/Core/Spectrum.h>
 
 /**
-* Isotropic phase function that scatters light uniformly in all directions.
+* Phase function implementing the Rayleigh scattering.
+* Rayleigh scattering is observed on particles only slightly smaller than the wavelength of light (cigarette smoke and dust).
 */
-class IsotropicPhaseFunction
+class RayleighPhaseFunction
   {
   public:
     /**
@@ -20,9 +21,10 @@ class IsotropicPhaseFunction
 /////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-double IsotropicPhaseFunction::operator()(const Vector3D_d &i_incoming, const Vector3D_d &i_outgoing) const
+double RayleighPhaseFunction::operator()(const Vector3D_d &i_incoming, const Vector3D_d &i_outgoing) const
   {
-  return 1.0/(4.0*M_PI);
+  double costheta = i_incoming*i_outgoing;
+  return  3.0/(16.0*M_PI) * (1.0 + costheta * costheta);
   }
 
-#endif // ISOTROPIC_PHASE_FUNCTION_H
+#endif // RAYLEIGH_PHASE_FUNCTION_H

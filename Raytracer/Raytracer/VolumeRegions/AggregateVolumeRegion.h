@@ -73,7 +73,7 @@ class AggregateVolumeRegion: public VolumeRegion
     /**
     * Returns aggregated optical thickness of the volume region for the specified ray.
     * The method also takes two additional parameters for MonteCarlo integration.
-    * @param i_ray Ray for which the optical thickness is to be computed.
+    * @param i_ray Ray for which the optical thickness is to be computed. Ray direction should be normalized.
     * @param i_step Step size for the MonteCarlo integration. Should be greater than 0.0. Not used by this implementation.
     * @param i_offset_sample The sample value used for MonteCarlo integration to choose position in the segments for evaluating attenuation value.
     * Should be in [0;1) range. Not used by this implementation.

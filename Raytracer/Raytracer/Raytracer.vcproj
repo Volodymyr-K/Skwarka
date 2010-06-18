@@ -176,6 +176,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\Core\CoreCommon.h"
+					>
+				</File>
+				<File
 					RelativePath=".\Core\CoreUtils.h"
 					>
 				</File>
@@ -265,10 +269,6 @@
 				</File>
 				<File
 					RelativePath=".\Core\TriangleMesh.h"
-					>
-				</File>
-				<File
-					RelativePath=".\Core\VolumeIntegrator.h"
 					>
 				</File>
 				<File
@@ -758,6 +758,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\VolumeRegions\GridDensityVolumeRegion.h"
+					>
+				</File>
+				<File
 					RelativePath=".\VolumeRegions\HomogeneousVolumeRegion.h"
 					>
 				</File>
@@ -779,6 +783,18 @@
 				>
 				<File
 					RelativePath=".\PhaseFunctions\IsotropicPhaseFunction.h"
+					>
+				</File>
+				<File
+					RelativePath=".\PhaseFunctions\MieHazyPhaseFunction.h"
+					>
+				</File>
+				<File
+					RelativePath=".\PhaseFunctions\MieMurkyPhaseFunction.h"
+					>
+				</File>
+				<File
+					RelativePath=".\PhaseFunctions\RayleighPhaseFunction.h"
 					>
 				</File>
 			</Filter>

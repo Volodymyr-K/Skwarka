@@ -2,6 +2,7 @@
 #include <Common/Numerics.h>
 #include <Math/Constants.h>
 #include <Math/RandomGenerator.h>
+#include <Raytracer/Core/CoreCommon.h>
 #include <tbb/pipeline.h>
 #include <vector>
 
@@ -340,6 +341,10 @@ void* SamplerBasedRenderer::IntegratorFilter::operator()(void* ip_chunk)
   PixelsChunk *p_chunk = static_cast<PixelsChunk*>(ip_chunk);
   MemoryPool *p_pool = p_chunk->GetMemoryPool();
 
+  ThreadSpecifics ts;
+  ts.mp_pool = p_pool;
+  ts.mp_random_generator = p_chunk->GetRandomGenerator();
+
   while(const Sample *p_sample = p_chunk->GetNextSample())
     {
     Point2D_d image_point = p_sample->GetImagePoint();
@@ -365,7 +370,7 @@ void* SamplerBasedRenderer::IntegratorFilter::operator()(void* ip_chunk)
 
     Spectrum_d radiance=Spectrum_d(0.0);
     if (weight != 0.0)
-      radiance = mp_lte_integrator->Radiance(ray, p_sample, *p_pool);
+      radiance = mp_lte_integrator->Radiance(ray, p_sample, ts);
 
     // Log unexpected radiance values.
     if (IsNaN(radiance))

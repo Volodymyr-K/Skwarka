@@ -14,10 +14,14 @@ Evaluates direct lighting only with fixed number of random samples.
 class LTEIntegratorMock: public LTEIntegrator
   {
   public:
-    LTEIntegratorMock(intrusive_ptr<const Scene> ip_scene, intrusive_ptr<VolumeIntegrator> ip_volume_integrator);
+    LTEIntegratorMock(intrusive_ptr<const Scene> ip_scene);
 
   private:
-    virtual Spectrum_d _SurfaceRadiance(const RayDifferential &i_ray, const Intersection &i_intersection, const Sample *ip_sample, MemoryPool &i_pool) const;
+    virtual Spectrum_d _SurfaceRadiance(const RayDifferential &i_ray, const Intersection &i_intersection, const Sample *ip_sample, ThreadSpecifics i_ts) const;
+
+    virtual Spectrum_d _MediaRadianceAndTranmsittance(const RayDifferential &i_ray, const Sample *ip_sample, Spectrum_d &o_transmittance, ThreadSpecifics i_ts) const;
+
+    virtual Spectrum_d _MediaTransmittance(const Ray &i_ray, const Sample *ip_sample, ThreadSpecifics i_ts) const;
 
   private:
     intrusive_ptr<const Scene> mp_scene;
@@ -26,17 +30,20 @@ class LTEIntegratorMock: public LTEIntegrator
 /////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-inline LTEIntegratorMock::LTEIntegratorMock(intrusive_ptr<const Scene> ip_scene, intrusive_ptr<VolumeIntegrator> ip_volume_integrator):
-LTEIntegrator(ip_scene, ip_volume_integrator), mp_scene(ip_scene)
+inline LTEIntegratorMock::LTEIntegratorMock(intrusive_ptr<const Scene> ip_scene):
+LTEIntegrator(ip_scene), mp_scene(ip_scene)
   {
   }
 
-inline Spectrum_d LTEIntegratorMock::_SurfaceRadiance(const RayDifferential &i_ray, const Intersection &i_intersection, const Sample *ip_sample, MemoryPool &i_pool) const
+inline Spectrum_d LTEIntegratorMock::_SurfaceRadiance(const RayDifferential &i_ray, const Intersection &i_intersection, const Sample *ip_sample, ThreadSpecifics i_ts) const
   {
   ASSERT(i_ray.m_base_ray.m_direction.IsNormalized());
-  Spectrum_d radiance;
+  ASSERT(i_ts.mp_pool && i_ts.mp_random_generator);
+  MemoryPool *p_pool = i_ts.mp_pool;
+  RandomGenerator<double> *p_rng = i_ts.mp_random_generator;
 
-  const BSDF *p_bsdf = i_intersection.mp_primitive->GetBSDF(i_intersection.m_dg, i_intersection.m_triangle_index, i_pool);
+  Spectrum_d radiance;
+  const BSDF *p_bsdf = i_intersection.mp_primitive->GetBSDF(i_intersection.m_dg, i_intersection.m_triangle_index, *p_pool);
 
   const AreaLightSource *p_light_source = i_intersection.mp_primitive->GetAreaLightSource_RawPtr();
   if (p_light_source)
@@ -57,7 +64,7 @@ inline Spectrum_d LTEIntegratorMock::_SurfaceRadiance(const RayDifferential &i_r
     Spectrum_d f = p_bsdf->Evaluate(lighting_ray.m_direction.Normalized(), i_ray.m_base_ray.m_direction*(-1.0));
     if (!f.IsBlack() && mp_scene->IntersectTest(lighting_ray)==false)
       {
-      Spectrum_d transmittance = _VolumeTransmittance(lighting_ray, ip_sample);
+      Spectrum_d transmittance = _MediaTransmittance(lighting_ray, ip_sample, i_ts);
       radiance += (f * Li * transmittance) * fabs(lighting_ray.m_direction.Normalized()* i_intersection.m_dg.m_shading_normal);
       }
     }
@@ -67,10 +74,10 @@ inline Spectrum_d LTEIntegratorMock::_SurfaceRadiance(const RayDifferential &i_r
   for (size_t i = 0; i < 10; ++i)
     {
     Vector3D_d exitant;
-    Point2D_d sample(RandomDouble(1.0), RandomDouble(1.0));
+    Point2D_d sample((*p_rng)(1.0), (*p_rng)(1.0));
     double pdf;
     BxDFType sampled_type;
-    Spectrum_d f = p_bsdf->Sample(i_ray.m_base_ray.m_direction*(-1.0), exitant, sample, RandomDouble(1.0), pdf, sampled_type);
+    Spectrum_d f = p_bsdf->Sample(i_ray.m_base_ray.m_direction*(-1.0), exitant, sample, (*p_rng)(1.0), pdf, sampled_type);
 
     if (pdf>0.0)
       {
@@ -81,7 +88,7 @@ inline Spectrum_d LTEIntegratorMock::_SurfaceRadiance(const RayDifferential &i_r
           {
           Ray lighting_ray(i_intersection.m_dg.m_point, exitant);
           Spectrum_d Li = lights.m_infinite_light_sources[j]->Radiance(RayDifferential(lighting_ray));
-          Spectrum_d transmittance = _VolumeTransmittance(lighting_ray, ip_sample);
+          Spectrum_d transmittance = _MediaTransmittance(lighting_ray, ip_sample, i_ts);
 
           infinity_light += (f * Li * transmittance) * cs / pdf;
           }
@@ -100,10 +107,10 @@ inline Spectrum_d LTEIntegratorMock::_SurfaceRadiance(const RayDifferential &i_r
   for (size_t i = 0; i < 10; ++i)
     {
     Vector3D_d exitant;
-    Point2D_d sample(RandomDouble(1.0), RandomDouble(1.0));
+    Point2D_d sample((*p_rng)(1.0), (*p_rng)(1.0));
     double pdf;
     BxDFType sampled_type;
-    Spectrum_d f = p_bsdf->Sample(i_ray.m_base_ray.m_direction*(-1.0), exitant, sample, RandomDouble(1.0), pdf, sampled_type);
+    Spectrum_d f = p_bsdf->Sample(i_ray.m_base_ray.m_direction*(-1.0), exitant, sample, (*p_rng)(1.0), pdf, sampled_type);
 
     if (pdf>0.0)
       {
@@ -120,6 +127,23 @@ inline Spectrum_d LTEIntegratorMock::_SurfaceRadiance(const RayDifferential &i_r
   */
 
   return radiance;
+  }
+
+inline Spectrum_d LTEIntegratorMock::_MediaRadianceAndTranmsittance(const RayDifferential &i_ray, const Sample *ip_sample, Spectrum_d &o_transmittance, ThreadSpecifics i_ts) const
+  {
+  o_transmittance = _MediaTransmittance(i_ray.m_base_ray, ip_sample, i_ts);
+  return Spectrum_d(0.0);  }
+
+inline Spectrum_d LTEIntegratorMock::_MediaTransmittance(const Ray &i_ray, const Sample *ip_sample, ThreadSpecifics i_ts) const
+  {
+  ASSERT(i_ray.m_direction.IsNormalized());
+
+  const VolumeRegion *p_volume = mp_scene->GetVolumeRegion_RawPtr();
+  if (p_volume==NULL)
+    return Spectrum_d(1.0);
+
+  Spectrum_d opt_thickness = p_volume->OpticalThickness(i_ray, 0.1, 0.5);
+  return Spectrum_d(exp(-opt_thickness[0]), exp(-opt_thickness[1]), exp(-opt_thickness[2]));
   }
 
 #endif // LTE_INTEGRATOR_MOCK_H

@@ -15,29 +15,23 @@
 static LTEIntegratorTestSuite suite_LTEIntegratorTestSuite;
 
 static CxxTest::List Tests_LTEIntegratorTestSuite = { 0, 0 };
-CxxTest::StaticSuiteDescription suiteDescription_LTEIntegratorTestSuite( "./LTEIntegrator.test.h", 14, "LTEIntegratorTestSuite", suite_LTEIntegratorTestSuite, Tests_LTEIntegratorTestSuite );
+CxxTest::StaticSuiteDescription suiteDescription_LTEIntegratorTestSuite( "./LTEIntegrator.test.h", 15, "LTEIntegratorTestSuite", suite_LTEIntegratorTestSuite, Tests_LTEIntegratorTestSuite );
 
-static class TestDescription_LTEIntegratorTestSuite_test_LTEIntegratorTestSuite_RadianceInsideSphere_NoVolumeIntegrator : public CxxTest::RealTestDescription {
+static class TestDescription_LTEIntegratorTestSuite_test_LTEIntegratorTestSuite_RadianceInsideSphere_NoMedia : public CxxTest::RealTestDescription {
 public:
- TestDescription_LTEIntegratorTestSuite_test_LTEIntegratorTestSuite_RadianceInsideSphere_NoVolumeIntegrator() : CxxTest::RealTestDescription( Tests_LTEIntegratorTestSuite, suiteDescription_LTEIntegratorTestSuite, 46, "test_LTEIntegratorTestSuite_RadianceInsideSphere_NoVolumeIntegrator" ) {}
- void runTest() { suite_LTEIntegratorTestSuite.test_LTEIntegratorTestSuite_RadianceInsideSphere_NoVolumeIntegrator(); }
-} testDescription_LTEIntegratorTestSuite_test_LTEIntegratorTestSuite_RadianceInsideSphere_NoVolumeIntegrator;
+ TestDescription_LTEIntegratorTestSuite_test_LTEIntegratorTestSuite_RadianceInsideSphere_NoMedia() : CxxTest::RealTestDescription( Tests_LTEIntegratorTestSuite, suiteDescription_LTEIntegratorTestSuite, 53, "test_LTEIntegratorTestSuite_RadianceInsideSphere_NoMedia" ) {}
+ void runTest() { suite_LTEIntegratorTestSuite.test_LTEIntegratorTestSuite_RadianceInsideSphere_NoMedia(); }
+} testDescription_LTEIntegratorTestSuite_test_LTEIntegratorTestSuite_RadianceInsideSphere_NoMedia;
 
-static class TestDescription_LTEIntegratorTestSuite_test_LTEIntegrator_RadianceOutsideSphere_NoVolumeIntegrator : public CxxTest::RealTestDescription {
+static class TestDescription_LTEIntegratorTestSuite_test_LTEIntegrator_RadianceOutsideSphere_NoMedia : public CxxTest::RealTestDescription {
 public:
- TestDescription_LTEIntegratorTestSuite_test_LTEIntegrator_RadianceOutsideSphere_NoVolumeIntegrator() : CxxTest::RealTestDescription( Tests_LTEIntegratorTestSuite, suiteDescription_LTEIntegratorTestSuite, 58, "test_LTEIntegrator_RadianceOutsideSphere_NoVolumeIntegrator" ) {}
- void runTest() { suite_LTEIntegratorTestSuite.test_LTEIntegrator_RadianceOutsideSphere_NoVolumeIntegrator(); }
-} testDescription_LTEIntegratorTestSuite_test_LTEIntegrator_RadianceOutsideSphere_NoVolumeIntegrator;
+ TestDescription_LTEIntegratorTestSuite_test_LTEIntegrator_RadianceOutsideSphere_NoMedia() : CxxTest::RealTestDescription( Tests_LTEIntegratorTestSuite, suiteDescription_LTEIntegratorTestSuite, 64, "test_LTEIntegrator_RadianceOutsideSphere_NoMedia" ) {}
+ void runTest() { suite_LTEIntegratorTestSuite.test_LTEIntegrator_RadianceOutsideSphere_NoMedia(); }
+} testDescription_LTEIntegratorTestSuite_test_LTEIntegrator_RadianceOutsideSphere_NoMedia;
 
-static class TestDescription_LTEIntegratorTestSuite_test_LTEIntegrator_RadianceOutsideSphere_WithVolumeIntegrator : public CxxTest::RealTestDescription {
+static class TestDescription_LTEIntegratorTestSuite_test_LTEIntegrator_RadianceInsideSphere_WithMedia : public CxxTest::RealTestDescription {
 public:
- TestDescription_LTEIntegratorTestSuite_test_LTEIntegrator_RadianceOutsideSphere_WithVolumeIntegrator() : CxxTest::RealTestDescription( Tests_LTEIntegratorTestSuite, suiteDescription_LTEIntegratorTestSuite, 70, "test_LTEIntegrator_RadianceOutsideSphere_WithVolumeIntegrator" ) {}
- void runTest() { suite_LTEIntegratorTestSuite.test_LTEIntegrator_RadianceOutsideSphere_WithVolumeIntegrator(); }
-} testDescription_LTEIntegratorTestSuite_test_LTEIntegrator_RadianceOutsideSphere_WithVolumeIntegrator;
-
-static class TestDescription_LTEIntegratorTestSuite_test_LTEIntegrator_RadianceInsideSphere_WithVolumeIntegrators : public CxxTest::RealTestDescription {
-public:
- TestDescription_LTEIntegratorTestSuite_test_LTEIntegrator_RadianceInsideSphere_WithVolumeIntegrators() : CxxTest::RealTestDescription( Tests_LTEIntegratorTestSuite, suiteDescription_LTEIntegratorTestSuite, 81, "test_LTEIntegrator_RadianceInsideSphere_WithVolumeIntegrators" ) {}
- void runTest() { suite_LTEIntegratorTestSuite.test_LTEIntegrator_RadianceInsideSphere_WithVolumeIntegrators(); }
-} testDescription_LTEIntegratorTestSuite_test_LTEIntegrator_RadianceInsideSphere_WithVolumeIntegrators;
+ TestDescription_LTEIntegratorTestSuite_test_LTEIntegrator_RadianceInsideSphere_WithMedia() : CxxTest::RealTestDescription( Tests_LTEIntegratorTestSuite, suiteDescription_LTEIntegratorTestSuite, 75, "test_LTEIntegrator_RadianceInsideSphere_WithMedia" ) {}
+ void runTest() { suite_LTEIntegratorTestSuite.test_LTEIntegrator_RadianceInsideSphere_WithMedia(); }
+} testDescription_LTEIntegratorTestSuite_test_LTEIntegrator_RadianceInsideSphere_WithMedia;
 

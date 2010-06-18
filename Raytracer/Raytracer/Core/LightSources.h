@@ -72,7 +72,7 @@ class InfiniteLightSource: public ReferenceCounted
     virtual Spectrum_d Power() const = 0;
 
     /**
-    * Samples direct lighting at the specified point.
+    * Samples direct lighting.
     * @param i_sample 2D sample. Should be in [0;1)^2 range.
     * @param[out] o_lighting_direction Direction to the light source from the specified point. Should be normalized.
     * @param[out] o_pdf PDF value for the sampled direction. The returned value should be greater or equal than zero.
@@ -89,7 +89,7 @@ class InfiniteLightSource: public ReferenceCounted
     virtual double LightingPDF(const Vector3D_d &i_lighting_direction) const = 0;
 
     /**
-    * Samples direct lighting at the specified point with the specified surface normal.
+    * Samples direct lighting for the specified surface normal.
     * Default implementation just calls SampleLighting() method without the normal information.
     * @param i_normal Surface normal vector at the specified point. Should be normalized.
     * @param i_sample 2D sample. Should be in [0;1)^2 range.

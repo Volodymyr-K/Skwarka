@@ -6,9 +6,9 @@
 #include <Common/MemoryPool.h>
 #include <Raytracer/Renderers/SamplerBasedRenderer.h>
 #include "Mocks/LTEIntegratorMock.h"
-#include "Mocks/VolumeIntegratorMock.h"
 #include "Mocks/MaterialMock.h"
 #include "Mocks/InfiniteLightSourceMock.h"
+#include "Mocks/VolumeRegionMock.h"
 #include <Raytracer/Cameras/PerspectiveCamera.h>
 #include <Raytracer/LightSources/PointLight.h>
 #include <Raytracer/Films/ImageFilm.h>
@@ -40,7 +40,9 @@ class SamplerBasedRendererTestSuite : public CxxTest::TestSuite
       lights.m_infinite_light_sources.push_back(p_infinite_light);
       //////////////////////
 
-      mp_scene.reset( new Scene(m_primitives, NULL, lights) );
+      intrusive_ptr<const VolumeRegion> p_volume( new VolumeRegionMock(BBox3D_d(Point3D_d(-1,-1,-1),Point3D_d(1,1,1)), Spectrum_d(0), Spectrum_d(0.5), Spectrum_d(0.5)) );
+
+      mp_scene.reset( new Scene(m_primitives, p_volume, lights) );
 
       intrusive_ptr<FilmFilter> p_filter( new BoxFilter(0.5,0.5) );
       intrusive_ptr<Film> p_film( new ImageFilm(10, 10, p_filter) );
@@ -59,8 +61,7 @@ class SamplerBasedRendererTestSuite : public CxxTest::TestSuite
     // This will run in multiple threads depending on the number of threads available.
     void test_SamplerBasedRendererInsideSphere_Render()
       {
-      intrusive_ptr<VolumeIntegrator> mp_volume_int( new VolumeIntegratorMock() );
-      intrusive_ptr<LTEIntegrator> p_lte_int( new LTEIntegratorMock(mp_scene, mp_volume_int) );
+      intrusive_ptr<LTEIntegrator> p_lte_int( new LTEIntegratorMock(mp_scene) );
       intrusive_ptr<SamplerBasedRenderer> p_renderer( new SamplerBasedRenderer(p_lte_int, mp_sampler, intrusive_ptr<Log>(new StreamLog())) );
 
       p_renderer->Render(mp_camera);
@@ -86,7 +87,6 @@ class SamplerBasedRendererTestSuite : public CxxTest::TestSuite
     std::vector<intrusive_ptr<const Primitive> > m_primitives;
 
     intrusive_ptr<Scene> mp_scene;
-    intrusive_ptr<VolumeIntegrator> mp_volume_int;
     intrusive_ptr<Sampler> mp_sampler;
     intrusive_ptr<Camera> mp_camera;
   };

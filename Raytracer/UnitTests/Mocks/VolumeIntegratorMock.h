@@ -17,9 +17,9 @@ class VolumeIntegratorMock: public VolumeIntegrator
   public:
     VolumeIntegratorMock();
 
-    virtual Spectrum_d RadianceAndTransmittance(const RayDifferential &i_ray, const Sample *ip_sample, Spectrum_d &o_transmittance) const;
+    virtual Spectrum_d RadianceAndTransmittance(const RayDifferential &i_ray, const Sample *ip_sample, Spectrum_d &o_transmittance, MemoryPool &i_pool) const;
 
-    virtual Spectrum_d Transmittance(const Ray &i_ray, const Sample *ip_sample) const;
+    virtual Spectrum_d Transmittance(const Ray &i_ray, const Sample *ip_sample, MemoryPool &i_pool) const;
 
   };
 
@@ -30,7 +30,7 @@ inline VolumeIntegratorMock::VolumeIntegratorMock(): VolumeIntegrator()
   {
   }
 
-inline Spectrum_d VolumeIntegratorMock::RadianceAndTransmittance(const RayDifferential &i_ray, const Sample *ip_sample, Spectrum_d &o_transmittance) const
+inline Spectrum_d VolumeIntegratorMock::RadianceAndTransmittance(const RayDifferential &i_ray, const Sample *ip_sample, Spectrum_d &o_transmittance, MemoryPool &i_pool) const
   {
   ASSERT(i_ray.m_base_ray.m_direction.IsNormalized());
   double ray_length = i_ray.m_base_ray.m_direction.Length()*fabs(i_ray.m_base_ray.m_max_t-i_ray.m_base_ray.m_min_t);
@@ -38,7 +38,7 @@ inline Spectrum_d VolumeIntegratorMock::RadianceAndTransmittance(const RayDiffer
   return Spectrum_d(0.0);
   }
 
-inline Spectrum_d VolumeIntegratorMock::Transmittance(const Ray &i_ray, const Sample *ip_sample) const
+inline Spectrum_d VolumeIntegratorMock::Transmittance(const Ray &i_ray, const Sample *ip_sample, MemoryPool &i_pool) const
   {
   ASSERT(i_ray.m_direction.IsNormalized());
   double ray_length = i_ray.m_direction.Length()*fabs(i_ray.m_max_t-i_ray.m_min_t);

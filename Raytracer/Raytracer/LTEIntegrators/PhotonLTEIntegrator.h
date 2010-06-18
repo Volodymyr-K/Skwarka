@@ -1,5 +1,6 @@
 #ifndef PHOTON_LTE_INTEGRATOR_H
 #define PHOTON_LTE_INTEGRATOR_H
+//TBD: Implement photon mapping for participating media
 
 #include <Common/Common.h>
 #include <Raytracer/Core/LTEIntegrator.h>
@@ -38,6 +39,11 @@ struct PhotonLTEIntegratorParams
   * Maximum specular depth for specular reflections and refractions.
   */
   size_t m_max_specular_depth;
+
+  /**
+  * Step size to be used for participating media integration. Should be greater than 0.0
+  */
+  double m_media_step_size;
   };
 
 /**
@@ -61,10 +67,10 @@ class PhotonLTEIntegrator: public LTEIntegrator
     /**
     * Creates PhotonLTEIntegrator instance.
     * @param ip_scene Scene instance. Should not be NULL.
-    * @param ip_volume_integrator Volume integrator for computing volume radiance and transmittance. Can be NULL in which case it is assumed there is no participating media.
+
     * @param i_params Integrator parameters.
     */
-    PhotonLTEIntegrator(intrusive_ptr<const Scene> ip_scene, intrusive_ptr<VolumeIntegrator> ip_volume_integrator, PhotonLTEIntegratorParams i_params);
+    PhotonLTEIntegrator(intrusive_ptr<const Scene> ip_scene, PhotonLTEIntegratorParams i_params);
 
     /**
     * Shoots photons and construct photon maps.
@@ -95,7 +101,7 @@ class PhotonLTEIntegrator: public LTEIntegrator
   private:
     /**
     * Requests 1D and 2D samples sequences needed for the surface part of the LTE integration.
-    * The method requests samples sequences needed for final gathering.
+    * The method requests samples sequences needed for final gathering and samples for media integration.
     * This method also redirects call to the DirectLightingIntegrator::RequestSamples() method.
     */
     virtual void _RequestSamples(intrusive_ptr<Sampler> ip_sampler);
@@ -106,21 +112,36 @@ class PhotonLTEIntegrator: public LTEIntegrator
     * @param i_ray Ray for which the radiance is to be computed. The direction component of the ray should be normalized.
     * @param i_intersection Intersection of the specified ray with the nearest primitive in the scene.
     * @param ip_sample Sample instance containing requested samples sequences. Can be null.
-    * @param i_pool Memory pool object that is used for allocating the BSDF and BxDFs objects.
+    * @param i_ts Thread specifics (memory pool, random number generator etc.).
     * @return Resulting radiance value.
     */
-    virtual Spectrum_d _SurfaceRadiance(const RayDifferential &i_ray, const Intersection &i_intersection, const Sample *ip_sample, MemoryPool &i_pool) const;
+    virtual Spectrum_d _SurfaceRadiance(const RayDifferential &i_ray, const Intersection &i_intersection, const Sample *ip_sample, ThreadSpecifics i_ts) const;
+
+    /**
+    * Computes media radiance and transmittance for the specified ray.
+    * @param i_ray Ray for which the radiance is to be computed. The direction component of the ray should be normalized.
+    * @param ip_sample Sample instance containing requested samples sequences.
+    * @param o_transmittance Resulting transmittance value. All spectrum components will be in [0;1] range.
+    * @param i_ts Thread specifics (memory pool, random number generator etc.).
+    * @return Resulting radiance value.
+    */
+    virtual Spectrum_d _MediaRadianceAndTranmsittance(const RayDifferential &i_ray, const Sample *ip_sample, Spectrum_d &o_transmittance, ThreadSpecifics i_ts) const;
+
+    /**
+    * Helper private method that computes media transmittance for the specified ray.
+    */
+    Spectrum_d _MediaTransmittance(const Ray &i_ray, ThreadSpecifics i_ts) const;
 
     /**
     * Helper private method that traces final gather rays to estimate indirect illumination (caustic aside).
     * The method traces rays based on BSDF's PDF and also based on nearby photon's directions (and combines result via multiple importance sampling).
     */
-    Spectrum_d _FinalGather(const Intersection &i_intersection, const Vector3D_d &i_incident, const BSDF *ip_bsdf, const Sample *ip_sample, MemoryPool &i_pool) const;
+    Spectrum_d _FinalGather(const Intersection &i_intersection, const Vector3D_d &i_incident, const BSDF *ip_bsdf, const Sample *ip_sample, ThreadSpecifics i_ts) const;
 
     /**
     * Estimates caustic radiance by doing lookup in caustic photon map and interpolating nearby photons.
     */
-    Spectrum_d _LookupCausticRadiance(const BSDF *ip_bsdf, const DifferentialGeometry &i_dg, const Vector3D_d &i_direction, MemoryPool &i_pool) const;
+    Spectrum_d _LookupCausticRadiance(const BSDF *ip_bsdf, const DifferentialGeometry &i_dg, const Vector3D_d &i_direction, ThreadSpecifics i_ts) const;
 
     /**
     * Computes CDF for sampling lights.
@@ -194,6 +215,9 @@ class PhotonLTEIntegrator: public LTEIntegrator
 
     // Irradiance photon map.
     shared_ptr<const KDTree<IrradiancePhoton> > mp_irradiance_map;
+
+    // IDs of samples sequences used for media integration.
+    size_t m_media_offset1_id, m_media_offset2_id;
   };
 
 #endif // PHOTON_LTE_INTEGRATOR_H

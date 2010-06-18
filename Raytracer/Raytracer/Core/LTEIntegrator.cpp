@@ -1,8 +1,8 @@
 #include "LTEIntegrator.h"
 #include "CoreUtils.h"
 
-LTEIntegrator::LTEIntegrator(intrusive_ptr<const Scene> ip_scene, intrusive_ptr<VolumeIntegrator> ip_volume_integrator):
-mp_scene(ip_scene), mp_volume_integrator(ip_volume_integrator)
+LTEIntegrator::LTEIntegrator(intrusive_ptr<const Scene> ip_scene):
+mp_scene(ip_scene)
   {
   ASSERT(ip_scene);
   }
@@ -11,7 +11,7 @@ LTEIntegrator::~LTEIntegrator()
   {
   }
 
-Spectrum_d LTEIntegrator::Radiance(const RayDifferential &i_ray, const Sample *ip_sample, MemoryPool &i_pool) const
+Spectrum_d LTEIntegrator::Radiance(const RayDifferential &i_ray, const Sample *ip_sample, ThreadSpecifics i_ts) const
   {
   ASSERT(i_ray.m_base_ray.m_direction.IsNormalized());
 
@@ -23,7 +23,7 @@ Spectrum_d LTEIntegrator::Radiance(const RayDifferential &i_ray, const Sample *i
   Spectrum_d radiance;
   if (hit)
     {
-    radiance = this->_SurfaceRadiance(i_ray, isect, ip_sample, i_pool);
+    radiance = this->_SurfaceRadiance(i_ray, isect, ip_sample, i_ts);
     intersection_ray.m_base_ray.m_max_t=intersection_t;
     }
   else
@@ -36,7 +36,7 @@ Spectrum_d LTEIntegrator::Radiance(const RayDifferential &i_ray, const Sample *i
       }
 
   Spectrum_d transmittance(1.0);
-  Spectrum_d volume_radiance = _VolumeRadianceAndTranmsittance(intersection_ray, ip_sample, transmittance);
+  Spectrum_d volume_radiance = _MediaRadianceAndTranmsittance(intersection_ray, ip_sample, transmittance, i_ts);
 
   return radiance * transmittance + volume_radiance;
   }
@@ -45,13 +45,10 @@ void LTEIntegrator::RequestSamples(intrusive_ptr<Sampler> ip_sampler)
   {
   ASSERT(ip_sampler);
 
-  if (mp_volume_integrator)
-    mp_volume_integrator->RequestSamples(ip_sampler);
-
   this->_RequestSamples(ip_sampler);
   }
 
-Spectrum_d LTEIntegrator::_SpecularReflect(const RayDifferential &i_ray, const Intersection &i_intersection, const BSDF *ip_bsdf, const Sample *ip_sample, MemoryPool &i_pool) const
+Spectrum_d LTEIntegrator::_SpecularReflect(const RayDifferential &i_ray, const Intersection &i_intersection, const BSDF *ip_bsdf, const Sample *ip_sample, ThreadSpecifics i_ts) const
   {
   ASSERT(ip_bsdf);
   const DifferentialGeometry &dg = i_intersection.m_dg;
@@ -73,13 +70,13 @@ Spectrum_d LTEIntegrator::_SpecularReflect(const RayDifferential &i_ray, const I
     CoreUtils::SetReflectedDifferentials(i_ray, dg, rd);
 
     // No need to multiply by the cosine value because the specular BRDF already accounts for that.
-    return this->Radiance(rd, ip_sample, i_pool) * brdf;
+    return this->Radiance(rd, ip_sample, i_ts) * brdf;
     }
   else
     return Spectrum_d();
   }
 
-Spectrum_d LTEIntegrator::_SpecularTransmit(const RayDifferential &i_ray, const Intersection &i_intersection, const BSDF *ip_bsdf, const Sample *ip_sample, MemoryPool &i_pool) const
+Spectrum_d LTEIntegrator::_SpecularTransmit(const RayDifferential &i_ray, const Intersection &i_intersection, const BSDF *ip_bsdf, const Sample *ip_sample, ThreadSpecifics i_ts) const
   {
   ASSERT(ip_bsdf);
   const DifferentialGeometry &dg = i_intersection.m_dg;
@@ -108,44 +105,13 @@ Spectrum_d LTEIntegrator::_SpecularTransmit(const RayDifferential &i_ray, const 
     double eta = (incident*dg.m_shading_normal > 0.0) ? 1.0 / refractive_index : refractive_index;
 
     // No need to multiply by the cosine value because the specular BTDF already accounts for that.
-    return this->Radiance(rd, ip_sample, i_pool) * btdf * (eta*eta);
+    return this->Radiance(rd, ip_sample, i_ts) * btdf * (eta*eta);
     }
   else
     return Spectrum_d();
   }
 
-Spectrum_d LTEIntegrator::_VolumeRadianceAndTranmsittance(const RayDifferential &i_ray, const Sample *ip_sample, Spectrum_d &o_transmittance) const
-  {
-  ASSERT(i_ray.m_base_ray.m_direction.IsNormalized());
-
-  if (mp_volume_integrator)
-    {
-    Spectrum_d volume_radiance = mp_volume_integrator->RadianceAndTransmittance(i_ray, ip_sample, o_transmittance);
-    ASSERT(InRange(o_transmittance, 0.0, 1.0));
-
-    return volume_radiance;
-    }
-  else
-    {
-    o_transmittance = Spectrum_d(1.0);
-    return Spectrum_d(0.0);
-    }
-  }
-
-Spectrum_d LTEIntegrator::_VolumeTransmittance(const Ray &i_ray, const Sample *ip_sample) const
-  {
-  ASSERT(i_ray.m_direction.IsNormalized());
-
-  if (mp_volume_integrator)
-    {
-    Spectrum_d transmittance = mp_volume_integrator->Transmittance(i_ray, ip_sample);
-    ASSERT(InRange(transmittance, 0.0, 1.0));
-    return transmittance;
-    }
-  else
-    return Spectrum_d(1.0);
-  }
-
 void LTEIntegrator::_RequestSamples(intrusive_ptr<Sampler> ip_sampler)
   {
+  // No samples are requested by default.
   }

@@ -17,7 +17,7 @@ class HomogeneousVolumeRegionTestSuite : public CxxTest::TestSuite
       {
       m_bounds = BBox3D_d(Point3D_d(1,2,3), Point3D_d(10,20,30));
       m_emission = Spectrum_d(1,1.5,2);
-      m_emission = Spectrum_d(5,7,9);
+      m_absorption = Spectrum_d(5,7,9);
       m_scattering = Spectrum_d(0.1,0.0,0.9);
       PhaseFunctionMock phase_function;
 

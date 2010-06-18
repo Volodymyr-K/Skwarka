@@ -9,7 +9,7 @@
 #include "Sampler.h"
 #include "Intersection.h"
 #include "LightsSamplingStrategy.h"
-#include "VolumeIntegrator.h"
+#include "CoreCommon.h"
 #include <vector>
 #include <utility>
 
@@ -30,13 +30,13 @@ class DirectLightingIntegrator: public ReferenceCounted
     * The strategy defines the probability for each light to be sampled. If NULL, the default irradiance-based implementation will be used.
     * Depending on the sampler, the actual number of lights and BSDF samples can be greater then the ones requested.
     * @param ip_scene Scene instance. Should not be NULL.
-    * @param ip_volume_integrator VolumeIntegrator instance. Used to compute media transmittance. Can be NULL in which case it is assumed there is no participating media.
     * @param i_lights_samples_num Number of lights samples. Should be equal or greater than zero.
     * @param i_bsdf_samples_num Number of BSDF samples. Should be equal or greater than zero.
+    * @param i_media_step_size Step size to be used for participating media integration. Should be greater than 0.0
     * @param ip_lights_sampling_strategy Light sampling strategy implementation. If NULL, the default irradiance-based implementation will be used.
     */
-    DirectLightingIntegrator(intrusive_ptr<const Scene> ip_scene, intrusive_ptr<VolumeIntegrator> ip_volume_integrator,
-      size_t i_lights_samples_num, size_t i_bsdf_samples_num, intrusive_ptr<const LightsSamplingStrategy> ip_lights_sampling_strategy = NULL);
+    DirectLightingIntegrator(intrusive_ptr<const Scene> ip_scene, size_t i_lights_samples_num, size_t i_bsdf_samples_num, double i_media_step_size,
+      intrusive_ptr<const LightsSamplingStrategy> ip_lights_sampling_strategy = NULL);
 
     /**
     * Requests 1D and 2D samples sequences needed for the direct lighting integrator.
@@ -51,11 +51,11 @@ class DirectLightingIntegrator: public ReferenceCounted
     * @param i_view_direction View direction from the surface point. Should be normalized.
     * @param ip_bsdf Defines the scattering properties at the surface point. Should not be NULL.
     * @param ip_sample Sample instance containing requested samples sequences. If NULL, stratified samples will be generated.
-    * @param i_pool Memory pool object that is used for allocating the temporary objects.
+    * @param i_ts Thread specifics (memory pool, random number generator etc.).
     * @return Resulting radiance value for the direct lighting.
     */
     Spectrum_d ComputeDirectLighting(const Intersection &i_intersection, const Vector3D_d &i_view_direction,
-      const BSDF *ip_bsdf, const Sample *ip_sample, MemoryPool &i_pool) const;
+      const BSDF *ip_bsdf, const Sample *ip_sample, ThreadSpecifics i_ts) const;
 
   private:
     // Not implemented, not a value type.
@@ -66,13 +66,13 @@ class DirectLightingIntegrator: public ReferenceCounted
     * Helper private method that estimates direct lighting by sampling infinite and area lights.
     */
     Spectrum_d _SampleLights(const Intersection &i_intersection, const Vector3D_d &i_view_direction,
-      const BSDF *ip_bsdf, const DirectLightingSamples &i_samples, double *ip_lights_CDF) const;
+      const BSDF *ip_bsdf, const DirectLightingSamples &i_samples, double *ip_lights_CDF, ThreadSpecifics i_ts) const;
 
     /**
     * Helper private method that estimates direct lighting by sampling the BSDF.
     */
     Spectrum_d _SampleBSDF(const Intersection &i_intersection, const Vector3D_d &i_view_direction,
-      const BSDF *ip_bsdf, const DirectLightingSamples &i_samples, double *ip_lights_CDF) const;
+      const BSDF *ip_bsdf, const DirectLightingSamples &i_samples, double *ip_lights_CDF, ThreadSpecifics i_ts) const;
 
     /**
     * Returns the index of the specified area light in the LightSources::m_area_light_sources vector returned by the Scene.
@@ -82,9 +82,8 @@ class DirectLightingIntegrator: public ReferenceCounted
 
     /**
     * Helper private method that computes volume transmittance.
-    * If no volume integrator is set the method returns Spectrum_d(1.0)
     */
-    Spectrum_d _VolumeTransmittance(const Ray &i_ray) const;
+    Spectrum_d _MediaTransmittance(const Ray &i_ray, ThreadSpecifics i_ts) const;
 
   private:
     // Internal types.
@@ -100,12 +99,10 @@ class DirectLightingIntegrator: public ReferenceCounted
       };
 
   private:
-    // Used to compute volume transmittance.
-    intrusive_ptr<VolumeIntegrator> mp_volume_integrator;
-
     intrusive_ptr<const Scene> mp_scene;
 
     size_t m_lights_samples_num, m_bsdf_samples_num;
+    double m_media_step_size;
 
     intrusive_ptr<const LightsSamplingStrategy> mp_lights_sampling_strategy;
     std::vector<std::pair<const AreaLightSource *,size_t> > m_area_lights_sorted;

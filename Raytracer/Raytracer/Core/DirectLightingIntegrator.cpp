@@ -3,11 +3,12 @@
 #include <Math/SamplingRoutines.h>
 #include "CoreUtils.h"
 
-DirectLightingIntegrator::DirectLightingIntegrator(intrusive_ptr<const Scene> ip_scene, intrusive_ptr<VolumeIntegrator> ip_volume_integrator, size_t i_lights_samples_num,
-                                                   size_t i_bsdf_samples_num, intrusive_ptr<const LightsSamplingStrategy> ip_lights_sampling_strategy):
-mp_scene(ip_scene), mp_volume_integrator(ip_volume_integrator), m_lights_samples_num(i_lights_samples_num), m_bsdf_samples_num(i_bsdf_samples_num), m_samples_requested(false)
+DirectLightingIntegrator::DirectLightingIntegrator(intrusive_ptr<const Scene> ip_scene, size_t i_lights_samples_num, size_t i_bsdf_samples_num, double i_media_step_size,
+                                                   intrusive_ptr<const LightsSamplingStrategy> ip_lights_sampling_strategy):
+mp_scene(ip_scene), m_lights_samples_num(i_lights_samples_num), m_bsdf_samples_num(i_bsdf_samples_num), m_media_step_size(i_media_step_size), m_samples_requested(false)
   {
   ASSERT(ip_scene);
+  ASSERT(i_media_step_size > 0.0);
 
   if (ip_lights_sampling_strategy)
     mp_lights_sampling_strategy = ip_lights_sampling_strategy;
@@ -15,7 +16,7 @@ mp_scene(ip_scene), mp_volume_integrator(ip_volume_integrator), m_lights_samples
     mp_lights_sampling_strategy.reset( new IrradianceLightsSamplingStrategy(mp_scene->GetLightSources()) );
   
   // Sort and cache area lights. This is needed for a quick search of the area light's index by a pointer.
-  const LightSources &light_sources = mp_scene->GetLightSources();
+  const LightSources &light_sources = ip_scene->GetLightSources();
   size_t n = light_sources.m_area_light_sources.size();
   m_area_lights_sorted.reserve(n);
   for(size_t i=0;i<n;++i)
@@ -37,10 +38,13 @@ void DirectLightingIntegrator::RequestSamples(intrusive_ptr<Sampler> ip_sampler)
   }
 
 Spectrum_d DirectLightingIntegrator::ComputeDirectLighting(const Intersection &i_intersection, const Vector3D_d &i_view_direction,
-                                                           const BSDF *ip_bsdf, const Sample *ip_sample, MemoryPool &i_pool) const
+                                                           const BSDF *ip_bsdf, const Sample *ip_sample, ThreadSpecifics i_ts) const
   {
   ASSERT(ip_bsdf);
   ASSERT(i_view_direction.IsNormalized());
+  ASSERT(i_ts.mp_pool && i_ts.mp_random_generator);
+  MemoryPool *p_pool = i_ts.mp_pool;
+  RandomGenerator<double> *p_rng = i_ts.mp_random_generator;
 
   if (m_samples_requested==false && ip_sample!=NULL)
     {
@@ -71,13 +75,13 @@ Spectrum_d DirectLightingIntegrator::ComputeDirectLighting(const Intersection &i
       lighting_ray.m_min_t = CoreUtils::GetNextMinT(i_intersection, lighting_ray.m_direction);
       if (reflectance.IsBlack()==false && mp_scene->IntersectTest(lighting_ray) == false)
         {
-        Spectrum_d transmittance = _VolumeTransmittance(lighting_ray);
+        Spectrum_d transmittance = _MediaTransmittance(lighting_ray, i_ts);
         radiance.AddWeighted(reflectance*light*transmittance, fabs(lighting_ray.m_direction*i_intersection.m_dg.m_shading_normal));
         }
       }
     }
 
-  double *lights_CDF = static_cast<double*>(i_pool.Alloc( (infinity_light_sources_num + area_light_sources_num)*sizeof(double) ));
+  double *lights_CDF = static_cast<double*>(p_pool->Alloc( (infinity_light_sources_num + area_light_sources_num)*sizeof(double) ));
 
   if (reflection_components_num==0)
     {
@@ -108,14 +112,14 @@ Spectrum_d DirectLightingIntegrator::ComputeDirectLighting(const Intersection &i
     ASSERT(std::distance(samples.m_bsdf_1D_samples.m_begin, samples.m_bsdf_1D_samples.m_end) == m_bsdf_samples_num);
     ASSERT(std::distance(samples.m_bsdf_2D_samples.m_begin, samples.m_bsdf_2D_samples.m_end) == m_bsdf_samples_num);
 
-    radiance += _SampleLights(i_intersection, i_view_direction, ip_bsdf, samples, lights_CDF);
-    radiance += _SampleBSDF(i_intersection, i_view_direction, ip_bsdf, samples, lights_CDF);
+    radiance += _SampleLights(i_intersection, i_view_direction, ip_bsdf, samples, lights_CDF, i_ts);
+    radiance += _SampleBSDF(i_intersection, i_view_direction, ip_bsdf, samples, lights_CDF, i_ts);
     }
   else
     {
     size_t total_samples = m_lights_samples_num+m_bsdf_samples_num;
-    double *samples_1D = (double *)i_pool.Alloc( total_samples * sizeof(double) );
-    Point2D_d *samples_2D = (Point2D_d *)i_pool.Alloc( total_samples * sizeof(Point2D_d) );
+    double *samples_1D = (double *)p_pool->Alloc( total_samples * sizeof(double) );
+    Point2D_d *samples_2D = (Point2D_d *)p_pool->Alloc( total_samples * sizeof(Point2D_d) );
 
     DirectLightingSamples samples;
     samples.m_light_1D_samples=SamplesSequence1D(samples_1D, samples_1D+m_lights_samples_num);
@@ -124,20 +128,20 @@ Spectrum_d DirectLightingIntegrator::ComputeDirectLighting(const Intersection &i
     samples.m_light_2D_samples=SamplesSequence2D(samples_2D, samples_2D+m_lights_samples_num);
     samples.m_bsdf_2D_samples=SamplesSequence2D(samples_2D+m_lights_samples_num, samples_2D+total_samples );
 
-    SamplingRoutines::StratifiedSampling1D(samples.m_light_1D_samples.m_begin, m_lights_samples_num, true);
-    SamplingRoutines::StratifiedSampling1D(samples.m_bsdf_1D_samples.m_begin,  m_bsdf_samples_num,   true);
-    SamplingRoutines::LatinHypercubeSampling2D(samples.m_light_2D_samples.m_begin, m_lights_samples_num, true);
-    SamplingRoutines::LatinHypercubeSampling2D(samples.m_bsdf_2D_samples.m_begin,  m_bsdf_samples_num,   true);
+    SamplingRoutines::StratifiedSampling1D(samples.m_light_1D_samples.m_begin, m_lights_samples_num, true, p_rng);
+    SamplingRoutines::StratifiedSampling1D(samples.m_bsdf_1D_samples.m_begin,  m_bsdf_samples_num,   true, p_rng);
+    SamplingRoutines::LatinHypercubeSampling2D(samples.m_light_2D_samples.m_begin, m_lights_samples_num, true, p_rng);
+    SamplingRoutines::LatinHypercubeSampling2D(samples.m_bsdf_2D_samples.m_begin,  m_bsdf_samples_num,   true, p_rng);
 
-    radiance += _SampleLights(i_intersection, i_view_direction, ip_bsdf, samples, lights_CDF);
-    radiance += _SampleBSDF(i_intersection, i_view_direction, ip_bsdf, samples, lights_CDF);
+    radiance += _SampleLights(i_intersection, i_view_direction, ip_bsdf, samples, lights_CDF, i_ts);
+    radiance += _SampleBSDF(i_intersection, i_view_direction, ip_bsdf, samples, lights_CDF, i_ts);
     }
 
   return radiance;
   }
 
 Spectrum_d DirectLightingIntegrator::_SampleLights(const Intersection &i_intersection, const Vector3D_d &i_view_direction,
-                                                   const BSDF *ip_bsdf, const DirectLightingSamples &i_samples, double *ip_lights_CDF) const
+                                                   const BSDF *ip_bsdf, const DirectLightingSamples &i_samples, double *ip_lights_CDF, ThreadSpecifics i_ts) const
   {
   Spectrum_d radiance;
 
@@ -197,7 +201,7 @@ Spectrum_d DirectLightingIntegrator::_SampleLights(const Intersection &i_interse
 
         lighting_ray.m_min_t = CoreUtils::GetNextMinT(i_intersection, lighting_ray.m_direction);
         if (weight>0.0 && light.IsBlack()==false && mp_scene->IntersectTest(lighting_ray)==false)
-          radiance.AddWeighted(light*_VolumeTransmittance(lighting_ray), weight);
+          radiance.AddWeighted(light*_MediaTransmittance(lighting_ray, i_ts), weight);
         }
       }
     else
@@ -226,7 +230,7 @@ Spectrum_d DirectLightingIntegrator::_SampleLights(const Intersection &i_interse
 
         lighting_ray.m_min_t = CoreUtils::GetNextMinT(i_intersection, lighting_ray.m_direction);
         if (weight>0.0 && light.IsBlack()==false && mp_scene->IntersectTest(lighting_ray)==false)
-          radiance.AddWeighted(light*_VolumeTransmittance(lighting_ray), weight);
+          radiance.AddWeighted(light*_MediaTransmittance(lighting_ray, i_ts), weight);
         }
       }
 
@@ -238,8 +242,11 @@ Spectrum_d DirectLightingIntegrator::_SampleLights(const Intersection &i_interse
   }
 
 Spectrum_d DirectLightingIntegrator::_SampleBSDF(const Intersection &i_intersection, const Vector3D_d &i_view_direction,
-                                                   const BSDF *ip_bsdf, const DirectLightingSamples &i_samples, double *ip_lights_CDF) const
+                                                   const BSDF *ip_bsdf, const DirectLightingSamples &i_samples, double *ip_lights_CDF, ThreadSpecifics i_ts) const
   {
+  ASSERT(i_ts.mp_pool && i_ts.mp_random_generator);
+  RandomGenerator<double> *p_rng = i_ts.mp_random_generator;
+
   Spectrum_d radiance;
 
   const LightSources &light_sources = mp_scene->GetLightSources();
@@ -300,7 +307,7 @@ Spectrum_d DirectLightingIntegrator::_SampleBSDF(const Intersection &i_intersect
             // Compute weighting coefficient for the multiple importance sampling.
             double weight = SamplingRoutines::PowerHeuristic(m_bsdf_samples_num, bsdf_pdf, m_lights_samples_num, light_pdf*light_component_pdf);
             weight *= fabs(lighting_ray.m_direction*i_intersection.m_dg.m_shading_normal) / bsdf_pdf;
-            radiance.AddWeighted(reflectance*light*_VolumeTransmittance(lighting_ray), weight);
+            radiance.AddWeighted(reflectance*light*_MediaTransmittance(lighting_ray, i_ts), weight);
             }
           }
         }
@@ -310,7 +317,7 @@ Spectrum_d DirectLightingIntegrator::_SampleBSDF(const Intersection &i_intersect
           {
           // Select a random infinity light based on the CDF.
           double light_component_pdf;
-          size_t sampled_index = MathRoutines::BinarySearchCDF(ip_lights_CDF, ip_lights_CDF+infinity_light_sources_num, RandomDouble(infinity_lights_probability), &light_component_pdf) - ip_lights_CDF;
+          size_t sampled_index = MathRoutines::BinarySearchCDF(ip_lights_CDF, ip_lights_CDF+infinity_light_sources_num, (*p_rng)(infinity_lights_probability), &light_component_pdf) - ip_lights_CDF;
           ASSERT(sampled_index>=0 && sampled_index<infinity_light_sources_num);
           bsdf_pdf *= light_component_pdf*inv_infinity_lights_probability;
           ASSERT(bsdf_pdf > 0.0);
@@ -324,7 +331,7 @@ Spectrum_d DirectLightingIntegrator::_SampleBSDF(const Intersection &i_intersect
             // Compute weighting coefficient for the multiple importance sampling.
             double weight = SamplingRoutines::PowerHeuristic(m_bsdf_samples_num, bsdf_pdf, m_lights_samples_num, light_component_pdf*light_pdf);
             weight *= fabs(lighting_ray.m_direction*i_intersection.m_dg.m_shading_normal) / bsdf_pdf;
-            radiance.AddWeighted(reflectance*light*_VolumeTransmittance(lighting_ray), weight);
+            radiance.AddWeighted(reflectance*light*_MediaTransmittance(lighting_ray, i_ts), weight);
             }
           }
         }
@@ -356,16 +363,15 @@ size_t DirectLightingIntegrator::_GetAreaLightIndex(const AreaLightSource *ip_ar
   return m_area_lights_sorted[l].second;
   }
 
-Spectrum_d DirectLightingIntegrator::_VolumeTransmittance(const Ray &i_ray) const
+Spectrum_d DirectLightingIntegrator::_MediaTransmittance(const Ray &i_ray, ThreadSpecifics i_ts) const
   {
   ASSERT(i_ray.m_direction.IsNormalized());
+  ASSERT(i_ts.mp_pool && i_ts.mp_random_generator);
 
-  if (mp_volume_integrator)
-    {
-    Spectrum_d transmittance = mp_volume_integrator->Transmittance(i_ray, NULL);
-    ASSERT(InRange(transmittance, 0.0, 1.0));
-    return transmittance;
-    }
-  else
+  const VolumeRegion *p_volume = mp_scene->GetVolumeRegion_RawPtr();
+  if (p_volume==NULL)
     return Spectrum_d(1.0);
+
+  Spectrum_d opt_thickness = p_volume->OpticalThickness(i_ray, m_media_step_size, (*i_ts.mp_random_generator)(1.0));
+  return Spectrum_d(exp(-opt_thickness[0]), exp(-opt_thickness[1]), exp(-opt_thickness[2]));
   }

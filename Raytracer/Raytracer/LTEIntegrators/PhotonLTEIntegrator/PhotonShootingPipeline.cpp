@@ -81,8 +81,12 @@ tbb::filter(parallel), mp_integrator(ip_integrator), mp_scene(ip_scene), m_light
 void* PhotonLTEIntegrator::PhotonsShootingFilter::operator()(void* ip_chunk)
   {
   PhotonsChunk *p_chunk = static_cast<PhotonsChunk*>(ip_chunk);
-  MemoryPool &pool = *p_chunk->mp_memory_pool;
+  MemoryPool *p_pool = p_chunk->mp_memory_pool;
   RandomGenerator<double> *p_rng = p_chunk->mp_rng;
+
+  ThreadSpecifics ts;
+  ts.mp_pool = p_pool;
+  ts.mp_random_generator = p_rng;
 
   const LightSources &lights = mp_scene->GetLightSources();
 
@@ -137,10 +141,10 @@ void* PhotonLTEIntegrator::PhotonsShootingFilter::operator()(void* ip_chunk)
       ++intersections_num;
 
       photon_ray.m_max_t=isect_t;
-      weight *= mp_integrator->_VolumeTransmittance(photon_ray, NULL);
+      weight *= mp_integrator->_MediaTransmittance(photon_ray, ts);
 
       Vector3D_d incident = photon_ray.m_direction*(-1.0);
-      const BSDF *p_photon_BSDF = photon_isect.mp_primitive->GetBSDF(photon_isect.m_dg, photon_isect.m_triangle_index, pool);
+      const BSDF *p_photon_BSDF = photon_isect.mp_primitive->GetBSDF(photon_isect.m_dg, photon_isect.m_triangle_index, *p_pool);
       bool has_non_specular = p_photon_BSDF->GetComponentsNum(non_specular_types) > 0;
 
       // Deposit photon at surface.
@@ -217,7 +221,7 @@ void* PhotonLTEIntegrator::PhotonsShootingFilter::operator()(void* ip_chunk)
       } // while (mp_scene->Intersect(photon_ray, photon_isect, &isect_t))
   
     // Free all allocated objects since we don't need them anymore at this point.
-    pool.FreeAll();
+    p_pool->FreeAll();
     } // for (size_t path_index=path_begin; path_index<path_end; ++path_index)
 
   return p_chunk;

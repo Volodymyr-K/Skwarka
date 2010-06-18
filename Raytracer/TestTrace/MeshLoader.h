@@ -213,4 +213,23 @@ intrusive_ptr<TriangleMesh> LoadMeshFromPbrt(std::string i_vertices_filename, st
   return intrusive_ptr<TriangleMesh>( new TriangleMesh(vertices, triangles, true) );
   }
 
+void LoadDensities(std::vector<std::vector<std::vector<double> > > &o_densities, std::string i_filename)
+  {
+  FILE *fp=fopen(i_filename.c_str(),"r");
+
+  size_t x,y,z;
+  fscanf(fp, "%d %d %d ", &x, &y, &z);
+  o_densities.assign(x, std::vector<std::vector<double> > (y, std::vector<double>(z,0.0)));
+  for(size_t i=0;i<z;++i)
+    for(size_t j=0;j<y;++j)
+      for(size_t k=0;k<x;++k)
+        {
+        double d;
+        fscanf(fp,"%lf ", &d);
+        o_densities[k][j][i]=d;
+        }
+
+  fclose(fp);
+  }
+
 #endif // MESH_LOADER_H

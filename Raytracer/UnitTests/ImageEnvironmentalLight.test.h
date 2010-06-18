@@ -218,7 +218,7 @@ class ImageEnvironmentalLightTestSuite : public CxxTest::TestSuite
             }
           }
 
-        TS_ASSERT_DELTA(sum, 1.0, (1e-7));
+        TS_ASSERT_DELTA(sum, 1.0, (1e-6));
         }
       }
 
