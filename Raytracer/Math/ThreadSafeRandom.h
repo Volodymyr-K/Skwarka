@@ -22,7 +22,9 @@ class ThreadSafeRandomGenerator
     /**
     * tbb::enumerable_thread_specific is the thread local storage used to keep separate generators for different threads.
     */
-    typedef tbb::enumerable_thread_specific<UnderlyingRandomGenerator, tbb::cache_aligned_allocator<UnderlyingRandomGenerator>, tbb::ets_key_per_instance> ThreadRandomGenerators;
+    typedef tbb::enumerable_thread_specific<UnderlyingRandomGenerator, tbb::cache_aligned_allocator<UnderlyingRandomGenerator>, tbb::ets_no_key> ThreadRandomGenerators;
+    // TBD: it is more efficient to use ets_key_per_instance instead of ets_no_key here but the current version of TBB does not support it yet.
+    // Consider switching to it when it does.
 
   public:
     /**
