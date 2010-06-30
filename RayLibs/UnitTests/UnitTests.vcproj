@@ -38,6 +38,7 @@
 			/>
 			<Tool
 				Name="CxxTest"
+				output="$(InputName).cpp"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -53,7 +54,7 @@
 				AdditionalOptions="/MP"
 				Optimization="0"
 				AdditionalIncludeDirectories="..\;..\..\..\ThirdParty\;..\..\..\ThirdParty\boost\1.43\;..\..\..\ThirdParty\TBB\3.0\include;..\..\..\ThirdParty\cxxtest\3.10.1\"
-				PreprocessorDefinitions="TBB_USE_DEBUG;WIN32;_DEBUG;_WINDOWS;NOMINMAX"
+				PreprocessorDefinitions="TBB_USE_DEBUG;WIN32;_DEBUG;_WINDOWS;NOMINMAX;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS"
 				MinimalRebuild="false"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -76,7 +77,7 @@
 				AdditionalDependencies="tbb_debug.lib"
 				OutputFile="$(OutDir)\$(ProjectName)d.exe"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="..\..\..\ThirdParty\TBB\3.0\lib\ia32\vc9"
+				AdditionalLibraryDirectories="..\..\..\ThirdParty\TBB\3.0\lib\ia32\vc9;..\..\..\ThirdParty\boost\libs\1.43"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				TargetMachine="1"
@@ -139,7 +140,7 @@
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
 				AdditionalIncludeDirectories="..\;..\..\..\ThirdParty\;..\..\..\ThirdParty\boost\1.43\;..\..\..\ThirdParty\TBB\3.0\include;..\..\..\ThirdParty\cxxtest\3.10.1\"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;NOMINMAX;_SECURE_SCL=0"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;NOMINMAX;_SECURE_SCL=0;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS"
 				MinimalRebuild="false"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -161,7 +162,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="tbb.lib"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\..\..\ThirdParty\TBB\3.0\lib\ia32\vc9"
+				AdditionalLibraryDirectories="..\..\..\ThirdParty\TBB\3.0\lib\ia32\vc9;..\..\..\ThirdParty\boost\libs\1.43"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				OptimizeReferences="2"
@@ -195,139 +196,69 @@
 	</References>
 	<Files>
 		<Filter
-			Name="Test Code"
+			Name="MainTests"
 			>
-			<File
-				RelativePath=".\CustomValueTraits.h"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\Main.test.h"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="CxxTest"
-						runner="1"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="CxxTest"
-						runner="1"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\SamplingTestHelper.h"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\TriangleMeshTestHelper.h"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-			</File>
 			<Filter
 				Name="Math"
 				>
 				<File
-					RelativePath=".\BBox3D.test.h"
+					RelativePath=".\MainTests\Math\BBox3D.test.h"
 					>
 				</File>
 				<File
-					RelativePath=".\CompressedDirection.test.h"
+					RelativePath=".\MainTests\Math\BlockedArray.test.h"
 					>
 				</File>
 				<File
-					RelativePath=".\MathRoutines.test.h"
+					RelativePath=".\MainTests\Math\CompressedDirection.test.h"
 					>
 				</File>
 				<File
-					RelativePath=".\Matrix.test.h"
+					RelativePath=".\MainTests\Math\MathRoutines.test.h"
 					>
 				</File>
 				<File
-					RelativePath=".\Point2D.test.h"
+					RelativePath=".\MainTests\Math\Matrix.test.h"
 					>
 				</File>
 				<File
-					RelativePath=".\Point3D.test.h"
+					RelativePath=".\MainTests\Math\Point2D.test.h"
 					>
 				</File>
 				<File
-					RelativePath=".\RandomGenerator.test.h"
+					RelativePath=".\MainTests\Math\Point3D.test.h"
 					>
 				</File>
 				<File
-					RelativePath=".\Ray.test.h"
+					RelativePath=".\MainTests\Math\RandomGenerator.test.h"
 					>
 				</File>
 				<File
-					RelativePath=".\SamplingRoutines.test.h"
+					RelativePath=".\MainTests\Math\Ray.test.h"
 					>
 				</File>
 				<File
-					RelativePath=".\ThreadSafeRandom.test.h"
+					RelativePath=".\MainTests\Math\SamplingRoutines.test.h"
 					>
 				</File>
 				<File
-					RelativePath=".\Transform.test.h"
+					RelativePath=".\MainTests\Math\ThreadSafeRandom.Test.h"
 					>
 				</File>
 				<File
-					RelativePath=".\Triangle3D.test.h"
+					RelativePath=".\MainTests\Math\Transform.test.h"
 					>
 				</File>
 				<File
-					RelativePath=".\Vector2D.test.h"
+					RelativePath=".\MainTests\Math\Triangle3D.test.h"
 					>
 				</File>
 				<File
-					RelativePath=".\Vector3D.test.h"
+					RelativePath=".\MainTests\Math\Vector2D.test.h"
+					>
+				</File>
+				<File
+					RelativePath=".\MainTests\Math\Vector3D.test.h"
 					>
 				</File>
 			</Filter>
@@ -338,87 +269,75 @@
 					Name="Core"
 					>
 					<File
-						RelativePath=".\BlockedArray.test.h"
+						RelativePath=".\MainTests\Raytracer\Core\BSDF.test.h"
 						>
 					</File>
 					<File
-						RelativePath=".\BSDF.test.h"
+						RelativePath=".\MainTests\Raytracer\Core\BxDF.test.h"
 						>
 					</File>
 					<File
-						RelativePath=".\BxDF.test.h"
+						RelativePath=".\MainTests\Raytracer\Core\Camera.test.h"
 						>
 					</File>
 					<File
-						RelativePath=".\Camera.test.h"
+						RelativePath=".\MainTests\Raytracer\Core\CoreUtils.test.h"
 						>
 					</File>
 					<File
-						RelativePath=".\CoreUtils.test.h"
+						RelativePath=".\MainTests\Raytracer\Core\DirectLightingIntegrator.test.h"
 						>
 					</File>
 					<File
-						RelativePath=".\DirectLightingIntegrator.test.h"
+						RelativePath=".\MainTests\Raytracer\Core\Film.test.h"
 						>
 					</File>
 					<File
-						RelativePath=".\Film.test.h"
+						RelativePath=".\MainTests\Raytracer\Core\FilmFilter.test.h"
 						>
 					</File>
 					<File
-						RelativePath=".\FilmFilter.test.h"
+						RelativePath=".\MainTests\Raytracer\Core\Fresnel.test.h"
 						>
 					</File>
 					<File
-						RelativePath=".\Fresnel.test.h"
+						RelativePath=".\MainTests\Raytracer\Core\KDTree.test.h"
 						>
 					</File>
 					<File
-						RelativePath=".\KDTree.test.h"
+						RelativePath=".\MainTests\Raytracer\Core\LTEIntegrator.test.h"
 						>
 					</File>
 					<File
-						RelativePath=".\LTEIntegrator.test.h"
+						RelativePath=".\MainTests\Raytracer\Core\MIPMap.test.h"
 						>
 					</File>
 					<File
-						RelativePath=".\MIPMap.test.h"
+						RelativePath=".\MainTests\Raytracer\Core\Primitive.test.h"
 						>
 					</File>
 					<File
-						RelativePath=".\Primitive.test.h"
+						RelativePath=".\MainTests\Raytracer\Core\Sample.test.h"
 						>
 					</File>
 					<File
-						RelativePath=".\Sample.test.h"
+						RelativePath=".\MainTests\Raytracer\Core\Sampler.test.h"
 						>
 					</File>
 					<File
-						RelativePath=".\Sampler.test.h"
+						RelativePath=".\MainTests\Raytracer\Core\Scene.test.h"
 						>
 					</File>
 					<File
-						RelativePath=".\Scene.test.h"
+						RelativePath=".\MainTests\Raytracer\Core\Spectrum.test.h"
 						>
 					</File>
 					<File
-						RelativePath=".\Spectrum.test.h"
+						RelativePath=".\MainTests\Raytracer\Core\TriangleAccelerator.test.h"
 						>
 					</File>
 					<File
-						RelativePath=".\TriangleAccelerator.test.h"
-						>
-					</File>
-					<File
-						RelativePath=".\TriangleMesh.test.h"
-						>
-					</File>
-				</Filter>
-				<Filter
-					Name="Cameras"
-					>
-					<File
-						RelativePath=".\PerspectiveCamera.test.h"
+						RelativePath=".\MainTests\Raytracer\Core\TriangleMesh.test.h"
 						>
 					</File>
 				</Filter>
@@ -426,7 +345,7 @@
 					Name="FilmFilters"
 					>
 					<File
-						RelativePath=".\BoxFilter.test.h"
+						RelativePath=".\MainTests\Raytracer\FilmFilters\BoxFilter.test.h"
 						>
 					</File>
 				</Filter>
@@ -434,27 +353,27 @@
 					Name="Samplers"
 					>
 					<File
-						RelativePath=".\ConsecutiveImagePixelsOrder.test.h"
+						RelativePath=".\MainTests\Raytracer\Samplers\ConsecutiveImagePixelsOrder.test.h"
 						>
 					</File>
 					<File
-						RelativePath=".\LDSampler.test.h"
+						RelativePath=".\MainTests\Raytracer\Samplers\LDSampler.test.h"
 						>
 					</File>
 					<File
-						RelativePath=".\RandomBlockedImagePixelsOrder.test.h"
+						RelativePath=".\MainTests\Raytracer\Samplers\RandomBlockedImagePixelsOrder.test.h"
 						>
 					</File>
 					<File
-						RelativePath=".\RandomSampler.test.h"
+						RelativePath=".\MainTests\Raytracer\Samplers\RandomSampler.test.h"
 						>
 					</File>
 					<File
-						RelativePath=".\StratifiedSampler.test.h"
+						RelativePath=".\MainTests\Raytracer\Samplers\StratifiedSampler.test.h"
 						>
 					</File>
 					<File
-						RelativePath=".\UniformImagePixelsOrder.test.h"
+						RelativePath=".\MainTests\Raytracer\Samplers\UniformImagePixelsOrder.test.h"
 						>
 					</File>
 				</Filter>
@@ -462,11 +381,11 @@
 					Name="Films"
 					>
 					<File
-						RelativePath=".\ImageFilm.test.h"
+						RelativePath=".\MainTests\Raytracer\Films\ImageFilm.test.h"
 						>
 					</File>
 					<File
-						RelativePath=".\InteractiveFilm.test.h"
+						RelativePath=".\MainTests\Raytracer\Films\InteractiveFilm.test.h"
 						>
 					</File>
 				</Filter>
@@ -474,27 +393,27 @@
 					Name="BxDFs"
 					>
 					<File
-						RelativePath=".\FresnelBlend.test.h"
+						RelativePath=".\MainTests\Raytracer\BxDFs\FresnelBlend.test.h"
 						>
 					</File>
 					<File
-						RelativePath=".\Lambertian.test.h"
+						RelativePath=".\MainTests\Raytracer\BxDFs\Lambertian.test.h"
 						>
 					</File>
 					<File
-						RelativePath=".\Microfacet.test.h"
+						RelativePath=".\MainTests\Raytracer\BxDFs\Microfacet.test.h"
 						>
 					</File>
 					<File
-						RelativePath=".\OrenNayar.test.h"
+						RelativePath=".\MainTests\Raytracer\BxDFs\OrenNayar.test.h"
 						>
 					</File>
 					<File
-						RelativePath=".\SpecularReflection.test.h"
+						RelativePath=".\MainTests\Raytracer\BxDFs\SpecularReflection.test.h"
 						>
 					</File>
 					<File
-						RelativePath=".\SpecularTransmission.test.h"
+						RelativePath=".\MainTests\Raytracer\BxDFs\SpecularTransmission.test.h"
 						>
 					</File>
 				</Filter>
@@ -502,11 +421,11 @@
 					Name="Textures"
 					>
 					<File
-						RelativePath=".\ConstantTexture.test.h"
+						RelativePath=".\MainTests\Raytracer\Textures\ConstantTexture.test.h"
 						>
 					</File>
 					<File
-						RelativePath=".\ImageTexture.test.h"
+						RelativePath=".\MainTests\Raytracer\Textures\ImageTexture.test.h"
 						>
 					</File>
 				</Filter>
@@ -514,19 +433,19 @@
 					Name="Materials"
 					>
 					<File
-						RelativePath=".\Matte.test.h"
+						RelativePath=".\MainTests\Raytracer\Materials\Matte.test.h"
 						>
 					</File>
 					<File
-						RelativePath=".\Metal.test.h"
+						RelativePath=".\MainTests\Raytracer\Materials\Metal.test.h"
 						>
 					</File>
 					<File
-						RelativePath=".\Substrate.test.h"
+						RelativePath=".\MainTests\Raytracer\Materials\Substrate.test.h"
 						>
 					</File>
 					<File
-						RelativePath=".\Transparent.test.h"
+						RelativePath=".\MainTests\Raytracer\Materials\Transparent.test.h"
 						>
 					</File>
 				</Filter>
@@ -534,7 +453,7 @@
 					Name="MicrofacetDistributions"
 					>
 					<File
-						RelativePath=".\BlinnDistribution.test.h"
+						RelativePath=".\MainTests\Raytracer\MicrofacetDistributions\BlinnDistribution.test.h"
 						>
 					</File>
 				</Filter>
@@ -542,19 +461,19 @@
 					Name="LightSources"
 					>
 					<File
-						RelativePath=".\DiffuseAreaLightSource.test.h"
+						RelativePath=".\MainTests\Raytracer\LightSources\DiffuseAreaLightSource.test.h"
 						>
 					</File>
 					<File
-						RelativePath=".\ImageEnvironmentalLight.test.h"
+						RelativePath=".\MainTests\Raytracer\LightSources\ImageEnvironmentalLight.test.h"
 						>
 					</File>
 					<File
-						RelativePath=".\ParallelLight.test.h"
+						RelativePath=".\MainTests\Raytracer\LightSources\ParallelLight.test.h"
 						>
 					</File>
 					<File
-						RelativePath=".\PointLight.test.h"
+						RelativePath=".\MainTests\Raytracer\LightSources\PointLight.test.h"
 						>
 					</File>
 				</Filter>
@@ -562,7 +481,7 @@
 					Name="Renderers"
 					>
 					<File
-						RelativePath=".\SamplerBasedRenderer.test.h"
+						RelativePath=".\MainTests\Raytracer\Renderers\SamplerBasedRenderer.test.h"
 						>
 					</File>
 				</Filter>
@@ -570,11 +489,11 @@
 					Name="LightsSamplingStrategies"
 					>
 					<File
-						RelativePath=".\IrradianceLightsSamplingStrategy.test.h"
+						RelativePath=".\MainTests\Raytracer\LightsSamplingStrategies\IrradianceLightsSamplingStrategy.test.h"
 						>
 					</File>
 					<File
-						RelativePath=".\PowerLightsSamplingStrategy.test.h"
+						RelativePath=".\MainTests\Raytracer\LightsSamplingStrategies\PowerLightsSamplingStrategy.test.h"
 						>
 					</File>
 				</Filter>
@@ -582,15 +501,15 @@
 					Name="Mappings"
 					>
 					<File
-						RelativePath=".\SphericalMapping2D.test.h"
+						RelativePath=".\MainTests\Raytracer\Mappings\SphericalMapping2D.test.h"
 						>
 					</File>
 					<File
-						RelativePath=".\TransformMapping3D.test.h"
+						RelativePath=".\MainTests\Raytracer\Mappings\TransformMapping3D.test.h"
 						>
 					</File>
 					<File
-						RelativePath=".\UVMapping2D.test.h"
+						RelativePath=".\MainTests\Raytracer\Mappings\UVMapping2D.test.h"
 						>
 					</File>
 				</Filter>
@@ -598,7 +517,7 @@
 					Name="LTEIntegrators"
 					>
 					<File
-						RelativePath=".\PhotonLTEIntegrator.test.h"
+						RelativePath=".\MainTests\Raytracer\LTEIntegrators\PhotonLTEIntegrator.test.h"
 						>
 					</File>
 				</Filter>
@@ -606,15 +525,23 @@
 					Name="VolumeRegions"
 					>
 					<File
-						RelativePath=".\AggregateVolumeRegion.test.h"
+						RelativePath=".\MainTests\Raytracer\VolumeRegions\AggregateVolumeRegion.test.h"
 						>
 					</File>
 					<File
-						RelativePath=".\GridDensityVolumeRegion.test.h"
+						RelativePath=".\MainTests\Raytracer\VolumeRegions\GridDensityVolumeRegion.test.h"
 						>
 					</File>
 					<File
-						RelativePath=".\HomogeneousVolumeRegion.test.h"
+						RelativePath=".\MainTests\Raytracer\VolumeRegions\HomogeneousVolumeRegion.test.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="Cameras"
+					>
+					<File
+						RelativePath=".\MainTests\Raytracer\Cameras\PerspectiveCamera.test.h"
 						>
 					</File>
 				</Filter>
@@ -623,11 +550,11 @@
 				Name="Shapes"
 				>
 				<File
-					RelativePath=".\Shape.test.h"
+					RelativePath=".\MainTests\Shapes\Shape.test.h"
 					>
 				</File>
 				<File
-					RelativePath=".\Sphere.test.h"
+					RelativePath=".\MainTests\Shapes\Sphere.test.h"
 					>
 				</File>
 			</Filter>
@@ -635,15 +562,15 @@
 				Name="Common"
 				>
 				<File
-					RelativePath=".\Log.test.h"
+					RelativePath=".\MainTests\Common\Log.test.h"
 					>
 				</File>
 				<File
-					RelativePath=".\MemoryPool.test.h"
+					RelativePath=".\MainTests\Common\MemoryPool.test.h"
 					>
 				</File>
 				<File
-					RelativePath=".\Numerics.test.h"
+					RelativePath=".\MainTests\Common\Numerics.test.h"
 					>
 				</File>
 			</Filter>
@@ -772,10 +699,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Main.test.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\MathRoutines.test.cpp"
 				>
 			</File>
@@ -860,6 +783,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Runner.test.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Sample.test.cpp"
 				>
 			</File>
@@ -912,7 +839,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ThreadSafeRandom.test.cpp"
+				RelativePath=".\ThreadSafeRandom.Test.cpp"
 				>
 			</File>
 			<File
@@ -1176,6 +1103,84 @@
 				</FileConfiguration>
 			</File>
 		</Filter>
+		<Filter
+			Name="TestHelpers"
+			>
+			<File
+				RelativePath=".\Helpers\CustomValueTraits.h"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\Helpers\SamplingTestHelper.h"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\Helpers\TriangleMeshTestHelper.h"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+			</File>
+		</Filter>
+		<File
+			RelativePath=".\Runner.test.h"
+			>
+			<FileConfiguration
+				Name="Debug|Win32"
+				>
+				<Tool
+					Name="CxxTest"
+					runner="1"
+				/>
+			</FileConfiguration>
+			<FileConfiguration
+				Name="Release|Win32"
+				>
+				<Tool
+					Name="CxxTest"
+					runner="1"
+				/>
+			</FileConfiguration>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>
