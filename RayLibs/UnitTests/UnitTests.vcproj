@@ -603,6 +603,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\BoxFilter.Serialization.test.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\BoxFilter.test.cpp"
 				>
 			</File>
@@ -675,11 +679,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ImageFilm.Serialization.test.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\ImageFilm.test.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\ImageTexture.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\InteractiveFilm.Serialization.test.cpp"
 				>
 			</File>
 			<File
@@ -756,6 +768,10 @@
 			</File>
 			<File
 				RelativePath=".\ParallelLight.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\PerspectiveCamera.Serialization.test.cpp"
 				>
 			</File>
 			<File
@@ -840,6 +856,10 @@
 			</File>
 			<File
 				RelativePath=".\Shape.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Spectrum.Serialization.test.cpp"
 				>
 			</File>
 			<File
@@ -1267,6 +1287,46 @@
 					RelativePath=".\SerializationTests\Math\Vector3D.Serialization.test.h"
 					>
 				</File>
+			</Filter>
+			<Filter
+				Name="Raytracer"
+				>
+				<Filter
+					Name="FilmFilters"
+					>
+					<File
+						RelativePath=".\SerializationTests\Raytracer\FilmFilters\BoxFilter.Serialization.test.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="Films"
+					>
+					<File
+						RelativePath=".\SerializationTests\Raytracer\Films\ImageFilm.Serialization.test.h"
+						>
+					</File>
+					<File
+						RelativePath=".\SerializationTests\Raytracer\Films\InteractiveFilm.Serialization.test.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="Core"
+					>
+					<File
+						RelativePath=".\SerializationTests\Raytracer\Core\Spectrum.Serialization.test.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="Cameras"
+					>
+					<File
+						RelativePath=".\SerializationTests\Raytracer\Cameras\PerspectiveCamera.Serialization.test.h"
+						>
+					</File>
+				</Filter>
 			</Filter>
 		</Filter>
 		<File

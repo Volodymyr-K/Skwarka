@@ -15,6 +15,11 @@ Film(i_x_resolution, i_y_resolution), m_x_resolution(i_x_resolution), m_y_resolu
   m_crop_window_end = Point2D_i(m_x_resolution, m_y_resolution);
   }
 
+intrusive_ptr<const FilmFilter> ImageFilm::GetFilmFilter() const
+  {
+  return mp_filter;
+  }
+
 void ImageFilm::AddSample(const Point2D_d &i_image_point, const Spectrum_d &i_spectrum)
   {
   double image_x = i_image_point[0] - 0.5;
@@ -89,4 +94,10 @@ void ImageFilm::SetCropWindow(const Point2D_i &i_begin, const Point2D_i &i_end)
 
   m_crop_window_begin = Point2D_i(std::max(0,i_begin[0]), std::max(0,i_begin[1]));
   m_crop_window_end = Point2D_i(std::min((int)m_x_resolution,i_end[0]), std::min((int)m_y_resolution,i_end[1]));
+  }
+
+void ImageFilm::GetCropWindow(Point2D_i &o_begin, Point2D_i &o_end) const
+  {
+  o_begin = m_crop_window_begin;
+  o_end = m_crop_window_end;
   }

@@ -17,7 +17,10 @@ class CameraTestSuite : public CxxTest::TestSuite
       intrusive_ptr<Film> p_film(new FilmMock(100,100));
       CameraMock cam(t,p_film);
 
-      TS_ASSERT(cam.GetFilm()==p_film);
+      Point3D_d test_point(1,2,3);
+      TS_ASSERT_EQUALS(cam.GetCamera2WorldTransform()(test_point), t(test_point));
+
+      TS_ASSERT_EQUALS(cam.GetFilm(), p_film);
       }
   };
 

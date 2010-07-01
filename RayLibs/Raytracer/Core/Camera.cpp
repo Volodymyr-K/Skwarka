@@ -6,6 +6,11 @@ m_camera2world(i_camera2world), mp_film(ip_film)
   ASSERT(ip_film!=NULL);
   }
 
+Transform Camera::GetCamera2WorldTransform() const
+  {
+  return m_camera2world;
+  }
+
 intrusive_ptr<Film> Camera::GetFilm() const
   {
   return mp_film;

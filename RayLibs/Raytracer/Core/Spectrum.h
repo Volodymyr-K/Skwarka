@@ -1,9 +1,9 @@
 #ifndef SPECTRUM_H
 #define SPECTRUM_H
 
-#include "Common\Common.h"
-#include <istream>
+#include <Common\Common.h>
 #include <Math/MathRoutines.h>
+#include <istream>
 
 /**
 * Represents the spectrum of light (i.e. color).
@@ -386,6 +386,17 @@ template<typename T>
 bool IsInf(const Spectrum<T> &i_spectrum)
   {
   return IsInf(i_spectrum[0]) || IsInf(i_spectrum[1]) || IsInf(i_spectrum[2]);
+  }
+
+/**
+* Serializes Spectrum to/from the specified Archive. This method is used by the boost serialization framework.
+*/
+template<typename T, class Archive>
+void serialize(Archive &i_ar, Spectrum<T> &i_spectrum, const unsigned int i_version)
+  {
+  i_ar & i_spectrum[0];
+  i_ar & i_spectrum[1];
+  i_ar & i_spectrum[2];
   }
 
 #endif // SPECTRUM_H

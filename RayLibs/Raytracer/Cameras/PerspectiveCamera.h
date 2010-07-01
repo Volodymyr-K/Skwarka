@@ -24,6 +24,12 @@ class PerspectiveCamera: public Camera
     */
     PerspectiveCamera(const Transform &i_camera2world, intrusive_ptr<Film> ip_film, const double &i_lens_radius, const double &i_focal_distance, const double &i_x_view_angle);
 
+    double GetLensRadius() const;
+
+    double GetFocalDistance() const;
+
+    double GetXViewAngle() const;
+
     /**
     * Generates ray based on the image point and lens UV coordinates.
     * @param i_image_point An image point.
@@ -42,5 +48,57 @@ class PerspectiveCamera: public Camera
 
     size_t m_film_x_resolution, m_film_y_resolution;
   };
+
+/////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/**
+* Saves the data which is needed to construct PerspectiveCamera to the specified Archive. This method is used by the boost serialization framework.
+*/
+template<class Archive>
+void save_construct_data(Archive &i_ar, const PerspectiveCamera *ip_camera, const unsigned int i_version)
+  {
+  Transform camera2world = ip_camera->GetCamera2WorldTransform();
+  intrusive_ptr<Film> p_film = ip_camera->GetFilm();
+  double lens_radius = ip_camera->GetLensRadius();
+  double focal_distance = ip_camera->GetFocalDistance();
+  double x_view_angle = ip_camera->GetXViewAngle();
+
+  i_ar << camera2world;
+  i_ar << p_film;
+  i_ar << lens_radius;
+  i_ar << focal_distance;
+  i_ar << x_view_angle;
+  }
+
+/**
+* Constructs PerspectiveCamera with the data from the specified Archive. This method is used by the boost serialization framework.
+*/
+template<class Archive>
+void load_construct_data(Archive &i_ar, PerspectiveCamera *ip_camera, const unsigned int i_version)
+  {
+  Transform camera2world;
+  intrusive_ptr<Film> p_film;
+  double lens_radius, focal_distance, x_view_angle;
+
+  i_ar >> camera2world;
+  i_ar >> p_film;
+  i_ar >> lens_radius;
+  i_ar >> focal_distance;
+  i_ar >> x_view_angle;
+  ::new(ip_camera)PerspectiveCamera(camera2world, p_film, lens_radius, focal_distance, x_view_angle);
+  }
+
+/**
+* Serializes PerspectiveCamera to/from the specified Archive. This method is used by the boost serialization framework.
+*/
+template<class Archive>
+void serialize(Archive &i_ar, PerspectiveCamera &i_camera, const unsigned int version)
+  {
+  i_ar & boost::serialization::base_object<Camera>(i_camera);
+  }
+
+// Register the derived class in the boost serialization framework.
+BOOST_CLASS_EXPORT(PerspectiveCamera)
 
 #endif // PERSPECTIVE_CAMERA_H

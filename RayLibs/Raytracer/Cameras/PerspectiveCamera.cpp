@@ -19,6 +19,21 @@ Camera(i_camera2world, ip_film), m_lens_radius(i_lens_radius), m_focal_distance(
   m_y_tan=m_x_tan*((double)m_film_y_resolution)/m_film_x_resolution;
   }
 
+double PerspectiveCamera::GetLensRadius() const
+  {
+  return m_lens_radius;
+  }
+
+double PerspectiveCamera::GetFocalDistance() const
+  {
+  return m_focal_distance;
+  }
+
+double PerspectiveCamera::GetXViewAngle() const
+  {
+  return m_x_view_angle;
+  }
+
 double PerspectiveCamera::GenerateRay(const Point2D_d &i_image_point, const Point2D_d &i_lens_uv, Ray &o_ray) const
   {
   ASSERT(i_lens_uv[0]>=0.0 && i_lens_uv[0]<1.0 && i_lens_uv[1]>=0.0 && i_lens_uv[1]<1.0);

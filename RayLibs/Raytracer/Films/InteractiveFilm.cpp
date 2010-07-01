@@ -2,7 +2,7 @@
 #include <Math/MathRoutines.h>
 
 InteractiveFilm::InteractiveFilm(size_t i_x_resolution, size_t i_y_resolution, intrusive_ptr<const FilmFilter> ip_filter):
-Film(i_x_resolution, i_y_resolution), m_x_resolution(i_x_resolution), m_y_resolution(i_y_resolution)
+Film(i_x_resolution, i_y_resolution), m_x_resolution(i_x_resolution), m_y_resolution(i_y_resolution), mp_filter(ip_filter)
   {
   ASSERT(i_x_resolution>0 && i_y_resolution>0);
   ASSERT(ip_filter != NULL);
@@ -23,6 +23,11 @@ Film(i_x_resolution, i_y_resolution), m_x_resolution(i_x_resolution), m_y_resolu
     layer_y_resolution = (layer_y_resolution+FRACTION_FACTOR-1)/FRACTION_FACTOR;
     }
 
+  }
+
+intrusive_ptr<const FilmFilter> InteractiveFilm::GetFilmFilter() const
+  {
+  return mp_filter;
   }
 
 void InteractiveFilm::AddSample(const Point2D_d &i_image_point, const Spectrum_d &i_spectrum)
@@ -102,4 +107,10 @@ void InteractiveFilm::SetCropWindow(const Point2D_i &i_begin, const Point2D_i &i
     begin/=FRACTION_FACTOR;
     end=(end+Point2D_i(FRACTION_FACTOR-1,FRACTION_FACTOR-1))/FRACTION_FACTOR;
     }
+  }
+
+void InteractiveFilm::GetCropWindow(Point2D_i &o_begin, Point2D_i &o_end) const
+  {
+  o_begin = m_crop_window_begin;
+  o_end = m_crop_window_end;
   }

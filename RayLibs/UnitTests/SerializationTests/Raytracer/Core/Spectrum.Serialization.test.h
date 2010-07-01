@@ -1,9 +1,9 @@
-#ifndef VECTOR2D_SERIALIZATION_TEST_H
-#define VECTOR2D_SERIALIZATION_TEST_H
+#ifndef SPECTRUM_SERIALIZATION_TEST_H
+#define SPECTRUM_SERIALIZATION_TEST_H
 
 #include <cxxtest/TestSuite.h>
 #include <UnitTests/TestHelpers/CustomValueTraits.h>
-#include <Math/Vector2D.h>
+#include <Raytracer/Core/Spectrum.h>
 #include <boost/archive/binary_iarchive.hpp>
 #include <boost/archive/binary_oarchive.hpp>
 
@@ -13,36 +13,37 @@
 typedef boost::iostreams::basic_array_sink<char> SinkDevice;
 typedef boost::iostreams::basic_array_source<char> SourceDevice;
 
-class Vector2DSerializationTestSuite : public CxxTest::TestSuite
+class SpectrumSerializationTestSuite : public CxxTest::TestSuite
   { 
   public:
 
     // Tests serialization with different extreme cases like infinity value, epsilon value and NaN.
-    void test_Vector2D_Serialization()
+    void test_Spectrum_Serialization()
       {
-      Vector2D_d vd1(-0.2,DBL_INF);
-      Vector2D_f vf1(0.f, FLT_EPS);
-      vf1[0]=std::numeric_limits<float>::quiet_NaN();
+      Spectrum_d sd1(-0.2,DBL_INF, 123.0);
+      Spectrum_f sf1(0.f, FLT_EPS, 999.f);
+      sf1[0]=std::numeric_limits<float>::quiet_NaN();
 
         {
         boost::iostreams::stream_buffer<SinkDevice> buffer(m_data, m_buffer_size);
         boost::archive::binary_oarchive output_archive(buffer);
-        output_archive << vd1;
-        output_archive << vf1;
+        output_archive << sd1;
+        output_archive << sf1;
         } // archive and stream closed when destructors are called
 
-      Vector2D_d vd2;
-      Vector2D_f vf2;
+      Spectrum_d sd2;
+      Spectrum_f sf2;
         {
         boost::iostreams::stream_buffer<SourceDevice> buffer(m_data, m_buffer_size);
         boost::archive::binary_iarchive input_archive(buffer);
-        input_archive >> vd2;
-        input_archive >> vf2;
+        input_archive >> sd2;
+        input_archive >> sf2;
         } // archive and stream closed when destructors are called
 
-      TS_ASSERT_EQUALS(vd1, vd2);
-      TS_ASSERT_EQUALS(vf1[1],vf2[1]);
-      if (IsNaN(vf2[0])==false) TS_FAIL("NaN value serialization failed.");
+      TS_ASSERT_EQUALS(sd1, sd2);
+      TS_ASSERT_EQUALS(sf1[1],sf2[1]);
+      TS_ASSERT_EQUALS(sf1[2],sf2[2]);
+      if (IsNaN(sf2[0])==false) TS_FAIL("NaN value serialization failed.");
       }
 
   private:
@@ -50,4 +51,4 @@ class Vector2DSerializationTestSuite : public CxxTest::TestSuite
     char m_data[m_buffer_size];
   };
 
-#endif // VECTOR2D_SERIALIZATION_TEST_H
+#endif // SPECTRUM_SERIALIZATION_TEST_H

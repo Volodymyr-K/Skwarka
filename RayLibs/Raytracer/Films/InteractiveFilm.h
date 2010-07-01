@@ -33,6 +33,11 @@ class InteractiveFilm: public Film
     InteractiveFilm(size_t i_x_resolution, size_t i_y_resolution, intrusive_ptr<const FilmFilter> ip_filter);
 
     /**
+    * Returns film filter.
+    */
+    intrusive_ptr<const FilmFilter> GetFilmFilter() const;
+
+    /**
     * Adds sample value to the film.
     */
     virtual void AddSample(const Point2D_d &i_image_point, const Spectrum_d &i_spectrum);
@@ -68,9 +73,30 @@ class InteractiveFilm: public Film
     */
     void SetCropWindow(const Point2D_i &i_begin, const Point2D_i &i_end);
 
+    /**
+    * Gets cropping window for the film.
+    * @param out o_begin Left lower corner of the crop window. Will be in [0;m_x_resolution] x [0;m_y_resolution] range. Will be lesser or equal than o_end in both dimensions.
+    * @param out o_end Right upper corner of the crop window. Will be in [0;m_x_resolution] x [0;m_y_resolution] range. Will be higher or equal than o_begin in both dimensions.
+    */
+    void GetCropWindow(Point2D_i &o_begin, Point2D_i &o_end) const;
+
+  private:
+    // Needed for the boost serialization framework.  
+    friend class boost::serialization::access;
+
+    /**
+    * Serializes InteractiveFilm to/from the specified Archive. This method is used by the boost serialization framework.
+    */
+    template<class Archive>
+    void serialize(Archive &i_ar, const unsigned int version);
+
   private:
     size_t m_x_resolution, m_y_resolution;
     Point2D_i m_crop_window_begin, m_crop_window_end;
+
+    // Although the filter will be duplicated in the ImageFilms we need this filter here too due to a subtle issue with the serialization framework.
+    // If we don't store a reference to the filter from the InteractiveFilm it will be destroyed during de-serialization before the ImageFilms are loaded.
+    intrusive_ptr<const FilmFilter> mp_filter;
 
     // Vector of image layers.
     std::vector<intrusive_ptr<ImageFilm> > m_image_films;
@@ -79,5 +105,54 @@ class InteractiveFilm: public Film
     // Smaller factor results in a better approximation but takes more processing time when adding samples.
     static const unsigned int FRACTION_FACTOR = 4;
   };
+
+/////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/**
+* Saves the data which is needed to construct InteractiveFilm to the specified Archive. This method is used by the boost serialization framework.
+*/
+template<class Archive>
+void save_construct_data(Archive &i_ar, const InteractiveFilm *ip_film, const unsigned int i_version)
+  {
+  size_t x_resolution = ip_film->GetXResolution();
+  size_t y_resolution = ip_film->GetYResolution();
+  intrusive_ptr<const FilmFilter> p_filter = ip_film->GetFilmFilter();
+
+  i_ar << x_resolution;
+  i_ar << y_resolution;
+  i_ar << p_filter;
+  }
+
+/**
+* Constructs InteractiveFilm with the data from the specified Archive. This method is used by the boost serialization framework.
+*/
+template<class Archive>
+void load_construct_data(Archive &i_ar, InteractiveFilm *ip_film, const unsigned int i_version)
+  {
+  size_t x_resolution, y_resolution;
+  intrusive_ptr<const FilmFilter> p_filter;
+
+  i_ar >> x_resolution;
+  i_ar >> y_resolution;
+  i_ar >> p_filter;
+  ::new(ip_film)InteractiveFilm(x_resolution, y_resolution, p_filter);
+  }
+
+/**
+* Serializes InteractiveFilm to/from the specified Archive. This method is used by the boost serialization framework.
+*/
+template<class Archive>
+void InteractiveFilm::serialize(Archive &i_ar, const unsigned int version)
+  {
+  i_ar & boost::serialization::base_object<Film>(*this);
+
+  i_ar & m_crop_window_begin;
+  i_ar & m_crop_window_end;
+  i_ar & m_image_films;
+  }
+
+// Register the derived class in the boost serialization framework.
+BOOST_CLASS_EXPORT(InteractiveFilm)
 
 #endif // INTERACTIVE_FILM_H

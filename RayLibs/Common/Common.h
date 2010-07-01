@@ -15,5 +15,12 @@ using boost::shared_ptr;
 
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/vector.hpp>
+#include <boost/serialization/export.hpp>
+
+// We explicitly include the binary archives here to make sure all serializable classes include them.
+// This is needed to make the serialization export work for the derived classes.
+// If later we need to serialize other types of archive they must be included here as well.
+#include <boost/archive/binary_iarchive.hpp>
+#include <boost/archive/binary_oarchive.hpp>
 
 #endif // COMMON_H

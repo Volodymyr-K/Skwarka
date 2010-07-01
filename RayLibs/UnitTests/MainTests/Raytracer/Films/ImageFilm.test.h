@@ -24,6 +24,11 @@ class ImageFilmTestSuite : public CxxTest::TestSuite
       // Nothing to clear.
       }
 
+    void test_ImageFilm_GetFilmFilter()
+      {
+      TS_ASSERT_EQUALS(mp_film->GetFilmFilter(), mp_filter);
+      }
+
     void test_ImageFilm_Extent()
       {
       Point2D_i begin, end;
@@ -124,6 +129,17 @@ class ImageFilmTestSuite : public CxxTest::TestSuite
           }
 
       TS_ASSERT(correct);
+      }
+
+    void test_ImageFilm_GetCropWindow()
+      {
+      mp_film->SetCropWindow(Point2D_i(20,10),Point2D_i(80,40));
+
+      Point2D_i begin, end;
+      mp_film->GetCropWindow(begin, end);
+
+      TS_ASSERT_EQUALS(begin, Point2D_i(20,10));
+      TS_ASSERT_EQUALS(end, Point2D_i(80,40));
       }
 
   private:

@@ -91,4 +91,22 @@ inline size_t Film::GetYResolution() const
   return m_y_resolution;
   }
 
+/**
+* Serializes Film to/from the specified Archive. This method is used by the boost serialization framework.
+*/
+template<class Archive>
+void serialize(Archive &i_ar, Film &i_film, const unsigned int i_version)
+  {
+  /*
+  Nothing to do here, everything must be serialized by the derived classes.
+
+  We can't serialize the member fields here because there's no default constructor for the class
+  and save_construct_data/load_construct_data functions can't be used either
+  because it is impossible to create an instance of the abstract class.
+  */
+
+  // Just call the serialization for the base ReferenceCounted class.
+  i_ar & boost::serialization::base_object<ReferenceCounted>(i_film);
+  }
+
 #endif // FILM_H

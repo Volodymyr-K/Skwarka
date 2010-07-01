@@ -26,6 +26,27 @@ class PerspectiveCameraTestSuite : public CxxTest::TestSuite
       // Nothing to clear.
       }
 
+    void test_PerspectiveCamera_GetLensRadius()
+      {
+      PerspectiveCamera cam(m_transformation, mp_film, 0.1, 0.2, m_x_view_angle);
+
+      TS_ASSERT_EQUALS(cam.GetLensRadius(), 0.1);
+      }
+
+    void test_PerspectiveCamera_GetFocalDistance()
+      {
+      PerspectiveCamera cam(m_transformation, mp_film, 0.1, 0.2, m_x_view_angle);
+
+      TS_ASSERT_EQUALS(cam.GetFocalDistance(), 0.2);
+      }
+
+    void test_PerspectiveCamera_GetGetXViewAngle()
+      {
+      PerspectiveCamera cam(m_transformation, mp_film, 0.1, 0.2, m_x_view_angle);
+
+      TS_ASSERT_EQUALS(cam.GetXViewAngle(), m_x_view_angle);
+      }
+
     void test_PerspectiveCamera_RayDirectionNormalization()
       {
       PerspectiveCamera cam(m_transformation, mp_film, 0.0, 0.0, m_x_view_angle);

@@ -80,7 +80,8 @@ class IntrusiveSmartPointerSerializationTestSuite : public CxxTest::TestSuite
 
       TS_ASSERT_EQUALS(sample_referenced_destroy_counter, 0); // Nothing should have been destroyed so far.
 
-      TS_ASSERT_EQUALS(p_ref4.get(), p_ref5.get()); // Pointers must point to the same object;
+      TS_ASSERT_DIFFERS(p_ref1.get(), p_ref4.get()); // These pointers must point to different objects.
+      TS_ASSERT_EQUALS(p_ref4.get(), p_ref5.get()); // These pointers must point to the same object.
       TS_ASSERT_EQUALS(p_ref1->GetData(), p_ref4->GetData()); // Data must be the same.
 
       p_ref4.reset(NULL);

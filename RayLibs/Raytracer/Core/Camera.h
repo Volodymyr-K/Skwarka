@@ -25,6 +25,11 @@ class Camera: public ReferenceCounted
     virtual double GenerateRay(const Point2D_d &i_image_point, const Point2D_d &i_lens_uv, Ray &o_ray) const = 0;
 
     /**
+    * Returns the transformation object that defines the transformation between the camera space and world space.
+    */
+    Transform GetCamera2WorldTransform() const;
+
+    /**
     * Returns the film.
     */
     intrusive_ptr<Film> GetFilm() const;
@@ -54,5 +59,26 @@ class Camera: public ReferenceCounted
     Transform m_camera2world;
     intrusive_ptr<Film> mp_film;
   };
+
+/////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/**
+* Serializes Camera to/from the specified Archive. This method is used by the boost serialization framework.
+*/
+template<class Archive>
+void serialize(Archive &i_ar, Camera &i_camera, const unsigned int i_version)
+  {
+  /*
+  Nothing to do here, everything must be serialized by the derived classes.
+
+  We can't serialize the member fields here because there's no default constructor for the class
+  and save_construct_data/load_construct_data functions can't be used either
+  because it is impossible to create an instance of the abstract class.
+  */
+
+  // Just call the serialization for the base ReferenceCounted class.
+  i_ar & boost::serialization::base_object<ReferenceCounted>(i_camera);
+  }
 
 #endif // CAMERA_H
