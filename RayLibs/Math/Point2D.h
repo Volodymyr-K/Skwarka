@@ -211,4 +211,14 @@ Point2D<T2> Convert(const Point2D<T> &i_point)
   return Point2D<T2>((T2)i_point[0], (T2)i_point[1]);
   }
 
+/**
+* Serializes Point2D to/from the specified Archive. This method is used by the boost serialization framework.
+*/
+template<typename T, class Archive>
+void serialize(Archive &i_ar, Point2D<T> &i_point, const unsigned int i_version)
+  {
+  i_ar & i_point[0];
+  i_ar & i_point[1];
+  }
+
 #endif // POINT2D_H

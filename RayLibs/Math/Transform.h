@@ -1,6 +1,7 @@
 #ifndef TRANSFORM_H
 #define TRANSFORM_H
 
+#include <Common/Common.h>
 #include "Matrix.h"
 #include "Point3D.h"
 #include "Vector3D.h"
@@ -75,6 +76,16 @@ class Transform
     * The constructor is private because the class needs to keep the invariant that the inverted matrix is indeed an inverse of the transformation matrix.
     */
     Transform(const Matrix4x4_d &i_matrix, const Matrix4x4_d &i_inverted_matrix);
+
+  private:
+    // Needed for the boost serialization framework.
+    friend class boost::serialization::access;
+
+    /**
+    * Serializes Transform to/from the specified Archive. This method is used by the boost serialization framework.
+    */
+    template<typename Archive>
+    void serialize(Archive & ar, const unsigned int version);
 
   private:
     Matrix4x4_d m_matrix, m_inverted_matrix;
@@ -232,6 +243,13 @@ inline Transform Transform::operator*(const Transform &i_transform) const
   Matrix4x4_d m1 = m_matrix*i_transform.m_matrix;
   Matrix4x4_d m2 = i_transform.m_inverted_matrix*m_inverted_matrix;
   return Transform(m1, m2);
+  }
+
+template<typename Archive>
+void Transform::serialize(Archive &i_ar, const unsigned int version)
+  {
+  i_ar & m_matrix;
+  i_ar & m_inverted_matrix;
   }
 
 #endif // TRANSFORM_H

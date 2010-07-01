@@ -55,16 +55,25 @@ class CompressedDirection
     static const unsigned int Y_BITS_MASK = (1<<0) | (1<<1) | (1<<2) | (1<<3) | (1<<4) | (1<<5);
 
   private:
+    // This is a friend class that initializes static m_vectors array during application startup.
+    friend class CompressedDirection_StaticInitializer;
+
+    // Needed for the boost serialization framework.
+    friend class boost::serialization::access;
+
+    /**
+    * Serializes CompressedDirection to/from the specified Archive. This method is used by the boost serialization framework.
+    */
+    template<typename Archive>
+    void serialize(Archive &i_ar, const unsigned int version);
+
+  private:
     unsigned short m_data;
 
     /**
     * Static array used for lookup.
     */
     static Vector3D_d m_vectors[1<<16];
-
-  private:
-    // This is a friend class that initializes static m_vectors array during application startup.
-    friend class CompressedDirection_StaticInitializer;
   };
 
 /////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
@@ -119,6 +128,12 @@ inline CompressedDirection CompressedDirection::FromID(unsigned short i_id)
   CompressedDirection ret;
   ret.m_data = i_id;
   return ret;
+  }
+
+template<typename Archive>
+void CompressedDirection::serialize(Archive &i_ar, const unsigned int version)
+  {
+  i_ar & m_data;
   }
 
 #endif // COMPRESSED_DIRECTION_H

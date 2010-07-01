@@ -24,7 +24,7 @@ class BBox3D
     BBox3D();
 
     /**
-    * Creates BBox3D instance with the specified coorindates.
+    * Creates BBox3D instance with the specified coordinates.
     */
     BBox3D(const Point3D<T> &i_min, const Point3D<T> &i_max);
 
@@ -223,6 +223,16 @@ template<typename T2, typename T>
 BBox3D<T2> Convert(const BBox3D<T> &i_bbox)
   {
   return BBox3D<T2>(Convert<T2>(i_bbox.m_min), Convert<T2>(i_bbox.m_max));
+  }
+
+/**
+* Serializes BBox3D to/from the specified Archive. This method is used by the boost serialization framework.
+*/
+template<typename T, class Archive>
+void serialize(Archive &i_ar, BBox3D<T> &i_bbox, const unsigned int i_version)
+  {
+  i_ar & i_bbox.m_min;
+  i_ar & i_bbox.m_max;
   }
 
 #endif // BBOX3D_H

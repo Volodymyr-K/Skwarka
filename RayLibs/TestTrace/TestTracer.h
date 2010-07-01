@@ -173,7 +173,7 @@ inline void TestTracer::LoadMesh()
   Imf::Array2D<Imf::Rgba> image(height, width);
   readRgba1("env_lights/DH041LL.exr", image, width, height);
 
-  std::vector<std::vector<Spectrum_f> > values(height, width);
+  std::vector<std::vector<Spectrum_f> > values(height, std::vector<Spectrum_f>(width));
   for( int j=0 ; j < height ; j++)
     for( int i=0 ; i < width ; i++)
       values[j][i] = 25*Spectrum_f(static_cast<float>(image[j][i].r), static_cast<float>(image[j][i].g), static_cast<float>(image[j][i].b));
@@ -308,7 +308,7 @@ inline void TestTracer::LoadMesh()
     Imf::Array2D<Imf::Rgba> image(height, width);
     readRgba1("env_lights/DH041LL.exr", image, width, height);
 
-    std::vector<std::vector<Spectrum_f> > values(height, width);
+    std::vector<std::vector<Spectrum_f> > values(height, std::vector<Spectrum_f>(width));
     for( int j=0 ; j < height ; j++)
       for( int i=0 ; i < width ; i++)
         values[j][i] = 8*Spectrum_f(static_cast<float>(image[j][i].r), static_cast<float>(image[j][i].g), static_cast<float>(image[j][i].b));

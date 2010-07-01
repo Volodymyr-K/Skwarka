@@ -5,7 +5,7 @@
 #include <Raytracer/Core/Film.h>
 #include <Raytracer/Core/FilmFilter.h>
 #include <Raytracer/Core/Spectrum.h>
-#include <Raytracer/Core/BlockedArray.h>
+#include <Math/BlockedArray.h>
 #include <Math/Point2D.h>
 
 /**

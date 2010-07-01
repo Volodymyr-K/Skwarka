@@ -1,6 +1,7 @@
 #ifndef MATRIX_H
 #define MATRIX_H
 
+#include <Common/Common.h>
 #include <cstring>
 
 /**
@@ -57,7 +58,7 @@ class Matrix4x4
     */
     Matrix4x4 Transposed() const;
 
-    public:
+  public:
     // Public data members.
     T m_values[4][4];
   };
@@ -314,6 +315,15 @@ Matrix4x4<T> operator*(const Matrix4x4<T> &i_left, const Matrix4x4<T> &i_right)
       i_left.m_values[i][3]*i_right.m_values[3][j];
 
   return Matrix4x4<T>(tmp);
+  }
+
+/**
+* Serializes Matrix4x4 to/from the specified Archive. This method is used by the boost serialization framework.
+*/
+template<typename T, class Archive>
+void serialize(Archive &i_ar, Matrix4x4<T> &i_matrix, const unsigned int i_version)
+  {
+  i_ar & i_matrix.m_values;
   }
 
 #endif // MATRIX_H

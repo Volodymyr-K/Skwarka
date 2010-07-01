@@ -2,7 +2,7 @@
 #define MIP_MAP_H
 
 #include <Common/Common.h>
-#include <Raytracer/Core/BlockedArray.h>
+#include <Math/BlockedArray.h>
 #include <Math/Point2D.h>
 #include <Math/MathRoutines.h>
 #include <Math/SamplingRoutines.h>

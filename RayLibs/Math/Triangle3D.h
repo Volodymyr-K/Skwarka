@@ -84,4 +84,15 @@ Point3D<T> &Triangle3D<T>::operator[](unsigned char i_index)
   return m_vertices[i_index];
   }
 
+/**
+* Serializes Triangle3D to/from the specified Archive. This method is used by the boost serialization framework.
+*/
+template<typename T, class Archive>
+void serialize(Archive &i_ar, Triangle3D<T> &i_triangle, const unsigned int i_version)
+  {
+  i_ar & i_triangle[0];
+  i_ar & i_triangle[1];
+  i_ar & i_triangle[2];
+  }
+
 #endif // TRIANGLE3D_H

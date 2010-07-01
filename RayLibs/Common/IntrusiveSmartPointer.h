@@ -81,4 +81,45 @@ void intrusive_ptr_release(const T *i_ptr)
     delete i_ptr;
   }
 
+/**
+* Serializes intrusive_ptr to the specified Archive. This method is used by the boost serialization framework.
+* This method is (indirectly) called by the serialize() method below.
+*/
+template<typename T, class Archive>
+inline void save(Archive &i_ar, const intrusive_ptr<T> &i_ptr, const unsigned int i_version)
+  {
+  T *p_raw_poniter = i_ptr.get();
+  i_ar << p_raw_poniter;
+  }
+
+/**
+* De-serializes intrusive_ptr from the specified Archive. This method is used by the boost serialization framework.
+* This method is (indirectly) called by the serialize() method below.
+*/
+template<typename T, class Archive>
+inline void load(Archive &i_ar, intrusive_ptr<T> &i_ptr, const unsigned int i_version)
+  {
+  T *p_referenced;
+  i_ar >> p_referenced;
+  i_ptr.reset(p_referenced);
+  }
+
+/**
+* Serializes intrusive_ptr to/from the specified Archive. This method is used by the boost serialization framework.
+*/
+template<typename T, class Archive>
+void serialize(Archive &i_ar, intrusive_ptr<T> &i_ptr, const unsigned int i_version)
+  {
+  boost::serialization::split_free(i_ar, i_ptr, i_version);
+  }
+
+/**
+* Serializes ReferenceCounted to/from the specified Archive. This method is used by the boost serialization framework.
+*/
+template<class Archive>
+void serialize(Archive &i_ar, ReferenceCounted &i_ref, const unsigned int i_version)
+  {
+  // Nothing to do here because we don't serialize the references counter. The counter value is dynamically updated during the de-serialization.
+  }
+
 #endif // INTRUSIVE_SMART_POINTER_H
