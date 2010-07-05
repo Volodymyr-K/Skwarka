@@ -635,6 +635,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ConstantTexture.Serialization.test.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\ConstantTexture.test.cpp"
 				>
 			</File>
@@ -684,6 +688,10 @@
 			</File>
 			<File
 				RelativePath=".\ImageFilm.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ImageTexture.Serialization.test.cpp"
 				>
 			</File>
 			<File
@@ -739,6 +747,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Matte.Serialization.test.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Matte.test.cpp"
 				>
 			</File>
@@ -747,11 +759,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Metal.Serialization.test.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Metal.test.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\Microfacet.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\MIPMap.Serialization.test.cpp"
 				>
 			</File>
 			<File
@@ -879,11 +899,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\SphericalMapping2D.Serialization.test.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\SphericalMapping2D.test.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\StratifiedSampler.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Substrate.Serialization.test.cpp"
 				>
 			</File>
 			<File
@@ -903,7 +931,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\TransformMapping3D.Serialization.test.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\TransformMapping3D.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Transparent.Serialization.test.cpp"
 				>
 			</File>
 			<File
@@ -923,11 +959,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\TriangleMesh.Serialization.test.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\TriangleMesh.test.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\UniformImagePixelsOrder.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\UVMapping2D.Serialization.test.cpp"
 				>
 			</File>
 			<File
@@ -1315,7 +1359,15 @@
 					Name="Core"
 					>
 					<File
+						RelativePath=".\SerializationTests\Raytracer\Core\MIPMap.Serialization.test.h"
+						>
+					</File>
+					<File
 						RelativePath=".\SerializationTests\Raytracer\Core\Spectrum.Serialization.test.h"
+						>
+					</File>
+					<File
+						RelativePath=".\SerializationTests\Raytracer\Core\TriangleMesh.Serialization.test.h"
 						>
 					</File>
 				</Filter>
@@ -1324,6 +1376,54 @@
 					>
 					<File
 						RelativePath=".\SerializationTests\Raytracer\Cameras\PerspectiveCamera.Serialization.test.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="Mappings"
+					>
+					<File
+						RelativePath=".\SerializationTests\Raytracer\Mappings\SphericalMapping2D.Serialization.test.h"
+						>
+					</File>
+					<File
+						RelativePath=".\SerializationTests\Raytracer\Mappings\TransformMapping3D.Serialization.test.h"
+						>
+					</File>
+					<File
+						RelativePath=".\SerializationTests\Raytracer\Mappings\UVMapping2D.Serialization.test.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="Textures"
+					>
+					<File
+						RelativePath=".\SerializationTests\Raytracer\Textures\ConstantTexture.Serialization.test.h"
+						>
+					</File>
+					<File
+						RelativePath=".\SerializationTests\Raytracer\Textures\ImageTexture.Serialization.test.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="Materials"
+					>
+					<File
+						RelativePath=".\SerializationTests\Raytracer\Materials\Matte.Serialization.test.h"
+						>
+					</File>
+					<File
+						RelativePath=".\SerializationTests\Raytracer\Materials\Metal.Serialization.test.h"
+						>
+					</File>
+					<File
+						RelativePath=".\SerializationTests\Raytracer\Materials\Substrate.Serialization.test.h"
+						>
+					</File>
+					<File
+						RelativePath=".\SerializationTests\Raytracer\Materials\Transparent.Serialization.test.h"
 						>
 					</File>
 				</Filter>

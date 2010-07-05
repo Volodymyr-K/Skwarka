@@ -32,6 +32,14 @@ class Metal: public Material
     */
     Metal(intrusive_ptr<const Texture<Spectrum_d> > ip_reflectance, intrusive_ptr<const Texture<double> > ip_roughness);
 
+    intrusive_ptr<const Texture<Spectrum_d> > GetRefractiveIndexTexture() const;
+
+    intrusive_ptr<const Texture<Spectrum_d> > GetAbsoprtionTexture() const;
+
+    intrusive_ptr<const Texture<Spectrum_d> > GetReflectanceTexture() const;
+
+    intrusive_ptr<const Texture<double> > GetRoughnessTexture() const;
+
     /**
     * Returns a pointer to BSDF describing local scattering properties at the specified surface point.
     * The BSDF object and all its BxDFs is allocated using the provided MemoryPool.
@@ -47,5 +55,59 @@ class Metal: public Material
 
     intrusive_ptr<const Texture<double> > mp_roughness;
   };
+
+/////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/**
+* Saves the data which is needed to construct Metal to the specified Archive. This method is used by the boost serialization framework.
+*/
+template<class Archive>
+void save_construct_data(Archive &i_ar, const Metal *ip_material, const unsigned int i_version)
+  {
+  intrusive_ptr<const Texture<Spectrum_d> > p_refractive_index = ip_material->GetRefractiveIndexTexture();
+  intrusive_ptr<const Texture<Spectrum_d> > p_absoprtion = ip_material->GetAbsoprtionTexture();
+  intrusive_ptr<const Texture<Spectrum_d> > p_reflectance = ip_material->GetReflectanceTexture();
+  intrusive_ptr<const Texture<double> > p_roughness = ip_material->GetRoughnessTexture();
+
+  i_ar << p_refractive_index;
+  i_ar << p_absoprtion;
+  i_ar << p_reflectance;
+  i_ar << p_roughness;
+  }
+
+/**
+* Constructs Metal with the data from the specified Archive. This method is used by the boost serialization framework.
+*/
+template<class Archive>
+void load_construct_data(Archive &i_ar, Metal *ip_material, const unsigned int i_version)
+  {
+  intrusive_ptr<const Texture<Spectrum_d> > p_refractive_index, p_absoprtion, p_reflectance;
+  intrusive_ptr<const Texture<double> > p_roughness;
+
+  i_ar >> p_refractive_index;
+  i_ar >> p_absoprtion;
+  i_ar >> p_reflectance;
+  i_ar >> p_roughness;
+
+  if (p_refractive_index && p_absoprtion)
+    ::new(ip_material)Metal(p_refractive_index, p_absoprtion, p_roughness);
+  else if (p_reflectance)
+    ::new(ip_material)Metal(p_reflectance, p_roughness);
+  else
+    ASSERT(0 && "Invalid data serialized for Metal material.");
+  }
+
+/**
+* Serializes Metal to/from the specified Archive. This method is used by the boost serialization framework.
+*/
+template<class Archive>
+void serialize(Archive &i_ar, Metal &i_material, const unsigned int i_version)
+  {
+  i_ar & boost::serialization::base_object<Material>(i_material);
+  }
+
+// Register the derived class in the boost serialization framework.
+BOOST_CLASS_EXPORT(Metal)
 
 #endif // METAL_H

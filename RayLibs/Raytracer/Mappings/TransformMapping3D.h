@@ -17,6 +17,8 @@ class TransformMapping3D: public Mapping3D
     */
     TransformMapping3D(const Transform &i_transform = Transform());
 
+    Transform GetTransform() const;
+
     /**
     * Maps DifferentialGeometry to a 3D point.
     * @param i_dg DifferentialGeometry object describing the surface point.
@@ -38,11 +40,52 @@ inline TransformMapping3D::TransformMapping3D(const Transform &i_transform): m_t
   {
   }
 
+inline Transform TransformMapping3D::GetTransform() const
+  {
+  return m_transform;
+  }
+
 inline void TransformMapping3D::Map(const DifferentialGeometry &i_dg, size_t i_triangle_index, Point3D_d &o_point, Vector3D_d &o_dp_dx, Vector3D_d &o_dp_dy) const
   {
   o_point = m_transform(i_dg.m_point);
   o_dp_dx = Vector3D_d(m_transform(i_dg.m_point_dx)-o_point);
   o_dp_dy = Vector3D_d(m_transform(i_dg.m_point_dy)-o_point);
   }
+
+/**
+* Saves the data which is needed to construct TransformMapping3D to the specified Archive. This method is used by the boost serialization framework.
+*/
+template<class Archive>
+void save_construct_data(Archive &i_ar, const TransformMapping3D *ip_mapping, const unsigned int i_version)
+  {
+  Transform transform = ip_mapping->GetTransform();
+
+  i_ar << transform;
+  }
+
+/**
+* Constructs TransformMapping3D with the data from the specified Archive. This method is used by the boost serialization framework.
+*/
+template<class Archive>
+void load_construct_data(Archive &i_ar, TransformMapping3D *ip_mapping, const unsigned int i_version)
+  {
+  Transform transform;
+
+  i_ar >> transform;
+
+  ::new(ip_mapping)TransformMapping3D(transform);
+  }
+
+/**
+* Serializes TransformMapping3D to/from the specified Archive. This method is used by the boost serialization framework.
+*/
+template<class Archive>
+void serialize(Archive &i_ar, TransformMapping3D &i_mapping, const unsigned int i_version)
+  {
+  i_ar & boost::serialization::base_object<Mapping3D>(i_mapping);
+  }
+
+// Register the derived class in the boost serialization framework.
+BOOST_CLASS_EXPORT(TransformMapping3D)
 
 #endif // TRANSFORM_MAPPING_3D_H

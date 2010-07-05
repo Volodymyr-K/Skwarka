@@ -26,6 +26,11 @@ class Mapping2D : public ReferenceCounted
 
   protected:
     Mapping2D();
+
+  private:
+    // Not implemented, not a value type.
+    Mapping2D(const Mapping2D&);
+    Mapping2D &operator=(const Mapping2D&);
   };
 
 /**
@@ -49,6 +54,11 @@ class Mapping3D : public ReferenceCounted
 
   protected:
     Mapping3D();
+
+  private:
+    // Not implemented, not a value type.
+    Mapping3D(const Mapping3D&);
+    Mapping3D &operator=(const Mapping3D&);
   };
 
 /////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
@@ -68,6 +78,30 @@ inline Mapping3D::Mapping3D()
 
 inline Mapping3D::~Mapping3D()
   {
+  }
+
+/**
+* Serializes Mapping2D to/from the specified Archive. This method is used by the boost serialization framework.
+*/
+template<class Archive>
+void serialize(Archive &i_ar, Mapping2D &i_mapping, const unsigned int i_version)
+  {
+  // Nothing to do here, everything must be serialized by the derived classes.
+
+  // Just call the serialization for the base ReferenceCounted class.
+  i_ar & boost::serialization::base_object<ReferenceCounted>(i_mapping);
+  }
+
+/**
+* Serializes Mapping3D to/from the specified Archive. This method is used by the boost serialization framework.
+*/
+template<class Archive>
+void serialize(Archive &i_ar, Mapping3D &i_mapping, const unsigned int i_version)
+  {
+  // Nothing to do here, everything must be serialized by the derived classes.
+
+  // Just call the serialization for the base ReferenceCounted class.
+  i_ar & boost::serialization::base_object<ReferenceCounted>(i_mapping);
   }
 
 #endif // MAPPING_H

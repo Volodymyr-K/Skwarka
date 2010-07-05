@@ -22,6 +22,26 @@ Material(), mp_reflectance(ip_reflectance), mp_roughness(ip_roughness)
   ASSERT(ip_roughness);
   }
 
+intrusive_ptr<const Texture<Spectrum_d> > Metal::GetRefractiveIndexTexture() const
+  {
+  return mp_refractive_index;
+  }
+
+intrusive_ptr<const Texture<Spectrum_d> > Metal::GetAbsoprtionTexture() const
+  {
+  return mp_absoprtion;
+  }
+
+intrusive_ptr<const Texture<Spectrum_d> > Metal::GetReflectanceTexture() const
+  {
+  return mp_reflectance;
+  }
+
+intrusive_ptr<const Texture<double> > Metal::GetRoughnessTexture() const
+  {
+  return mp_roughness;
+  }
+
 const BSDF *Metal::GetBSDF(const DifferentialGeometry &i_dg, size_t i_triangle_index, MemoryPool &i_pool) const
   {
   typedef Microfacet<FresnelConductor,BlinnDistribution> BlinnMicrofacetMetal;

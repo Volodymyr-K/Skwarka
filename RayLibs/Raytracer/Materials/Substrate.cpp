@@ -14,6 +14,21 @@ Material(), mp_specular_reflectance(ip_specular_reflectance), mp_diffuse_reflect
   ASSERT(ip_roughness);
   }
 
+intrusive_ptr<const Texture<Spectrum_d> > Substrate::GetDiffuseReflectanceTexture() const
+  {
+  return mp_diffuse_reflectance;
+  }
+
+intrusive_ptr<const Texture<Spectrum_d> > Substrate::GetSpecularReflectanceTexture() const
+  {
+  return mp_specular_reflectance;
+  }
+
+intrusive_ptr<const Texture<double> > Substrate::GetRoughnessTexture() const
+  {
+  return mp_roughness;
+  }
+
 const BSDF *Substrate::GetBSDF(const DifferentialGeometry &i_dg, size_t i_triangle_index, MemoryPool &i_pool) const
   {
   typedef FresnelBlend<BlinnDistribution> BlinnFresnelBlend;

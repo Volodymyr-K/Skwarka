@@ -22,6 +22,10 @@ class Matte: public Material
     */
     Matte(intrusive_ptr<const Texture<Spectrum_d> > ip_reflectance, intrusive_ptr<const Texture<double> > ip_sigma);
 
+    intrusive_ptr<const Texture<Spectrum_d> > GetReflectanceTexture() const;
+
+    intrusive_ptr<const Texture<double> > GetSigmaTexture() const;
+
     /**
     * Returns a pointer to BSDF describing local scattering properties at the specified surface point.
     * The BSDF object and all its BxDFs is allocated using the provided MemoryPool.
@@ -37,5 +41,48 @@ class Matte: public Material
 
     intrusive_ptr<const Texture<double> > mp_sigma;
   };
+
+/////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/**
+* Saves the data which is needed to construct Matte to the specified Archive. This method is used by the boost serialization framework.
+*/
+template<class Archive>
+void save_construct_data(Archive &i_ar, const Matte *ip_material, const unsigned int i_version)
+  {
+  intrusive_ptr<const Texture<Spectrum_d> > p_reflectance = ip_material->GetReflectanceTexture();
+  intrusive_ptr<const Texture<double> > p_sigma = ip_material->GetSigmaTexture();
+
+  i_ar << p_reflectance;
+  i_ar << p_sigma;
+  }
+
+/**
+* Constructs Matte with the data from the specified Archive. This method is used by the boost serialization framework.
+*/
+template<class Archive>
+void load_construct_data(Archive &i_ar, Matte *ip_material, const unsigned int i_version)
+  {
+  intrusive_ptr<const Texture<Spectrum_d> > p_reflectance;
+  intrusive_ptr<const Texture<double> > p_sigma;
+
+  i_ar >> p_reflectance;
+  i_ar >> p_sigma;
+
+  ::new(ip_material)Matte(p_reflectance, p_sigma);
+  }
+
+/**
+* Serializes Matte to/from the specified Archive. This method is used by the boost serialization framework.
+*/
+template<class Archive>
+void serialize(Archive &i_ar, Matte &i_material, const unsigned int i_version)
+  {
+  i_ar & boost::serialization::base_object<Material>(i_material);
+  }
+
+// Register the derived class in the boost serialization framework.
+BOOST_CLASS_EXPORT(Matte)
 
 #endif // MATTE_H

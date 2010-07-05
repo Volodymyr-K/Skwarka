@@ -86,6 +86,28 @@ class MIPMap: public ReferenceCounted
     std::vector<ResampleWeight> _ComputeResampleWeights(size_t i_old_size, size_t i_new_size) const;
 
   private:
+    // Needed for the boost serialization framework.  
+    friend class boost::serialization::access;
+
+    /**
+    * Saves MIPMap to the specified Archive. This method is called by the serialize() method.
+    */
+    template<class Archive>
+    void save(Archive &i_ar, const unsigned int version) const;
+
+    /**
+    * Loads MIPMap from the specified Archive. This method is called by the serialize() method.
+    */
+    template<class Archive>
+    void load(Archive &i_ar, const unsigned int version);
+
+    /**
+    * Serializes MIPMap to/from the specified Archive. This method is used by the boost serialization framework.
+    */
+    template<class Archive>
+    void serialize(Archive &i_ar, const unsigned int version);
+
+  private:
     size_t m_width, m_height, m_num_levels;
     double m_max_anisotropy;
     bool m_repeat;
@@ -209,7 +231,9 @@ BlockedArray<T> *MIPMap<T>::_ResampleImage(const std::vector<std::vector<T> > &i
     for (size_t x=0;x<rounded_size_x;++x)
       {
       double weigths_sum=0.0;
-      p_array->Get(y,x) = T();
+      T& val = p_array->Get(y,x);
+      val = T();
+
       for (unsigned char j = 0; j < 4; ++j)
         {
         int original_x = weights[x].m_first_texel + j;
@@ -219,13 +243,13 @@ BlockedArray<T> *MIPMap<T>::_ResampleImage(const std::vector<std::vector<T> > &i
         if (original_x >= 0 && original_x < (int)size_x)
           {
           weigths_sum += weights[x].m_weights[j];
-          p_array->Get(y,x) += weights[x].m_weights[j] * i_values[y][original_x];
+          val += static_cast<T>( weights[x].m_weights[j] * i_values[y][original_x] );
           }
         }
 
       // Normalize filter weights for texel resampling.
       ASSERT(weigths_sum > 0.0);
-      p_array->Get(y,x) /= weigths_sum;
+      val = static_cast<T>( val/weigths_sum );
       }
     }
 
@@ -248,13 +272,13 @@ BlockedArray<T> *MIPMap<T>::_ResampleImage(const std::vector<std::vector<T> > &i
         if (original_y >= 0 && original_y < (int)size_y)
           {
           weigths_sum += weights[y].m_weights[j];
-          tmp[y] += weights[y].m_weights[j] * p_array->Get(original_y,x);
+          tmp[y] += static_cast<T>( weights[y].m_weights[j] * p_array->Get(original_y,x) );
           }
         }
 
       // Normalize filter weights for texel resampling.
       ASSERT(weigths_sum > 0.0);
-      tmp[y] /= weigths_sum;
+      tmp[y] = static_cast<T>( tmp[y]/weigths_sum );
       }
 
     for (size_t y=0;y<rounded_size_y;++y)
@@ -407,7 +431,9 @@ T MIPMap<T>::Evaluate(const Point2D_d &i_point, Vector2D_d i_dxy_1, Vector2D_d i
     {
     // Choose level of detail for EWA lookup and perform EWA filtering.
     double delta = level - (size_t)level;
-    return (1.0-delta) * _EWA((size_t)level, i_point, i_dxy_1, i_dxy_2) + delta * _EWA((size_t)level+1, i_point, i_dxy_1, i_dxy_2);
+    return static_cast<T>(
+      (1.0-delta) * _EWA((size_t)level, i_point, i_dxy_1, i_dxy_2) + delta * _EWA((size_t)level+1, i_point, i_dxy_1, i_dxy_2)
+      );
     }
   }
 
@@ -423,11 +449,12 @@ T MIPMap<T>::_Interpolate(size_t i_level, Point2D_d i_point) const
   double dx = i_point[0] - x, dy = i_point[1] - y;
   ASSERT(dx>=0.0 && dy>=0.0);
 
-  return
+  return static_cast<T>(
     (1.0-dx)*(1.0-dy) * _GetTexel(i_level, x  , y  ) +
     (1.0-dx)*dy       * _GetTexel(i_level, x  , y+1) +
     dx*(1.0-dy)       * _GetTexel(i_level, x+1, y  ) +
-    dx*dy             * _GetTexel(i_level, x+1, y+1);
+    dx*dy             * _GetTexel(i_level, x+1, y+1)
+    );
   }
 
 template <typename T>
@@ -482,14 +509,77 @@ T MIPMap<T>::_EWA(size_t i_level, Point2D_d i_point, Vector2D_d i_dxy_1, Vector2
         {
         ASSERT(r_sqr>=0.0);
         double weight = m_EWA_weights[std::min((size_t)floor(r_sqr * EWA_WEIGHTS_NUM), EWA_WEIGHTS_NUM-1)];
-        num += _GetTexel(i_level, x, y) * weight;
+        num += static_cast<T>( _GetTexel(i_level, x, y) * weight );
         den += weight;
         }
       }
     }
 
   ASSERT(den > 0.0);
-  return num / den;
+  return static_cast<T>( num / den );
+  }
+
+/**
+* Saves the data which is needed to construct MIPMap to the specified Archive. This method is used by the boost serialization framework.
+*/
+template<typename T, class Archive>
+void save_construct_data(Archive &i_ar, const MIPMap<T> *ip_map, const unsigned int i_version)
+  {
+  // Nothing to save here. Everything will be serialized by the serialize() method.
+  }
+
+/**
+* Constructs MIPMap with the data from the specified Archive. This method is used by the boost serialization framework.
+*/
+template<typename T, class Archive>
+void load_construct_data(Archive &i_ar, MIPMap<T> *ip_map, const unsigned int i_version)
+  {
+  // Nothing to load here. Everything will be serialized by the serialize() method.
+
+  // Create MIPMap with some dummy parameters.
+  std::vector<std::vector<T> > values (1,std::vector<T>(1));
+  ::new(ip_map)MIPMap<T>(values, true, 1.0);
+  }
+
+template<typename T>
+template<class Archive>
+void MIPMap<T>::save(Archive &i_ar, const unsigned int i_version) const
+  {
+  i_ar & boost::serialization::base_object<ReferenceCounted>(*this);
+
+  i_ar & m_width;
+  i_ar & m_height;
+  i_ar & m_num_levels;
+  i_ar & m_max_anisotropy;
+  i_ar & m_repeat;
+  i_ar & m_levels;
+  }
+
+template<typename T>
+template<class Archive>
+void MIPMap<T>::load(Archive &i_ar, const unsigned int i_version)
+  {
+  // Delete previous levels first to avoid memory leaks.
+  for(size_t i=0;i<m_levels.size();++i)
+    delete m_levels[i];
+
+  // Serialize the base class.
+  i_ar & boost::serialization::base_object<ReferenceCounted>(*this);
+
+  // Now read the data.
+  i_ar & m_width;
+  i_ar & m_height;
+  i_ar & m_num_levels;
+  i_ar & m_max_anisotropy;
+  i_ar & m_repeat;
+  i_ar & m_levels;
+  }
+
+template<typename T>
+template<class Archive>
+void MIPMap<T>::serialize(Archive &i_ar, const unsigned int i_version)
+  {
+  boost::serialization::split_member(i_ar, *this, i_version);
   }
 
 #endif // MIP_MAP_H

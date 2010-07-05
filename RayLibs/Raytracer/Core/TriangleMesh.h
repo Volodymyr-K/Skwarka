@@ -70,9 +70,19 @@ class TriangleMesh: public ReferenceCounted
     void SetUseShadingNormals(bool i_use_shading_normals);
 
     /**
+    * Returns true if the normals are interpolated inside the triangles.
+    */
+    bool GetUseShadingNormals() const;
+
+    /**
     * Sets whether to invert all triangle normals.
     */
     void SetInvertNormals(bool i_invert_normals);
+
+    /**
+    * Returns true if the triangle normals are inverted.
+    */
+    bool GetInvertNormals() const;
 
     size_t GetNumberOfVertices() const;
 
@@ -119,6 +129,16 @@ class TriangleMesh: public ReferenceCounted
     bool _ComputeIntersectionPoint(const Point3D_d i_vertices[3], const Point3D_d &i_origin, const Vector3D_d &i_direction, double &o_b1, double &o_b2, double &o_t) const;
 
     void _BuildConnectivityData(ConnectivityData &o_connectivity);
+
+  private:
+    // Needed for the boost serialization framework.  
+    friend class boost::serialization::access;
+
+    /**
+    * Serializes TriangleMesh to/from the specified Archive. This method is used by the boost serialization framework.
+    */
+    template<class Archive>
+    void serialize(Archive &i_ar, const unsigned int version);
 
   private:
     std::vector<Point3D_f> m_vertices;
@@ -187,5 +207,60 @@ inline TopologyInfo TriangleMesh::GetTopologyInfo() const
   {
   return m_topology_info;
   }
+
+/**
+* Saves the data which is needed to construct TriangleMesh to the specified Archive. This method is used by the boost serialization framework.
+*/
+template<class Archive>
+void save_construct_data(Archive &i_ar, const TriangleMesh *ip_mesh, const unsigned int i_version)
+  {
+  // Nothing to save here really. Everything will be serialzied by the serialize() method.
+  }
+
+/**
+* Constructs TriangleMesh with the data from the specified Archive. This method is used by the boost serialization framework.
+*/
+template<class Archive>
+void load_construct_data(Archive &i_ar, TriangleMesh *ip_mesh, const unsigned int i_version)
+  {
+  // Just create an empty mesh.
+  ::new(ip_mesh)TriangleMesh(std::vector<Point3D_f>(), std::vector<MeshTriangle>());
+  }
+
+/**
+* Serializes TriangleMesh to/from the specified Archive. This method is used by the boost serialization framework.
+*/
+template<class Archive>
+void TriangleMesh::serialize(Archive &i_ar, const unsigned int i_version)
+  {
+  i_ar & boost::serialization::base_object<ReferenceCounted>(*this);
+
+  i_ar & m_vertices;
+  i_ar & m_triangles;
+  i_ar & m_shading_normals;
+
+  i_ar & m_use_shading_normals;
+  i_ar & m_invert_normals;
+
+  i_ar & m_bbox;
+  i_ar & m_area;
+
+  i_ar & m_topology_info.m_manifold;
+  i_ar & m_topology_info.m_number_of_patches;
+  i_ar & m_topology_info.m_solid;
+  }
+
+/**
+* Serializes MeshTriangle to/from the specified Archive. This method is used by the boost serialization framework.
+*/
+template<class Archive>
+void serialize(Archive &i_ar, MeshTriangle &i_triangle, const unsigned int i_version)
+  {
+  i_ar & i_triangle.m_uvs;
+  i_ar & i_triangle.m_vertices;
+  }
+
+// Don't store class info for MeshTriangle.
+BOOST_CLASS_IMPLEMENTATION(MeshTriangle, boost::serialization::object_serializable)
 
 #endif // TRIANGLE_MESH_H

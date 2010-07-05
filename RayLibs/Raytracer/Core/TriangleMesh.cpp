@@ -473,7 +473,17 @@ void TriangleMesh::SetUseShadingNormals(bool i_use_shading_normals)
   m_use_shading_normals = i_use_shading_normals;
   }
 
+bool TriangleMesh::GetUseShadingNormals() const
+  {
+  return m_use_shading_normals;
+  }
+
 void TriangleMesh::SetInvertNormals(bool i_invert_normals)
   {
   m_invert_normals = i_invert_normals;
+  }
+
+bool TriangleMesh::GetInvertNormals() const
+  {
+  return m_invert_normals;
   }

@@ -24,6 +24,8 @@ class TriangleMeshTestSuite : public CxxTest::TestSuite
       intrusive_ptr<TriangleMesh> p_mesh(new TriangleMesh(std::vector<Point3D_f>(),std::vector<MeshTriangle>()));
       TopologyInfo info = p_mesh->GetTopologyInfo();
 
+      TS_ASSERT_EQUALS(p_mesh->GetInvertNormals(), false);
+      TS_ASSERT_EQUALS(p_mesh->GetUseShadingNormals(), true);
       TS_ASSERT_EQUALS(p_mesh->GetNumberOfVertices(),0);
       TS_ASSERT_EQUALS(p_mesh->GetNumberOfTriangles(),0);
       TS_ASSERT(info.m_manifold && info.m_number_of_patches==0 && info.m_solid);
@@ -134,6 +136,7 @@ class TriangleMeshTestSuite : public CxxTest::TestSuite
 
         // Test inverted normals.
         p_mesh->SetInvertNormals(true);
+        TS_ASSERT_EQUALS(p_mesh->GetInvertNormals(), true);
 
         normal *= -1.0;
         normal2 = p_mesh->GetTriangleNormal(i);
@@ -151,6 +154,7 @@ class TriangleMeshTestSuite : public CxxTest::TestSuite
       {
       intrusive_ptr<TriangleMesh> p_mesh( TriangleMeshHelper::ConstructTetrahedron() );
       p_mesh->SetUseShadingNormals(false);
+      TS_ASSERT_EQUALS(p_mesh->GetUseShadingNormals(), false);
       
       Point3D_d origin(0.5,-0.5,-10.0);
       Vector3D_d direction = Vector3D_d(Point3D_d(0.1,0.2,-1.0/3.0) - origin).Normalized();
@@ -242,6 +246,8 @@ class TriangleMeshTestSuite : public CxxTest::TestSuite
       {
       intrusive_ptr<TriangleMesh> p_mesh( TriangleMeshHelper::ConstructTetrahedron() );
       p_mesh->SetUseShadingNormals(true);
+
+      TS_ASSERT_EQUALS(p_mesh->GetUseShadingNormals(), true);
 
       Point3D_d origin(0.5,-0.5,-10.0);
       Vector3D_d direction = Vector3D_d(Convert<double>(p_mesh->GetVertex(1)) - origin).Normalized();

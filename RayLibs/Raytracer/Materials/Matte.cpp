@@ -12,6 +12,16 @@ Material(), mp_reflectance(ip_reflectance), mp_sigma(ip_sigma)
   ASSERT(ip_sigma);
   }
 
+intrusive_ptr<const Texture<Spectrum_d> > Matte::GetReflectanceTexture() const
+  {
+  return mp_reflectance;
+  }
+
+intrusive_ptr<const Texture<double> > Matte::GetSigmaTexture() const
+  {
+  return mp_sigma;
+  }
+
 const BSDF *Matte::GetBSDF(const DifferentialGeometry &i_dg, size_t i_triangle_index, MemoryPool &i_pool) const
   {
   BSDF *p_bsdf = new ( i_pool.Alloc(sizeof(BSDF)) ) BSDF(i_dg);

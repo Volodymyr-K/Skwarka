@@ -42,4 +42,16 @@ Texture<T>::~Texture()
   {
   }
 
+/**
+* Serializes Texture to/from the specified Archive. This method is used by the boost serialization framework.
+*/
+template<typename T, class Archive>
+void serialize(Archive &i_ar, Texture<T> &i_texture, const unsigned int i_version)
+  {
+  // Nothing to do here, everything must be serialized by the derived classes.
+
+  // Just call the serialization for the base ReferenceCounted class.
+  i_ar & boost::serialization::base_object<ReferenceCounted>(i_texture);
+  }
+
 #endif // TEXTURE_H
