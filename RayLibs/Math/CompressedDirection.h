@@ -136,4 +136,7 @@ void CompressedDirection::serialize(Archive &i_ar, const unsigned int version)
   i_ar & m_data;
   }
 
+// Don't store class info for CompressedDirection.
+BOOST_CLASS_IMPLEMENTATION(CompressedDirection, boost::serialization::object_serializable)
+
 #endif // COMPRESSED_DIRECTION_H

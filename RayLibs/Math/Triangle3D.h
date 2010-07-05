@@ -36,6 +36,7 @@ class Triangle3D
     Point3D<T> m_vertices[3];
   };
 
+typedef Triangle3D<int> Triangle3D_i;
 typedef Triangle3D<float> Triangle3D_f;
 typedef Triangle3D<double> Triangle3D_d;
 
@@ -94,5 +95,10 @@ void serialize(Archive &i_ar, Triangle3D<T> &i_triangle, const unsigned int i_ve
   i_ar & i_triangle[1];
   i_ar & i_triangle[2];
   }
+
+// Don't store class info for Triangle3D.
+BOOST_CLASS_IMPLEMENTATION(Triangle3D_i, boost::serialization::object_serializable)
+BOOST_CLASS_IMPLEMENTATION(Triangle3D_f, boost::serialization::object_serializable)
+BOOST_CLASS_IMPLEMENTATION(Triangle3D_d, boost::serialization::object_serializable)
 
 #endif // TRIANGLE3D_H

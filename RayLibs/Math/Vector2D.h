@@ -99,6 +99,7 @@ std::basic_ostream<charT,traits>& operator << (std::basic_ostream<charT,traits>&
 template<typename T2, typename T>
 Vector2D<T2> Convert(const Vector2D<T> &i_vector);
 
+typedef Vector2D<int> Vector2D_i;
 typedef Vector2D<float> Vector2D_f;
 typedef Vector2D<double> Vector2D_d;
 
@@ -327,5 +328,10 @@ void serialize(Archive &i_ar, Vector2D<T> &i_vector, const unsigned int i_versio
   i_ar & i_vector[0];
   i_ar & i_vector[1];
   }
+
+// Don't store class info for Vector2D.
+BOOST_CLASS_IMPLEMENTATION(Vector2D_i, boost::serialization::object_serializable)
+BOOST_CLASS_IMPLEMENTATION(Vector2D_f, boost::serialization::object_serializable)
+BOOST_CLASS_IMPLEMENTATION(Vector2D_d, boost::serialization::object_serializable)
 
 #endif // VECTOR2D_H

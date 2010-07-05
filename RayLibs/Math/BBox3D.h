@@ -95,6 +95,7 @@ BBox3D<T1> Union(const BBox3D<T1> &i_bbox1, const BBox3D<T2> &i_bbox2);
 template<typename T2, typename T>
 BBox3D<T2> Convert(const BBox3D<T> &i_bbox);
 
+typedef BBox3D<int> BBox3D_i;
 typedef BBox3D<float> BBox3D_f;
 typedef BBox3D<double> BBox3D_d;
 
@@ -234,5 +235,10 @@ void serialize(Archive &i_ar, BBox3D<T> &i_bbox, const unsigned int i_version)
   i_ar & i_bbox.m_min;
   i_ar & i_bbox.m_max;
   }
+
+// Don't store class info for BBox3D.
+BOOST_CLASS_IMPLEMENTATION(BBox3D_i, boost::serialization::object_serializable)
+BOOST_CLASS_IMPLEMENTATION(BBox3D_f, boost::serialization::object_serializable)
+BOOST_CLASS_IMPLEMENTATION(BBox3D_d, boost::serialization::object_serializable)
 
 #endif // BBOX3D_H

@@ -158,4 +158,8 @@ void serialize(Archive &i_ar, RayDifferential &i_ray, const unsigned int i_versi
   i_ar & i_ray.m_specular_depth;
   }
 
+// Don't store class info for Ray and RayDifferential.
+BOOST_CLASS_IMPLEMENTATION(Ray, boost::serialization::object_serializable)
+BOOST_CLASS_IMPLEMENTATION(RayDifferential, boost::serialization::object_serializable)
+
 #endif // RAY_H

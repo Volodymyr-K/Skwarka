@@ -252,4 +252,7 @@ void Transform::serialize(Archive &i_ar, const unsigned int version)
   i_ar & m_inverted_matrix;
   }
 
+// Don't store class info for Transform.
+BOOST_CLASS_IMPLEMENTATION(Transform, boost::serialization::object_serializable)
+
 #endif // TRANSFORM_H

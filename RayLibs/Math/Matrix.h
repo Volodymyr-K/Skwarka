@@ -326,4 +326,8 @@ void serialize(Archive &i_ar, Matrix4x4<T> &i_matrix, const unsigned int i_versi
   i_ar & i_matrix.m_values;
   }
 
+// Don't store class info for Matrix4x4.
+BOOST_CLASS_IMPLEMENTATION(Matrix4x4_f, boost::serialization::object_serializable)
+BOOST_CLASS_IMPLEMENTATION(Matrix4x4_d, boost::serialization::object_serializable)
+
 #endif // MATRIX_H

@@ -61,6 +61,7 @@ std::basic_ostream<charT,traits>& operator << (std::basic_ostream<charT,traits>&
 template<typename T2, typename T>
 Point3D<T2> Convert(const Point3D<T> &i_point);
 
+typedef Point3D<int> Point3D_i;
 typedef Point3D<float> Point3D_f;
 typedef Point3D<double> Point3D_d;
 
@@ -227,5 +228,10 @@ void serialize(Archive &i_ar, Point3D<T> &i_point, const unsigned int i_version)
   i_ar & i_point[1];
   i_ar & i_point[2];
   }
+
+// Don't store class info for Point3D.
+BOOST_CLASS_IMPLEMENTATION(Point3D_i, boost::serialization::object_serializable)
+BOOST_CLASS_IMPLEMENTATION(Point3D_f, boost::serialization::object_serializable)
+BOOST_CLASS_IMPLEMENTATION(Point3D_d, boost::serialization::object_serializable)
 
 #endif // POINT3D_H
