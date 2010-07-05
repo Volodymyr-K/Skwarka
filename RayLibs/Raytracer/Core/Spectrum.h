@@ -399,4 +399,8 @@ void serialize(Archive &i_ar, Spectrum<T> &i_spectrum, const unsigned int i_vers
   i_ar & i_spectrum[2];
   }
 
+// Don't store class info for Spectrum.
+BOOST_CLASS_IMPLEMENTATION(Spectrum_f, boost::serialization::object_serializable)
+BOOST_CLASS_IMPLEMENTATION(Spectrum_d, boost::serialization::object_serializable)
+
 #endif // SPECTRUM_H

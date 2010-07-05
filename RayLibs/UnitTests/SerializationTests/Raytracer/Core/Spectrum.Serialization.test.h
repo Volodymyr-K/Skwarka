@@ -43,7 +43,7 @@ class SpectrumSerializationTestSuite : public CxxTest::TestSuite
       TS_ASSERT_EQUALS(sd1, sd2);
       TS_ASSERT_EQUALS(sf1[1],sf2[1]);
       TS_ASSERT_EQUALS(sf1[2],sf2[2]);
-      if (IsNaN(sf2[0])==false) TS_FAIL("NaN value serialization failed.");
+      if (IsNaN(sf2[0])==false) TS_FAIL("NaN value serialization test failed.");
       }
 
   private:

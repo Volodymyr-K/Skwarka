@@ -66,7 +66,7 @@ class InteractiveSerializationFilmTestSuite : public CxxTest::TestSuite
           p_film2->GetPixel(Point2D_i(x,y),sp2);
           if (sp1 != sp2)
             {
-            TS_FAIL("ImageFilm serialization failed.");
+            TS_FAIL("ImageFilm serialization test failed.");
             return;
             }
           }

@@ -42,7 +42,7 @@ class Point2DSerializationTestSuite : public CxxTest::TestSuite
 
       TS_ASSERT_EQUALS(pd1, pd2);
       TS_ASSERT_EQUALS(pf1[1],pf2[1]);
-      if (IsNaN(pf2[0])==false) TS_FAIL("NaN value serialization failed.");
+      if (IsNaN(pf2[0])==false) TS_FAIL("NaN value serialization test failed.");
       }
 
   private:

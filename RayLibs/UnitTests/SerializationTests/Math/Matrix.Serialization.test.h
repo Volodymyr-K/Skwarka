@@ -43,7 +43,7 @@ class MatrixSerializationTestSuite : public CxxTest::TestSuite
         for(size_t j=0;j<4;++j)
           if (matrix1.m_values[i][j] != matrix2.m_values[i][j])
             {
-            TS_FAIL("Matrix serialization failed.");
+            TS_FAIL("Matrix serialization test failed.");
             return;
             }
       }

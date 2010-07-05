@@ -121,6 +121,9 @@ struct ImageFilm::ImageFilmPixel
   double m_weight_sum;
   };
 
+// Don't store class info for ImageFilm::ImageFilmPixel.
+BOOST_CLASS_IMPLEMENTATION(ImageFilm::ImageFilmPixel, boost::serialization::object_serializable)
+
 /**
 * Saves the data which is needed to construct ImageFilm to the specified Archive. This method is used by the boost serialization framework.
 */

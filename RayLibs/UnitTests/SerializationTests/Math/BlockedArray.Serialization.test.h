@@ -42,7 +42,7 @@ class BlockedArraySerializationTestSuite : public CxxTest::TestSuite
         for(size_t j=0;j<m;++j)
           if (p_ba1->Get(i,j)!=p_ba2->Get(i,j))
             {
-            TS_FAIL("BlockedArray serialization failed.");
+            TS_FAIL("BlockedArray serialization test failed.");
             return;
             }
       }

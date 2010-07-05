@@ -13,7 +13,7 @@ class SphericalMapping2DTestSuite : public CxxTest::TestSuite
       {
       Point3D_d center(1,2,3);
       Vector3D_d z_axis(1,0,0), x_axis(0,1,0);
-      intrusive_ptr<Mapping2D> mapping( new SphericalMapping2D(center, z_axis, x_axis) );
+      intrusive_ptr<Mapping2D> p_mapping( new SphericalMapping2D(center, z_axis, x_axis) );
 
       DifferentialGeometry dg;
       dg.m_point = center+Point3D_d(10,1,1);
@@ -22,7 +22,7 @@ class SphericalMapping2DTestSuite : public CxxTest::TestSuite
 
       Point2D_d mapped;
       Vector2D_d dp_dx, dp_dy;
-      mapping->Map(dg,  0,mapped, dp_dx, dp_dy);
+      p_mapping->Map(dg,  0,mapped, dp_dx, dp_dy);
       TS_ASSERT_DELTA(mapped[0], acos(10/sqrt(102.0))*INV_PI, (1e-10));
       TS_ASSERT_DELTA(mapped[1], 0.125, (1e-10));
       

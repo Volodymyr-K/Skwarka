@@ -12,7 +12,7 @@ class TransformMapping3DTestSuite : public CxxTest::TestSuite
   public:
     void test_TransformMapping3D_Map1()
       {
-      intrusive_ptr<Mapping3D> mapping( new TransformMapping3D );
+      intrusive_ptr<Mapping3D> p_mapping( new TransformMapping3D );
 
       DifferentialGeometry dg;
       dg.m_point = Point3D_d(10,1,1);
@@ -21,7 +21,7 @@ class TransformMapping3DTestSuite : public CxxTest::TestSuite
 
       Point3D_d mapped;
       Vector3D_d dp_dx, dp_dy;
-      mapping->Map(dg, 0, mapped, dp_dx, dp_dy);
+      p_mapping->Map(dg, 0, mapped, dp_dx, dp_dy);
 
       TS_ASSERT_EQUALS(mapped, dg.m_point);
       TS_ASSERT_EQUALS(dp_dx, Vector3D_d(dg.m_point_dx-dg.m_point));
@@ -31,7 +31,7 @@ class TransformMapping3DTestSuite : public CxxTest::TestSuite
     void test_TransformMapping3D_Map2()
       {
       Transform t = MakeRotationX(0.5);
-      intrusive_ptr<Mapping3D> mapping( new TransformMapping3D(t) );
+      intrusive_ptr<Mapping3D> p_mapping( new TransformMapping3D(t) );
 
       DifferentialGeometry dg;
       dg.m_point = Point3D_d(10,1,1);
@@ -40,7 +40,7 @@ class TransformMapping3DTestSuite : public CxxTest::TestSuite
 
       Point3D_d mapped;
       Vector3D_d dp_dx, dp_dy;
-      mapping->Map(dg, 0, mapped, dp_dx, dp_dy);
+      p_mapping->Map(dg, 0, mapped, dp_dx, dp_dy);
 
       TS_ASSERT_EQUALS(mapped, t(dg.m_point));
       TS_ASSERT_EQUALS(dp_dx, t(Vector3D_d(dg.m_point_dx-dg.m_point)));

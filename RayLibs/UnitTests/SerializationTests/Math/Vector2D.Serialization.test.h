@@ -42,7 +42,7 @@ class Vector2DSerializationTestSuite : public CxxTest::TestSuite
 
       TS_ASSERT_EQUALS(vd1, vd2);
       TS_ASSERT_EQUALS(vf1[1],vf2[1]);
-      if (IsNaN(vf2[0])==false) TS_FAIL("NaN value serialization failed.");
+      if (IsNaN(vf2[0])==false) TS_FAIL("NaN value serialization test failed.");
       }
 
   private:
