@@ -4,6 +4,7 @@
 #include <Common/Common.h>
 #include <Math/Geometry.h>
 #include "Spectrum.h"
+#include "PhaseFunction.h"
 
 /**
 * Base abstract class for participating media.
@@ -81,10 +82,9 @@ class VolumeRegion: public ReferenceCounted
 
 /**
 * Abstract implementation of the VolumeRegion with emission, absorption and scattering being proportional to the density of the media particles.
-* The phase function does not depend on the point coordinates and is defined by the template parameter of the class.
+* The phase function does not depend on the point coordinates and is defined by the PhaseFunction implementation.
 * The class declares new virtual method _Density() that sub-classes must implement.
 */
-template<typename PhaseFunction>
 class DensityVolumeRegion: public VolumeRegion
   {
   public:
@@ -92,12 +92,20 @@ class DensityVolumeRegion: public VolumeRegion
     * Creates DensityVolumeRegion instance with specified base emission, absorption and scattering. The real properties are evaluated by multiplying the base values by the density.
     * The constructor also takes ans instance of the phase function.
     */
-    DensityVolumeRegion(const BBox3D_d &i_bounds, Spectrum_d &i_base_emission, Spectrum_d &i_base_absorption, Spectrum_d &i_base_scattering, const PhaseFunction &i_phase_function);
+    DensityVolumeRegion(const BBox3D_d &i_bounds, Spectrum_d &i_base_emission, Spectrum_d &i_base_absorption, Spectrum_d &i_base_scattering, intrusive_ptr<const PhaseFunction> ip_phase_function);
 
     /**
     * Returns bounding box of the volume region.
     */
     BBox3D_d GetBounds() const;
+
+    Spectrum_d GetBaseEmission() const;
+
+    Spectrum_d GetBaseAbsorption() const;
+
+    Spectrum_d GetBaseScattering() const;
+
+    intrusive_ptr<const PhaseFunction> GetPhaseFunction() const;
 
     /**
     * Returns emission density of the volume region at the specified point.
@@ -154,85 +162,34 @@ class DensityVolumeRegion: public VolumeRegion
     BBox3D_d m_bounds;
     Spectrum_d m_base_emission, m_base_absorption, m_base_scattering, m_base_attenuation;
 
-    PhaseFunction m_phase_function;
+    intrusive_ptr<const PhaseFunction> mp_phase_function;
   };
 
 /////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename PhaseFunction>
-DensityVolumeRegion<PhaseFunction>::DensityVolumeRegion(const BBox3D_d &i_bounds, Spectrum_d &i_base_emission, Spectrum_d &i_base_absorption,
-                                                        Spectrum_d &i_base_scattering, const PhaseFunction &i_phase_function):
-m_bounds(i_bounds), m_base_emission(i_base_emission), m_base_absorption(i_base_absorption), m_base_scattering(i_base_scattering), m_phase_function(i_phase_function)
+/**
+* Serializes VolumeRegion to/from the specified Archive. This method is used by the boost serialization framework.
+*/
+template<class Archive>
+void serialize(Archive &i_ar, VolumeRegion &i_volume, const unsigned int i_version)
   {
-  ASSERT(InRange(i_base_emission, 0.0, DBL_INF));
-  ASSERT(InRange(i_base_absorption, 0.0, DBL_INF));
-  ASSERT(InRange(i_base_scattering, 0.0, DBL_INF));
+  // Nothing to do here, everything must be serialized by the derived classes.
 
-  ASSERT(m_bounds.Volume() > 0.0);
-  if (m_bounds.m_min[0] > m_bounds.m_max[0]) std::swap(m_bounds.m_min[0], m_bounds.m_max[0]);
-  if (m_bounds.m_min[1] > m_bounds.m_max[1]) std::swap(m_bounds.m_min[1], m_bounds.m_max[1]);
-  if (m_bounds.m_min[2] > m_bounds.m_max[2]) std::swap(m_bounds.m_min[2], m_bounds.m_max[2]);
-
-  m_base_attenuation = m_base_absorption+m_base_scattering;
+  // Just call the serialization for the base ReferenceCounted class.
+  i_ar & boost::serialization::base_object<ReferenceCounted>(i_volume);
   }
 
-template<typename PhaseFunction>
-BBox3D_d DensityVolumeRegion<PhaseFunction>::GetBounds() const
+/**
+* Serializes DensityVolumeRegion to/from the specified Archive. This method is used by the boost serialization framework.
+*/
+template<class Archive>
+void serialize(Archive &i_ar, DensityVolumeRegion &i_volume, const unsigned int i_version)
   {
-  return m_bounds;
-  }
+  // Nothing to do here, everything must be serialized by the derived classes.
 
-template<typename PhaseFunction>
-Spectrum_d DensityVolumeRegion<PhaseFunction>::Emission(const Point3D_d &i_point) const
-  {
-  return _Density(i_point) * m_base_emission;
-  }
-
-template<typename PhaseFunction>
-Spectrum_d DensityVolumeRegion<PhaseFunction>::Absorption(const Point3D_d &i_point) const
-  {
-  return _Density(i_point) * m_base_absorption;
-  }
-
-template<typename PhaseFunction>
-Spectrum_d DensityVolumeRegion<PhaseFunction>::Scattering(const Point3D_d &i_point) const
-  {
-  return _Density(i_point) * m_base_scattering;
-  }
-
-template<typename PhaseFunction>
-Spectrum_d DensityVolumeRegion<PhaseFunction>::Attenuation(const Point3D_d &i_point) const
-  {
-  return _Density(i_point) * m_base_attenuation;
-  }
-
-template<typename PhaseFunction>
-double DensityVolumeRegion<PhaseFunction>::Phase(const Point3D_d &i_point, const Vector3D_d &i_incoming, const Vector3D_d &i_outgoing) const
-  {
-  return m_bounds.Inside(i_point) ? m_phase_function(i_incoming, i_outgoing) : 0.0;
-  }
-
-template<typename PhaseFunction>
-Spectrum_d DensityVolumeRegion<PhaseFunction>::OpticalThickness(const Ray &i_ray, double i_step, double i_offset_sample) const
-  {
-  ASSERT(i_ray.m_direction.IsNormalized());
-  ASSERT(i_step > 0.0 && i_offset_sample >= 0.0 && i_offset_sample < 1.0);
-
-  double t_begin, t_end;
-  if (this->Intersect(i_ray, &t_begin, &t_end)==false)
-    return Spectrum_d(0.0);
-
-  double optical_thickness = 0.0;
-  double t = t_begin, step = i_step;
-  while (t<t_end-DBL_EPS)
-    {
-    step = std::min(step, t_end-t);
-    optical_thickness += _Density( i_ray(t+i_offset_sample * step) ) * step;
-    t += step;
-    }
-
-  return optical_thickness * m_base_attenuation;
+  // Just call the serialization for the base VolumeRegion class.
+  i_ar & boost::serialization::base_object<VolumeRegion>(i_volume);
   }
 
 #endif // VOLUME_REGION_H

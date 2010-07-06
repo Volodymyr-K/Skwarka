@@ -65,7 +65,7 @@ class CompressedDirection
     * Serializes CompressedDirection to/from the specified Archive. This method is used by the boost serialization framework.
     */
     template<typename Archive>
-    void serialize(Archive &i_ar, const unsigned int version);
+    void serialize(Archive &i_ar, const unsigned int i_version);
 
   private:
     unsigned short m_data;
@@ -131,7 +131,7 @@ inline CompressedDirection CompressedDirection::FromID(unsigned short i_id)
   }
 
 template<typename Archive>
-void CompressedDirection::serialize(Archive &i_ar, const unsigned int version)
+void CompressedDirection::serialize(Archive &i_ar, const unsigned int i_version)
   {
   i_ar & m_data;
   }

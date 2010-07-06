@@ -93,7 +93,7 @@ void load_construct_data(Archive &i_ar, PerspectiveCamera *ip_camera, const unsi
 * Serializes PerspectiveCamera to/from the specified Archive. This method is used by the boost serialization framework.
 */
 template<class Archive>
-void serialize(Archive &i_ar, PerspectiveCamera &i_camera, const unsigned int version)
+void serialize(Archive &i_ar, PerspectiveCamera &i_camera, const unsigned int i_version)
   {
   i_ar & boost::serialization::base_object<Camera>(i_camera);
   }

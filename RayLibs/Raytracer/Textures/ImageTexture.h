@@ -46,7 +46,7 @@ class ImageTexture: public Texture<ReturnType>
     * Serializes ImageTexture to/from the specified Archive. This method is used by the boost serialization framework.
     */
     template<class Archive>
-    void serialize(Archive &i_ar, const unsigned int version);
+    void serialize(Archive &i_ar, const unsigned int i_version);
 
   private:
     intrusive_ptr<const MIPMap<MemoryType> > mp_mip_map;

@@ -19,17 +19,29 @@ InfiniteLightSource(), m_world_bounds(i_world_bounds), m_light_to_world(i_light_
   m_height = i_image.size();
   m_width = i_image[0].size();
 
+  // Important! The code below should be kept in sync with the serialization code (i.e. ImageEnvironmentalLight::load() method).
+
   m_theta_coef = M_PI / m_height;
   m_phi_coef = 2.0*M_PI / m_width;
   
   m_CDF_cols.assign(m_height, std::vector<double>(m_width, 0.0));
 
   m_nodes_num=1;
-  _Build(0, 0, Point2D_i(0,0), Point2D_i(m_width, m_height), m_nodes_num);
+  _Build(0, 0, Point2D_i(0,0), Point2D_i((int)m_width, (int)m_height), m_nodes_num);
   ASSERT(m_nodes_num < 2*(1<<MAX_TREE_DEPTH));
 
   // Precompute irradiance values and PDFs.
   _PrecomputeData();
+  }
+
+BBox3D_d ImageEnvironmentalLight::GetWorldBounds() const
+  {
+  return m_world_bounds;
+  }
+
+Transform ImageEnvironmentalLight::GetLightToWorld() const
+  {
+  return m_light_to_world;
   }
 
 // Recursively builds tree by initializing the specified node and calling itself for the children.

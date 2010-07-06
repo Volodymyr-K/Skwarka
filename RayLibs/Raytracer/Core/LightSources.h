@@ -240,4 +240,54 @@ struct LightSources
   std::vector<intrusive_ptr<const AreaLightSource> > m_area_light_sources;
   };
 
+/////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/**
+* Serializes DeltaLightSource to/from the specified Archive. This method is used by the boost serialization framework.
+*/
+template<class Archive>
+void serialize(Archive &i_ar, DeltaLightSource &i_light, const unsigned int i_version)
+  {
+  // Nothing to do here, everything must be serialized by the derived classes.
+
+  // Just call the serialization for the base ReferenceCounted class.
+  i_ar & boost::serialization::base_object<ReferenceCounted>(i_light);
+  }
+
+/**
+* Serializes InfiniteLightSource to/from the specified Archive. This method is used by the boost serialization framework.
+*/
+template<class Archive>
+void serialize(Archive &i_ar, InfiniteLightSource &i_light, const unsigned int i_version)
+  {
+  // Nothing to do here, everything must be serialized by the derived classes.
+
+  // Just call the serialization for the base ReferenceCounted class.
+  i_ar & boost::serialization::base_object<ReferenceCounted>(i_light);
+  }
+
+/**
+* Serializes AreaLightSource to/from the specified Archive. This method is used by the boost serialization framework.
+*/
+template<class Archive>
+void serialize(Archive &i_ar, AreaLightSource &i_light, const unsigned int i_version)
+  {
+  // Nothing to do here, everything must be serialized by the derived classes.
+
+  // Just call the serialization for the base ReferenceCounted class.
+  i_ar & boost::serialization::base_object<ReferenceCounted>(i_light);
+  }
+
+/**
+* Serializes LightSources to/from the specified Archive. This method is used by the boost serialization framework.
+*/
+template<class Archive>
+void serialize(Archive &i_ar, LightSources &i_light_sources, const unsigned int i_version)
+  {
+  i_ar & i_light_sources.m_delta_light_sources;
+  i_ar & i_light_sources.m_infinite_light_sources;
+  i_ar & i_light_sources.m_area_light_sources;
+  }
+
 #endif // LIGHT_SOURCES_H

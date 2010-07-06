@@ -5,25 +5,33 @@
 #include <Math/Geometry.h>
 #include <Raytracer/Core/Spectrum.h>
 #include <Raytracer/Core/VolumeRegion.h>
+#include <Raytracer/Core/PhaseFunction.h>
 
 /**
 * Implementation of the VolumeRegion with constant emission, absorption and scattering.
-* The phase function does not depend on the point coordinates and is defined by the template parameter of the class.
+* The phase function does not depend on the point coordinates and is defined by the PhaseFunction implementation.
 */
-template<typename PhaseFunction>
 class HomogeneousVolumeRegion: public VolumeRegion
   {
   public:
     /**
     * Creates HomogeneousVolumeRegion instance with specified bounding box, emission, absorption and scattering.
-    * The constructor also takes ans instance of the phase function.
+    * The constructor also takes an instance of the phase function.
     */
-    HomogeneousVolumeRegion(const BBox3D_d &i_bounds, Spectrum_d &i_emission, Spectrum_d &i_absorption, Spectrum_d &i_scattering, const PhaseFunction &i_phase_function);
+    HomogeneousVolumeRegion(const BBox3D_d &i_bounds, Spectrum_d &i_emission, Spectrum_d &i_absorption, Spectrum_d &i_scattering, intrusive_ptr<const PhaseFunction> ip_phase_function);
 
     /**
     * Returns bounding box of the volume region.
     */
     BBox3D_d GetBounds() const;
+
+    Spectrum_d GetEmission() const;
+
+    Spectrum_d GetAbsorption() const;
+
+    Spectrum_d GetScattering() const;
+
+    intrusive_ptr<const PhaseFunction> GetPhaseFunction() const;
 
     /**
     * Returns true if the ray intersects volume region and computes ray parametric coordinates of the intersection region.
@@ -81,77 +89,60 @@ class HomogeneousVolumeRegion: public VolumeRegion
 
     Spectrum_d m_emission, m_absorption, m_scattering, m_attenuation;
 
-    PhaseFunction m_phase_function;
+    intrusive_ptr<const PhaseFunction> mp_phase_function;
   };
 
 /////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-template<typename PhaseFunction>
-HomogeneousVolumeRegion<PhaseFunction>::HomogeneousVolumeRegion(const BBox3D_d &i_bounds, Spectrum_d &i_emission, Spectrum_d &i_absorption,
-                                                                Spectrum_d &i_scattering, const PhaseFunction &i_phase_function):
-m_bounds(i_bounds), m_emission(i_emission), m_absorption(i_absorption), m_scattering(i_scattering), m_phase_function(i_phase_function)
+/**
+* Saves the data which is needed to construct HomogeneousVolumeRegion to the specified Archive. This method is used by the boost serialization framework.
+*/
+template<class Archive>
+void save_construct_data(Archive &i_ar, const HomogeneousVolumeRegion *ip_volume, const unsigned int i_version)
   {
-  ASSERT(InRange(i_emission, 0.0, DBL_INF));
-  ASSERT(InRange(i_absorption, 0.0, DBL_INF));
-  ASSERT(InRange(i_scattering, 0.0, DBL_INF));
+  BBox3D_d bounds = ip_volume->GetBounds();
+  Spectrum_d emission = ip_volume->GetEmission();
+  Spectrum_d absorption = ip_volume->GetAbsorption();
+  Spectrum_d scattering = ip_volume->GetScattering();
+  intrusive_ptr<const PhaseFunction> p_phase_function = ip_volume->GetPhaseFunction();
 
-  m_attenuation = m_absorption + m_scattering;
+  i_ar << bounds;
+  i_ar << emission;
+  i_ar << absorption;
+  i_ar << scattering;
+  i_ar << p_phase_function;
   }
 
-template<typename PhaseFunction>
-BBox3D_d HomogeneousVolumeRegion<PhaseFunction>::GetBounds() const
+/**
+* Constructs HomogeneousVolumeRegion with the data from the specified Archive. This method is used by the boost serialization framework.
+*/
+template<class Archive>
+void load_construct_data(Archive &i_ar, HomogeneousVolumeRegion *ip_volume, const unsigned int i_version)
   {
-  return m_bounds;
+  BBox3D_d bounds;
+  Spectrum_d emission, absorption, scattering;
+  intrusive_ptr<const PhaseFunction> p_phase_function;
+
+  i_ar >> bounds;
+  i_ar >> emission;
+  i_ar >> absorption;
+  i_ar >> scattering;
+  i_ar >> p_phase_function;
+
+  ::new(ip_volume)HomogeneousVolumeRegion(bounds, emission, absorption, scattering, p_phase_function);
   }
 
-template<typename PhaseFunction>
-bool HomogeneousVolumeRegion<PhaseFunction>::Intersect(Ray i_ray, double *op_t_begin, double *op_t_end) const
+/**
+* Serializes HomogeneousVolumeRegion to/from the specified Archive. This method is used by the boost serialization framework.
+*/
+template<class Archive>
+void serialize(Archive &i_ar, HomogeneousVolumeRegion &i_volume, const unsigned int i_version)
   {
-  return m_bounds.Intersect(i_ray, op_t_begin, op_t_end);
+  i_ar & boost::serialization::base_object<VolumeRegion>(i_volume);
   }
 
-template<typename PhaseFunction>
-Spectrum_d HomogeneousVolumeRegion<PhaseFunction>::Emission(const Point3D_d &i_point) const
-  {
-  return m_bounds.Inside(i_point) ? m_emission : Spectrum_d(0.0);
-  }
-
-template<typename PhaseFunction>
-Spectrum_d HomogeneousVolumeRegion<PhaseFunction>::Absorption(const Point3D_d &i_point) const
-  {
-  return m_bounds.Inside(i_point) ? m_absorption : Spectrum_d(0.0);
-  }
-
-template<typename PhaseFunction>
-Spectrum_d HomogeneousVolumeRegion<PhaseFunction>::Scattering(const Point3D_d &i_point) const
-  {
-  return m_bounds.Inside(i_point) ? m_scattering : Spectrum_d(0.0);
-  }
-
-template<typename PhaseFunction>
-Spectrum_d HomogeneousVolumeRegion<PhaseFunction>::Attenuation(const Point3D_d &i_point) const
-  {
-  return m_bounds.Inside(i_point) ? m_attenuation : Spectrum_d(0.0);
-  }
-
-template<typename PhaseFunction>
-double HomogeneousVolumeRegion<PhaseFunction>::Phase(const Point3D_d &i_point, const Vector3D_d &i_incoming, const Vector3D_d &i_outgoing) const
-  {
-  return m_bounds.Inside(i_point) ? m_phase_function(i_incoming, i_outgoing) : 0.0;
-  }
-
-template<typename PhaseFunction>
-Spectrum_d HomogeneousVolumeRegion<PhaseFunction>::OpticalThickness(const Ray &i_ray, double i_step, double i_offset_sample) const
-  {
-  ASSERT(i_ray.m_direction.IsNormalized());
-  ASSERT(i_step > 0.0 && i_offset_sample >= 0.0 && i_offset_sample < 1.0);
-
-  double t_begin, t_end;
-  if (m_bounds.Intersect(i_ray, &t_begin, &t_end))
-    return fabs(t_end-t_begin) * m_attenuation;
-  else
-    return Spectrum_d(0.0);
-  }
+// Register the derived class in the boost serialization framework.
+BOOST_CLASS_EXPORT(HomogeneousVolumeRegion)
 
 #endif // HOMOGENEOUS_VOLUME_REGION_H

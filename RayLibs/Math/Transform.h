@@ -85,7 +85,7 @@ class Transform
     * Serializes Transform to/from the specified Archive. This method is used by the boost serialization framework.
     */
     template<typename Archive>
-    void serialize(Archive & ar, const unsigned int version);
+    void serialize(Archive & ar, const unsigned int i_version);
 
   private:
     Matrix4x4_d m_matrix, m_inverted_matrix;
@@ -246,7 +246,7 @@ inline Transform Transform::operator*(const Transform &i_transform) const
   }
 
 template<typename Archive>
-void Transform::serialize(Archive &i_ar, const unsigned int version)
+void Transform::serialize(Archive &i_ar, const unsigned int i_version)
   {
   i_ar & m_matrix;
   i_ar & m_inverted_matrix;

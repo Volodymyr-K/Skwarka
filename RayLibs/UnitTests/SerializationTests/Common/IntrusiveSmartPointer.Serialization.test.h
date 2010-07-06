@@ -41,7 +41,7 @@ class SampleReferenced: public ReferenceCounted
     friend class boost::serialization::access;
 
     template<class Archive>
-    void serialize(Archive &i_ar, const unsigned int version)
+    void serialize(Archive &i_ar, const unsigned int i_version)
       {
       i_ar & boost::serialization::base_object<ReferenceCounted>(*this);
       i_ar & m_data;

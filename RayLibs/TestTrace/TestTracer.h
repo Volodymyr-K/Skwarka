@@ -322,7 +322,7 @@ inline void TestTracer::LoadMesh()
     }
 
 
-  MieHazyPhaseFunction phase_funct;
+  intrusive_ptr<PhaseFunction> p_phase_funct( new MieHazyPhaseFunction );
   //intrusive_ptr<const VolumeRegion> p_volume (new HomogeneousVolumeRegion<MieHazyPhaseFunction>(
   //  BBox3D_d(Point3D_d(-70,-70,0),Point3D_d(70,70,70)), Spectrum_d(0.0), Spectrum_d(0.000), Spectrum_d(0.005), phase_funct));
 
@@ -330,8 +330,8 @@ inline void TestTracer::LoadMesh()
   std::vector<std::vector<std::vector<double> > > densities;
   LoadDensities(densities, "densities/2.txt");
 
-  intrusive_ptr<const VolumeRegion> p_volume (new GridDensityVolumeRegion<MieHazyPhaseFunction>(
-    BBox3D_d(Point3D_d(0.01,0.01,0.51),Point3D_d(1.99,1.99,1.29)), Spectrum_d(0), Spectrum_d(3), Spectrum_d(20), phase_funct, densities) );
+  intrusive_ptr<const VolumeRegion> p_volume (new GridDensityVolumeRegion(
+    BBox3D_d(Point3D_d(0.01,0.01,0.51),Point3D_d(1.99,1.99,1.29)), Spectrum_d(0), Spectrum_d(3), Spectrum_d(20), p_phase_funct, densities) );
 
   mp_scene.reset(new Scene(primitives, p_volume, lights));
   }

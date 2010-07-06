@@ -88,7 +88,7 @@ class InteractiveFilm: public Film
     * Serializes InteractiveFilm to/from the specified Archive. This method is used by the boost serialization framework.
     */
     template<class Archive>
-    void serialize(Archive &i_ar, const unsigned int version);
+    void serialize(Archive &i_ar, const unsigned int i_version);
 
   private:
     size_t m_x_resolution, m_y_resolution;
@@ -143,7 +143,7 @@ void load_construct_data(Archive &i_ar, InteractiveFilm *ip_film, const unsigned
 * Serializes InteractiveFilm to/from the specified Archive. This method is used by the boost serialization framework.
 */
 template<class Archive>
-void InteractiveFilm::serialize(Archive &i_ar, const unsigned int version)
+void InteractiveFilm::serialize(Archive &i_ar, const unsigned int i_version)
   {
   i_ar & boost::serialization::base_object<Film>(*this);
 

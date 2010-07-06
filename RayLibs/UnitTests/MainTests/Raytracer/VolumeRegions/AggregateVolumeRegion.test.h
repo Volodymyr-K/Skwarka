@@ -17,12 +17,12 @@ class AggregateVolumeRegionTestSuite : public CxxTest::TestSuite
       {
       m_bounds1 = BBox3D_d(Point3D_d(0,0,0), Point3D_d(2,2,2));
       m_emission1 = Spectrum_d(1,1.5,2);
-      m_emission1 = Spectrum_d(5,7,9);
+      m_absorption1 = Spectrum_d(5,7,9);
       m_scattering1 = Spectrum_d(0.1,0.0,0.9);
 
       m_bounds2 = BBox3D_d(Point3D_d(1,1,1), Point3D_d(3,3,3));
       m_emission2 = Spectrum_d(2,0.5,1);
-      m_emission2 = Spectrum_d(2,1,4);
+      m_absorption2 = Spectrum_d(2,1,4);
       m_scattering2 = Spectrum_d(5.1,0.3,3.9);
 
       mp_region1.reset(new VolumeRegionMock(m_bounds1, m_emission1, m_absorption1, m_scattering1));

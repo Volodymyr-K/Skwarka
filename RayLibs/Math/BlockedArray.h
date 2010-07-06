@@ -78,7 +78,7 @@ class BlockedArray
     * Serializes BlockedArray to/from the specified Archive. This method is used by the boost serialization framework.
     */
     template<class Archive>
-    void serialize(Archive &i_ar, const unsigned int version);
+    void serialize(Archive &i_ar, const unsigned int i_version);
 
   private:
     size_t m_size_u, m_size_v, m_u_blocks;
@@ -182,7 +182,7 @@ void BlockedArray<T,block_size_log>::Fill(const T &i_value)
 
 template<typename T, size_t block_size_log>
 template<class Archive>
-void BlockedArray<T,block_size_log>::serialize(Archive &i_ar, const unsigned int version)
+void BlockedArray<T,block_size_log>::serialize(Archive &i_ar, const unsigned int i_version)
   {
   i_ar & m_data;
   }

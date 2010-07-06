@@ -14,7 +14,7 @@
 * best possible sampling strategy (with cost of some memory requirements).
 * The implementation constructs kD-tree on the image map. Each leaf corresponds to a non-empty rectangle on the image map. All leaves of the tree cover the entire image.
 * For each possible normal (discretized with CompressedDirection) the probability (to be sampled) for each tree node is precomputed.
-* Having the probabilities the sampling comes down to constructing a path from the root of the tree to one of the leaves each time using childern's probabilities to decide which path to go.
+* Having the probabilities the sampling comes down to constructing a path from the root of the tree to one of the leaves each time using children's probabilities to decide which path to go.
 * Inside each leaf the texels are sampled based on their radiance luminance.
 */
 class ImageEnvironmentalLight: public InfiniteLightSource
@@ -27,6 +27,10 @@ class ImageEnvironmentalLight: public InfiniteLightSource
     * @param i_image Image map. Should not be empty, should have the same number of columns for each row.
     */
     ImageEnvironmentalLight(const BBox3D_d &i_world_bounds, const Transform &i_light_to_world, const std::vector<std::vector<Spectrum_f> > &i_image);
+
+    BBox3D_d GetWorldBounds() const;
+
+    Transform GetLightToWorld() const;
 
     /**
     * Returns the light source radiance for the specified ray.
@@ -154,6 +158,28 @@ class ImageEnvironmentalLight: public InfiniteLightSource
     double _LightingPDF(const Vector3D_d &i_lighting_direction, const float *ip_nodes_pdf) const;
 
   private:
+    // Needed for the boost serialization framework.  
+    friend class boost::serialization::access;
+
+    /**
+    * Saves ImageEnvironmentalLight to the specified Archive. This method is called by the serialize() method.
+    */
+    template<class Archive>
+    void save(Archive &i_ar, const unsigned int i_version) const;
+
+    /**
+    * Loads ImageEnvironmentalLight from the specified Archive. This method is called by the serialize() method.
+    */
+    template<class Archive>
+    void load(Archive &i_ar, const unsigned int i_version);
+
+    /**
+    * Serializes ImageEnvironmentalLight to/from the specified Archive. This method is used by the boost serialization framework.
+    */
+    template<class Archive>
+    void serialize(Archive &i_ar, const unsigned int i_version);
+
+  private:
     BBox3D_d m_world_bounds;
 
     Transform m_light_to_world, m_world_to_light;
@@ -189,5 +215,87 @@ class ImageEnvironmentalLight: public InfiniteLightSource
     // Has the same size that the image map has and each row contains concatenated CDFs for all leaves intersecting the row.
     std::vector<std::vector<double> > m_CDF_cols;
   };
+
+/////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/**
+* Saves the data which is needed to construct ImageEnvironmentalLight to the specified Archive. This method is used by the boost serialization framework.
+*/
+template<class Archive>
+void save_construct_data(Archive &i_ar, const ImageEnvironmentalLight *ip_light, const unsigned int i_version)
+  {
+  BBox3D_d world_bounds = ip_light->GetWorldBounds();
+  Transform light_to_world = ip_light->GetLightToWorld();
+
+  i_ar << world_bounds;
+  i_ar << light_to_world;
+  }
+
+/**
+* Constructs ImageEnvironmentalLight with the data from the specified Archive. This method is used by the boost serialization framework.
+*/
+template<class Archive>
+void load_construct_data(Archive &i_ar, ImageEnvironmentalLight *ip_light, const unsigned int i_version)
+  {
+  BBox3D_d world_bounds;
+  Transform light_to_world;
+
+  i_ar >> world_bounds;
+  i_ar >> light_to_world;
+
+  // Create ImageEnvironmentalLight with dummy image, it will be serialized later in save()/load() methods.
+  std::vector<std::vector<Spectrum_f> > image(1, std::vector<Spectrum_f>(1));
+  ::new(ip_light)ImageEnvironmentalLight(world_bounds, light_to_world, image);
+  }
+
+template<class Archive>
+void ImageEnvironmentalLight::save(Archive &i_ar, const unsigned int i_version) const
+  {
+  i_ar & mp_image_map;
+  i_ar & m_height;
+  i_ar & m_width;
+  }
+
+template<class Archive>
+void ImageEnvironmentalLight::load(Archive &i_ar, const unsigned int i_version)
+  {
+  i_ar & mp_image_map;
+  i_ar & m_height;
+  i_ar & m_width;
+
+  // Clear vectors with old data.
+  m_nodes_directions.clear();
+  m_irradiances.clear();
+  m_nodes_hemispherical_PDF.clear();
+  m_nodes_spherical_PDF.clear();
+  m_CDF_rows.clear();
+  m_CDF_cols.clear();
+
+  // Important! The code below should be kept in sync with the class constructor code.
+
+  // Initialize the data members and build the tree.
+  m_theta_coef = M_PI / m_height;
+  m_phi_coef = 2.0*M_PI / m_width;
+
+  m_CDF_cols.assign(m_height, std::vector<double>(m_width, 0.0));
+
+  m_nodes_num=1;
+  _Build(0, 0, Point2D_i(0,0), Point2D_i((int)m_width, (int)m_height), m_nodes_num);
+  ASSERT(m_nodes_num < 2*(1<<MAX_TREE_DEPTH));
+
+  // Precompute irradiance values and PDFs.
+  _PrecomputeData();
+  }
+
+template<class Archive>
+void ImageEnvironmentalLight::serialize(Archive &i_ar, const unsigned int i_version)
+  {
+  i_ar & boost::serialization::base_object<InfiniteLightSource>(*this);
+  boost::serialization::split_member(i_ar, *this, i_version);
+  }
+
+// Register the derived class in the boost serialization framework.
+BOOST_CLASS_EXPORT(ImageEnvironmentalLight)
 
 #endif // IMAGE_ENVIRONMENTAL_LIGHT_H

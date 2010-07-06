@@ -138,7 +138,7 @@ class TriangleMesh: public ReferenceCounted
     * Serializes TriangleMesh to/from the specified Archive. This method is used by the boost serialization framework.
     */
     template<class Archive>
-    void serialize(Archive &i_ar, const unsigned int version);
+    void serialize(Archive &i_ar, const unsigned int i_version);
 
   private:
     std::vector<Point3D_f> m_vertices;

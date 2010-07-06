@@ -232,6 +232,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\Core\PhaseFunction.h"
+					>
+				</File>
+				<File
 					RelativePath=".\Core\Primitive.h"
 					>
 				</File>
@@ -323,6 +327,10 @@
 				</File>
 				<File
 					RelativePath=".\Core\TriangleMesh.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Core\VolumeRegion.cpp"
 					>
 				</File>
 			</Filter>
@@ -767,6 +775,14 @@
 				>
 				<File
 					RelativePath=".\VolumeRegions\AggregateVolumeRegion.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\VolumeRegions\GridDensityVolumeRegion.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\VolumeRegions\HomogeneousVolumeRegion.cpp"
 					>
 				</File>
 			</Filter>

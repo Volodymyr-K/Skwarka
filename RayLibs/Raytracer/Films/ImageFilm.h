@@ -84,7 +84,7 @@ class ImageFilm: public Film
     * Serializes ImageFilm to/from the specified Archive. This method is used by the boost serialization framework.
     */
     template<class Archive>
-    void serialize(Archive &i_ar, const unsigned int version);
+    void serialize(Archive &i_ar, const unsigned int i_version);
 
   private:
     size_t m_x_resolution, m_y_resolution;
@@ -111,7 +111,7 @@ struct ImageFilm::ImageFilmPixel
   * Serializes ImageFilm::ImageFilmPixel to/from the specified Archive. This method is used by the boost serialization framework.
   */
   template<class Archive>
-  void serialize(Archive &i_ar, const unsigned int version)
+  void serialize(Archive &i_ar, const unsigned int i_version)
     {
     i_ar & m_spectrum;
     i_ar & m_weight_sum;
@@ -158,7 +158,7 @@ void load_construct_data(Archive &i_ar, ImageFilm *ip_film, const unsigned int i
 * Serializes ImageFilm to/from the specified Archive. This method is used by the boost serialization framework.
 */
 template<class Archive>
-void ImageFilm::serialize(Archive &i_ar, const unsigned int version)
+void ImageFilm::serialize(Archive &i_ar, const unsigned int i_version)
   {
   i_ar & boost::serialization::base_object<Film>(*this);
 

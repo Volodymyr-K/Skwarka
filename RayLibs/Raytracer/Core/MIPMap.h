@@ -93,19 +93,19 @@ class MIPMap: public ReferenceCounted
     * Saves MIPMap to the specified Archive. This method is called by the serialize() method.
     */
     template<class Archive>
-    void save(Archive &i_ar, const unsigned int version) const;
+    void save(Archive &i_ar, const unsigned int i_version) const;
 
     /**
     * Loads MIPMap from the specified Archive. This method is called by the serialize() method.
     */
     template<class Archive>
-    void load(Archive &i_ar, const unsigned int version);
+    void load(Archive &i_ar, const unsigned int i_version);
 
     /**
     * Serializes MIPMap to/from the specified Archive. This method is used by the boost serialization framework.
     */
     template<class Archive>
-    void serialize(Archive &i_ar, const unsigned int version);
+    void serialize(Archive &i_ar, const unsigned int i_version);
 
   private:
     size_t m_width, m_height, m_num_levels;
@@ -579,6 +579,7 @@ template<typename T>
 template<class Archive>
 void MIPMap<T>::serialize(Archive &i_ar, const unsigned int i_version)
   {
+  i_ar & boost::serialization::base_object<ReferenceCounted>(*this);
   boost::serialization::split_member(i_ar, *this, i_version);
   }
 

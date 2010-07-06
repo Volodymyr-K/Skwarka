@@ -25,6 +25,8 @@ class AggregateVolumeRegion: public VolumeRegion
     */
     BBox3D_d GetBounds() const;
 
+    std::vector<intrusive_ptr<const VolumeRegion> > GetVolumeRegions() const;
+
     /**
     * Returns true if the ray intersects at least one volume region and computes ray parametric coordinates of the intersection region.
     * @param i_ray Input ray. Direction component should be normalized.
@@ -86,5 +88,44 @@ class AggregateVolumeRegion: public VolumeRegion
 
     BBox3D_d m_bounds;
   };
+
+/////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/**
+* Saves the data which is needed to construct AggregateVolumeRegion to the specified Archive. This method is used by the boost serialization framework.
+*/
+template<class Archive>
+void save_construct_data(Archive &i_ar, const AggregateVolumeRegion *ip_volume, const unsigned int i_version)
+  {
+  std::vector<intrusive_ptr<const VolumeRegion> > volume_regions = ip_volume->GetVolumeRegions();
+
+  i_ar << volume_regions;
+  }
+
+/**
+* Constructs AggregateVolumeRegion with the data from the specified Archive. This method is used by the boost serialization framework.
+*/
+template<class Archive>
+void load_construct_data(Archive &i_ar, AggregateVolumeRegion *ip_volume, const unsigned int i_version)
+  {
+  std::vector<intrusive_ptr<const VolumeRegion> > volume_regions;
+
+  i_ar >> volume_regions;
+
+  ::new(ip_volume)AggregateVolumeRegion(volume_regions);
+  }
+
+/**
+* Serializes AggregateVolumeRegion to/from the specified Archive. This method is used by the boost serialization framework.
+*/
+template<class Archive>
+void serialize(Archive &i_ar, AggregateVolumeRegion &i_volume, const unsigned int i_version)
+  {
+  i_ar & boost::serialization::base_object<VolumeRegion>(i_volume);
+  }
+
+// Register the derived class in the boost serialization framework.
+BOOST_CLASS_EXPORT(AggregateVolumeRegion)
 
 #endif // VOLUME_REGION_H

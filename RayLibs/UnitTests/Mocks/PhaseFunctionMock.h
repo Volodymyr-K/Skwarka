@@ -4,14 +4,15 @@
 #include <Common/Common.h>
 #include <Math/Geometry.h>
 #include <Raytracer/Core/Spectrum.h>
+#include <Raytracer/Core/PhaseFunction.h>
 
 /*
 FunctionMock mock implementation. Always returns constant value.
 */
-class PhaseFunctionMock
+class PhaseFunctionMock: public PhaseFunction
   {
   public:
-    double operator()(const Vector3D_d &i_incoming, const Vector3D_d &i_outgoing) const
+    double ScatteringPDF(const Vector3D_d &i_incoming, const Vector3D_d &i_outgoing) const
       {
       return 1.0/(4.0*M_PI);
       }

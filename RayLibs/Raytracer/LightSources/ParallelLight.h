@@ -19,6 +19,12 @@ class ParallelLight: public DeltaLightSource
     */
     ParallelLight(const Vector3D_d &i_direction, const Spectrum_d &i_radiance, const BBox3D_d &i_world_bounds);
 
+    Vector3D_d GetDirection() const;
+
+    Spectrum_d GetRadiance() const;
+
+    BBox3D_d GetWorldBounds() const;
+
     /**
     * Returns the total power of the light source, i.e. the light flux.
     * The power is estimated by computing the flux for the scene bounding box.
@@ -58,5 +64,52 @@ class ParallelLight: public DeltaLightSource
     // The CDF is based on the triangle's projected area.
     double m_area_CDF[6];
   };
+
+/////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/**
+* Saves the data which is needed to construct ParallelLight to the specified Archive. This method is used by the boost serialization framework.
+*/
+template<class Archive>
+void save_construct_data(Archive &i_ar, const ParallelLight *ip_light, const unsigned int i_version)
+  {
+  Vector3D_d direction = ip_light->GetDirection();
+  Spectrum_d radiance = ip_light->GetRadiance();
+  BBox3D_d world_bounds = ip_light->GetWorldBounds();
+
+  i_ar << direction;
+  i_ar << radiance;
+  i_ar << world_bounds;
+  }
+
+/**
+* Constructs ParallelLight with the data from the specified Archive. This method is used by the boost serialization framework.
+*/
+template<class Archive>
+void load_construct_data(Archive &i_ar, ParallelLight *ip_light, const unsigned int i_version)
+  {
+  Vector3D_d direction;
+  Spectrum_d radiance;
+  BBox3D_d world_bounds;
+
+  i_ar >> direction;
+  i_ar >> radiance;
+  i_ar >> world_bounds;
+
+  ::new(ip_light)ParallelLight(direction, radiance, world_bounds);
+  }
+
+/**
+* Serializes ParallelLight to/from the specified Archive. This method is used by the boost serialization framework.
+*/
+template<class Archive>
+void serialize(Archive &i_ar, ParallelLight &i_light, const unsigned int i_version)
+  {
+  i_ar & boost::serialization::base_object<DeltaLightSource>(i_light);
+  }
+
+// Register the derived class in the boost serialization framework.
+BOOST_CLASS_EXPORT(ParallelLight)
 
 #endif // POINT_LIGHT_H

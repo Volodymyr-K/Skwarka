@@ -49,6 +49,21 @@ m_direction(i_direction), m_radiance(i_radiance), m_world_bounds(i_world_bounds)
   for(size_t i=0;i<6;++i) m_area_CDF[i] /= m_area_CDF[5];
   }
 
+Vector3D_d ParallelLight::GetDirection() const
+  {
+  return m_direction;
+  }
+
+Spectrum_d ParallelLight::GetRadiance() const
+  {
+  return m_radiance;
+  }
+
+BBox3D_d ParallelLight::GetWorldBounds() const
+  {
+  return m_world_bounds;
+  }
+
 Spectrum_d ParallelLight::Power() const
   {
   return m_power;
