@@ -65,6 +65,11 @@ class Primitive: public ReferenceCounted
     const AreaLightSource *GetAreaLightSource_RawPtr() const;
 
     /**
+    * Returns the bump map.
+    */
+    intrusive_ptr<const Texture<double> > GetBumpMap() const;
+
+    /**
     * Returns a pointer to BSDF describing local scattering properties at the specified surface point.
     * The BSDF object and all its BxDFs is allocated using the provided MemoryPool.
     * The method first bump maps the shading normal and then redirects the call to the Material.
@@ -144,6 +149,11 @@ inline const AreaLightSource *Primitive::GetAreaLightSource_RawPtr() const
   return mp_area_light_source.get();
   }
 
+inline intrusive_ptr<const Texture<double> > Primitive::GetBumpMap() const
+  {
+  return mp_bump_map;
+  }
+
 inline const BSDF *Primitive::GetBSDF(const DifferentialGeometry &i_dg, size_t i_triangle_index, MemoryPool &i_pool) const
   {
   ASSERT(mp_mesh);
@@ -168,5 +178,51 @@ inline Spectrum_d Primitive::SelfEmittance(const DifferentialGeometry &i_dg, siz
   else
     return Spectrum_d(0.0);
   }
+
+/**
+* Saves the data which is needed to construct Primitive to the specified Archive. This method is used by the boost serialization framework.
+*/
+template<class Archive>
+void save_construct_data(Archive &i_ar, const Primitive *ip_primitive, const unsigned int i_version)
+  {
+  intrusive_ptr<const TriangleMesh> p_mesh = ip_primitive->GetTriangleMesh();
+  intrusive_ptr<const Material> p_material = ip_primitive->GetMaterial();
+  intrusive_ptr<const Texture<double> > p_bump_map = ip_primitive->GetBumpMap();
+  intrusive_ptr<const AreaLightSource> p_area_light_source = ip_primitive->GetAreaLightSource();
+
+  i_ar << p_mesh;
+  i_ar << p_material;
+  i_ar << p_bump_map;
+  i_ar << p_area_light_source;
+  }
+
+/**
+* Constructs Primitive with the data from the specified Archive. This method is used by the boost serialization framework.
+*/
+template<class Archive>
+void load_construct_data(Archive &i_ar, Primitive *ip_primitive, const unsigned int i_version)
+  {
+  intrusive_ptr<const TriangleMesh> p_mesh;
+  intrusive_ptr<const Material> p_material;
+  intrusive_ptr<const Texture<double> > p_bump_map;
+  intrusive_ptr<const AreaLightSource> p_area_light_source;
+
+  i_ar >> p_mesh;
+  i_ar >> p_material;
+  i_ar >> p_bump_map;
+  i_ar >> p_area_light_source;
+
+  ::new(ip_primitive)Primitive(p_mesh, p_material, p_area_light_source, p_bump_map);
+  }
+
+/**
+* Serializes Primitive to/from the specified Archive. This method is used by the boost serialization framework.
+*/
+template<class Archive>
+void serialize(Archive &i_ar, Primitive &i_primitive, const unsigned int i_version)
+  {
+  i_ar & boost::serialization::base_object<ReferenceCounted>(i_primitive);
+  }
+
 
 #endif // PRIMITIVE_H

@@ -133,4 +133,47 @@ inline bool Scene::IntersectTest(const Ray &i_ray) const
   return m_triangle_accelerator.IntersectTest(i_ray);
   }
 
+/**
+* Saves the data which is needed to construct Scene to the specified Archive. This method is used by the boost serialization framework.
+*/
+template<class Archive>
+void save_construct_data(Archive &i_ar, const Scene *ip_scene, const unsigned int i_version)
+  {
+  std::vector<intrusive_ptr<const Primitive> > primitives = ip_scene->GetPrimitives();
+  intrusive_ptr<const VolumeRegion> p_volume_region = ip_scene->GetVolumeRegion();
+  LightSources light_sources = ip_scene->GetLightSources();
+
+  i_ar << primitives;
+  i_ar << p_volume_region;
+  i_ar << light_sources;
+  }
+
+/**
+* Constructs Scene with the data from the specified Archive. This method is used by the boost serialization framework.
+*/
+template<class Archive>
+void load_construct_data(Archive &i_ar, Scene *ip_scene, const unsigned int i_version)
+  {
+  ASSERT(0);
+  std::vector<intrusive_ptr<const Primitive> > primitives;
+  intrusive_ptr<const VolumeRegion> p_volume_region;
+  LightSources light_sources;
+
+  i_ar >> primitives;
+  i_ar >> p_volume_region;
+  i_ar >> light_sources;
+
+  ::new(ip_scene)Scene(primitives, p_volume_region, light_sources);
+  }
+
+/**
+* Serializes Scene to/from the specified Archive. This method is used by the boost serialization framework.
+*/
+template<class Archive>
+void serialize(Archive &i_ar, Scene &i_scene, const unsigned int i_version)
+  {
+  ASSERT(0);
+  i_ar & boost::serialization::base_object<ReferenceCounted>(i_scene);
+  }
+
 #endif // SCENE_H

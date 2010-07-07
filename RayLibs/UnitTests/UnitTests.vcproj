@@ -855,6 +855,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Primitive.Serialization.test.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Primitive.test.cpp"
 				>
 			</File>
@@ -896,6 +900,10 @@
 			</File>
 			<File
 				RelativePath=".\SamplingRoutines.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Scene.Serialization.test.cpp"
 				>
 			</File>
 			<File
@@ -1388,6 +1396,14 @@
 					>
 					<File
 						RelativePath=".\SerializationTests\Raytracer\Core\MIPMap.Serialization.test.h"
+						>
+					</File>
+					<File
+						RelativePath=".\SerializationTests\Raytracer\Core\Primitive.Serialization.test.h"
+						>
+					</File>
+					<File
+						RelativePath=".\SerializationTests\Raytracer\Core\Scene.Serialization.test.h"
 						>
 					</File>
 					<File
