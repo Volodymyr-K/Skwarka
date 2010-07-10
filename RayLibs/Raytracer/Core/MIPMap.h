@@ -6,6 +6,7 @@
 #include <Math/Point2D.h>
 #include <Math/MathRoutines.h>
 #include <Math/SamplingRoutines.h>
+#include "ImageSource.h"
 #include <vector>
 
 /**
@@ -27,6 +28,14 @@ class MIPMap: public ReferenceCounted
     * @param i_max_anisotropy Maximum anisotropy allowed (ratio of the major ellipse axis to its minor axis). Should be greater or equal than 1.0.
     */
     MIPMap(const std::vector<std::vector<T> > &i_values, bool i_repeat, double i_max_anisotropy);
+
+    /**
+    * Constructs MIPMap from the specified image source.
+    * @param ip_image_source ImageSource implementation that defines image for the MIPMap. The image defined by the ImageSource should not be empty.
+    * @param i_repeat Sets whether to wrap the texture on its edges. If false, the value is considered zero (black) beyond the image.
+    * @param i_max_anisotropy Maximum anisotropy allowed (ratio of the major ellipse axis to its minor axis). Should be greater or equal than 1.0.
+    */
+    MIPMap(intrusive_ptr<const ImageSource<T> > ip_image_source, bool i_repeat, double i_max_anisotropy);
     
     /**
     * Returns filtered value of image at the specified point using trilinear filter.
@@ -55,6 +64,12 @@ class MIPMap: public ReferenceCounted
     struct ResampleWeight;
 
   private:
+    /**
+    * This method is called from constructors to initialize the class instance.
+    * It resamples the input image, builds the MIPMap levels and initialies EWA weights.
+    */
+    void _Initialize(const std::vector<std::vector<T> > &i_values, double i_max_anisotropy);
+
     /**
     * Private method that returns image value at the specified point at the specified level.
     */
@@ -113,6 +128,15 @@ class MIPMap: public ReferenceCounted
     bool m_repeat;
 
     /**
+    * ImageSource instance the MIPMap was initialized from.
+    * Although it is not used for lookups after the MIPMap is constructed we still store the ImageSource for the serialization.
+    * In most of the cases the serialization takes much less space when ImageSource is provided.
+    *
+    * Can be NULL, in this case MIPMap levels are serialized directly.
+    */
+    intrusive_ptr<const ImageSource<T> > mp_image_source;
+
+    /**
     * Levels of the MIP-map. 0-th level corresponds to the original image and the highest level has 1x1 size.
     */
     std::vector<BlockedArray<T> *> m_levels;
@@ -138,7 +162,26 @@ struct MIPMap<T>::ResampleWeight
   };
 
 template <typename T>
-MIPMap<T>::MIPMap(const std::vector<std::vector<T> > &i_values, bool i_repeat, double i_max_anisotropy): m_repeat(i_repeat)
+MIPMap<T>::MIPMap(const std::vector<std::vector<T> > &i_values, bool i_repeat, double i_max_anisotropy):
+m_repeat(i_repeat), mp_image_source(NULL)
+  {
+  _Initialize(i_values, i_max_anisotropy);
+  }
+
+template <typename T>
+MIPMap<T>::MIPMap(intrusive_ptr<const ImageSource<T> > ip_image_source, bool i_repeat, double i_max_anisotropy):
+m_repeat(i_repeat), mp_image_source(ip_image_source)
+  {
+  ASSERT(ip_image_source);
+  ASSERT(ip_image_source->GetHeight()>0 && ip_image_source->GetWidth()>0);
+
+  std::vector<std::vector<T> > image;
+  ip_image_source->GetImage(image);
+  _Initialize(image, i_max_anisotropy);
+  }
+
+template <typename T>
+void MIPMap<T>::_Initialize(const std::vector<std::vector<T> > &i_values, double i_max_anisotropy)
   {
   ASSERT(i_max_anisotropy>=1.0);
   m_max_anisotropy = std::max(i_max_anisotropy, 1.0);
@@ -151,7 +194,7 @@ MIPMap<T>::MIPMap(const std::vector<std::vector<T> > &i_values, bool i_repeat, d
 
   m_num_levels = MathRoutines::FloorLog2( (unsigned int)std::max(m_width,m_height) )+1;
   ASSERT(m_num_levels>0);
-  
+
   m_levels.push_back(p_resampled_image);
   for(size_t level=1;level<m_num_levels;++level)
     {
@@ -291,11 +334,13 @@ BlockedArray<T> *MIPMap<T>::_ResampleImage(const std::vector<std::vector<T> > &i
 template <typename T>
 void MIPMap<T>::_InitializeEWA()
   {
+  m_EWA_weights.assign(EWA_WEIGHTS_NUM, 0.0);
+
   for (size_t i=0;i<EWA_WEIGHTS_NUM;++i)
     {
     const double alpha = 2.0;
     double r2 = double(i) / double(EWA_WEIGHTS_NUM - 1);
-    m_EWA_weights.push_back( exp(-alpha * r2) - exp(-alpha) );
+    m_EWA_weights[i] = exp(-alpha * r2) - exp(-alpha);
     }
   }
 
@@ -547,12 +592,20 @@ void MIPMap<T>::save(Archive &i_ar, const unsigned int i_version) const
   {
   i_ar & boost::serialization::base_object<ReferenceCounted>(*this);
 
-  i_ar & m_width;
-  i_ar & m_height;
-  i_ar & m_num_levels;
-  i_ar & m_max_anisotropy;
+  bool image_source_provided = mp_image_source.get() != NULL;
+  i_ar & image_source_provided;
   i_ar & m_repeat;
-  i_ar & m_levels;
+  i_ar & m_max_anisotropy;
+
+  if (image_source_provided)
+    i_ar & mp_image_source;
+  else
+    {
+    i_ar & m_width;
+    i_ar & m_height;
+    i_ar & m_num_levels;
+    i_ar & m_levels;
+    }
   }
 
 template<typename T>
@@ -563,16 +616,35 @@ void MIPMap<T>::load(Archive &i_ar, const unsigned int i_version)
   for(size_t i=0;i<m_levels.size();++i)
     delete m_levels[i];
 
+  m_levels.clear();
+  m_num_levels = 0;
+
   // Serialize the base class.
   i_ar & boost::serialization::base_object<ReferenceCounted>(*this);
 
-  // Now read the data.
-  i_ar & m_width;
-  i_ar & m_height;
-  i_ar & m_num_levels;
-  i_ar & m_max_anisotropy;
+  bool image_source_provided;
+  i_ar & image_source_provided;
   i_ar & m_repeat;
-  i_ar & m_levels;
+  i_ar & m_max_anisotropy;
+
+  if (image_source_provided)
+    {
+    i_ar & mp_image_source;
+    std::vector<std::vector<T> > image;
+    mp_image_source->GetImage(image);
+    _Initialize(image, m_max_anisotropy);
+    }
+  else
+    {
+    i_ar & m_width;
+    i_ar & m_height;
+    i_ar & m_num_levels;
+    i_ar & m_levels;
+
+    mp_image_source = NULL;
+    }
+
+  // No need to serialize EWA weights because they do not change and have already been initialized in the constructor.
   }
 
 template<typename T>

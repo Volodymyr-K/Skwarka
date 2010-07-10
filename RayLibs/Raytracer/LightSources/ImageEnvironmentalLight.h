@@ -21,15 +21,29 @@ class ImageEnvironmentalLight: public InfiniteLightSource
   {
   public:
     /**
-    * Constructs ImageEnvironmentalLight.
+    * Constructs ImageEnvironmentalLight with the specified image.
     * @param i_world_bounds World bounds.
-    * @param i_light_to_world Transform object that defines transformation from light space to world space.
-    * @param i_image Image map. Should not be empty, should have the same number of columns for each row.
+    * @param i_light_to_world Transform object that defines transformation from the light space to the world space.
+    * @param i_image 2D array of the image values. All inner vectors should have the same size. Should have at least one row and at least one column.
     */
     ImageEnvironmentalLight(const BBox3D_d &i_world_bounds, const Transform &i_light_to_world, const std::vector<std::vector<Spectrum_f> > &i_image);
 
+    /**
+    * Constructs ImageEnvironmentalLight from the specified image source.
+    * @param i_world_bounds World bounds.
+    * @param i_light_to_world Transform object that defines transformation from the light space to the world space.
+    * @param ip_image_source ImageSource implementation that defines image for the ImageEnvironmentalLight. The image defined by the ImageSource should not be empty.
+    */
+    ImageEnvironmentalLight(const BBox3D_d &i_world_bounds, const Transform &i_light_to_world, intrusive_ptr<const ImageSource<Spectrum_f> > ip_image_source);
+
+    /**
+    * Returns world bounding box.
+    */
     BBox3D_d GetWorldBounds() const;
 
+    /**
+    * Returns Transform object that defines transformation from the light space to the world space.
+    */
     Transform GetLightToWorld() const;
 
     /**
@@ -147,6 +161,8 @@ class ImageEnvironmentalLight: public InfiniteLightSource
     static const size_t MAX_TREE_DEPTH = 8;
 
   private:
+    void _Initialize();
+
     void _Build(size_t i_node_index, size_t i_depth, const Point2D_i &i_begin, const Point2D_i &i_end, size_t &io_next_free_node_index);
 
     void _PrecomputeData();
@@ -272,20 +288,7 @@ void ImageEnvironmentalLight::load(Archive &i_ar, const unsigned int i_version)
   m_CDF_rows.clear();
   m_CDF_cols.clear();
 
-  // Important! The code below should be kept in sync with the class constructor code.
-
-  // Initialize the data members and build the tree.
-  m_theta_coef = M_PI / m_height;
-  m_phi_coef = 2.0*M_PI / m_width;
-
-  m_CDF_cols.assign(m_height, std::vector<double>(m_width, 0.0));
-
-  m_nodes_num=1;
-  _Build(0, 0, Point2D_i(0,0), Point2D_i((int)m_width, (int)m_height), m_nodes_num);
-  ASSERT(m_nodes_num < 2*(1<<MAX_TREE_DEPTH));
-
-  // Precompute irradiance values and PDFs.
-  _PrecomputeData();
+  _Initialize();
   }
 
 template<class Archive>

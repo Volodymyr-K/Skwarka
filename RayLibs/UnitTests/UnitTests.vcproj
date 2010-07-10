@@ -53,8 +53,8 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/MP"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\;..\..\..\ThirdParty\;..\..\..\ThirdParty\boost\1.43\;..\..\..\ThirdParty\TBB\3.0\include;..\..\..\ThirdParty\cxxtest\3.10.1\"
-				PreprocessorDefinitions="TBB_USE_DEBUG;WIN32;_DEBUG;_WINDOWS;NOMINMAX;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS"
+				AdditionalIncludeDirectories="..\;..\..\..\ThirdParty\;..\..\..\ThirdParty\boost\1.43\;..\..\..\ThirdParty\TBB\3.0\include;..\..\..\ThirdParty\cxxtest\3.10.1\;..\..\..\ThirdParty\OpenEXR\Deploy\include"
+				PreprocessorDefinitions="TBB_USE_DEBUG;WIN32;_DEBUG;_WINDOWS;NOMINMAX;OPENEXR_DLL;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS"
 				MinimalRebuild="false"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -74,10 +74,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="tbb_debug.lib"
+				AdditionalDependencies="tbb_debug.lib Half.lib Iex.lib IlmImf.lib IlmThread.lib Imath.lib zdll.lib"
 				OutputFile="$(OutDir)\$(ProjectName)d.exe"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="..\..\..\ThirdParty\TBB\3.0\lib\ia32\vc9;..\..\..\ThirdParty\boost\libs\1.43"
+				AdditionalLibraryDirectories="..\..\..\ThirdParty\TBB\3.0\lib\ia32\vc9;..\..\..\ThirdParty\OpenEXR\Deploy\lib\Debug;..\..\..\ThirdParty\boost\libs\1.43"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				TargetMachine="1"
@@ -139,8 +139,8 @@
 				AdditionalOptions="/MP"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="..\;..\..\..\ThirdParty\;..\..\..\ThirdParty\boost\1.43\;..\..\..\ThirdParty\TBB\3.0\include;..\..\..\ThirdParty\cxxtest\3.10.1\"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;NOMINMAX;_SECURE_SCL=0;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS"
+				AdditionalIncludeDirectories="..\;..\..\..\ThirdParty\;..\..\..\ThirdParty\boost\1.43\;..\..\..\ThirdParty\TBB\3.0\include;..\..\..\ThirdParty\cxxtest\3.10.1\;..\..\..\ThirdParty\OpenEXR\Deploy\include"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;NOMINMAX;_SECURE_SCL=0;OPENEXR_DLL;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS"
 				MinimalRebuild="false"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -160,9 +160,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="tbb.lib"
+				AdditionalDependencies="tbb.lib Half.lib Iex.lib IlmImf.lib IlmThread.lib Imath.lib zdll.lib"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\..\..\ThirdParty\TBB\3.0\lib\ia32\vc9;..\..\..\ThirdParty\boost\libs\1.43"
+				AdditionalLibraryDirectories="..\..\..\ThirdParty\TBB\3.0\lib\ia32\vc9;..\..\..\ThirdParty\OpenEXR\Deploy\lib\Release;..\..\..\ThirdParty\boost\libs\1.43"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				OptimizeReferences="2"
@@ -545,6 +545,18 @@
 						>
 					</File>
 				</Filter>
+				<Filter
+					Name="ImageSources"
+					>
+					<File
+						RelativePath=".\MainTests\Raytracer\ImageSources\OpenEXRRgbaSpectrumImageSource.test.h"
+						>
+					</File>
+					<File
+						RelativePath=".\MainTests\Raytracer\ImageSources\RGB24SpectrumImageSource.test.h"
+						>
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="Shapes"
@@ -803,6 +815,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\OpenEXRRgbaSpectrumImageSource.Serialization.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\OpenEXRRgbaSpectrumImageSource.test.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\OrenNayar.test.cpp"
 				>
 			</File>
@@ -880,6 +900,14 @@
 			</File>
 			<File
 				RelativePath=".\Ray.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\RGB24SpectrumImageSource.Serialization.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\RGB24SpectrumImageSource.test.cpp"
 				>
 			</File>
 			<File
@@ -1504,6 +1532,18 @@
 					</File>
 					<File
 						RelativePath=".\SerializationTests\Raytracer\VolumeRegions\HomogeneousVolumeRegion.Serialization.test.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="ImageSources"
+					>
+					<File
+						RelativePath=".\SerializationTests\Raytracer\ImageSources\OpenEXRRgbaSpectrumImageSource.Serialization.test.h"
+						>
+					</File>
+					<File
+						RelativePath=".\SerializationTests\Raytracer\ImageSources\RGB24SpectrumImageSource.Serialization.test.h"
 						>
 					</File>
 				</Filter>

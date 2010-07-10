@@ -41,7 +41,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/MP"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\;..\..\..\ThirdParty\;..\..\..\ThirdParty\boost\1.43\;..\..\..\ThirdParty\TBB\3.0\include"
+				AdditionalIncludeDirectories="..\;..\..\..\ThirdParty\;..\..\..\ThirdParty\boost\1.43\;..\..\..\ThirdParty\TBB\3.0\include;..\..\..\ThirdParty\OpenEXR\Deploy\include"
 				PreprocessorDefinitions="TBB_USE_DEBUG;_DEBUG;NOMINMAX;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS"
 				MinimalRebuild="false"
 				BasicRuntimeChecks="3"
@@ -109,7 +109,7 @@
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
-				AdditionalIncludeDirectories="..\;..\..\..\ThirdParty\;..\..\..\ThirdParty\boost\1.43\;..\..\..\ThirdParty\TBB\3.0\include"
+				AdditionalIncludeDirectories="..\;..\..\..\ThirdParty\;..\..\..\ThirdParty\boost\1.43\;..\..\..\ThirdParty\TBB\3.0\include;..\..\..\ThirdParty\OpenEXR\Deploy\include"
 				PreprocessorDefinitions="NDEBUG;NOMINMAX;_SECURE_SCL=0;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -197,6 +197,10 @@
 				</File>
 				<File
 					RelativePath=".\Core\Fresnel.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Core\ImageSource.h"
 					>
 				</File>
 				<File
@@ -807,6 +811,26 @@
 				</File>
 				<File
 					RelativePath=".\PhaseFunctions\RayleighPhaseFunction.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Source Files"
+				>
+			</Filter>
+		</Filter>
+		<Filter
+			Name="ImageSources"
+			>
+			<Filter
+				Name="Header Files"
+				>
+				<File
+					RelativePath=".\ImageSources\OpenEXRRgbaSpectrumImageSource.h"
+					>
+				</File>
+				<File
+					RelativePath=".\ImageSources\RGB24SpectrumImageSource.h"
 					>
 				</File>
 			</Filter>

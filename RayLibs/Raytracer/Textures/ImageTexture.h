@@ -31,6 +31,15 @@ class ImageTexture: public Texture<ReturnType>
     */
     ImageTexture(const std::vector<std::vector<MemoryType> > &i_image, intrusive_ptr<const Mapping2D> ip_mapping, bool i_repeat = true, double i_max_anisotropy = 8.0);
 
+    /**
+    * Crates ImageTexture from the specified image source and 2D mapping.
+    * @param ip_image_source ImageSource implementation that defines image for the ImageTexture. The image defined by the ImageSource should not be empty.
+    * @param ip_mapping 2D mapping used to map DifferentialGeometry to an image point. Should not be NULL.
+    * @param i_repeat Sets whether to wrap the texture on its edges. If false, the value is considered zero (black) beyond the image bounds.
+    * @param i_max_anisotropy Maximum anisotropy allowed (ratio of the major ellipse axis to its minor axis). Should be greater or equal than 1.0.
+    */
+    ImageTexture(intrusive_ptr<const ImageSource<MemoryType> > ip_image_source, intrusive_ptr<const Mapping2D> ip_mapping, bool i_repeat = true, double i_max_anisotropy = 8.0);
+
     intrusive_ptr<const Mapping2D> GetMapping() const;
 
     /**
@@ -61,7 +70,19 @@ ImageTexture<MemoryType,ReturnType,Converter>::ImageTexture(const std::vector<st
                                                   intrusive_ptr<const Mapping2D> ip_mapping, bool i_repeat, double i_max_anisotropy): mp_mapping(ip_mapping)
   {
   ASSERT(ip_mapping);
+
   mp_mip_map.reset(new MIPMap<MemoryType>(i_image, i_repeat, i_max_anisotropy) );
+  }
+
+template<typename MemoryType, typename ReturnType, typename Converter>
+ImageTexture<MemoryType,ReturnType,Converter>::ImageTexture(intrusive_ptr<const ImageSource<MemoryType> > ip_image_source,
+                                                            intrusive_ptr<const Mapping2D> ip_mapping, bool i_repeat, double i_max_anisotropy): mp_mapping(ip_mapping)
+  {
+  ASSERT(ip_image_source);
+  ASSERT(ip_image_source->GetHeight()>0 && ip_image_source->GetWidth()>0);
+  ASSERT(ip_mapping);
+
+  mp_mip_map.reset(new MIPMap<MemoryType>(ip_image_source, i_repeat, i_max_anisotropy) );
   }
 
 template<typename MemoryType, typename ReturnType, typename Converter>

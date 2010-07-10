@@ -5,9 +5,10 @@
 /////////////////////////////////////// ImageEnvironmentalLight ///////////////////////////////////////////
 
 ImageEnvironmentalLight::ImageEnvironmentalLight(const BBox3D_d &i_world_bounds, const Transform &i_light_to_world, const std::vector<std::vector<Spectrum_f> > &i_image):
-InfiniteLightSource(), m_world_bounds(i_world_bounds), m_light_to_world(i_light_to_world), m_world_to_light(i_light_to_world.Inverted())
+m_world_bounds(i_world_bounds), m_light_to_world(i_light_to_world), m_world_to_light(i_light_to_world.Inverted())
   {
   ASSERT(i_image.size()>0 && i_image[0].size()>0);
+
   for(size_t i=1;i<i_image.size();++i)
     {
     ASSERT(i_image[i].size() == i_image[0].size());
@@ -19,11 +20,27 @@ InfiniteLightSource(), m_world_bounds(i_world_bounds), m_light_to_world(i_light_
   m_height = i_image.size();
   m_width = i_image[0].size();
 
-  // Important! The code below should be kept in sync with the serialization code (i.e. ImageEnvironmentalLight::load() method).
+  _Initialize();
+  }
 
+ImageEnvironmentalLight::ImageEnvironmentalLight(const BBox3D_d &i_world_bounds, const Transform &i_light_to_world, intrusive_ptr<const ImageSource<Spectrum_f> > ip_image_source):
+m_world_bounds(i_world_bounds), m_light_to_world(i_light_to_world), m_world_to_light(i_light_to_world.Inverted())
+  {
+  ASSERT(ip_image_source);
+  ASSERT(ip_image_source->GetHeight()>0 && ip_image_source->GetWidth()>0);
+
+  mp_image_map.reset(new MIPMap<Spectrum_f>(ip_image_source, true, 9.0) );
+  m_height = ip_image_source->GetHeight();
+  m_width = ip_image_source->GetWidth();
+
+  _Initialize();
+  }
+
+void ImageEnvironmentalLight::_Initialize()
+  {
   m_theta_coef = M_PI / m_height;
   m_phi_coef = 2.0*M_PI / m_width;
-  
+
   m_CDF_cols.assign(m_height, std::vector<double>(m_width, 0.0));
 
   m_nodes_num=1;

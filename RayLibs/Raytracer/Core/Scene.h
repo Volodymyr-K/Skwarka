@@ -154,7 +154,6 @@ void save_construct_data(Archive &i_ar, const Scene *ip_scene, const unsigned in
 template<class Archive>
 void load_construct_data(Archive &i_ar, Scene *ip_scene, const unsigned int i_version)
   {
-  ASSERT(0);
   std::vector<intrusive_ptr<const Primitive> > primitives;
   intrusive_ptr<const VolumeRegion> p_volume_region;
   LightSources light_sources;
@@ -172,7 +171,6 @@ void load_construct_data(Archive &i_ar, Scene *ip_scene, const unsigned int i_ve
 template<class Archive>
 void serialize(Archive &i_ar, Scene &i_scene, const unsigned int i_version)
   {
-  ASSERT(0);
   i_ar & boost::serialization::base_object<ReferenceCounted>(i_scene);
   }
 

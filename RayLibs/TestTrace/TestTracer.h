@@ -63,6 +63,12 @@
 #include <Raytracer/PhaseFunctions/MieHazyPhaseFunction.h>
 #include <Raytracer/PhaseFunctions/MieMurkyPhaseFunction.h>
 #include <Raytracer/PhaseFunctions/RayleighPhaseFunction.h>
+#include <Raytracer/ImageSources/RGB24SpectrumImageSource.h>
+#include <Raytracer/ImageSources/OpenEXRRgbaSpectrumImageSource.h>
+
+#include <boost/archive/binary_iarchive.hpp>
+#include <boost/archive/binary_oarchive.hpp>
+#include <fstream>
 
 #include <ImfRgbaFile.h>
 #include <ImfStringAttribute.h>
@@ -143,8 +149,29 @@ readRgba1 (const char fileName[],
   file.readPixels (dw.min.y, dw.max.y);
   }
 
+void SaveScene(intrusive_ptr<Scene> ip_scene, std::string ip_filename)
+  {
+  std::ofstream ofs(ip_filename.c_str(), std::ios::binary);
+  boost::archive::binary_oarchive oa(ofs);
+
+  oa << ip_scene;
+  }
+
+intrusive_ptr<Scene> LoadScene(std::string ip_filename)
+  {
+  std::ifstream ifs(ip_filename.c_str(), std::ios::binary);
+  boost::archive::binary_iarchive ia(ifs);
+
+  intrusive_ptr<Scene> p_scene;
+  ia >> p_scene;
+  return p_scene;
+  }
+
 inline void TestTracer::LoadMesh()
   {
+  mp_scene = LoadScene("scene3.dat");
+  return;
+
   std::vector<intrusive_ptr<const Primitive> > primitives;
 /*
   intrusive_ptr<const Primitive> p_primitive = LoadDiffusePrimitive("sponza/sponza.stl", false, Spectrum_d(100,100,100)/255.0);
@@ -230,18 +257,22 @@ inline void TestTracer::LoadMesh()
   BMP Input;
   Input.ReadFromFile("mendeleev.bmp");
 
-  std::vector<std::vector<Spectrum_f> > values(Input.TellHeight(),std::vector<Spectrum_f>(Input.TellWidth()));
+  std::vector<std::vector<RGB24> > values(Input.TellHeight(),std::vector<RGB24>(Input.TellWidth()));
   for( int j=0 ; j < Input.TellHeight() ; j++)
     {
     for( int i=0 ; i < Input.TellWidth() ; i++)
       {
-      values[j][i]=Spectrum_f(Input(i,j)->Red,Input(i,j)->Green,Input(i,j)->Blue)*1.0;
-      values[j][i] *= 0.5/255.0;
+      RGB24 rgb;
+      rgb.m_rgb[0]=Input(i,j)->Red;
+      rgb.m_rgb[1]=Input(i,j)->Green;
+      rgb.m_rgb[2]=Input(i,j)->Blue;
+      values[j][i]=rgb;
       }
     }
+  intrusive_ptr<ImageSource<Spectrum_f> > p_image_source( new RGB24SpectrumImageSource<float>(values, 1.0/255.0) );
 
   intrusive_ptr<Mapping2D> p_mapping( new UVMapping2D() );
-  intrusive_ptr< ImageTexture<Spectrum_f,Spectrum_d> > p_text(new ImageTexture<Spectrum_f,Spectrum_d>(values, p_mapping) );
+  intrusive_ptr< ImageTexture<Spectrum_f,Spectrum_d> > p_text(new ImageTexture<Spectrum_f,Spectrum_d>(p_image_source, p_mapping) );
 
   /////// Add primitive 1 ///
     {
@@ -268,8 +299,8 @@ inline void TestTracer::LoadMesh()
     {
     std::vector<Point3D_f> vertices;
     std::vector<MeshTriangle> triangles;
-    vertices.push_back(Point3D_f(-5,0,4.7));vertices.push_back(Point3D_f(5,0,4.7));
-    vertices.push_back(Point3D_f(5,10,4.7));vertices.push_back(Point3D_f(-5,10,4.7));
+    vertices.push_back(Point3D_f(-5.f,0.f,4.7f));vertices.push_back(Point3D_f(5.f,0.f,4.7f));
+    vertices.push_back(Point3D_f(5.f,10.f,4.7f));vertices.push_back(Point3D_f(-5.f,10.f,4.7f));
     triangles.push_back(MeshTriangle(0,1,2));triangles.push_back(MeshTriangle(2,3,0));
     intrusive_ptr<TriangleMesh> p_ground_mesh = intrusive_ptr<TriangleMesh>( new TriangleMesh(vertices, triangles, true) );
 
@@ -308,13 +339,10 @@ inline void TestTracer::LoadMesh()
     Imf::Array2D<Imf::Rgba> image(height, width);
     readRgba1("env_lights/DH041LL.exr", image, width, height);
 
-    std::vector<std::vector<Spectrum_f> > values(height, std::vector<Spectrum_f>(width));
-    for( int j=0 ; j < height ; j++)
-      for( int i=0 ; i < width ; i++)
-        values[j][i] = 8*Spectrum_f(static_cast<float>(image[j][i].r), static_cast<float>(image[j][i].g), static_cast<float>(image[j][i].b));
+    intrusive_ptr<ImageSource<Spectrum_f> > p_env_light_image_source( new OpenEXRRgbaSpectrumImageSource<float>(image, width, height, 8.0) );
 
     tbb::tick_count t0 = tbb::tick_count::now();
-    intrusive_ptr<InfiniteLightSource> p_inf_light( new ImageEnvironmentalLight(bbox, Transform(), values) );
+    intrusive_ptr<InfiniteLightSource> p_inf_light( new ImageEnvironmentalLight(bbox, Transform(), p_env_light_image_source) );
     tbb::tick_count t1 = tbb::tick_count::now();
     printf("Creating light: %lf\n", (t1-t0).seconds());
 
@@ -334,6 +362,8 @@ inline void TestTracer::LoadMesh()
     BBox3D_d(Point3D_d(0.01,0.01,0.51),Point3D_d(1.99,1.99,1.29)), Spectrum_d(0), Spectrum_d(3), Spectrum_d(20), p_phase_funct, densities) );
 
   mp_scene.reset(new Scene(primitives, p_volume, lights));
+
+  SaveScene(mp_scene, "scene3.dat");
   }
 
 inline void TestTracer::RenderImage()

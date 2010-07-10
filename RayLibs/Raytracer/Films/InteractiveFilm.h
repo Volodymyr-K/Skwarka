@@ -75,8 +75,8 @@ class InteractiveFilm: public Film
 
     /**
     * Gets cropping window for the film.
-    * @param out o_begin Left lower corner of the crop window. Will be in [0;m_x_resolution] x [0;m_y_resolution] range. Will be lesser or equal than o_end in both dimensions.
-    * @param out o_end Right upper corner of the crop window. Will be in [0;m_x_resolution] x [0;m_y_resolution] range. Will be higher or equal than o_begin in both dimensions.
+    * @param o_begin out Left lower corner of the crop window. Will be in [0;m_x_resolution] x [0;m_y_resolution] range. Will be lesser or equal than o_end in both dimensions.
+    * @param o_end out Right upper corner of the crop window. Will be in [0;m_x_resolution] x [0;m_y_resolution] range. Will be higher or equal than o_begin in both dimensions.
     */
     void GetCropWindow(Point2D_i &o_begin, Point2D_i &o_end) const;
 

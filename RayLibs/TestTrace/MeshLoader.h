@@ -179,7 +179,7 @@ intrusive_ptr<TriangleMesh> LoadMeshFromPbrt(std::string i_vertices_filename, st
   if (uniq.find(std::make_pair(std::make_pair(x,y),z))==uniq.end())
   {
   uniq[std::make_pair(std::make_pair(x,y),z)]=vertices.size()-1;
-  repl.push_back(vertices.size()-1);
+  repl.push_back( (size_t)(vertices.size()-1) );
   }
   else
   {
