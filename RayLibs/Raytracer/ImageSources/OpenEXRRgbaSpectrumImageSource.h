@@ -139,6 +139,7 @@ void OpenEXRRgbaSpectrumImageSource<T>::serialize(Archive &i_ar, const unsigned 
 typedef OpenEXRRgbaSpectrumImageSource<float> OpenEXRRgbaSpectrumImageSource_float;
 typedef OpenEXRRgbaSpectrumImageSource<double> OpenEXRRgbaSpectrumImageSource_double;
 
+#include <boost/serialization/export.hpp>
 BOOST_CLASS_EXPORT(OpenEXRRgbaSpectrumImageSource_float)
 BOOST_CLASS_EXPORT(OpenEXRRgbaSpectrumImageSource_double)
 

@@ -134,6 +134,7 @@ void serialize(Archive &i_ar, DiffuseAreaLightSource &i_light, const unsigned in
   }
 
 // Register the derived class in the boost serialization framework.
+#include <boost/serialization/export.hpp>
 BOOST_CLASS_EXPORT(DiffuseAreaLightSource)
 
 #endif // DIFFUSE_AREA_LIGHT_SOURCE_H

@@ -83,6 +83,7 @@ void serialize(Archive &i_ar, Matte &i_material, const unsigned int i_version)
   }
 
 // Register the derived class in the boost serialization framework.
+#include <boost/serialization/export.hpp>
 BOOST_CLASS_EXPORT(Matte)
 
 #endif // MATTE_H

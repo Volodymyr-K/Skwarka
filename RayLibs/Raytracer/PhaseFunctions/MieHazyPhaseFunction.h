@@ -38,6 +38,7 @@ void serialize(Archive &i_ar, MieHazyPhaseFunction &i_phase_function, const unsi
   }
 
 // Register the derived class in the boost serialization framework.
+#include <boost/serialization/export.hpp>
 BOOST_CLASS_EXPORT(MieHazyPhaseFunction)
 
 #endif // MIE_HAZY_PHASE_FUNCTION_H

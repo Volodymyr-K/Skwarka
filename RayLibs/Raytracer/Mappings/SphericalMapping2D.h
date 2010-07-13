@@ -164,6 +164,7 @@ void serialize(Archive &i_ar, SphericalMapping2D &i_mapping, const unsigned int 
   }
 
 // Register the derived class in the boost serialization framework.
+#include <boost/serialization/export.hpp>
 BOOST_CLASS_EXPORT(SphericalMapping2D)
 
 #endif // SPHERICAL_MAPPING_2D_H

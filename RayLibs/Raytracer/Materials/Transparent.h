@@ -87,6 +87,7 @@ void serialize(Archive &i_ar, Transparent &i_material, const unsigned int i_vers
   }
 
 // Register the derived class in the boost serialization framework.
+#include <boost/serialization/export.hpp>
 BOOST_CLASS_EXPORT(Transparent)
 
 #endif // TRANSPARENT_H

@@ -84,6 +84,7 @@ typedef ConstantTexture<Spectrum_d> ConstantTexture_Spectrum_d;
 typedef ConstantTexture<float> ConstantTexture_float;
 typedef ConstantTexture<double> ConstantTexture_double;
 
+#include <boost/serialization/export.hpp>
 BOOST_CLASS_EXPORT(ConstantTexture_Spectrum_f)
 BOOST_CLASS_EXPORT(ConstantTexture_Spectrum_d)
 BOOST_CLASS_EXPORT(ConstantTexture_float)

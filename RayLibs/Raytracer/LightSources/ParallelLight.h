@@ -110,6 +110,7 @@ void serialize(Archive &i_ar, ParallelLight &i_light, const unsigned int i_versi
   }
 
 // Register the derived class in the boost serialization framework.
+#include <boost/serialization/export.hpp>
 BOOST_CLASS_EXPORT(ParallelLight)
 
 #endif // POINT_LIGHT_H

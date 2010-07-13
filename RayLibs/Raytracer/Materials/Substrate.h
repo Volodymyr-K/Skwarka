@@ -90,6 +90,7 @@ void serialize(Archive &i_ar, Substrate &i_material, const unsigned int i_versio
   }
 
 // Register the derived class in the boost serialization framework.
+#include <boost/serialization/export.hpp>
 BOOST_CLASS_EXPORT(Substrate)
 
 #endif // SUBSTRATE_H

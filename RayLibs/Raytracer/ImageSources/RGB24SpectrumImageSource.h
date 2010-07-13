@@ -138,6 +138,7 @@ void RGB24SpectrumImageSource<T>::serialize(Archive &i_ar, const unsigned int i_
 typedef RGB24SpectrumImageSource<float> RGB24SpectrumImageSource_float;
 typedef RGB24SpectrumImageSource<double> RGB24SpectrumImageSource_double;
 
+#include <boost/serialization/export.hpp>
 BOOST_CLASS_EXPORT(RGB24SpectrumImageSource_float)
 BOOST_CLASS_EXPORT(RGB24SpectrumImageSource_double)
 
