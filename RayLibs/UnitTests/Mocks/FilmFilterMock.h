@@ -10,11 +10,11 @@ Always generates the same value (just like box filter).
 class FilmFilterMock: public FilmFilter
   {
   public:
-    FilmFilterMock(const double &i_x_width, const double &i_y_width) : FilmFilter(i_x_width, i_y_width)
+    FilmFilterMock(double i_x_width, double i_y_width) : FilmFilter(i_x_width, i_y_width)
       {
       }
 
-    double Evaluate(const double &i_x, const double &i_y) const
+    double Evaluate(double i_x, double i_y) const
       {
       if (i_x<-GetXWidth() || i_x>GetXWidth() || i_y<-GetYWidth() || i_y>GetYWidth())
         return 0.0;

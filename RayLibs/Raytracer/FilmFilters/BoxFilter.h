@@ -9,12 +9,12 @@
 class BoxFilter: public FilmFilter
   {
   public:
-    BoxFilter(const double &i_x_width, const double &i_y_width);
+    BoxFilter(double i_x_width, double i_y_width);
 
     /**
     * Returns value 1.0 everywhere inside the filter's width.
     */
-    double Evaluate(const double &i_x, const double &i_y) const;
+    double Evaluate(double i_x, double i_y) const;
   };
 
 /////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
@@ -40,8 +40,10 @@ template<class Archive>
 void load_construct_data(Archive &i_ar, BoxFilter *ip_filter, const unsigned int i_version)
   {
   double x_width, y_width;
+
   i_ar >> x_width;
   i_ar >> y_width;
+
   ::new(ip_filter)BoxFilter(x_width, y_width);
   }
 

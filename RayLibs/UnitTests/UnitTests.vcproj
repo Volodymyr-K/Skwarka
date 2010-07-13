@@ -348,6 +348,10 @@
 						RelativePath=".\MainTests\Raytracer\FilmFilters\BoxFilter.test.h"
 						>
 					</File>
+					<File
+						RelativePath=".\MainTests\Raytracer\FilmFilters\MitchellFilter.test.h"
+						>
+					</File>
 				</Filter>
 				<Filter
 					Name="Samplers"
@@ -808,6 +812,14 @@
 			</File>
 			<File
 				RelativePath=".\MIPMap.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\MitchellFilter.Serialization.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\MitchellFilter.test.cpp"
 				>
 			</File>
 			<File
@@ -1404,6 +1416,10 @@
 					>
 					<File
 						RelativePath=".\SerializationTests\Raytracer\FilmFilters\BoxFilter.Serialization.test.h"
+						>
+					</File>
+					<File
+						RelativePath=".\SerializationTests\Raytracer\FilmFilters\MitchellFilter.Serialization.test.h"
 						>
 					</File>
 				</Filter>

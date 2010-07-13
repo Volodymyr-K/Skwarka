@@ -15,7 +15,7 @@ class FilmFilter: public ReferenceCounted
     /**
     * Returns the filter value for the specified X and Y coordinates.
     */
-    virtual double Evaluate(const double &i_x, const double &i_y) const = 0;
+    virtual double Evaluate(double i_x, double i_y) const = 0;
 
     /**
     * Returns the maximum X coordinate for which the function is not zero.
@@ -30,7 +30,7 @@ class FilmFilter: public ReferenceCounted
     virtual ~FilmFilter() {}
 
   protected:
-    FilmFilter(const double &i_x_width, const double &i_y_width);
+    FilmFilter(double i_x_width, double i_y_width);
 
   private:
     // Not implemented, not a value type.

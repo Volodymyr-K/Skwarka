@@ -369,12 +369,20 @@
 					RelativePath=".\FilmFilters\BoxFilter.h"
 					>
 				</File>
+				<File
+					RelativePath=".\FilmFilters\MitchellFilter.h"
+					>
+				</File>
 			</Filter>
 			<Filter
 				Name="Source Files"
 				>
 				<File
 					RelativePath=".\FilmFilters\BoxFilter.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\FilmFilters\MitchellFilter.cpp"
 					>
 				</File>
 			</Filter>
