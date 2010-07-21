@@ -6,6 +6,7 @@
 #include <Raytracer/Core/TriangleMesh.h>
 #include <Raytracer/Core/DifferentialGeometry.h>
 #include <UnitTests/TestHelpers/TriangleMeshTestHelper.h>
+#include <Math/ThreadSafeRandom.h>
 #include <vector>
 
 class TriangleMeshTestSuite : public CxxTest::TestSuite
@@ -261,6 +262,107 @@ class TriangleMeshTestSuite : public CxxTest::TestSuite
       theoretical_shading_normal.Normalize();
       
       CustomAssertDelta(dg.m_shading_normal, theoretical_shading_normal, (1e-6));
+      }
+
+    // Test user-provided shading normals.
+    void test_TriangleMesh_CustomShadingNormals()
+      {
+      std::vector<Point3D_f> vertices(4);
+      std::vector<MeshTriangle> triangles(4);
+
+      double base_radius = sqrt(8.0)/3.0;
+      vertices[0]=Point3D_f(0.f, 0.f, 1.f);
+      vertices[1]=Point3D_f((float) base_radius,  0.f, -1.f/3.f);
+      vertices[2]=Point3D_f((float) (base_radius*cos(2.0*M_PI_3)), (float) ( base_radius*sin(2.0*M_PI_3)), -1.f/3.f);
+      vertices[3]=Point3D_f((float) (base_radius*cos(2.0*M_PI_3)), (float) (-base_radius*sin(2.0*M_PI_3)), -1.f/3.f);
+
+      triangles[0]=MeshTriangle(1,3,2);
+      triangles[1]=MeshTriangle(1,0,3);
+      triangles[2]=MeshTriangle(1,2,0);
+      triangles[3]=MeshTriangle(0,2,3);
+
+      // All normals point "inside" to the center, it is not necessarily to normalize them.
+      std::vector<Vector3D_f> normals(4);
+      normals[0]=Vector3D_f(vertices[0])*(-1.0);
+      normals[1]=Vector3D_f(vertices[1])*(-1.0);
+      normals[2]=Vector3D_f(vertices[2])*(-1.0);
+      normals[3]=Vector3D_f(vertices[3])*(-1.0);
+      intrusive_ptr<TriangleMesh> p_mesh(new TriangleMesh(vertices, triangles, normals, std::vector<Vector3D_f>(), true, false));
+
+      Point3D_d origin(0.5,-0.5,-10.0);
+      Vector3D_d direction = Vector3D_d(Convert<double>(p_mesh->GetVertex(1)) - origin).Normalized();
+      RayDifferential ray(Ray(origin,direction));
+
+      DifferentialGeometry dg;
+      p_mesh->ComputeDifferentialGeometry(0,ray,dg);     
+
+      Vector3D_d theoretical_shading_normal = Vector3D_d(dg.m_point).Normalized()*(-1.0);
+      CustomAssertDelta(dg.m_shading_normal, theoretical_shading_normal, (1e-6));
+
+      p_mesh->SetInvertNormals(true);
+      p_mesh->ComputeDifferentialGeometry(0,ray,dg);     
+      CustomAssertDelta(dg.m_shading_normal, theoretical_shading_normal*(-1.0), (1e-6));
+      }
+
+    // Test that custom tangent vectors are correctly computed by ComputeDifferentialGeometry() method.
+    void test_TriangleMesh_CustomTangentVectors()
+      {
+      std::vector<Point3D_f> vertices(4);
+      std::vector<MeshTriangle> triangles(4);
+
+      double base_radius = sqrt(8.0)/3.0;
+      vertices[0]=Point3D_f(0.f, 0.f, 1.f);
+      vertices[1]=Point3D_f((float) base_radius,  0.f, -1.f/3.f);
+      vertices[2]=Point3D_f((float) (base_radius*cos(2.0*M_PI_3)), (float) ( base_radius*sin(2.0*M_PI_3)), -1.f/3.f);
+      vertices[3]=Point3D_f((float) (base_radius*cos(2.0*M_PI_3)), (float) (-base_radius*sin(2.0*M_PI_3)), -1.f/3.f);
+
+      triangles[0]=MeshTriangle(1,3,2);
+      triangles[1]=MeshTriangle(1,0,3);
+      triangles[2]=MeshTriangle(1,2,0);
+      triangles[3]=MeshTriangle(0,2,3);
+
+      // All tangents are perpendicular to vector (1,1,1).
+      std::vector<Vector3D_f> tangents(4);
+      tangents[0]=(Vector3D_f(vertices[0])^Vector3D_f(1,1,1)).Normalized();
+      tangents[1]=(Vector3D_f(vertices[1])^Vector3D_f(1,1,1)).Normalized();
+      tangents[2]=(Vector3D_f(vertices[2])^Vector3D_f(1,1,1)).Normalized();
+      tangents[3]=(Vector3D_f(vertices[3])^Vector3D_f(1,1,1)).Normalized();
+      intrusive_ptr<TriangleMesh> p_mesh(new TriangleMesh(vertices, triangles, std::vector<Vector3D_f>(), tangents, true, false));
+
+      Point3D_d origin(0.5,-0.5,-10.0);
+      Vector3D_d direction = Vector3D_d(Convert<double>(p_mesh->GetVertex(1)+p_mesh->GetVertex(2)+p_mesh->GetVertex(3))/3.0 - origin).Normalized();
+      RayDifferential ray(Ray(origin,direction));
+
+      DifferentialGeometry dg;
+      p_mesh->ComputeDifferentialGeometry(0,ray,dg);
+
+      Vector3D_d theoretical_tangent = Convert<double>(tangents[1]+tangents[2]+tangents[3]);
+      theoretical_tangent = ((dg.m_shading_normal^theoretical_tangent)^dg.m_shading_normal).Normalized();
+      CustomAssertDelta(dg.m_tangent, theoretical_tangent, (1e-6));
+      }
+
+    void test_TriangleMesh_UVTangentVectors()
+      {
+      intrusive_ptr<TriangleMesh> p_mesh( TriangleMeshHelper::ConstructSphere(Point3D_d(), 1.0, 7) );
+
+      size_t triangle_index=123;
+      Point3D_d vertices[3] =
+        {
+        Convert<double>(p_mesh->GetVertex(p_mesh->GetTriangle(triangle_index).m_vertices[0])),
+        Convert<double>(p_mesh->GetVertex(p_mesh->GetTriangle(triangle_index).m_vertices[1])),
+        Convert<double>(p_mesh->GetVertex(p_mesh->GetTriangle(triangle_index).m_vertices[2]))
+        };
+
+      Vector3D_d direction = Convert<double>(p_mesh->GetTriangleNormal(triangle_index))*(-1.0);
+      Point3D_d origin = (vertices[0]+vertices[1]+vertices[2])/3.0 - direction;
+      RayDifferential ray(Ray(origin,direction));
+
+      DifferentialGeometry dg;
+      p_mesh->ComputeDifferentialGeometry(triangle_index,ray,dg);
+
+      // Tangent vector should have z-component equal to zero because U-isolines for sphere are parallel to XY-plane.
+      TS_ASSERT(dg.m_tangent.IsNormalized());
+      TS_ASSERT_DELTA(dg.m_tangent[2], 0.0, 0.001);
       }
   };
 

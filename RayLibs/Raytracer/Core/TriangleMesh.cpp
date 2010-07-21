@@ -1,6 +1,7 @@
 #include "TriangleMesh.h"
 #include <queue>
 #include <algorithm>
+#include <Math/MathRoutines.h>
 
 //////////////// ConnectivityData  ////////////////
 
@@ -130,13 +131,35 @@ bool TriangleMesh::IllegalTrianglePredicate::operator()(const MeshTriangle &i_tr
 
 /////////////// TriangleMesh ////////////////
 
-TriangleMesh::TriangleMesh(const std::vector<Point3D_f> &i_vertices, const std::vector<MeshTriangle> &i_triangles, bool i_use_shading_normals, bool i_invert_normals):
+TriangleMesh::TriangleMesh(const std::vector<Point3D_f> &i_vertices, const std::vector<MeshTriangle> &i_triangles,
+                           bool i_use_shading_normals, bool i_invert_normals):
 m_vertices(i_vertices.begin(),i_vertices.end()),
 m_triangles(i_triangles.begin(), i_triangles.end()),
 m_use_shading_normals(i_use_shading_normals),
 m_invert_normals(i_invert_normals),
 m_topology_info_computed(false)
   {
+  _Initialize(i_vertices, i_triangles, std::vector<Vector3D_f>(), std::vector<Vector3D_f>());
+  }
+
+TriangleMesh::TriangleMesh(const std::vector<Point3D_f> &i_vertices, const std::vector<MeshTriangle> &i_triangles,
+                           const std::vector<Vector3D_f> &i_shading_normals, const std::vector<Vector3D_f> &i_tangents,
+                           bool i_use_shading_normals, bool i_invert_normals):
+m_vertices(i_vertices.begin(),i_vertices.end()),
+m_triangles(i_triangles.begin(), i_triangles.end()),
+m_use_shading_normals(i_use_shading_normals),
+m_invert_normals(i_invert_normals),
+m_topology_info_computed(false)
+  {
+  _Initialize(i_vertices, i_triangles, i_shading_normals, i_tangents);
+  }
+
+void TriangleMesh::_Initialize(const std::vector<Point3D_f> &i_vertices, const std::vector<MeshTriangle> &i_triangles,
+                           const std::vector<Vector3D_f> &i_shading_normals, const std::vector<Vector3D_f> &i_tangents)
+  {
+  ASSERT(i_shading_normals.empty() || i_shading_normals.size()==i_vertices.size());
+  ASSERT(i_tangents.empty() || i_tangents.size()==i_vertices.size());
+
   bool invalid_triangles_exist=false;
   for(size_t i=0;i<m_triangles.size();++i)
     {
@@ -151,7 +174,7 @@ m_topology_info_computed(false)
     // Skip degenerated triangles.
     if (triangle.m_vertices[0] == triangle.m_vertices[1] || triangle.m_vertices[0] == triangle.m_vertices[2] || triangle.m_vertices[1] == triangle.m_vertices[2])
       {
-	  ASSERT(0 && "TriangleMesh has degenerated triangles. Skipping such triangles.");
+      ASSERT(0 && "TriangleMesh has degenerated triangles. Skipping such triangles.");
       invalid_triangles_exist=true;
       break;
       }
@@ -184,11 +207,32 @@ m_topology_info_computed(false)
       }
     }
 
-  // We don't store the connectivity info as a data member because it is takes a lot of memory and is not used once the mesh is constructed.
-  // Instead, it is passed by a reference to all the methods that need it.
-  ConnectivityData connectivity;
-  _BuildConnectivityData(connectivity);
-  _ComputeShadingNormals(connectivity);
+  if (i_shading_normals.size() == m_vertices.size())
+    {
+    m_shading_normals.resize(i_shading_normals.size());
+    for(size_t i=0;i<i_shading_normals.size();++i)
+      m_shading_normals[i] = i_shading_normals[i].Normalized();
+    }
+  else
+    {
+    // We don't store the connectivity info as a data member because it takes a lot of memory and is not used after the mesh is constructed.
+    // Instead, it is passed by a reference to all the methods that need it.
+    ConnectivityData connectivity;
+    _BuildConnectivityData(connectivity);
+    _ComputeShadingNormals(connectivity);
+    }
+
+  if (i_tangents.size() == m_vertices.size())
+    {
+    m_tangents.resize(i_tangents.size());
+    for(size_t i=0;i<i_tangents.size();++i)
+      m_tangents[i] = i_tangents[i].Normalized();
+    }
+
+  // Assign dummy values otherwise the boost serialization engine will complain.
+  m_topology_info.m_manifold=false;
+  m_topology_info.m_number_of_patches=false;
+  m_topology_info.m_solid=false;
   }
 
 /**
@@ -433,13 +477,13 @@ void TriangleMesh::ComputeDifferentialGeometry(size_t i_triangle_index, const Ra
 
   if (m_invert_normals)
     {
-    o_dg.m_geometric_normal=Vector3D_d(vertices[2]-vertices[0])^Vector3D_d(vertices[1]-vertices[0]);
+    o_dg.m_geometric_normal = Vector3D_d(vertices[2]-vertices[0])^Vector3D_d(vertices[1]-vertices[0]);
     vertex_normals[0] *= -1.0;
     vertex_normals[1] *= -1.0;
     vertex_normals[2] *= -1.0;
     }
   else
-    o_dg.m_geometric_normal=Vector3D_d(vertices[1]-vertices[0])^Vector3D_d(vertices[2]-vertices[0]);
+    o_dg.m_geometric_normal = Vector3D_d(vertices[1]-vertices[0])^Vector3D_d(vertices[2]-vertices[0]);
 
   o_dg.m_geometric_normal.Normalize();
 
@@ -451,6 +495,41 @@ void TriangleMesh::ComputeDifferentialGeometry(size_t i_triangle_index, const Ra
     }
   else
     o_dg.m_shading_normal=o_dg.m_geometric_normal;
+
+  // Compute tangent vector.
+  Vector3D_d tangent;
+  if (m_tangents.empty() == false)
+    {
+    tangent =
+      b0*Convert<double>(m_tangents[triangle.m_vertices[0]])+
+      b1*Convert<double>(m_tangents[triangle.m_vertices[1]])+
+      b2*Convert<double>(m_tangents[triangle.m_vertices[2]]);
+    }
+  else
+    {
+    // Compute deltas for triangle partial derivatives.
+    double du1 = uv[0][0] - uv[2][0];
+    double du2 = uv[1][0] - uv[2][0];
+    double dv1 = uv[0][1] - uv[2][1];
+    double dv2 = uv[1][1] - uv[2][1];
+
+    double determinant = du1*dv2 - dv1*du2;
+    if (fabs(determinant) < DBL_EPS)
+      {
+      // Handle zero determinant for triangle partial derivative matrix.
+      Vector3D_d dummy;
+      MathRoutines::CoordinateSystem(o_dg.m_shading_normal, tangent, dummy);
+      }
+    else
+      tangent = (dv2*Vector3D_d(vertices[0]-vertices[2]) - dv1*Vector3D_d(vertices[1]-vertices[2])) / determinant;
+    }
+
+  // Make the tangent vector perpendicular to the shading normal and normalize it.
+  Vector3D_d tangent2 = (o_dg.m_shading_normal^tangent);
+  if (tangent2.LengthSqr() > DBL_EPS)
+    o_dg.m_tangent = (tangent2 ^ o_dg.m_shading_normal).Normalized();
+  else
+    MathRoutines::CoordinateSystem(o_dg.m_shading_normal, tangent, tangent2);
 
   // Compute screen-space differentials.
   double b0_x,b1_x,b2_x,t_x;

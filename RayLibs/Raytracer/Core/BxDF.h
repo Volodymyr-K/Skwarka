@@ -45,8 +45,6 @@ bool IsSpecular(BxDFType i_type);
 * An abstract class defining the contract for all BRDF and BTDF implementations (hence the name BxDF).
 * The class provides methods to compute the BxDF value for a given incident and exitant directions, sample BxDF value for
 * an incident direction and compute total hemisphere scattering.
-* All BxDF implementation are assumed to be isotropic in the sense that their properties only depend on the mutual location of
-* incident and exitant directions and do not change if both vectors are rotated around the normal simultaneously.
 *
 * A subtle thing that needs to be followed by the implementations is related to the difference between geometric and shading normals.
 * To avoid "light leaks" and "dark spots" Evaluate() method should not check for the correct hemisphere and should return

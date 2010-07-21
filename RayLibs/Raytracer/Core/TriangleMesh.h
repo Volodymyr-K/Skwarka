@@ -55,14 +55,34 @@ struct MeshTriangle
 class TriangleMesh: public ReferenceCounted
   {
   public:
+
     /**
     * Creates TriangleMesh instance with the given set of triangles and vertices.
+    * Shading normals will be interpolated from geometric normals.
+    * Tangent vectors, which are used as "base" directions for anisotropic material properties, will be computed from UV coordinates (as tangents to U-isolines).
     * @param i_vertices Vertices coordinates.
     * @param i_triangles Mesh triangles.
-    * @param i_use_shading_normals true if normals need to be interpolated inside the triangles.
-    * @param i_invert_normals true if triangle normals need to be inverted.
+    * @param i_use_shading_normals Defines if shading normals should be used for computing DifferentialGeometry. If false, geometric normals will be used instead.
+    * @param i_invert_normals Defines if triangle normals need to be inverted.
     */
-    TriangleMesh(const std::vector<Point3D_f> &i_vertices, const std::vector<MeshTriangle> &i_triangles, bool i_use_shading_normals=true, bool i_invert_normals=false);
+    TriangleMesh(const std::vector<Point3D_f> &i_vertices, const std::vector<MeshTriangle> &i_triangles,
+      bool i_use_shading_normals=true, bool i_invert_normals=false);
+
+    /**
+    * Creates TriangleMesh instance with the given set of triangles and vertices and (optionally) shading and tangent normals.
+    * If shading normals are not specified they will be interpolated from geometric normals.
+    * Tangent vectors are used as "base" directions for anisotropic material properties. If the tangent vectors are not specified they will be
+    * computed from UV coordinates (as tangents to U-isolines).
+    * @param i_vertices Vertices coordinates.
+    * @param i_triangles Mesh triangles.
+    * @param i_shading_normals Vector of shading normals. Should be either empty or have the same size that i_vertices has. Vectors are not required to be normaized.
+    * @param i_tangents Vector of tangent directions. Should be either empty or have the same size that i_vertices has. Vectors are not required to be normaized.
+    * @param i_use_shading_normals Defines if shading normals should be used for computing DifferentialGeometry. If false, geometric normals will be used instead.
+    * @param i_invert_normals Defines if triangle normals need to be inverted.
+    */
+    TriangleMesh(const std::vector<Point3D_f> &i_vertices, const std::vector<MeshTriangle> &i_triangles,
+      const std::vector<Vector3D_f> &i_shading_normals, const std::vector<Vector3D_f> &i_tangents,
+      bool i_use_shading_normals=true, bool i_invert_normals=false);
 
     /**
     * Sets whether the normals should be interpolated inside the triangles.
@@ -127,6 +147,9 @@ class TriangleMesh: public ReferenceCounted
     TriangleMesh(const TriangleMesh&);
     TriangleMesh &operator=(const TriangleMesh&);
 
+    void _Initialize(const std::vector<Point3D_f> &i_vertices, const std::vector<MeshTriangle> &i_triangles,
+      const std::vector<Vector3D_f> &i_shading_normals, const std::vector<Vector3D_f> &i_tangents);
+
     void _ComputeShadingNormals(const ConnectivityData &i_connectivity);
     bool _ConsistentlyOriented(size_t i_triangle_index1, size_t i_triangle_index2) const;
     bool _ComputeIntersectionPoint(const Point3D_d i_vertices[3], const Point3D_d &i_origin, const Vector3D_d &i_direction, double &o_b1, double &o_b2, double &o_t) const;
@@ -146,7 +169,7 @@ class TriangleMesh: public ReferenceCounted
   private:
     std::vector<Point3D_f> m_vertices;
     std::vector<MeshTriangle> m_triangles;
-    std::vector<Vector3D_f> m_shading_normals;
+    std::vector<Vector3D_f> m_shading_normals, m_tangents;
 
     bool m_use_shading_normals, m_invert_normals;
 
@@ -213,7 +236,7 @@ inline float TriangleMesh::GetArea() const
 template<class Archive>
 void save_construct_data(Archive &i_ar, const TriangleMesh *ip_mesh, const unsigned int i_version)
   {
-  // Nothing to save here really. Everything will be serialzied by the serialize() method.
+  // Nothing to save here really. Everything will be serialized by the serialize() method.
   }
 
 /**
@@ -223,7 +246,7 @@ template<class Archive>
 void load_construct_data(Archive &i_ar, TriangleMesh *ip_mesh, const unsigned int i_version)
   {
   // Just create an empty mesh.
-  ::new(ip_mesh)TriangleMesh(std::vector<Point3D_f>(), std::vector<MeshTriangle>());
+  ::new(ip_mesh)TriangleMesh(std::vector<Point3D_f>(), std::vector<MeshTriangle>(), std::vector<Vector3D_f>(), std::vector<Vector3D_f>());
   }
 
 /**
@@ -237,6 +260,7 @@ void TriangleMesh::serialize(Archive &i_ar, const unsigned int i_version)
   i_ar & m_vertices;
   i_ar & m_triangles;
   i_ar & m_shading_normals;
+  i_ar & m_tangents;
 
   i_ar & m_use_shading_normals;
   i_ar & m_invert_normals;

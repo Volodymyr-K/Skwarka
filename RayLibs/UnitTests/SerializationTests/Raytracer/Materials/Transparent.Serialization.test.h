@@ -45,6 +45,7 @@ class TransparentSerializationTestSuite : public CxxTest::TestSuite
       MemoryPool pool;
       DifferentialGeometry dg;
       dg.m_geometric_normal=dg.m_shading_normal=Vector3D_d(0.0,0.0,1.0);
+      dg.m_tangent=Vector3D_d(1.0,0.0,0.0);
 
       Vector3D_d incident=Vector3D_d(0.5,0.5,0.5).Normalized();
       Vector3D_d exitant1,exitant2;

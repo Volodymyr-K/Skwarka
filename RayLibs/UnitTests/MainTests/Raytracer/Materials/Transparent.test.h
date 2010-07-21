@@ -38,6 +38,7 @@ class TransparentTestSuite : public CxxTest::TestSuite
       MemoryPool pool;
       DifferentialGeometry dg;
       dg.m_geometric_normal=dg.m_shading_normal=Vector3D_d(0.0,0.0,1.0);
+      dg.m_tangent=Vector3D_d(1.0,0.0,0.0);
       const BSDF *p_bsdf = mp_material->GetBSDF(dg, 0, pool);
 
       TS_ASSERT(p_bsdf != NULL);
@@ -51,6 +52,7 @@ class TransparentTestSuite : public CxxTest::TestSuite
       MemoryPool pool;
       DifferentialGeometry dg;
       dg.m_geometric_normal=dg.m_shading_normal=Vector3D_d(0.0,0.0,1.0);
+      dg.m_tangent=Vector3D_d(1.0,0.0,0.0);
       const BSDF *p_bsdf = mp_material->GetBSDF(dg, 0, pool);
 
       TS_ASSERT_EQUALS(p_bsdf->GetRefractiveIndex(), m_refractive_index);
@@ -61,6 +63,7 @@ class TransparentTestSuite : public CxxTest::TestSuite
       MemoryPool pool;
       DifferentialGeometry dg;
       dg.m_geometric_normal=dg.m_shading_normal=Vector3D_d(0.0,0.0,1.0);
+      dg.m_tangent=Vector3D_d(1.0,0.0,0.0);
       const BSDF *p_bsdf = mp_material->GetBSDF(dg, 0, pool);
 
       Vector3D_d incident=Vector3D_d(0.5,0.5,0.5).Normalized();
@@ -82,6 +85,7 @@ class TransparentTestSuite : public CxxTest::TestSuite
       MemoryPool pool;
       DifferentialGeometry dg;
       dg.m_geometric_normal=dg.m_shading_normal=Vector3D_d(0.0,0.0,1.0);
+      dg.m_tangent=Vector3D_d(1.0,0.0,0.0);
       const BSDF *p_bsdf = mp_material->GetBSDF(dg, 0, pool);
 
       Vector3D_d incident=Vector3D_d(0.5,0.5,0.5).Normalized();

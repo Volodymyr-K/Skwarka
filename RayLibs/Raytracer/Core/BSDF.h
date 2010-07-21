@@ -15,8 +15,6 @@
 *
 * The class provides methods to compute the BSDF value for a given incident and exitant directions, sample BSDF value for
 * an incident direction and compute total hemisphere scattering.
-* Similarly to BxDF the BSDF is isotropic in the sense that its properties only depend on the mutual location of
-* incident and exitant directions and do not change if both vectors are rotated around the normal simultaneously.
 *
 * @warning The BSDF has a specific memory management. All BSDFs are allocated in a special memory pool. When the memory is freed
 * the destructor for the BSDF is not called. That means that BSDF is a lightweight class with no resources allocated (e.g. dynamical memory etc.).
@@ -161,7 +159,12 @@ inline BSDF::BSDF(const DifferentialGeometry &i_dg, double i_refractive_index):
 m_normal(i_dg.m_shading_normal), m_geometric_normal(i_dg.m_geometric_normal), m_refractive_index(i_refractive_index), m_BxDFs_num(0)
   {
   ASSERT(i_refractive_index>0.0);
-  MathRoutines::CoordinateSystem(i_dg.m_shading_normal, m_e1, m_e2);
+  m_e1 = i_dg.m_tangent;
+  m_e2 = i_dg.m_shading_normal^i_dg.m_tangent;
+
+  // This should be ensured by the TriangleMesh::ComputeDifferentialGeometry() method.
+  ASSERT(m_normal.IsNormalized());
+  ASSERT(m_e1.IsNormalized() && m_e2.IsNormalized());
   }
 
 inline Vector3D_d BSDF::GetShadingNormal() const

@@ -18,6 +18,7 @@ class BSDFTestSuite : public CxxTest::TestSuite
       {
       DifferentialGeometry dg;
       dg.m_shading_normal=dg.m_geometric_normal=Vector3D_d(0,0,1);
+      dg.m_tangent=Vector3D_d(1,0,0);
       mp_bsdf = shared_ptr<BSDF> (new BSDF(dg));
       }
 
@@ -30,6 +31,7 @@ class BSDFTestSuite : public CxxTest::TestSuite
       {
       DifferentialGeometry dg;
       dg.m_shading_normal=dg.m_shading_normal=Vector3D_d(0,0,1);
+      dg.m_tangent=Vector3D_d(1,0,0);
       BSDF bsdf(dg, 1.4);
 
       TS_ASSERT_EQUALS(bsdf.GetRefractiveIndex(), 1.4);

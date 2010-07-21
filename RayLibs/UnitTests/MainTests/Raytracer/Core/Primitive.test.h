@@ -41,6 +41,7 @@ class PrimitiveTestSuite : public CxxTest::TestSuite
       MemoryPool pool;
       DifferentialGeometry dg;
       dg.m_geometric_normal=dg.m_shading_normal=Vector3D_d(0.0,0.0,1.0);
+      dg.m_tangent=Vector3D_d(1.0,0.0,0.0);
       dg.m_point_dx=Point3D_d(1,0,0);
       dg.m_point_dy=Point3D_d(0,1,0);
 
@@ -59,6 +60,7 @@ class PrimitiveTestSuite : public CxxTest::TestSuite
 
       DifferentialGeometry dg;
       dg.m_geometric_normal=dg.m_shading_normal=Vector3D_d(0.0,0.0,1.0);
+      dg.m_tangent=Vector3D_d(1.0,0.0,0.0);
       dg.m_point_dx=Point3D_d(1,0,0);
       dg.m_point_dy=Point3D_d(0,1,0);
 

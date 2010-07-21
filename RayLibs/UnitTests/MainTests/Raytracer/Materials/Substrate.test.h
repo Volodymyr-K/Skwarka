@@ -29,6 +29,7 @@ class SubstrateTestSuite : public CxxTest::TestSuite
       MemoryPool pool;
       DifferentialGeometry dg;
       dg.m_geometric_normal=dg.m_shading_normal=Vector3D_d(0.0,0.0,1.0);
+      dg.m_tangent=Vector3D_d(1.0,0.0,0.0);
       const BSDF *p_bsdf = p_material->GetBSDF(dg, 0, pool);
 
       TS_ASSERT(p_bsdf != NULL);

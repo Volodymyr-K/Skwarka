@@ -55,6 +55,7 @@ class PrimitiveSerializationTestSuite : public CxxTest::TestSuite
       MemoryPool pool;
       DifferentialGeometry dg;
       dg.m_geometric_normal=dg.m_shading_normal=Vector3D_d(1,0,0);
+      dg.m_tangent=Vector3D_d(0.0,1.0,0.0);
       TS_ASSERT_EQUALS(p_primitive1->GetTriangleMesh()->GetNumberOfVertices(), p_primitive2->GetTriangleMesh()->GetNumberOfVertices());
       TS_ASSERT_EQUALS(p_primitive1->GetAreaLightSource()->Power(), p_primitive2->GetAreaLightSource()->Power());
       TS_ASSERT_EQUALS(p_primitive1->GetMaterial()->GetBSDF(dg,0,pool)->GetComponentsNum(), p_primitive2->GetMaterial()->GetBSDF(dg,0,pool)->GetComponentsNum());

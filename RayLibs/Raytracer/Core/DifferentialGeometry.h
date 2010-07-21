@@ -60,6 +60,11 @@ struct DifferentialGeometry
   * First derivative of UV coordinates at Y screen-space coordinate.
   */
   Vector2D_d m_duv_dy;
+
+  /**
+  * Surface tangential vector. Used to define "base" direction for anisotropic material properties.
+  */
+  Vector3D_d m_tangent;
   };
 
 #endif // DIFFERENTIAL_GEOMETRY_H
