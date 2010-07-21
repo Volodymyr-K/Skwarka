@@ -96,7 +96,7 @@ MeshTriangle::MeshTriangle(size_t i_v1, size_t i_v2, size_t i_v3)
 /////////////// IllegalTrianglesPredicate ////////////////
 
 /**
-* This is a helper predicate class that is used for removing triangles with of-bounds vertex indices.
+* This is a helper predicate class that is used for removing triangles with of-bounds vertex indices and degenerated triangles.
 */
 class TriangleMesh::IllegalTrianglePredicate
   {
@@ -116,9 +116,16 @@ TriangleMesh::IllegalTrianglePredicate::IllegalTrianglePredicate(size_t i_number
 bool TriangleMesh::IllegalTrianglePredicate::operator()(const MeshTriangle &i_triangle) const
   {
   return
+    (
     i_triangle.m_vertices[0] >= m_number_of_vertices ||
     i_triangle.m_vertices[1] >= m_number_of_vertices ||
-    i_triangle.m_vertices[2] >= m_number_of_vertices;
+    i_triangle.m_vertices[2] >= m_number_of_vertices
+    ) ||
+    (
+    i_triangle.m_vertices[0] == i_triangle.m_vertices[1] ||
+    i_triangle.m_vertices[0] == i_triangle.m_vertices[2] ||
+    i_triangle.m_vertices[1] == i_triangle.m_vertices[2]
+    );
   }
 
 /////////////// TriangleMesh ////////////////
@@ -127,7 +134,8 @@ TriangleMesh::TriangleMesh(const std::vector<Point3D_f> &i_vertices, const std::
 m_vertices(i_vertices.begin(),i_vertices.end()),
 m_triangles(i_triangles.begin(), i_triangles.end()),
 m_use_shading_normals(i_use_shading_normals),
-m_invert_normals(i_invert_normals)
+m_invert_normals(i_invert_normals),
+m_topology_info_computed(false)
   {
   bool invalid_triangles_exist=false;
   for(size_t i=0;i<m_triangles.size();++i)
@@ -137,6 +145,15 @@ m_invert_normals(i_invert_normals)
       {
       ASSERT(0 && "TriangleMesh has out of-bounds vertex index. Skipping such triangles.");
       invalid_triangles_exist=true;
+      break;
+      }
+
+    // Skip degenerated triangles.
+    if (triangle.m_vertices[0] == triangle.m_vertices[1] || triangle.m_vertices[0] == triangle.m_vertices[2] || triangle.m_vertices[1] == triangle.m_vertices[2])
+      {
+	  ASSERT(0 && "TriangleMesh has degenerated triangles. Skipping such triangles.");
+      invalid_triangles_exist=true;
+      break;
       }
     }
 
@@ -171,15 +188,13 @@ m_invert_normals(i_invert_normals)
   // Instead, it is passed by a reference to all the methods that need it.
   ConnectivityData connectivity;
   _BuildConnectivityData(connectivity);
-
-  _ComputeTopologyInfo(connectivity);
   _ComputeShadingNormals(connectivity);
   }
 
 /**
 * Populates the specified output parameter with the connectivity data.
 */
-void TriangleMesh::_BuildConnectivityData(ConnectivityData &o_connectivity)
+void TriangleMesh::_BuildConnectivityData(ConnectivityData &o_connectivity) const
   {
   std::vector<size_t> number_of_incident_triangles(m_vertices.size(),0);
   for(size_t i=0;i<m_triangles.size();++i)
@@ -252,10 +267,11 @@ void TriangleMesh::_ComputeShadingNormals(const ConnectivityData &i_connectivity
 * Computes and caches the topology info for the mesh.
 * We use BFS to iterate through all the triangles.
 */
-void TriangleMesh::_ComputeTopologyInfo(const ConnectivityData &i_connectivity)
+TopologyInfo TriangleMesh::_ComputeTopologyInfo(const ConnectivityData &i_connectivity) const
   {
-  m_topology_info.m_solid=true;
-  m_topology_info.m_manifold=true;
+  TopologyInfo topology_info;
+  topology_info.m_solid=true;
+  topology_info.m_manifold=true;
 
   unsigned int number_of_patches = 0;
 
@@ -293,7 +309,7 @@ void TriangleMesh::_ComputeTopologyInfo(const ConnectivityData &i_connectivity)
           for(size_t t=0;t<triangles.size();++t)
             if (triangles[t]!=current_triangle_index)
               if (_ConsistentlyOriented(current_triangle_index,triangles[t])==false)
-                m_topology_info.m_manifold=false;
+                topology_info.m_manifold=false;
               else
                 {
                 ++adjacent_triangles;
@@ -305,17 +321,19 @@ void TriangleMesh::_ComputeTopologyInfo(const ConnectivityData &i_connectivity)
                 }
 
               if (adjacent_triangles==0)
-                m_topology_info.m_solid=false;
+                topology_info.m_solid=false;
               if (adjacent_triangles>1)
-                m_topology_info.m_manifold=false;
+                topology_info.m_manifold=false;
           }
         } // while(qu.empty()==false)
 
       }
 
-    m_topology_info.m_number_of_patches=number_of_patches;
-    if (number_of_patches>1)
-      m_topology_info.m_solid=false;
+  topology_info.m_number_of_patches=number_of_patches;
+  if (number_of_patches>1)
+    topology_info.m_solid=false;
+
+  return topology_info;
   }
 
 /**
@@ -486,4 +504,17 @@ void TriangleMesh::SetInvertNormals(bool i_invert_normals)
 bool TriangleMesh::GetInvertNormals() const
   {
   return m_invert_normals;
+  }
+
+TopologyInfo TriangleMesh::GetTopologyInfo() const
+  {
+  if (m_topology_info_computed==false)
+    {
+    ConnectivityData connectivity;
+    _BuildConnectivityData(connectivity);
+    m_topology_info = _ComputeTopologyInfo(connectivity);
+    m_topology_info_computed = true;
+    }
+
+  return m_topology_info;
   }

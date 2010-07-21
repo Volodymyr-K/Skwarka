@@ -109,6 +109,11 @@ class TriangleMesh: public ReferenceCounted
     */
     float GetArea() const;
 
+    /**
+    * Returns TopologyInfo.
+    * The first time the method is called it computes the TopologyInfo, this can take some time.
+    * The next calls don't recompute the TopologyInfo and just return the cached one.
+    */
     TopologyInfo GetTopologyInfo() const;
 
   private:
@@ -123,12 +128,10 @@ class TriangleMesh: public ReferenceCounted
     TriangleMesh &operator=(const TriangleMesh&);
 
     void _ComputeShadingNormals(const ConnectivityData &i_connectivity);
-    void _ComputeTopologyInfo(const ConnectivityData &i_connectivity);
     bool _ConsistentlyOriented(size_t i_triangle_index1, size_t i_triangle_index2) const;
-
     bool _ComputeIntersectionPoint(const Point3D_d i_vertices[3], const Point3D_d &i_origin, const Vector3D_d &i_direction, double &o_b1, double &o_b2, double &o_t) const;
-
-    void _BuildConnectivityData(ConnectivityData &o_connectivity);
+    void _BuildConnectivityData(ConnectivityData &o_connectivity) const;
+    TopologyInfo _ComputeTopologyInfo(const ConnectivityData &i_connectivity) const;
 
   private:
     // Needed for the boost serialization framework.  
@@ -150,7 +153,8 @@ class TriangleMesh: public ReferenceCounted
     BBox3D_f m_bbox;
     float m_area;
 
-    TopologyInfo m_topology_info;
+    mutable TopologyInfo m_topology_info;
+    mutable bool m_topology_info_computed;
   };
 
 /////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
@@ -203,11 +207,6 @@ inline float TriangleMesh::GetArea() const
   return m_area;
   }
 
-inline TopologyInfo TriangleMesh::GetTopologyInfo() const
-  {
-  return m_topology_info;
-  }
-
 /**
 * Saves the data which is needed to construct TriangleMesh to the specified Archive. This method is used by the boost serialization framework.
 */
@@ -248,6 +247,8 @@ void TriangleMesh::serialize(Archive &i_ar, const unsigned int i_version)
   i_ar & m_topology_info.m_manifold;
   i_ar & m_topology_info.m_number_of_patches;
   i_ar & m_topology_info.m_solid;
+
+  i_ar & m_topology_info_computed;
   }
 
 /**
