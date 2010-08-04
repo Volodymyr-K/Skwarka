@@ -21,7 +21,7 @@ class Renderer: public ReferenceCounted
     * The rendered image will be saved to the camera's film. The film is cleared before rendering, so the previous image will be lost.
     * @param ip_camera Camera in the scene for which the image is to be rendered.
     */
-    virtual void Render(intrusive_ptr<const Camera> ip_camera) const = 0;
+    virtual void Render(intrusive_ptr<const Camera> ip_camera, bool i_low_thread_priority = false) const = 0;
 
     /**
     * Sets callback that will be called periodically to update display with the currently rendered image.

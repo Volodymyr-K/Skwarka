@@ -81,8 +81,9 @@ class PhotonLTEIntegrator: public LTEIntegrator
     * @param i_caustic_photons Minimum number of caustic photons to be stored.
     * @param i_direct_photons Minimum number of direct photons to be stored.
     * @param i_indirect_photons Minimum number of indirect photons to be stored.
+    * @param i_low_thread_priority Specifies OS scheduling priority for tbb threads that perform photons shooting. Use true to set low priority and false for normal priority.
     */
-    void ShootPhotons(size_t i_caustic_photons, size_t i_direct_photons, size_t i_indirect_photons);
+    void ShootPhotons(size_t i_caustic_photons, size_t i_direct_photons, size_t i_indirect_photons, bool i_low_thread_priority = false);
 
   private:
     class PhotonFilter;

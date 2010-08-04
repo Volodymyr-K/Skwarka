@@ -403,7 +403,7 @@ class PhotonLTEIntegrator::PhotonsInputFilter: public tbb::filter
 class PhotonLTEIntegrator::PhotonsShootingFilter: public tbb::filter
   {
   public:
-    PhotonsShootingFilter(const PhotonLTEIntegrator *ip_integrator, intrusive_ptr<const Scene> ip_scene, const std::vector<double> &i_lights_CDF);
+    PhotonsShootingFilter(const PhotonLTEIntegrator *ip_integrator, intrusive_ptr<const Scene> ip_scene, const std::vector<double> &i_lights_CDF, bool i_low_thread_priority);
 
     void* operator()(void* ip_chunk);
 
@@ -411,6 +411,7 @@ class PhotonLTEIntegrator::PhotonsShootingFilter: public tbb::filter
     const PhotonLTEIntegrator *mp_integrator;
     intrusive_ptr<const Scene> mp_scene;
     std::vector<double> m_lights_CDF;
+    bool m_low_thread_priority;
   };
 
 //////////////////////////////////////// PhotonsMergingFilter /////////////////////////////////////////////

@@ -281,7 +281,7 @@ void PhotonLTEIntegrator::_ConstructIrradiancePhotonMap()
     m_max_irradiance_lookup_dist = sqrt(heap[0]);
   }
 
-void PhotonLTEIntegrator::ShootPhotons(size_t i_caustic_photons, size_t i_direct_photons, size_t i_indirect_photons)
+void PhotonLTEIntegrator::ShootPhotons(size_t i_caustic_photons, size_t i_direct_photons, size_t i_indirect_photons, bool i_low_thread_priority)
   {
   mp_caustic_map.reset((KDTree<Photon>*)NULL);
   mp_direct_map.reset((KDTree<Photon>*)NULL);
@@ -297,7 +297,7 @@ void PhotonLTEIntegrator::ShootPhotons(size_t i_caustic_photons, size_t i_direct
   PhotonMaps photon_maps;
 
   PhotonsInputFilter input_filter(&photon_maps, i_caustic_photons, i_direct_photons, i_indirect_photons, MAX_PIPELINE_TOKENS_NUM, 4096);
-  PhotonsShootingFilter shooting_filter(this, mp_scene, lights_CDF);
+  PhotonsShootingFilter shooting_filter(this, mp_scene, lights_CDF, i_low_thread_priority);
   PhotonsMergingFilter merging_filter(&photon_maps);
 
   tbb::pipeline pipeline;

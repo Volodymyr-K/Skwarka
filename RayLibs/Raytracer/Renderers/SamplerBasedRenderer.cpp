@@ -3,6 +3,7 @@
 #include <Math/Constants.h>
 #include <Math/RandomGenerator.h>
 #include <Raytracer/Core/CoreCommon.h>
+#include <Raytracer/Core/CoreUtils.h>
 #include <tbb/pipeline.h>
 #include <vector>
 
@@ -130,7 +131,7 @@ class SamplerBasedRenderer::SamplesGeneratorFilter: public tbb::filter
 class SamplerBasedRenderer::IntegratorFilter: public tbb::filter
   {
   public:
-    IntegratorFilter(intrusive_ptr<const LTEIntegrator> ip_lte_integrator, intrusive_ptr<const Camera> ip_camera, intrusive_ptr<Log> ip_log);
+    IntegratorFilter(intrusive_ptr<const LTEIntegrator> ip_lte_integrator, intrusive_ptr<const Camera> ip_camera, intrusive_ptr<Log> ip_log, bool i_low_thread_priority);
 
     void* operator()(void* ip_chunk);
 
@@ -139,6 +140,7 @@ class SamplerBasedRenderer::IntegratorFilter: public tbb::filter
 
     intrusive_ptr<const Camera> mp_camera;
     intrusive_ptr<Log> mp_log;
+    bool m_low_thread_priority;
   };
 
 /**
@@ -168,7 +170,7 @@ mp_lte_integrator(ip_lte_integrator), mp_sampler(ip_sampler), mp_log(ip_log)
   ASSERT(ip_sampler);
   }
 
-void SamplerBasedRenderer::Render(intrusive_ptr<const Camera> ip_camera) const
+void SamplerBasedRenderer::Render(intrusive_ptr<const Camera> ip_camera, bool i_low_thread_priority) const
   {
   ASSERT(ip_camera);
 
@@ -180,7 +182,7 @@ void SamplerBasedRenderer::Render(intrusive_ptr<const Camera> ip_camera) const
   mp_lte_integrator->RequestSamples(mp_sampler);
 
   SamplesGeneratorFilter samples_generator(mp_sampler, MAX_PIPELINE_TOKENS_NUM, PIXELS_PER_CHUNK);
-  IntegratorFilter integrator(mp_lte_integrator, ip_camera, mp_log);
+  IntegratorFilter integrator(mp_lte_integrator, ip_camera, mp_log, i_low_thread_priority);
   FilmWriterFilter film_writer(ip_camera->GetFilm(), this);
 
   tbb::pipeline pipeline;
@@ -329,8 +331,8 @@ void* SamplerBasedRenderer::SamplesGeneratorFilter::operator()(void*)
 ////////////////////////////////////////// IntegratorFilter ///////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-SamplerBasedRenderer::IntegratorFilter::IntegratorFilter(intrusive_ptr<const LTEIntegrator> ip_lte_integrator, intrusive_ptr<const Camera> ip_camera, intrusive_ptr<Log> ip_log): tbb::filter(parallel),
-mp_lte_integrator(ip_lte_integrator), mp_camera(ip_camera), mp_log(ip_log)
+SamplerBasedRenderer::IntegratorFilter::IntegratorFilter(intrusive_ptr<const LTEIntegrator> ip_lte_integrator, intrusive_ptr<const Camera> ip_camera, intrusive_ptr<Log> ip_log, bool i_low_thread_priority)
+: tbb::filter(parallel), mp_lte_integrator(ip_lte_integrator), mp_camera(ip_camera), mp_log(ip_log), m_low_thread_priority(i_low_thread_priority)
   {
   ASSERT(ip_lte_integrator);
   ASSERT(ip_camera);
@@ -338,6 +340,10 @@ mp_lte_integrator(ip_lte_integrator), mp_camera(ip_camera), mp_log(ip_log)
 
 void* SamplerBasedRenderer::IntegratorFilter::operator()(void* ip_chunk)
   {
+  int prev_thread_priority = 0;
+  if (m_low_thread_priority)
+    prev_thread_priority = CoreUtils::SetThreadPriority(THREAD_PRIORITY_LOWEST);
+
   PixelsChunk *p_chunk = static_cast<PixelsChunk*>(ip_chunk);
   MemoryPool *p_pool = p_chunk->GetMemoryPool();
 
@@ -400,6 +406,8 @@ void* SamplerBasedRenderer::IntegratorFilter::operator()(void* ip_chunk)
     p_pool->FreeAll();
     }
 
+  if (m_low_thread_priority)
+    CoreUtils::SetThreadPriority(prev_thread_priority);
   return p_chunk;
   }
 

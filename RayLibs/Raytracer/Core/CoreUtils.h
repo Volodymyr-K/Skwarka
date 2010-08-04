@@ -4,6 +4,7 @@
 #include <Math/Geometry.h>
 #include "DifferentialGeometry.h"
 #include "Intersection.h"
+#include <windows.h>
 
 /**
 * This namespace contains helper routines for the raytracer core.
@@ -37,6 +38,11 @@ namespace CoreUtils
   */
   double GetNextMinT(const Intersection &i_intersection, const Vector3D_d &i_direction);
 
+  /**
+  * Sets priority for the current thread. Returns previous priority of the current thread.
+  * @param i_priority Value that defines thread priority. Should be one of THREAD_PRIORITY_xxx constants defined in windows.h
+  */
+  int SetThreadPriority(int i_priority);
   };
 
 /////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
@@ -125,6 +131,13 @@ namespace CoreUtils
       return std::max(0.0,(i_intersection.m_dot * (1.0/divisor)) + (1e-14));
     }
 
+  inline int SetThreadPriority(int i_priority)
+    {
+    const HANDLE h_thread = ::GetCurrentThread();
+    const int prev_priority = ::GetThreadPriority(h_thread);
+    ::SetThreadPriority(h_thread, i_priority);
+    return prev_priority;
+    }
   }
 
 #endif // CORE_UTILS_H

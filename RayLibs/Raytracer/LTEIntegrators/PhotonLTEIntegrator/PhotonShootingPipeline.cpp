@@ -71,8 +71,8 @@ void* PhotonLTEIntegrator::PhotonsInputFilter::operator()(void*)
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 PhotonLTEIntegrator::PhotonsShootingFilter::PhotonsShootingFilter(const PhotonLTEIntegrator *ip_integrator,
-                                                                  intrusive_ptr<const Scene> ip_scene, const std::vector<double> &i_lights_CDF):
-tbb::filter(parallel), mp_integrator(ip_integrator), mp_scene(ip_scene), m_lights_CDF(i_lights_CDF)
+                                                                  intrusive_ptr<const Scene> ip_scene, const std::vector<double> &i_lights_CDF, bool i_low_thread_priority):
+tbb::filter(parallel), mp_integrator(ip_integrator), mp_scene(ip_scene), m_lights_CDF(i_lights_CDF), m_low_thread_priority(i_low_thread_priority)
   {
   ASSERT(ip_integrator);
   ASSERT(ip_scene);
@@ -80,6 +80,10 @@ tbb::filter(parallel), mp_integrator(ip_integrator), mp_scene(ip_scene), m_light
 
 void* PhotonLTEIntegrator::PhotonsShootingFilter::operator()(void* ip_chunk)
   {
+  int prev_thread_priority = 0;
+  if (m_low_thread_priority)
+    prev_thread_priority = CoreUtils::SetThreadPriority(THREAD_PRIORITY_LOWEST);
+
   PhotonsChunk *p_chunk = static_cast<PhotonsChunk*>(ip_chunk);
   MemoryPool *p_pool = p_chunk->mp_memory_pool;
   RandomGenerator<double> *p_rng = p_chunk->mp_rng;
@@ -224,6 +228,8 @@ void* PhotonLTEIntegrator::PhotonsShootingFilter::operator()(void* ip_chunk)
     p_pool->FreeAll();
     } // for (size_t path_index=path_begin; path_index<path_end; ++path_index)
 
+  if (m_low_thread_priority)
+    CoreUtils::SetThreadPriority(prev_thread_priority);
   return p_chunk;
   }
 
