@@ -1,5 +1,5 @@
-#ifndef SUBSTRATE_H
-#define SUBSTRATE_H
+#ifndef SUBSTRATE_MATERIAL_H
+#define SUBSTRATE_MATERIAL_H
 
 #include <Common/Common.h>
 #include <Common/MemoryPool.h>
@@ -13,28 +13,28 @@
 * The glossiness of the specular surface is defined by a roughness parameter which can be different for U and V directions (in this case the material is anisotropic).
 * The material uses FresnelBlend BxDF implementation with Blinn or Anisotropic microfacet distribution. 
 */
-class Substrate: public Material
+class SubstrateMaterial: public Material
   {
   public:
     /**
-    * Creates Substrate instance with the specified textures defining the reflectances and microfacet distribution.
+    * Creates SubstrateMaterial instance with the specified textures defining the reflectances and microfacet distribution.
     * The roughness is constant for U and V directions and thus the material is isotropic.
     * @param ip_diffuse_reflectance The texture defining the reflectance(color) of the diffuse surface. Each spectrum component should be positive.
     * @param ip_specular_reflectance The texture defining the reflectance of the glossy layer at normal incidence. Each spectrum component should be positive.
     * @param ip_roughness The texture defining the roughness of the surface. Values should be in [0;1] range.
     */
-    Substrate(intrusive_ptr<const Texture<Spectrum_d> > ip_diffuse_reflectance, intrusive_ptr<const Texture<Spectrum_d> > ip_specular_reflectance, 
+    SubstrateMaterial(intrusive_ptr<const Texture<Spectrum_d> > ip_diffuse_reflectance, intrusive_ptr<const Texture<Spectrum_d> > ip_specular_reflectance, 
       intrusive_ptr<const Texture<double> > ip_roughness);
 
     /**
-    * Creates Substrate instance with the specified textures defining the reflectances and microfacet distribution.
+    * Creates SubstrateMaterial instance with the specified textures defining the reflectances and microfacet distribution.
     * The roughness can be different for U and V directions and thus the material is anisotropic.
     * @param ip_diffuse_reflectance The texture defining the reflectance(color) of the diffuse surface. Each spectrum component should be positive.
     * @param ip_specular_reflectance The texture defining the reflectance of the glossy layer at normal incidence. Each spectrum component should be positive.
     * @param ip_u_roughness The texture defining the roughness of the surface in U direction. Values should be in [0;1] range.
     * @param ip_v_roughness The texture defining the roughness of the surface in U direction. Values should be in [0;1] range.
     */
-    Substrate(intrusive_ptr<const Texture<Spectrum_d> > ip_diffuse_reflectance, intrusive_ptr<const Texture<Spectrum_d> > ip_specular_reflectance, 
+    SubstrateMaterial(intrusive_ptr<const Texture<Spectrum_d> > ip_diffuse_reflectance, intrusive_ptr<const Texture<Spectrum_d> > ip_specular_reflectance, 
       intrusive_ptr<const Texture<double> > ip_u_roughness, intrusive_ptr<const Texture<double> > ip_v_roughness);
 
     intrusive_ptr<const Texture<Spectrum_d> > GetDiffuseReflectanceTexture() const;
@@ -79,10 +79,10 @@ class Substrate: public Material
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
-* Saves the data which is needed to construct Substrate to the specified Archive. This method is used by the boost serialization framework.
+* Saves the data which is needed to construct SubstrateMaterial to the specified Archive. This method is used by the boost serialization framework.
 */
 template<class Archive>
-void save_construct_data(Archive &i_ar, const Substrate *ip_material, const unsigned int i_version)
+void save_construct_data(Archive &i_ar, const SubstrateMaterial *ip_material, const unsigned int i_version)
   {
   intrusive_ptr<const Texture<Spectrum_d> > p_diffuse_reflectance = ip_material->GetDiffuseReflectanceTexture();
   intrusive_ptr<const Texture<Spectrum_d> > p_specular_reflectance = ip_material->GetSpecularReflectanceTexture();
@@ -98,10 +98,10 @@ void save_construct_data(Archive &i_ar, const Substrate *ip_material, const unsi
   }
 
 /**
-* Constructs Substrate with the data from the specified Archive. This method is used by the boost serialization framework.
+* Constructs SubstrateMaterial with the data from the specified Archive. This method is used by the boost serialization framework.
 */
 template<class Archive>
-void load_construct_data(Archive &i_ar, Substrate *ip_material, const unsigned int i_version)
+void load_construct_data(Archive &i_ar, SubstrateMaterial *ip_material, const unsigned int i_version)
   {
   intrusive_ptr<const Texture<Spectrum_d> > p_diffuse_reflectance, p_specular_reflectance;
   intrusive_ptr<const Texture<double> > p_roughness, p_u_roughness, p_v_roughness;
@@ -113,22 +113,22 @@ void load_construct_data(Archive &i_ar, Substrate *ip_material, const unsigned i
   i_ar >> p_v_roughness;
 
   if (p_roughness)
-    ::new(ip_material)Substrate(p_diffuse_reflectance, p_specular_reflectance, p_roughness);
+    ::new(ip_material)SubstrateMaterial(p_diffuse_reflectance, p_specular_reflectance, p_roughness);
   else
-    ::new(ip_material)Substrate(p_diffuse_reflectance, p_specular_reflectance, p_u_roughness, p_v_roughness);
+    ::new(ip_material)SubstrateMaterial(p_diffuse_reflectance, p_specular_reflectance, p_u_roughness, p_v_roughness);
   }
 
 /**
-* Serializes Substrate to/from the specified Archive. This method is used by the boost serialization framework.
+* Serializes SubstrateMaterial to/from the specified Archive. This method is used by the boost serialization framework.
 */
 template<class Archive>
-void serialize(Archive &i_ar, Substrate &i_material, const unsigned int i_version)
+void serialize(Archive &i_ar, SubstrateMaterial &i_material, const unsigned int i_version)
   {
   i_ar & boost::serialization::base_object<Material>(i_material);
   }
 
 // Register the derived class in the boost serialization framework.
 #include <boost/serialization/export.hpp>
-BOOST_CLASS_EXPORT(Substrate)
+BOOST_CLASS_EXPORT(SubstrateMaterial)
 
-#endif // SUBSTRATE_H
+#endif // SUBSTRATE_MATERIAL_H

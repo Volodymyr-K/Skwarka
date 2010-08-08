@@ -1,28 +1,28 @@
-#include "Matte.h"
+#include "MatteMaterial.h"
 
 #include <Raytracer/Core/BxDF.h>
 #include <Raytracer/BxDFs/Lambertian.h>
 #include <Raytracer/BxDFs/OrenNayar.h>
 #include <Math/MathRoutines.h>
 
-Matte::Matte(intrusive_ptr<const Texture<Spectrum_d> > ip_reflectance, intrusive_ptr<const Texture<double> > ip_sigma):
+MatteMaterial::MatteMaterial(intrusive_ptr<const Texture<Spectrum_d> > ip_reflectance, intrusive_ptr<const Texture<double> > ip_sigma):
 Material(), mp_reflectance(ip_reflectance), mp_sigma(ip_sigma)
   {
   ASSERT(ip_reflectance);
   ASSERT(ip_sigma);
   }
 
-intrusive_ptr<const Texture<Spectrum_d> > Matte::GetReflectanceTexture() const
+intrusive_ptr<const Texture<Spectrum_d> > MatteMaterial::GetReflectanceTexture() const
   {
   return mp_reflectance;
   }
 
-intrusive_ptr<const Texture<double> > Matte::GetSigmaTexture() const
+intrusive_ptr<const Texture<double> > MatteMaterial::GetSigmaTexture() const
   {
   return mp_sigma;
   }
 
-const BSDF *Matte::GetBSDF(const DifferentialGeometry &i_dg, size_t i_triangle_index, MemoryPool &i_pool) const
+const BSDF *MatteMaterial::GetBSDF(const DifferentialGeometry &i_dg, size_t i_triangle_index, MemoryPool &i_pool) const
   {
   BSDF *p_bsdf = new ( i_pool.Alloc(sizeof(BSDF)) ) BSDF(i_dg);
 

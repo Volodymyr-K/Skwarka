@@ -10,7 +10,7 @@
 #include <Raytracer/Core/BSDF.h>
 #include <Raytracer/LightSources/DiffuseAreaLightSource.h>
 #include <Raytracer/Textures/ConstantTexture.h>
-#include <Raytracer/Materials/Matte.h>
+#include <Raytracer/Materials/MatteMaterial.h>
 #include <UnitTests/TestHelpers/TriangleMeshTestHelper.h>
 #include <vector>
 #include <boost/archive/binary_iarchive.hpp>
@@ -32,7 +32,7 @@ class PrimitiveSerializationTestSuite : public CxxTest::TestSuite
       intrusive_ptr<Texture<double> > p_sigma( new ConstantTexture<double>(0.1) );
 
       intrusive_ptr<TriangleMesh> p_mesh = TriangleMeshHelper::ConstructSphere(Point3D_d(1,2,3), 3.14, 5);
-      intrusive_ptr<Material> p_material( new Matte(p_reflectance, p_sigma) );
+      intrusive_ptr<Material> p_material( new MatteMaterial(p_reflectance, p_sigma) );
       intrusive_ptr<AreaLightSource> p_area_light( new DiffuseAreaLightSource(Spectrum_d(1.0), p_mesh) );
       intrusive_ptr<Texture<double> > p_bump_map( new ConstantTexture<double>(1.0) );
 

@@ -11,7 +11,7 @@
 #include <Raytracer/LightSources/PointLight.h>
 #include <Raytracer/LightSources/DiffuseAreaLightSource.h>
 #include <Raytracer/Textures/ConstantTexture.h>
-#include <Raytracer/Materials/Matte.h>
+#include <Raytracer/Materials/MatteMaterial.h>
 #include <Raytracer/PhaseFunctions/RayleighPhaseFunction.h>
 #include <Raytracer/VolumeRegions/HomogeneousVolumeRegion.h>
 #include <UnitTests/TestHelpers/TriangleMeshTestHelper.h>
@@ -93,7 +93,7 @@ class SceneSerializationTestSuite : public CxxTest::TestSuite
       intrusive_ptr<TriangleMesh> p_mesh( TriangleMeshHelper::ConstructTetrahedron(i_origin) );
       intrusive_ptr<Texture<Spectrum_d> > p_reflectance( new ConstantTexture<Spectrum_d>(Spectrum_d(1.0)) );
       intrusive_ptr<Texture<double> > p_sigma( new ConstantTexture<double>(0.1) );
-      intrusive_ptr<Material> p_material( new Matte(p_reflectance, p_sigma) );
+      intrusive_ptr<Material> p_material( new MatteMaterial(p_reflectance, p_sigma) );
       intrusive_ptr<AreaLightSource> p_area_light( new DiffuseAreaLightSource(Spectrum_d(1.0), p_mesh) );
 
       return intrusive_ptr<Primitive>( new Primitive(p_mesh, p_material, p_area_light, NULL) );

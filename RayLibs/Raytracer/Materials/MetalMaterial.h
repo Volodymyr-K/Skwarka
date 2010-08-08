@@ -1,5 +1,5 @@
-#ifndef METAL_H
-#define METAL_H
+#ifndef METAL_MATERIAL_H
+#define METAL_MATERIAL_H
 
 #include <Common/Common.h>
 #include <Common/MemoryPool.h>
@@ -13,48 +13,48 @@
 * The glossiness of the metal is defined by a roughness parameter which can be different for U and V directions (in this case the material is anisotropic).
 * The material uses Microfacet BxDF implementation with Blinn or Anisotropic microfacet distribution. 
 */
-class Metal: public Material
+class MetalMaterial: public Material
   {
   public:
     /**
-    * Creates Metal instance with the specified textures defining the refractive coefficient, absorption and roughness.
+    * Creates MetalMaterial instance with the specified textures defining the refractive coefficient, absorption and roughness.
     * The roughness is constant for U and V directions and thus the material is isotropic.
     * @param ip_refractive_index The texture defining the refractive index of the metal. Each spectrum component should be positive.
     * @param ip_absorption The texture defining the absorption of the metal. Each spectrum component should be positive.
     * @param ip_roughness The texture defining the roughness of the surface. Values should be in [0;1] range.
     */
-    Metal(intrusive_ptr<const Texture<Spectrum_d> > ip_refractive_index, intrusive_ptr<const Texture<Spectrum_d> > ip_absorption,
+    MetalMaterial(intrusive_ptr<const Texture<Spectrum_d> > ip_refractive_index, intrusive_ptr<const Texture<Spectrum_d> > ip_absorption,
       intrusive_ptr<const Texture<double> > ip_roughness);
 
     /**
-    * Creates Metal instance with the specified textures defining the refractive coefficient, absorption and roughness.
+    * Creates MetalMaterial instance with the specified textures defining the refractive coefficient, absorption and roughness.
     * The roughness can be different for U and V directions and thus the material is anisotropic.
     * @param ip_refractive_index The texture defining the refractive index of the metal. Each spectrum component should be positive.
     * @param ip_absorption The texture defining the absorption of the metal. Each spectrum component should be positive.
     * @param ip_u_roughness The texture defining the roughness of the surface in U direction. Values should be in [0;1] range.
     * @param ip_v_roughness The texture defining the roughness of the surface in U direction. Values should be in [0;1] range.
     */
-    Metal(intrusive_ptr<const Texture<Spectrum_d> > ip_refractive_index, intrusive_ptr<const Texture<Spectrum_d> > ip_absorption,
+    MetalMaterial(intrusive_ptr<const Texture<Spectrum_d> > ip_refractive_index, intrusive_ptr<const Texture<Spectrum_d> > ip_absorption,
       intrusive_ptr<const Texture<double> > ip_u_roughness, intrusive_ptr<const Texture<double> > ip_v_roughness);
 
     /**
-    * Creates Metal instance with the specified textures defining the reflectance and roughness.
+    * Creates MetalMaterial instance with the specified textures defining the reflectance and roughness.
     * The roughness is constant for U and V directions and thus the material is isotropic.
     * The refractive indices and absorptions coefficients are approximated based on the reflectance values.
     * @param ip_reflectance The texture defining the total hemisphere reflectance. Each spectrum component should be in [0;1] range.
     * @param ip_roughness The texture defining the roughness of the surface. Values should be in [0;1] range.
     */
-    Metal(intrusive_ptr<const Texture<Spectrum_d> > ip_reflectance, intrusive_ptr<const Texture<double> > ip_roughness);
+    MetalMaterial(intrusive_ptr<const Texture<Spectrum_d> > ip_reflectance, intrusive_ptr<const Texture<double> > ip_roughness);
 
     /**
-    * Creates Metal instance with the specified textures defining the reflectance and roughness.
+    * Creates MetalMaterial instance with the specified textures defining the reflectance and roughness.
     * The roughness can be different for U and V directions and thus the material is anisotropic.
     * The refractive indices and absorptions coefficients are approximated based on the reflectance values.
     * @param ip_reflectance The texture defining the total hemisphere reflectance. Each spectrum component should be in [0;1] range.
     * @param ip_u_roughness The texture defining the roughness of the surface in U direction. Values should be in [0;1] range.
     * @param ip_v_roughness The texture defining the roughness of the surface in U direction. Values should be in [0;1] range.
     */
-    Metal(intrusive_ptr<const Texture<Spectrum_d> > ip_reflectance,
+    MetalMaterial(intrusive_ptr<const Texture<Spectrum_d> > ip_reflectance,
       intrusive_ptr<const Texture<double> > ip_u_roughness, intrusive_ptr<const Texture<double> > ip_v_roughness);
 
     intrusive_ptr<const Texture<Spectrum_d> > GetRefractiveIndexTexture() const;
@@ -101,10 +101,10 @@ class Metal: public Material
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
-* Saves the data which is needed to construct Metal to the specified Archive. This method is used by the boost serialization framework.
+* Saves the data which is needed to construct MetalMaterial to the specified Archive. This method is used by the boost serialization framework.
 */
 template<class Archive>
-void save_construct_data(Archive &i_ar, const Metal *ip_material, const unsigned int i_version)
+void save_construct_data(Archive &i_ar, const MetalMaterial *ip_material, const unsigned int i_version)
   {
   intrusive_ptr<const Texture<Spectrum_d> > p_refractive_index = ip_material->GetRefractiveIndexTexture();
   intrusive_ptr<const Texture<Spectrum_d> > p_absorption = ip_material->GetAbsoprtionTexture();
@@ -122,10 +122,10 @@ void save_construct_data(Archive &i_ar, const Metal *ip_material, const unsigned
   }
 
 /**
-* Constructs Metal with the data from the specified Archive. This method is used by the boost serialization framework.
+* Constructs MetalMaterial with the data from the specified Archive. This method is used by the boost serialization framework.
 */
 template<class Archive>
-void load_construct_data(Archive &i_ar, Metal *ip_material, const unsigned int i_version)
+void load_construct_data(Archive &i_ar, MetalMaterial *ip_material, const unsigned int i_version)
   {
   intrusive_ptr<const Texture<Spectrum_d> > p_refractive_index, p_absorption, p_reflectance;
   intrusive_ptr<const Texture<double> > p_roughness, p_u_roughness, p_v_roughness;
@@ -140,32 +140,32 @@ void load_construct_data(Archive &i_ar, Metal *ip_material, const unsigned int i
   if (p_refractive_index && p_absorption)
     {
     if (p_roughness)
-      ::new(ip_material)Metal(p_refractive_index, p_absorption, p_roughness);
+      ::new(ip_material)MetalMaterial(p_refractive_index, p_absorption, p_roughness);
     else
-      ::new(ip_material)Metal(p_refractive_index, p_absorption, p_u_roughness, p_v_roughness);
+      ::new(ip_material)MetalMaterial(p_refractive_index, p_absorption, p_u_roughness, p_v_roughness);
     }
   else if (p_reflectance)
     {
     if (p_roughness)
-      ::new(ip_material)Metal(p_reflectance, p_roughness);
+      ::new(ip_material)MetalMaterial(p_reflectance, p_roughness);
     else
-      ::new(ip_material)Metal(p_reflectance, p_u_roughness, p_v_roughness);
+      ::new(ip_material)MetalMaterial(p_reflectance, p_u_roughness, p_v_roughness);
     }
   else
-    ASSERT(0 && "Invalid data serialized for Metal material.");
+    ASSERT(0 && "Invalid data serialized for MetalMaterial.");
   }
 
 /**
-* Serializes Metal to/from the specified Archive. This method is used by the boost serialization framework.
+* Serializes MetalMaterial to/from the specified Archive. This method is used by the boost serialization framework.
 */
 template<class Archive>
-void serialize(Archive &i_ar, Metal &i_material, const unsigned int i_version)
+void serialize(Archive &i_ar, MetalMaterial &i_material, const unsigned int i_version)
   {
   i_ar & boost::serialization::base_object<Material>(i_material);
   }
 
 // Register the derived class in the boost serialization framework.
 #include <boost/serialization/export.hpp>
-BOOST_CLASS_EXPORT(Metal)
+BOOST_CLASS_EXPORT(MetalMaterial)
 
-#endif // METAL_H
+#endif // METAL_MATERIAL_H

@@ -1,5 +1,5 @@
-#ifndef TRANSPARENT_TEST_H
-#define TRANSPARENT_TEST_H
+#ifndef TRANSPARENT_MATERIAL_TEST_H
+#define TRANSPARENT_MATERIAL_TEST_H
 
 #include <cxxtest/TestSuite.h>
 #include <UnitTests/TestHelpers/CustomValueTraits.h>
@@ -7,7 +7,7 @@
 #include <Raytracer/Core/Material.h>
 #include <Raytracer/Core/DifferentialGeometry.h>
 #include <Raytracer/Core/BSDF.h>
-#include <Raytracer/Materials/Transparent.h>
+#include <Raytracer/Materials/TransparentMaterial.h>
 #include "Mocks/TextureMock.h"
 #include <Math/ThreadSafeRandom.h>
 
@@ -24,7 +24,7 @@ class TransparentTestSuite : public CxxTest::TestSuite
 
       m_refractive_index=1.5;
 
-      mp_material.reset(new Transparent(p_reflectance_texture, p_transmittance_texture, m_refractive_index));
+      mp_material.reset(new TransparentMaterial(p_reflectance_texture, p_transmittance_texture, m_refractive_index));
       }
 
     void tearDown()
@@ -108,4 +108,4 @@ class TransparentTestSuite : public CxxTest::TestSuite
     double m_refractive_index;
   };
 
-#endif // TRANSPARENT_TEST_H
+#endif // TRANSPARENT_MATERIAL_TEST_H

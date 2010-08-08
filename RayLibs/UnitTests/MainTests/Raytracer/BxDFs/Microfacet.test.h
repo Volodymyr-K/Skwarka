@@ -21,9 +21,9 @@ class MicrofacetTestSuite : public CxxTest::TestSuite
       // These settings are for gold.
       FresnelConductor fresnel(Spectrum_d(0.37), Spectrum_d(2.82));
       BlinnDistribution blinn(20.0);
-      typedef Microfacet<FresnelConductor,BlinnDistribution> Metal;
+      typedef Microfacet<FresnelConductor,BlinnDistribution> MicrofacetBlinn;
 
-      mp_bxdf = shared_ptr<BxDF>( new Metal(Spectrum_d(1.0), fresnel, blinn) );
+      mp_bxdf = shared_ptr<BxDF>( new MicrofacetBlinn(Spectrum_d(1.0), fresnel, blinn) );
       }
 
     void tearDown()

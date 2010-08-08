@@ -1,4 +1,4 @@
-#include "substrate.h"
+#include "SubstrateMaterial.h"
 
 #include <Raytracer/Core/BxDF.h>
 #include <Raytracer/BxDFs/FresnelBlend.h>
@@ -6,7 +6,7 @@
 #include <Raytracer/MicrofacetDistributions/AnisotropicDistribution.h>
 #include <Math/MathRoutines.h>
 
-Substrate::Substrate(intrusive_ptr<const Texture<Spectrum_d> > ip_diffuse_reflectance, intrusive_ptr<const Texture<Spectrum_d> > ip_specular_reflectance, 
+SubstrateMaterial::SubstrateMaterial(intrusive_ptr<const Texture<Spectrum_d> > ip_diffuse_reflectance, intrusive_ptr<const Texture<Spectrum_d> > ip_specular_reflectance, 
                      intrusive_ptr<const Texture<double> > ip_roughness):
 Material(), mp_specular_reflectance(ip_specular_reflectance), mp_diffuse_reflectance(ip_diffuse_reflectance), mp_roughness(ip_roughness)
   {
@@ -15,7 +15,7 @@ Material(), mp_specular_reflectance(ip_specular_reflectance), mp_diffuse_reflect
   ASSERT(ip_roughness);
   }
 
-Substrate::Substrate(intrusive_ptr<const Texture<Spectrum_d> > ip_diffuse_reflectance, intrusive_ptr<const Texture<Spectrum_d> > ip_specular_reflectance, 
+SubstrateMaterial::SubstrateMaterial(intrusive_ptr<const Texture<Spectrum_d> > ip_diffuse_reflectance, intrusive_ptr<const Texture<Spectrum_d> > ip_specular_reflectance, 
                      intrusive_ptr<const Texture<double> > ip_u_roughness, intrusive_ptr<const Texture<double> > ip_v_roughness):
 Material(), mp_specular_reflectance(ip_specular_reflectance), mp_diffuse_reflectance(ip_diffuse_reflectance), mp_u_roughness(ip_u_roughness), mp_v_roughness(ip_v_roughness)
   {
@@ -25,32 +25,32 @@ Material(), mp_specular_reflectance(ip_specular_reflectance), mp_diffuse_reflect
   ASSERT(ip_v_roughness);
   }
 
-intrusive_ptr<const Texture<Spectrum_d> > Substrate::GetDiffuseReflectanceTexture() const
+intrusive_ptr<const Texture<Spectrum_d> > SubstrateMaterial::GetDiffuseReflectanceTexture() const
   {
   return mp_diffuse_reflectance;
   }
 
-intrusive_ptr<const Texture<Spectrum_d> > Substrate::GetSpecularReflectanceTexture() const
+intrusive_ptr<const Texture<Spectrum_d> > SubstrateMaterial::GetSpecularReflectanceTexture() const
   {
   return mp_specular_reflectance;
   }
 
-intrusive_ptr<const Texture<double> > Substrate::GetRoughnessTexture() const
+intrusive_ptr<const Texture<double> > SubstrateMaterial::GetRoughnessTexture() const
   {
   return mp_roughness;
   }
 
-intrusive_ptr<const Texture<double> > Substrate::GetURoughnessTexture() const
+intrusive_ptr<const Texture<double> > SubstrateMaterial::GetURoughnessTexture() const
   {
   return mp_u_roughness;
   }
 
-intrusive_ptr<const Texture<double> > Substrate::GetVRoughnessTexture() const
+intrusive_ptr<const Texture<double> > SubstrateMaterial::GetVRoughnessTexture() const
   {
   return mp_v_roughness;
   }
 
-const BSDF *Substrate::GetBSDF(const DifferentialGeometry &i_dg, size_t i_triangle_index, MemoryPool &i_pool) const
+const BSDF *SubstrateMaterial::GetBSDF(const DifferentialGeometry &i_dg, size_t i_triangle_index, MemoryPool &i_pool) const
   {
   BSDF *p_bsdf = new ( i_pool.Alloc(sizeof(BSDF)) ) BSDF(i_dg);
 

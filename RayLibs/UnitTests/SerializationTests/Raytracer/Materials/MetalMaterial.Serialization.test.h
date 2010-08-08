@@ -1,5 +1,5 @@
-#ifndef SUBSTRATE_SERIALIZATION_TEST_H
-#define SUBSTRATE_SERIALIZATION_TEST_H
+#ifndef METAL_MATERIAL_SERIALIZATION_TEST_H
+#define METAL_MATERIAL_SERIALIZATION_TEST_H
 
 #include <cxxtest/TestSuite.h>
 #include <UnitTests/TestHelpers/CustomValueTraits.h>
@@ -7,10 +7,8 @@
 #include <Raytracer/Core/Material.h>
 #include <Raytracer/Core/DifferentialGeometry.h>
 #include <Raytracer/Core/BSDF.h>
-#include <Raytracer/Materials/Substrate.h>
-#include <Raytracer/BxDFs/FresnelBlend.h>
-#include <Raytracer/MicrofacetDistributions/BlinnDistribution.h>
-#include <Raytracer/MicrofacetDistributions/AnisotropicDistribution.h>
+#include <Raytracer/Materials/MetalMaterial.h>
+#include <Raytracer/BxDFs/Microfacet.h>
 #include <Raytracer/Core/Fresnel.h>
 #include <Raytracer/Textures/ConstantTexture.h>
 #include <boost/archive/binary_iarchive.hpp>
@@ -22,18 +20,18 @@
 typedef boost::iostreams::basic_array_sink<char> SinkDevice;
 typedef boost::iostreams::basic_array_source<char> SourceDevice;
 
-class SubstrateSerializationTestSuite : public CxxTest::TestSuite
+class MetalSerializationTestSuite : public CxxTest::TestSuite
   {
   public:
 
-    void test_Substrate_Serialization_Isotropic()
+    void test_Metal_Serialization_Isotropic()
       {
-      Spectrum_d diffuse_reflectance(0.4,0.5,0.6), specular_reflectance(0.5);
-      intrusive_ptr<Texture<Spectrum_d> > p_diffuse_reflectance( new ConstantTexture<Spectrum_d>(diffuse_reflectance) );
-      intrusive_ptr<Texture<Spectrum_d> > p_specular_reflectance( new ConstantTexture<Spectrum_d>(specular_reflectance) );
-      intrusive_ptr<Texture<double> > p_roughness( new ConstantTexture<double>(0.025) );
+      Spectrum_d refreactive_index(0.41,1.15,1.18), absorption(4.2,2.66,2.5);
+      intrusive_ptr<Texture<Spectrum_d> > p_refreactive_index( new ConstantTexture<Spectrum_d>(refreactive_index) );
+      intrusive_ptr<Texture<Spectrum_d> > p_absorption( new ConstantTexture<Spectrum_d>(absorption) );
+      intrusive_ptr<Texture<double> > p_roughness( new ConstantTexture<double>(1.0) );
 
-      intrusive_ptr<Material> p_material1(new Substrate(p_diffuse_reflectance, p_specular_reflectance, p_roughness));
+      intrusive_ptr<Material> p_material1(new MetalMaterial(p_refreactive_index, p_absorption, p_roughness));
         {
         boost::iostreams::stream_buffer<SinkDevice> buffer(m_data, m_buffer_size);
         boost::archive::binary_oarchive output_archive(buffer);
@@ -57,15 +55,15 @@ class SubstrateSerializationTestSuite : public CxxTest::TestSuite
       TS_ASSERT_EQUALS(val1,val2);
       }
 
-    void test_Substrate_Serialization_Anisotropic()
+    void test_Metal_Serialization_Anisotropic()
       {
-      Spectrum_d diffuse_reflectance(0.4,0.5,0.6), specular_reflectance(0.5);
-      intrusive_ptr<Texture<Spectrum_d> > p_diffuse_reflectance( new ConstantTexture<Spectrum_d>(diffuse_reflectance) );
-      intrusive_ptr<Texture<Spectrum_d> > p_specular_reflectance( new ConstantTexture<Spectrum_d>(specular_reflectance) );
-      intrusive_ptr<Texture<double> > p_u_roughness( new ConstantTexture<double>(0.025) );
-      intrusive_ptr<Texture<double> > p_v_roughness( new ConstantTexture<double>(0.125) );
+      Spectrum_d refreactive_index(0.41,1.15,1.18), absorption(4.2,2.66,2.5);
+      intrusive_ptr<Texture<Spectrum_d> > p_refreactive_index( new ConstantTexture<Spectrum_d>(refreactive_index) );
+      intrusive_ptr<Texture<Spectrum_d> > p_absorption( new ConstantTexture<Spectrum_d>(absorption) );
+      intrusive_ptr<Texture<double> > p_u_roughness( new ConstantTexture<double>(1.0) );
+      intrusive_ptr<Texture<double> > p_v_roughness( new ConstantTexture<double>(10.0) );
 
-      intrusive_ptr<Material> p_material1(new Substrate(p_diffuse_reflectance, p_specular_reflectance, p_u_roughness, p_v_roughness));
+      intrusive_ptr<Material> p_material1(new MetalMaterial(p_refreactive_index, p_absorption, p_u_roughness, p_v_roughness));
         {
         boost::iostreams::stream_buffer<SinkDevice> buffer(m_data, m_buffer_size);
         boost::archive::binary_oarchive output_archive(buffer);
@@ -88,11 +86,10 @@ class SubstrateSerializationTestSuite : public CxxTest::TestSuite
       Spectrum_d val2 = p_material2->GetBSDF(dg, 0, pool)->Evaluate(Vector3D_d(0.5,0.0,1.0).Normalized(), Vector3D_d(-0.5,0.0,1.0).Normalized());
       TS_ASSERT_EQUALS(val1,val2);
       }
-
 
   private:
     const static size_t m_buffer_size=16384;
     char m_data[m_buffer_size];
   };
 
-#endif // SUBSTRATE_SERIALIZATION_TEST_H
+#endif // METAL_MATERIAL_SERIALIZATION_TEST_H

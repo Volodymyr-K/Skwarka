@@ -1,5 +1,5 @@
-#ifndef MATTE_SERIALIZATION_TEST_H
-#define MATTE_SERIALIZATION_TEST_H
+#ifndef MATTE_MATERIAL_SERIALIZATION_TEST_H
+#define MATTE_MATERIAL_SERIALIZATION_TEST_H
 
 #include <cxxtest/TestSuite.h>
 #include <UnitTests/TestHelpers/CustomValueTraits.h>
@@ -7,7 +7,7 @@
 #include <Raytracer/Core/Material.h>
 #include <Raytracer/Core/DifferentialGeometry.h>
 #include <Raytracer/Core/BSDF.h>
-#include <Raytracer/Materials/Matte.h>
+#include <Raytracer/Materials/MatteMaterial.h>
 #include <Raytracer/BxDFs/OrenNayar.h>
 #include <Raytracer/Textures/ConstantTexture.h>
 #include <boost/archive/binary_iarchive.hpp>
@@ -28,7 +28,7 @@ class MatteSerializationTestSuite : public CxxTest::TestSuite
       intrusive_ptr<Texture<Spectrum_d> > p_reflectance( new ConstantTexture<Spectrum_d>(Spectrum_d(1.0,0.5,0.1)) );
       intrusive_ptr<ConstantTexture<double> > p_sigma( new ConstantTexture<double>(0.2) );
 
-      intrusive_ptr<Material> p_material1(new Matte(p_reflectance, p_sigma));
+      intrusive_ptr<Material> p_material1(new MatteMaterial(p_reflectance, p_sigma));
 
         {
         boost::iostreams::stream_buffer<SinkDevice> buffer(m_data, m_buffer_size);
@@ -58,4 +58,4 @@ class MatteSerializationTestSuite : public CxxTest::TestSuite
     char m_data[m_buffer_size];
   };
 
-#endif // MATTE_SERIALIZATION_TEST_H
+#endif // MATTE_MATERIAL_SERIALIZATION_TEST_H

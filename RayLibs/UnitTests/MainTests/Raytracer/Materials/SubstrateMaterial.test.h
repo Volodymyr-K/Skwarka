@@ -1,5 +1,5 @@
-#ifndef SUBSTRATE_TEST_H
-#define SUBSTRATE_TEST_H
+#ifndef SUBSTRATE_MATERIAL_TEST_H
+#define SUBSTRATE_MATERIAL_TEST_H
 
 #include <cxxtest/TestSuite.h>
 #include <UnitTests/TestHelpers/CustomValueTraits.h>
@@ -7,7 +7,7 @@
 #include <Raytracer/Core/Material.h>
 #include <Raytracer/Core/DifferentialGeometry.h>
 #include <Raytracer/Core/BSDF.h>
-#include <Raytracer/Materials/Substrate.h>
+#include <Raytracer/Materials/SubstrateMaterial.h>
 #include <Raytracer/BxDFs/FresnelBlend.h>
 #include <Raytracer/MicrofacetDistributions/BlinnDistribution.h>
 #include <Raytracer/MicrofacetDistributions/AnisotropicDistribution.h>
@@ -25,7 +25,7 @@ class SubstrateTestSuite : public CxxTest::TestSuite
       intrusive_ptr<Texture<Spectrum_d> > p_specular_reflectance( new TextureMock<Spectrum_d>(specular_reflectance) );
       intrusive_ptr<Texture<double> > p_roughness( new TextureMock<double>(0.025) );
 
-      intrusive_ptr<Material> p_material(new Substrate(p_diffuse_reflectance, p_specular_reflectance, p_roughness));
+      intrusive_ptr<Material> p_material(new SubstrateMaterial(p_diffuse_reflectance, p_specular_reflectance, p_roughness));
 
       MemoryPool pool;
       DifferentialGeometry dg;
@@ -53,7 +53,7 @@ class SubstrateTestSuite : public CxxTest::TestSuite
       intrusive_ptr<Texture<double> > p_u_roughness( new TextureMock<double>(0.025) );
       intrusive_ptr<Texture<double> > p_v_roughness( new TextureMock<double>(0.125) );
 
-      intrusive_ptr<Material> p_material(new Substrate(p_diffuse_reflectance, p_specular_reflectance, p_u_roughness, p_v_roughness));
+      intrusive_ptr<Material> p_material(new SubstrateMaterial(p_diffuse_reflectance, p_specular_reflectance, p_u_roughness, p_v_roughness));
 
       MemoryPool pool;
       DifferentialGeometry dg;
@@ -75,4 +75,4 @@ class SubstrateTestSuite : public CxxTest::TestSuite
 
   };
 
-#endif // SUBSTRATE_TEST_H
+#endif // SUBSTRATE_MATERIAL_TEST_H

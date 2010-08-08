@@ -1,5 +1,5 @@
-#ifndef TRANSPARENT_SERIALIZATION_TEST_H
-#define TRANSPARENT_SERIALIZATION_TEST_H
+#ifndef TRANSPARENT_MATERIAL_SERIALIZATION_TEST_H
+#define TRANSPARENT_MATERIAL_SERIALIZATION_TEST_H
 
 #include <cxxtest/TestSuite.h>
 #include <UnitTests/TestHelpers/CustomValueTraits.h>
@@ -7,7 +7,7 @@
 #include <Raytracer/Core/Material.h>
 #include <Raytracer/Core/DifferentialGeometry.h>
 #include <Raytracer/Core/BSDF.h>
-#include <Raytracer/Materials/Transparent.h>
+#include <Raytracer/Materials/TransparentMaterial.h>
 #include <Raytracer/Textures/ConstantTexture.h>
 #include <Math/ThreadSafeRandom.h>
 #include <boost/archive/binary_iarchive.hpp>
@@ -28,7 +28,7 @@ class TransparentSerializationTestSuite : public CxxTest::TestSuite
       intrusive_ptr<Texture<Spectrum_d> > p_reflectance_texture( new ConstantTexture<Spectrum_d>(Spectrum_d(0.9,0.8,0.7)) );
       intrusive_ptr<Texture<Spectrum_d> > p_transmittance_texture( new ConstantTexture<Spectrum_d>(Spectrum_d(0.5,0.6,0.7)) );
 
-      intrusive_ptr<Material> p_material1(new Transparent(p_reflectance_texture, p_transmittance_texture, 1.5));
+      intrusive_ptr<Material> p_material1(new TransparentMaterial(p_reflectance_texture, p_transmittance_texture, 1.5));
         {
         boost::iostreams::stream_buffer<SinkDevice> buffer(m_data, m_buffer_size);
         boost::archive::binary_oarchive output_archive(buffer);
@@ -68,4 +68,4 @@ class TransparentSerializationTestSuite : public CxxTest::TestSuite
     char m_data[m_buffer_size];
   };
 
-#endif // TRANSPARENT_SERIALIZATION_TEST_H
+#endif // TRANSPARENT_MATERIAL_SERIALIZATION_TEST_H

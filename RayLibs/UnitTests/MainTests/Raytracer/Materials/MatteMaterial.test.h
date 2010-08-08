@@ -1,5 +1,5 @@
-#ifndef MATTE_TEST_H
-#define MATTE_TEST_H
+#ifndef MATTE_MATERIAL_TEST_H
+#define MATTE_MATERIAL_TEST_H
 
 #include <cxxtest/TestSuite.h>
 #include <UnitTests/TestHelpers/CustomValueTraits.h>
@@ -7,7 +7,7 @@
 #include <Raytracer/Core/Material.h>
 #include <Raytracer/Core/DifferentialGeometry.h>
 #include <Raytracer/Core/BSDF.h>
-#include <Raytracer/Materials/Matte.h>
+#include <Raytracer/Materials/MatteMaterial.h>
 #include <Raytracer/BxDFs/OrenNayar.h>
 #include "Mocks/TextureMock.h"
 
@@ -20,7 +20,7 @@ class MatteTestSuite : public CxxTest::TestSuite
       intrusive_ptr<Texture<Spectrum_d> > p_reflectance( new TextureMock<Spectrum_d>(Spectrum_d(1.0,0.5,0.1)) );
       intrusive_ptr<TextureMock<double> > p_sigma( new TextureMock<double>(0.0) );
       
-      intrusive_ptr<Material> p_material(new Matte(p_reflectance, p_sigma));
+      intrusive_ptr<Material> p_material(new MatteMaterial(p_reflectance, p_sigma));
 
       MemoryPool pool;
       DifferentialGeometry dg;
@@ -41,7 +41,7 @@ class MatteTestSuite : public CxxTest::TestSuite
       intrusive_ptr<Texture<Spectrum_d> > p_reflectance( new TextureMock<Spectrum_d>(Spectrum_d(1.0,0.5,0.1)) );
       intrusive_ptr<TextureMock<double> > p_sigma( new TextureMock<double>(0.1) );
 
-      intrusive_ptr<Material> p_material(new Matte(p_reflectance, p_sigma));
+      intrusive_ptr<Material> p_material(new MatteMaterial(p_reflectance, p_sigma));
 
       MemoryPool pool;
       DifferentialGeometry dg;
@@ -59,4 +59,4 @@ class MatteTestSuite : public CxxTest::TestSuite
       }
   };
 
-#endif // MATTE_TEST_H
+#endif // MATTE_MATERIAL_TEST_H

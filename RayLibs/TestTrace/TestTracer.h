@@ -34,7 +34,7 @@
 #include <Raytracer/Samplers/RandomBlockedImagePixelsOrder.h>
 #include <Raytracer/Films/ImageFilm.h>
 #include <Raytracer/Films/InteractiveFilm.h>
-#include <Raytracer/Materials/Matte.h>
+#include <Raytracer/Materials/MatteMaterial.h>
 #include <Raytracer/Textures/ConstantTexture.h>
 #include <Raytracer/Renderers/SamplerBasedRenderer.h>
 #include <Raytracer/LightSources/PointLight.h>
@@ -49,11 +49,11 @@
 #include <Raytracer/Textures/ImageTexture.h>
 #include <Raytracer/Mappings/SphericalMapping2D.h>
 #include <Raytracer/Mappings/UVMapping2D.h>
-#include <Raytracer/Materials/Transparent.h>
-#include <Raytracer/Materials/Metal.h>
+#include <Raytracer/Materials/TransparentMaterial.h>
+#include <Raytracer/Materials/MetalMaterial.h>
 #include <Raytracer/Core/Fresnel.h>
 #include <Math/CompressedDirection.h>
-#include <Raytracer/Materials/Substrate.h>
+#include <Raytracer/Materials/SubstrateMaterial.h>
 #include <Raytracer/BxDFs/FresnelBlend.h>
 #include <Raytracer/MicrofacetDistributions/AnisotropicDistribution.h>
 #include <Raytracer/MicrofacetDistributions/BlinnDistribution.h>
@@ -128,7 +128,7 @@ intrusive_ptr<Primitive> LoadWallsPrimitive(std::string i_filename, bool i_smoot
   intrusive_ptr< ImageTexture<Spectrum_f,Spectrum_d> > p_text(new ImageTexture<Spectrum_f,Spectrum_d>(values, p_mapping) );
 
   intrusive_ptr<Texture<double> > p_sigma(new ConstantTexture<double> (0.04));
-  intrusive_ptr<Material> p_material(new Matte(p_text, p_sigma));
+  intrusive_ptr<Material> p_material(new MatteMaterial(p_text, p_sigma));
 
   intrusive_ptr<Primitive> p_primitive(new Primitive(p_mesh, p_material));
   return p_primitive;
@@ -140,7 +140,7 @@ intrusive_ptr<Primitive> LoadDiffusePrimitive(std::string i_filename, bool i_smo
 
   intrusive_ptr<Texture<Spectrum_d> > p_reflectance(new ConstantTexture<Spectrum_d> (i_color));
   intrusive_ptr<Texture<double> > p_sigma(new ConstantTexture<double> (0.04));
-  intrusive_ptr<Material> p_material(new Matte(p_reflectance, p_sigma));
+  intrusive_ptr<Material> p_material(new MatteMaterial(p_reflectance, p_sigma));
 
   intrusive_ptr<Primitive> p_primitive(new Primitive(p_mesh, p_material));
   return p_primitive;
@@ -152,7 +152,7 @@ intrusive_ptr<Primitive> LoadGlassPrimitive(std::string i_filename, bool i_smoot
 
   intrusive_ptr<Texture<Spectrum_d> > p_reflectance(new ConstantTexture<Spectrum_d> (Spectrum_d(1.0)));
   intrusive_ptr<Texture<Spectrum_d> > p_transmittance(new ConstantTexture<Spectrum_d> (i_color));
-  intrusive_ptr<Material> p_material(new Transparent(p_reflectance, p_transmittance, 1.4));
+  intrusive_ptr<Material> p_material(new TransparentMaterial(p_reflectance, p_transmittance, 1.4));
 
   intrusive_ptr<Primitive> p_primitive(new Primitive(p_mesh, p_material));
   return p_primitive;
@@ -164,7 +164,7 @@ intrusive_ptr<Primitive> LoadMetalPrimitive(std::string i_filename, bool i_smoot
 
   intrusive_ptr<Texture<Spectrum_d> > p_refrlection(new ConstantTexture<Spectrum_d> (i_color));
   intrusive_ptr<Texture<double> > p_roughness(new ConstantTexture<double> (i_roughness));
-  intrusive_ptr<Material> p_material(new Metal(p_refrlection, p_roughness));
+  intrusive_ptr<Material> p_material(new MetalMaterial(p_refrlection, p_roughness));
 
   intrusive_ptr<Primitive> p_primitive(new Primitive(p_mesh, p_material));
   return p_primitive;
@@ -226,7 +226,7 @@ inline void TestTracer::LoadMesh()
     intrusive_ptr<TriangleMesh> p_ground_mesh = intrusive_ptr<TriangleMesh>( new TriangleMesh(vertices, triangles, true) );
 
     intrusive_ptr<Texture<double> > p_sigma(new ConstantTexture<double> (0.35));
-    intrusive_ptr<Material> p_material(new Matte(p_text, p_sigma));
+    intrusive_ptr<Material> p_material(new MatteMaterial(p_text, p_sigma));
 
     intrusive_ptr<Primitive> p_primitive(new Primitive(p_ground_mesh, p_material));
     primitives.push_back(p_primitive);
@@ -247,7 +247,7 @@ inline void TestTracer::LoadMesh()
 
     intrusive_ptr<Texture<Spectrum_d> > p_refrlection(new ConstantTexture<Spectrum_d> (Spectrum_d(0.4,0.4,0.4)));
     intrusive_ptr<Texture<double> > p_sigma(new ConstantTexture<double> (0.35));
-    intrusive_ptr<Material> p_material(new Matte(p_refrlection, p_sigma));
+    intrusive_ptr<Material> p_material(new MatteMaterial(p_refrlection, p_sigma));
 
     intrusive_ptr<Primitive> p_primitive(new Primitive(p_ceil_mesh, p_material));
     primitives.push_back(p_primitive);
@@ -270,7 +270,7 @@ inline void TestTracer::LoadMesh()
 
     intrusive_ptr<Texture<Spectrum_d> > p_refrlection(new ConstantTexture<Spectrum_d> (Spectrum_d(0.75,0.35,0.35)));
     intrusive_ptr<Texture<double> > p_sigma(new ConstantTexture<double> (0.35));
-    intrusive_ptr<Material> p_material(new Matte(p_refrlection, p_sigma));
+    intrusive_ptr<Material> p_material(new MatteMaterial(p_refrlection, p_sigma));
 
     intrusive_ptr<Primitive> p_primitive(new Primitive(p_wall_mesh, p_material));
     primitives.push_back(p_primitive);
@@ -291,7 +291,7 @@ inline void TestTracer::LoadMesh()
 
     intrusive_ptr<Texture<Spectrum_d> > p_refrlection(new ConstantTexture<Spectrum_d> (Spectrum_d(0.35,0.75,0.35)));
     intrusive_ptr<Texture<double> > p_sigma(new ConstantTexture<double> (0.35));
-    intrusive_ptr<Material> p_material(new Matte(p_refrlection, p_sigma));
+    intrusive_ptr<Material> p_material(new MatteMaterial(p_refrlection, p_sigma));
 
     intrusive_ptr<Primitive> p_primitive(new Primitive(p_wall_mesh, p_material));
     primitives.push_back(p_primitive);
@@ -312,7 +312,7 @@ inline void TestTracer::LoadMesh()
 
     intrusive_ptr<Texture<Spectrum_d> > p_refrlection(new ConstantTexture<Spectrum_d> (Spectrum_d(0.35,0.35,0.75)));
     intrusive_ptr<Texture<double> > p_sigma(new ConstantTexture<double> (0.35));
-    intrusive_ptr<Material> p_material(new Matte(p_refrlection, p_sigma));
+    intrusive_ptr<Material> p_material(new MatteMaterial(p_refrlection, p_sigma));
 
     intrusive_ptr<Primitive> p_primitive(new Primitive(p_wall_mesh, p_material));
     primitives.push_back(p_primitive);
@@ -322,11 +322,11 @@ inline void TestTracer::LoadMesh()
 
   intrusive_ptr<Texture<Spectrum_d> > p_reflection(new ConstantTexture<Spectrum_d> (Spectrum_d(0.75)));
   intrusive_ptr<Texture<double> > p_roughness(new ConstantTexture<double> (0.001));
-  //intrusive_ptr<Material> p_material(new Metal(p_reflection, p_roughness));
+  //intrusive_ptr<Material> p_material(new MetalMaterial(p_reflection, p_roughness));
 
   intrusive_ptr<Texture<Spectrum_d> > p_yellow_reflection(new ConstantTexture<Spectrum_d> (Spectrum_d(0.4,0.4,0.1)));
   intrusive_ptr<Texture<Spectrum_d> > p_white_reflection(new ConstantTexture<Spectrum_d> (Spectrum_d(0.4)));
-  intrusive_ptr<Material> p_material(new Substrate(p_yellow_reflection, p_white_reflection, p_roughness));
+  intrusive_ptr<Material> p_material(new SubstrateMaterial(p_yellow_reflection, p_white_reflection, p_roughness));
 
     {
     Sphere s;
@@ -394,7 +394,7 @@ inline void TestTracer::RenderImage()
   intrusive_ptr<ImagePixelsOrder> pixel_order(new ConsecutiveImagePixelsOrder);
   //intrusive_ptr<ImagePixelsOrder> pixel_order(new RandomBlockedImagePixelsOrder);
 
-  intrusive_ptr<Sampler> p_sampler( new LDSampler(window_begin, window_end, 4*16, pixel_order) );
+  intrusive_ptr<Sampler> p_sampler( new LDSampler(window_begin, window_end, 16, pixel_order) );
 
   /*
   DirectLightingLTEIntegratorParams params;

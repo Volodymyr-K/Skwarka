@@ -437,19 +437,19 @@
 					Name="Materials"
 					>
 					<File
-						RelativePath=".\MainTests\Raytracer\Materials\Matte.test.h"
+						RelativePath=".\MainTests\Raytracer\Materials\MatteMaterial.test.h"
 						>
 					</File>
 					<File
-						RelativePath=".\MainTests\Raytracer\Materials\Metal.test.h"
+						RelativePath=".\MainTests\Raytracer\Materials\MetalMaterial.test.h"
 						>
 					</File>
 					<File
-						RelativePath=".\MainTests\Raytracer\Materials\Substrate.test.h"
+						RelativePath=".\MainTests\Raytracer\Materials\SubstrateMaterial.test.h"
 						>
 					</File>
 					<File
-						RelativePath=".\MainTests\Raytracer\Materials\Transparent.test.h"
+						RelativePath=".\MainTests\Raytracer\Materials\TransparentMaterial.test.h"
 						>
 					</File>
 				</Filter>
@@ -791,11 +791,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Matte.Serialization.test.cpp"
+				RelativePath=".\MatteMaterial.Serialization.test.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\Matte.test.cpp"
+				RelativePath=".\MatteMaterial.test.cpp"
 				>
 			</File>
 			<File
@@ -803,11 +803,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Metal.Serialization.test.cpp"
+				RelativePath=".\MetalMaterial.Serialization.test.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\Metal.test.cpp"
+				RelativePath=".\MetalMaterial.test.cpp"
 				>
 			</File>
 			<File
@@ -995,11 +995,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Substrate.Serialization.test.cpp"
+				RelativePath=".\SubstrateMaterial.Serialization.test.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\Substrate.test.cpp"
+				RelativePath=".\SubstrateMaterial.test.cpp"
 				>
 			</File>
 			<File
@@ -1023,11 +1023,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Transparent.Serialization.test.cpp"
+				RelativePath=".\TransparentMaterial.Serialization.test.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\Transparent.test.cpp"
+				RelativePath=".\TransparentMaterial.test.cpp"
 				>
 			</File>
 			<File
@@ -1507,19 +1507,19 @@
 					Name="Materials"
 					>
 					<File
-						RelativePath=".\SerializationTests\Raytracer\Materials\Matte.Serialization.test.h"
+						RelativePath=".\SerializationTests\Raytracer\Materials\MatteMaterial.Serialization.test.h"
 						>
 					</File>
 					<File
-						RelativePath=".\SerializationTests\Raytracer\Materials\Metal.Serialization.test.h"
+						RelativePath=".\SerializationTests\Raytracer\Materials\MetalMaterial.Serialization.test.h"
 						>
 					</File>
 					<File
-						RelativePath=".\SerializationTests\Raytracer\Materials\Substrate.Serialization.test.h"
+						RelativePath=".\SerializationTests\Raytracer\Materials\SubstrateMaterial.Serialization.test.h"
 						>
 					</File>
 					<File
-						RelativePath=".\SerializationTests\Raytracer\Materials\Transparent.Serialization.test.h"
+						RelativePath=".\SerializationTests\Raytracer\Materials\TransparentMaterial.Serialization.test.h"
 						>
 					</File>
 				</Filter>

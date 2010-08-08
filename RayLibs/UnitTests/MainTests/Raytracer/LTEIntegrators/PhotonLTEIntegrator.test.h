@@ -8,7 +8,7 @@
 #include <Raytracer/LightSources/DiffuseAreaLightSource.h>
 #include <Raytracer/LightSources/PointLight.h>
 #include <Raytracer/Samplers/StratifiedSampler.h>
-#include <Raytracer/Materials/Matte.h>
+#include <Raytracer/Materials/MatteMaterial.h>
 #include <Raytracer/Textures/ConstantTexture.h>
 #include "Mocks/InfiniteLightSourceMock.h"
 #include <UnitTests/TestHelpers/TriangleMeshTestHelper.h>
@@ -154,7 +154,7 @@ class PhotonLTEIntegratorTestSuite : public CxxTest::TestSuite
       {
       intrusive_ptr<Texture<Spectrum_d> > p_reflectance( new ConstantTexture<Spectrum_d>(i_reflectance) );
       intrusive_ptr<Texture<double> > p_sigma( new ConstantTexture<double>(0.0) );
-      intrusive_ptr<Material> p_material(new Matte(p_reflectance, p_sigma));
+      intrusive_ptr<Material> p_material(new MatteMaterial(p_reflectance, p_sigma));
       intrusive_ptr<Primitive> p_primitive(new Primitive(ip_mesh, p_material, ip_light));
       return p_primitive;
       }

@@ -1,5 +1,5 @@
-#ifndef MATTE_H
-#define MATTE_H
+#ifndef MATTE_MATERIAL_H
+#define MATTE_MATERIAL_H
 
 #include <Common/Common.h>
 #include <Common/MemoryPool.h>
@@ -12,15 +12,15 @@
 * The diffuse-reflecting material implementation.
 * The scattering properties at a surface point is controlled by the overall reflectivity and roughness parameter.
 */
-class Matte: public Material
+class MatteMaterial: public Material
   {
   public:
     /**
-    * Creates Matte object with the specified textures defining the reflectivity and roughness of the material.
+    * Creates MatteMaterial object with the specified textures defining the reflectivity and roughness of the material.
     * @param ip_reflectance The texture defining the total hemisphere reflectance. Each spectrum component should be in [0;1] range.
     * @param ip_sigma The texture defining the roughness of the surface. Values should be in [0;1] range.
     */
-    Matte(intrusive_ptr<const Texture<Spectrum_d> > ip_reflectance, intrusive_ptr<const Texture<double> > ip_sigma);
+    MatteMaterial(intrusive_ptr<const Texture<Spectrum_d> > ip_reflectance, intrusive_ptr<const Texture<double> > ip_sigma);
 
     intrusive_ptr<const Texture<Spectrum_d> > GetReflectanceTexture() const;
 
@@ -46,10 +46,10 @@ class Matte: public Material
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
-* Saves the data which is needed to construct Matte to the specified Archive. This method is used by the boost serialization framework.
+* Saves the data which is needed to construct MatteMaterial to the specified Archive. This method is used by the boost serialization framework.
 */
 template<class Archive>
-void save_construct_data(Archive &i_ar, const Matte *ip_material, const unsigned int i_version)
+void save_construct_data(Archive &i_ar, const MatteMaterial *ip_material, const unsigned int i_version)
   {
   intrusive_ptr<const Texture<Spectrum_d> > p_reflectance = ip_material->GetReflectanceTexture();
   intrusive_ptr<const Texture<double> > p_sigma = ip_material->GetSigmaTexture();
@@ -59,10 +59,10 @@ void save_construct_data(Archive &i_ar, const Matte *ip_material, const unsigned
   }
 
 /**
-* Constructs Matte with the data from the specified Archive. This method is used by the boost serialization framework.
+* Constructs MatteMaterial with the data from the specified Archive. This method is used by the boost serialization framework.
 */
 template<class Archive>
-void load_construct_data(Archive &i_ar, Matte *ip_material, const unsigned int i_version)
+void load_construct_data(Archive &i_ar, MatteMaterial *ip_material, const unsigned int i_version)
   {
   intrusive_ptr<const Texture<Spectrum_d> > p_reflectance;
   intrusive_ptr<const Texture<double> > p_sigma;
@@ -70,20 +70,20 @@ void load_construct_data(Archive &i_ar, Matte *ip_material, const unsigned int i
   i_ar >> p_reflectance;
   i_ar >> p_sigma;
 
-  ::new(ip_material)Matte(p_reflectance, p_sigma);
+  ::new(ip_material)MatteMaterial(p_reflectance, p_sigma);
   }
 
 /**
-* Serializes Matte to/from the specified Archive. This method is used by the boost serialization framework.
+* Serializes MatteMaterial to/from the specified Archive. This method is used by the boost serialization framework.
 */
 template<class Archive>
-void serialize(Archive &i_ar, Matte &i_material, const unsigned int i_version)
+void serialize(Archive &i_ar, MatteMaterial &i_material, const unsigned int i_version)
   {
   i_ar & boost::serialization::base_object<Material>(i_material);
   }
 
 // Register the derived class in the boost serialization framework.
 #include <boost/serialization/export.hpp>
-BOOST_CLASS_EXPORT(Matte)
+BOOST_CLASS_EXPORT(MatteMaterial)
 
-#endif // MATTE_H
+#endif // MATTE_MATERIAL_H

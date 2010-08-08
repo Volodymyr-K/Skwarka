@@ -1,4 +1,4 @@
-#include "Metal.h"
+#include "MetalMaterial.h"
 
 #include <Raytracer/Core/BxDF.h>
 #include <Raytracer/BxDFs/Microfacet.h>
@@ -7,7 +7,7 @@
 #include <Raytracer/Core/Fresnel.h>
 #include <Math/MathRoutines.h>
 
-Metal::Metal(intrusive_ptr<const Texture<Spectrum_d> > ip_refractive_index, intrusive_ptr<const Texture<Spectrum_d> > ip_absorption,
+MetalMaterial::MetalMaterial(intrusive_ptr<const Texture<Spectrum_d> > ip_refractive_index, intrusive_ptr<const Texture<Spectrum_d> > ip_absorption,
              intrusive_ptr<const Texture<double> > ip_roughness):
 Material(), mp_refractive_index(ip_refractive_index), mp_absorption(ip_absorption), mp_roughness(ip_roughness)
   {
@@ -16,7 +16,7 @@ Material(), mp_refractive_index(ip_refractive_index), mp_absorption(ip_absorptio
   ASSERT(ip_roughness);
   }
 
-Metal::Metal(intrusive_ptr<const Texture<Spectrum_d> > ip_refractive_index, intrusive_ptr<const Texture<Spectrum_d> > ip_absorption,
+MetalMaterial::MetalMaterial(intrusive_ptr<const Texture<Spectrum_d> > ip_refractive_index, intrusive_ptr<const Texture<Spectrum_d> > ip_absorption,
              intrusive_ptr<const Texture<double> > ip_u_roughness, intrusive_ptr<const Texture<double> > ip_v_roughness):
 Material(), mp_refractive_index(ip_refractive_index), mp_absorption(ip_absorption), mp_u_roughness(ip_u_roughness), mp_v_roughness(ip_v_roughness)
   {
@@ -26,14 +26,14 @@ Material(), mp_refractive_index(ip_refractive_index), mp_absorption(ip_absorptio
   ASSERT(ip_v_roughness);
   }
 
-Metal::Metal(intrusive_ptr<const Texture<Spectrum_d> > ip_reflectance, intrusive_ptr<const Texture<double> > ip_roughness):
+MetalMaterial::MetalMaterial(intrusive_ptr<const Texture<Spectrum_d> > ip_reflectance, intrusive_ptr<const Texture<double> > ip_roughness):
   Material(), mp_reflectance(ip_reflectance), mp_roughness(ip_roughness)
     {
     ASSERT(ip_reflectance);
     ASSERT(ip_roughness);
     }
 
-Metal::Metal(intrusive_ptr<const Texture<Spectrum_d> > ip_reflectance, intrusive_ptr<const Texture<double> > ip_u_roughness, intrusive_ptr<const Texture<double> > ip_v_roughness):
+MetalMaterial::MetalMaterial(intrusive_ptr<const Texture<Spectrum_d> > ip_reflectance, intrusive_ptr<const Texture<double> > ip_u_roughness, intrusive_ptr<const Texture<double> > ip_v_roughness):
 Material(), mp_reflectance(ip_reflectance), mp_u_roughness(ip_u_roughness), mp_v_roughness(ip_v_roughness)
   {
   ASSERT(ip_reflectance);
@@ -41,37 +41,37 @@ Material(), mp_reflectance(ip_reflectance), mp_u_roughness(ip_u_roughness), mp_v
   ASSERT(ip_v_roughness);
   }
 
-intrusive_ptr<const Texture<Spectrum_d> > Metal::GetRefractiveIndexTexture() const
+intrusive_ptr<const Texture<Spectrum_d> > MetalMaterial::GetRefractiveIndexTexture() const
   {
   return mp_refractive_index;
   }
 
-intrusive_ptr<const Texture<Spectrum_d> > Metal::GetAbsoprtionTexture() const
+intrusive_ptr<const Texture<Spectrum_d> > MetalMaterial::GetAbsoprtionTexture() const
   {
   return mp_absorption;
   }
 
-intrusive_ptr<const Texture<Spectrum_d> > Metal::GetReflectanceTexture() const
+intrusive_ptr<const Texture<Spectrum_d> > MetalMaterial::GetReflectanceTexture() const
   {
   return mp_reflectance;
   }
 
-intrusive_ptr<const Texture<double> > Metal::GetRoughnessTexture() const
+intrusive_ptr<const Texture<double> > MetalMaterial::GetRoughnessTexture() const
   {
   return mp_roughness;
   }
 
-intrusive_ptr<const Texture<double> > Metal::GetURoughnessTexture() const
+intrusive_ptr<const Texture<double> > MetalMaterial::GetURoughnessTexture() const
   {
   return mp_u_roughness;
   }
 
-intrusive_ptr<const Texture<double> > Metal::GetVRoughnessTexture() const
+intrusive_ptr<const Texture<double> > MetalMaterial::GetVRoughnessTexture() const
   {
   return mp_v_roughness;
   }
 
-const BSDF *Metal::GetBSDF(const DifferentialGeometry &i_dg, size_t i_triangle_index, MemoryPool &i_pool) const
+const BSDF *MetalMaterial::GetBSDF(const DifferentialGeometry &i_dg, size_t i_triangle_index, MemoryPool &i_pool) const
   {
   BSDF *p_bsdf = new ( i_pool.Alloc(sizeof(BSDF)) ) BSDF(i_dg);
 

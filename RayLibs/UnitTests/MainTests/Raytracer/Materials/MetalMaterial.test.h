@@ -1,5 +1,5 @@
-#ifndef METAL_TEST_H
-#define METAL_TEST_H
+#ifndef METAL_MATERIAL_TEST_H
+#define METAL_MATERIAL_TEST_H
 
 #include <cxxtest/TestSuite.h>
 #include <UnitTests/TestHelpers/CustomValueTraits.h>
@@ -7,7 +7,7 @@
 #include <Raytracer/Core/Material.h>
 #include <Raytracer/Core/DifferentialGeometry.h>
 #include <Raytracer/Core/BSDF.h>
-#include <Raytracer/Materials/Metal.h>
+#include <Raytracer/Materials/MetalMaterial.h>
 #include <Raytracer/BxDFs/Microfacet.h>
 #include <Raytracer/MicrofacetDistributions/BlinnDistribution.h>
 #include <Raytracer/MicrofacetDistributions/AnisotropicDistribution.h>
@@ -25,7 +25,7 @@ class MetalTestSuite : public CxxTest::TestSuite
       intrusive_ptr<Texture<Spectrum_d> > p_absorption( new TextureMock<Spectrum_d>(absorption) );
       intrusive_ptr<Texture<double> > p_roughness( new TextureMock<double>(1.0) );
 
-      intrusive_ptr<Material> p_material(new Metal(p_refreactive_index, p_absorption, p_roughness));
+      intrusive_ptr<Material> p_material(new MetalMaterial(p_refreactive_index, p_absorption, p_roughness));
 
       MemoryPool pool;
       DifferentialGeometry dg;
@@ -53,7 +53,7 @@ class MetalTestSuite : public CxxTest::TestSuite
       intrusive_ptr<Texture<double> > p_u_roughness( new TextureMock<double>(1.0) );
       intrusive_ptr<Texture<double> > p_v_roughness( new TextureMock<double>(10.0) );
 
-      intrusive_ptr<Material> p_material(new Metal(p_refreactive_index, p_absorption, p_u_roughness, p_v_roughness));
+      intrusive_ptr<Material> p_material(new MetalMaterial(p_refreactive_index, p_absorption, p_u_roughness, p_v_roughness));
 
       MemoryPool pool;
       DifferentialGeometry dg;
@@ -75,4 +75,4 @@ class MetalTestSuite : public CxxTest::TestSuite
 
   };
 
-#endif // METAL_TEST_H
+#endif // METAL_MATERIAL_TEST_H

@@ -474,19 +474,19 @@
 				Name="Header Files"
 				>
 				<File
-					RelativePath=".\Materials\Matte.h"
+					RelativePath=".\Materials\MatteMaterial.h"
 					>
 				</File>
 				<File
-					RelativePath=".\Materials\Metal.h"
+					RelativePath=".\Materials\MetalMaterial.h"
 					>
 				</File>
 				<File
-					RelativePath=".\Materials\Substrate.h"
+					RelativePath=".\Materials\SubstrateMaterial.h"
 					>
 				</File>
 				<File
-					RelativePath=".\Materials\Transparent.h"
+					RelativePath=".\Materials\TransparentMaterial.h"
 					>
 				</File>
 			</Filter>
@@ -494,19 +494,19 @@
 				Name="Source Files"
 				>
 				<File
-					RelativePath=".\Materials\Matte.cpp"
+					RelativePath=".\Materials\MatteMaterial.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\Materials\Metal.cpp"
+					RelativePath=".\Materials\MetalMaterial.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\Materials\Substrate.cpp"
+					RelativePath=".\Materials\SubstrateMaterial.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\Materials\Transparent.cpp"
+					RelativePath=".\Materials\TransparentMaterial.cpp"
 					>
 				</File>
 			</Filter>
