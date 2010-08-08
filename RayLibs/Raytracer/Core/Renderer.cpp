@@ -5,6 +5,12 @@ Renderer::Renderer(): mp_display_update_callback(NULL), m_update_period(1.0)
   m_last_display_update = tbb::tick_count::now();
   }
 
+
+bool Renderer::StopRendering()
+  {
+  return false;
+  }
+
 void Renderer::SetDisplayUpdateCallback(intrusive_ptr<DisplayUpdateCallback> ip_display_update_callback, double i_update_period)
   {
   ASSERT(i_update_period>0.0);

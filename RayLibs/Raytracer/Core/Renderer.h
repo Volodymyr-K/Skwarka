@@ -21,9 +21,18 @@ class Renderer: public ReferenceCounted
     * The rendered image will be saved to the camera's film. The film is cleared before rendering, so the previous image will be lost.
     * @param ip_camera Camera in the scene for which the image is to be rendered.
     * @param i_low_thread_priority Specifies OS scheduling priority for tbb threads that perform rendering. Use true to set low priority and false for default priority.
+    * @return True if the image was rendered successfully and false if the rendering was stopped (see StopRendering() method).
     */
-    virtual void Render(intrusive_ptr<const Camera> ip_camera, bool i_low_thread_priority = false) const = 0;
-
+    virtual bool Render(intrusive_ptr<const Camera> ip_camera, bool i_low_thread_priority = false) = 0;
+	
+    /**
+    * Stops rendering of the image.
+    * This method can be called concurrently with the Render() method to stop rendering the image.
+    * Returns true if the rendering was actually stopped and false otherwise.
+    * Default implementation does nothing and always returns false.
+    */
+    virtual bool StopRendering();
+	
     /**
     * Sets callback that will be called periodically to update display with the currently rendered image.
     * The callback will be called by Render() method periodically with the specified period (in seconds).

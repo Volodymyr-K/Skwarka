@@ -109,7 +109,7 @@ class SamplerBasedRenderer::PixelsChunk
 class SamplerBasedRenderer::SamplesGeneratorFilter: public tbb::filter
   {
   public:
-    SamplesGeneratorFilter(intrusive_ptr<Sampler> ip_sampler, size_t i_number_of_chunks, size_t i_pixels_per_chunk);
+    SamplesGeneratorFilter(intrusive_ptr<Sampler> ip_sampler, size_t i_number_of_chunks, size_t i_pixels_per_chunk, const SamplerBasedRenderer *ip_renderer);
 
     ~SamplesGeneratorFilter();
 
@@ -121,6 +121,8 @@ class SamplerBasedRenderer::SamplesGeneratorFilter: public tbb::filter
     std::vector<PixelsChunk*> m_chunks;
 
     size_t m_next_chunk_index, m_pixels_per_chunk;
+
+    const SamplerBasedRenderer *mp_renderer;
   };
 
 /**
@@ -131,7 +133,8 @@ class SamplerBasedRenderer::SamplesGeneratorFilter: public tbb::filter
 class SamplerBasedRenderer::IntegratorFilter: public tbb::filter
   {
   public:
-    IntegratorFilter(intrusive_ptr<const LTEIntegrator> ip_lte_integrator, intrusive_ptr<const Camera> ip_camera, intrusive_ptr<Log> ip_log, bool i_low_thread_priority);
+    IntegratorFilter(intrusive_ptr<const LTEIntegrator> ip_lte_integrator, intrusive_ptr<const Camera> ip_camera, const SamplerBasedRenderer *ip_renderer,
+      intrusive_ptr<Log> ip_log, bool i_low_thread_priority);
 
     void* operator()(void* ip_chunk);
 
@@ -139,6 +142,9 @@ class SamplerBasedRenderer::IntegratorFilter: public tbb::filter
     intrusive_ptr<const LTEIntegrator> mp_lte_integrator;
 
     intrusive_ptr<const Camera> mp_camera;
+
+    const SamplerBasedRenderer *mp_renderer;
+
     intrusive_ptr<Log> mp_log;
     bool m_low_thread_priority;
   };
@@ -164,15 +170,17 @@ class SamplerBasedRenderer::FilmWriterFilter: public tbb::filter
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 SamplerBasedRenderer::SamplerBasedRenderer(intrusive_ptr<LTEIntegrator> ip_lte_integrator, intrusive_ptr<Sampler> ip_sampler, intrusive_ptr<Log> ip_log): Renderer(),
-mp_lte_integrator(ip_lte_integrator), mp_sampler(ip_sampler), mp_log(ip_log)
+mp_lte_integrator(ip_lte_integrator), mp_sampler(ip_sampler), mp_log(ip_log), m_rendering_in_process(false), m_rendering_stopped(false)
   {
   ASSERT(ip_lte_integrator);
   ASSERT(ip_sampler);
   }
 
-void SamplerBasedRenderer::Render(intrusive_ptr<const Camera> ip_camera, bool i_low_thread_priority) const
+bool SamplerBasedRenderer::Render(intrusive_ptr<const Camera> ip_camera, bool i_low_thread_priority)
   {
   ASSERT(ip_camera);
+  m_rendering_in_process = true;
+  m_rendering_stopped = false;
 
   ip_camera->GetFilm()->ClearFilm();
 
@@ -181,8 +189,8 @@ void SamplerBasedRenderer::Render(intrusive_ptr<const Camera> ip_camera, bool i_
 
   mp_lte_integrator->RequestSamples(mp_sampler);
 
-  SamplesGeneratorFilter samples_generator(mp_sampler, MAX_PIPELINE_TOKENS_NUM, PIXELS_PER_CHUNK);
-  IntegratorFilter integrator(mp_lte_integrator, ip_camera, mp_log, i_low_thread_priority);
+  SamplesGeneratorFilter samples_generator(mp_sampler, MAX_PIPELINE_TOKENS_NUM, PIXELS_PER_CHUNK, this);
+  IntegratorFilter integrator(mp_lte_integrator, ip_camera, this, mp_log, i_low_thread_priority);
   FilmWriterFilter film_writer(ip_camera->GetFilm(), this);
 
   tbb::pipeline pipeline;
@@ -192,9 +200,37 @@ void SamplerBasedRenderer::Render(intrusive_ptr<const Camera> ip_camera, bool i_
 
   pipeline.run(MAX_PIPELINE_TOKENS_NUM);
   pipeline.clear();
+  m_rendering_in_process = false;
 
   // Force display update (even if the time period has not passed yet).
   _UpdateDisplay(ip_camera->GetFilm(), true);
+
+  return m_rendering_stopped==false;
+  }
+
+bool SamplerBasedRenderer::StopRendering()
+  {
+  if (m_rendering_in_process == false)
+    {
+    if (mp_log)
+      mp_log->LogMessage(Log::WARNING_LEVEL, "Rendering is not active. Nothing to stop.");
+
+    return false;
+    }
+
+  if (m_rendering_stopped==true)
+    {
+    if (mp_log)
+      mp_log->LogMessage(Log::WARNING_LEVEL, "Rendering has already been stopped.");
+
+    return false;
+    }
+
+  if (mp_log)
+    mp_log->LogMessage(Log::INFO_LEVEL, "Rendering has been stopped.");
+
+  m_rendering_stopped = true;
+  return true;
   }
 
 //////////////////////////////////////////// PixelsChunk /////////////////////////////////////////////////
@@ -282,10 +318,12 @@ RandomGenerator<double> *SamplerBasedRenderer::PixelsChunk::GetRandomGenerator()
 /////////////////////////////////////// SamplesGeneratorFilter ////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-SamplerBasedRenderer::SamplesGeneratorFilter::SamplesGeneratorFilter(intrusive_ptr<Sampler> ip_sampler, size_t i_number_of_chunks, size_t i_pixels_per_chunk):
-filter(serial_out_of_order), mp_sampler(ip_sampler), m_pixels_per_chunk(i_pixels_per_chunk), m_next_chunk_index(0)
+SamplerBasedRenderer::SamplesGeneratorFilter::SamplesGeneratorFilter(intrusive_ptr<Sampler> ip_sampler, size_t i_number_of_chunks, size_t i_pixels_per_chunk,
+                                                                     const SamplerBasedRenderer *ip_renderer):
+filter(serial_out_of_order), mp_sampler(ip_sampler), m_pixels_per_chunk(i_pixels_per_chunk), mp_renderer(ip_renderer), m_next_chunk_index(0)
   {
   ASSERT(ip_sampler);
+  ASSERT(ip_renderer);
   ASSERT(i_number_of_chunks>0);
   ASSERT(i_pixels_per_chunk>0);
 
@@ -301,6 +339,10 @@ SamplerBasedRenderer::SamplesGeneratorFilter::~SamplesGeneratorFilter()
 
 void* SamplerBasedRenderer::SamplesGeneratorFilter::operator()(void*)
   {
+  // Stop rendering if it was stopped by user.
+  if (mp_renderer->m_rendering_stopped)
+    return NULL;
+
   /*
   Here we loop over all chunks until we find an available one, i.e. a one that is not locked by other thread.
   Although this is not really a thread-safe approach it works well here since SamplesGeneratorFilter is serial, so two
@@ -331,8 +373,9 @@ void* SamplerBasedRenderer::SamplesGeneratorFilter::operator()(void*)
 ////////////////////////////////////////// IntegratorFilter ///////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-SamplerBasedRenderer::IntegratorFilter::IntegratorFilter(intrusive_ptr<const LTEIntegrator> ip_lte_integrator, intrusive_ptr<const Camera> ip_camera, intrusive_ptr<Log> ip_log, bool i_low_thread_priority)
-: tbb::filter(parallel), mp_lte_integrator(ip_lte_integrator), mp_camera(ip_camera), mp_log(ip_log), m_low_thread_priority(i_low_thread_priority)
+SamplerBasedRenderer::IntegratorFilter::IntegratorFilter(intrusive_ptr<const LTEIntegrator> ip_lte_integrator, intrusive_ptr<const Camera> ip_camera, const SamplerBasedRenderer *ip_renderer,
+                                                         intrusive_ptr<Log> ip_log, bool i_low_thread_priority)
+: tbb::filter(parallel), mp_lte_integrator(ip_lte_integrator), mp_camera(ip_camera), mp_renderer(ip_renderer), mp_log(ip_log), m_low_thread_priority(i_low_thread_priority)
   {
   ASSERT(ip_lte_integrator);
   ASSERT(ip_camera);
@@ -351,7 +394,8 @@ void* SamplerBasedRenderer::IntegratorFilter::operator()(void* ip_chunk)
   ts.mp_pool = p_pool;
   ts.mp_random_generator = p_chunk->GetRandomGenerator();
 
-  while(const Sample *p_sample = p_chunk->GetNextSample())
+  const Sample *p_sample = NULL;
+  while((p_sample = p_chunk->GetNextSample()) && mp_renderer->m_rendering_stopped==false)
     {
     Point2D_d image_point = p_sample->GetImagePoint();
     Point2D_d lens_uv = p_sample->GetLensUV();
@@ -406,8 +450,10 @@ void* SamplerBasedRenderer::IntegratorFilter::operator()(void* ip_chunk)
     p_pool->FreeAll();
     }
 
+  // Set the thread priority back to its original value.
   if (m_low_thread_priority)
     CoreUtils::SetCurrentThreadPriority(prev_thread_priority);
+
   return p_chunk;
   }
 

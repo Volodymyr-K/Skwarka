@@ -29,8 +29,16 @@ class SamplerBasedRenderer: public Renderer
     * The method calls LTEIntegrator::RequestSamples to let the integrator request the samples sequences.
     * @param ip_camera Camera in the scene for which the image is to be rendered.
     * @param i_low_thread_priority Specifies OS scheduling priority for tbb threads that perform rendering. Use true to set low priority and false for default priority.
+    * @return True if the image was rendered successfully and false if the rendering was stopped (see StopRendering() method).
     */
-    virtual void Render(intrusive_ptr<const Camera> ip_camera, bool i_low_thread_priority = false) const;
+    virtual bool Render(intrusive_ptr<const Camera> ip_camera, bool i_low_thread_priority = false);
+
+    /**
+    * Stops rendering of the image.
+    * This method can be called concurrently with the Render() method to stop rendering the image.
+    * Returns true if the rendering was actually stopped and false otherwise.
+    */
+    virtual bool StopRendering();
 
   private:
     // Not implemented, not a value type.
@@ -50,6 +58,8 @@ class SamplerBasedRenderer: public Renderer
     intrusive_ptr<LTEIntegrator> mp_lte_integrator;
 
     intrusive_ptr<Log> mp_log;
+
+    bool m_rendering_in_process, m_rendering_stopped;
 
     // Defines the maximum number of tokens the TBB pipeline can run concurrently.
     // This is also the upper bound on the number of threads the pipeline can utilize concurrently.
