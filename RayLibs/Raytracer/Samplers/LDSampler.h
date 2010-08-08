@@ -11,7 +11,7 @@
 * Sampler implementation that creates LDSubSampler instances that produce low-discrepancy samples.
 * For image samples, lens samples and 2D integrator samples sequences the sampler generates (0,2)-sequences using VanDerCorput and Sobol' sequences.
 * For 1D integrator samples sequences the sampler generates low-discrepancy samples using VanDerCorput sequence.
-* The special property of (0,2)-sequences is that any sequence of 2^n samples is well distributed (e.g. each 8 samples are well distirbuted, each 16 samples are well distirbuted etc.)
+* The special property of (0,2)-sequences is that any sequence of 2^n samples is well distributed (e.g. each 8 samples are well distributed, each 16 samples are well distributed etc.)
 * The sampler can produce only a number of image samples, lens samples and integrator samples that is a power of 2 (otherwise they won't be well distributed).
 * The sampler uses random scrambling technique to generate different samples for different pixels, without it all pixels would have the same sample values.
 *
@@ -59,7 +59,7 @@ class LDSampler: public Sampler
 * SubSampler implementation that produces low-discrepancy samples.
 * For image samples, lens samples and 2D sample sequences the sampler generates (0,2)-sequences using VanDerCorput and Sobol' sequences.
 * For 1D sample sequences the sampler generates low-discrepancy samples using VanDerCorput sequence.
-* The special property of (0,2)-sequences is that any sequence of 2^n samples is well distributed (e.g. each 8 samples are well distirbuted, each 16 samples are well distirbuted etc.)
+* The special property of (0,2)-sequences is that any sequence of 2^n samples is well distributed (e.g. each 8 samples are well distributed, each 16 samples are well distributed etc.)
 * The sampler can produce only a number of image samples, lens samples or integrator samples that is a power of 2.
 * The sampler uses random scrambling technique to generate different samples for different pixels, without it all pixels would have the same samples.
 *

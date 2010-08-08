@@ -92,7 +92,7 @@ class MicrofacetTestSuite : public CxxTest::TestSuite
 
     void test_Microfacet_PDFSum()
       {
-      size_t num_samples_sqrt = 300;
+      size_t num_samples_sqrt = 400;
       Vector3D_d incident=Vector3D_d(0.5,0.5,0.5).Normalized();
       double sum=0;
       
@@ -110,8 +110,7 @@ class MicrofacetTestSuite : public CxxTest::TestSuite
         sum+=pdf2*2.0*M_PI/(num_samples_sqrt*num_samples_sqrt);
         }
 
-      // For some reason the PDF does not really sum up to 1.0 but rather to ~1.047. Don't know why...
-      TS_ASSERT_DELTA(sum, 1.0, 0.07);
+      TS_ASSERT_DELTA(sum, 1.0, 0.005);
       }
 
     void test_Microfacet_TotalScattering1()
@@ -121,7 +120,7 @@ class MicrofacetTestSuite : public CxxTest::TestSuite
       SamplingRoutines::StratifiedSampling2D(samples.begin(),num_samples_sqrt,num_samples_sqrt,true);
 
       Spectrum_d total=mp_bxdf->TotalScattering(Vector3D_d(0.5,0.5,0.5).Normalized(), SamplesSequence2D(&samples[0], (&samples[0]) + samples.size()));
-      CustomAssertDelta(total, Spectrum_d(0.7551), 0.001); // This is an empirical value.
+      CustomAssertDelta(total, Spectrum_d(0.7908), 0.001); // This is an empirical value.
       }
 
     void test_Microfacet_TotalScattering2()
@@ -136,7 +135,7 @@ class MicrofacetTestSuite : public CxxTest::TestSuite
       SamplesSequence2D sequence2(&samples2[0], (&samples2[0]) + samples2.size());
 
       Spectrum_d total=mp_bxdf->TotalScattering(true, sequence1, sequence2);
-      CustomAssertDelta(total, Spectrum_d(0.7814), 0.005); // This is an empirical value.
+      CustomAssertDelta(total, Spectrum_d(0.8186), 0.005); // This is an empirical value.
       }
 
   private:

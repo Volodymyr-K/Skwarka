@@ -10,7 +10,7 @@
 /**
 * The Blinn microfacet normal distribution implementation.
 * In this model the distribution of microfacet normals is approximated by an exponential falloff.
-* @sa Microfacet
+* @sa Microfacet, AnisotropicDistribution
 */
 class BlinnDistribution
   {
@@ -23,7 +23,7 @@ class BlinnDistribution
 
     /**
     * Evaluates the distribution value for the specified i_microfacet_normal direction.
-    * @param i_microfacet_normal Microfacets normal. Should be normalized.
+    * @param i_microfacet_normal Microfacet normal. Should be normalized.
     */
     double Evaluate(const Vector3D_d &i_microfacet_normal) const;
 
@@ -54,7 +54,7 @@ class BlinnDistribution
 inline BlinnDistribution::BlinnDistribution(double i_exponent)
   {
   ASSERT(i_exponent>=0.0);
-  m_exponent=MathRoutines::Clamp(i_exponent, 0.0, 1000.0);
+  m_exponent = MathRoutines::Clamp(i_exponent, 0.0, 1000.0);
   }
 
 inline double BlinnDistribution::Evaluate(const Vector3D_d &i_microfacet_normal) const
@@ -70,9 +70,9 @@ inline void BlinnDistribution::Sample(const Vector3D_d &i_incident, Vector3D_d &
   ASSERT(i_incident.IsNormalized());
 
   double cos_theta = pow(i_sample[0], 1.0 / (m_exponent+1.0));
-  double sint_heta = sqrt(std::max(0.0, 1.0 - cos_theta*cos_theta));
+  double sin_theta = sqrt(std::max(0.0, 1.0 - cos_theta*cos_theta));
   double phi = i_sample[1] * 2.0 * M_PI;
-  Vector3D_d half_angle(sint_heta*cos(phi), sint_heta*sin(phi), cos_theta);
+  Vector3D_d half_angle(sin_theta*cos(phi), sin_theta*sin(phi), cos_theta);
 
   // Flip the Z coordinate if needed to match the correct hemisphere.
   if (i_incident[2]*half_angle[2]<0.0)
@@ -80,7 +80,7 @@ inline void BlinnDistribution::Sample(const Vector3D_d &i_incident, Vector3D_d &
 
 	// Compute exitant direction by reflecting about the half angle vector.
   o_exitant = half_angle * (2.0*(i_incident*half_angle)) - i_incident;
-  o_pdf = ((m_exponent + 2.0) * pow(cos_theta, m_exponent)) / (2.0 * M_PI * 4.0 * fabs(i_incident*half_angle));
+  o_pdf = ((m_exponent + 1.0) * pow(cos_theta, m_exponent)) / (2.0 * M_PI * 4.0 * fabs(i_incident*half_angle));
   }
 
 inline double BlinnDistribution::PDF(const Vector3D_d &i_incident, const Vector3D_d &i_exitant) const
@@ -91,12 +91,8 @@ inline double BlinnDistribution::PDF(const Vector3D_d &i_incident, const Vector3
   Vector3D_d half_angle(i_incident + i_exitant);
   half_angle.Normalize();
 
-  // Flip the Z coordinate of the half angle vector if needed to match the correct hemisphere.
-  if (half_angle[2]*i_incident[2]<0.0)
-    half_angle *= -1.0;
-
   double cos_theta = fabs(half_angle[2]);
-  return ((m_exponent + 2.0) * pow(cos_theta, m_exponent)) / (2.0 * M_PI * 4.0 * fabs(i_incident*half_angle));
+  return ((m_exponent + 1.0) * pow(cos_theta, m_exponent)) / (2.0 * M_PI * 4.0 * fabs(i_incident*half_angle));
   }
 
 #endif // BLINN_DISTRIBUTION_H

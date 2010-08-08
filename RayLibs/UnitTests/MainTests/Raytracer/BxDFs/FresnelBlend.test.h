@@ -90,7 +90,7 @@ class FresnelBlendTestSuite : public CxxTest::TestSuite
 
     void test_FresnelBlend_PDFSum()
       {
-      size_t num_samples_sqrt = 300;
+      size_t num_samples_sqrt = 500;
       Vector3D_d incident=Vector3D_d(0.5,0.5,0.5).Normalized();
       double sum=0;
 
@@ -108,8 +108,7 @@ class FresnelBlendTestSuite : public CxxTest::TestSuite
         sum+=pdf2*2.0*M_PI/(num_samples_sqrt*num_samples_sqrt);
         }
 
-      // For some reason the PDF does not really sum up to 1.0 but rather to ~0.97. Don't know why...
-      TS_ASSERT_DELTA(sum, 1.0, 0.03);
+      TS_ASSERT_DELTA(sum, 1.0, 1e-3);
       }
 
     void test_FresnelBlend_TotalScattering1()
@@ -119,7 +118,7 @@ class FresnelBlendTestSuite : public CxxTest::TestSuite
       SamplingRoutines::StratifiedSampling2D(samples.begin(),num_samples_sqrt,num_samples_sqrt,true);
 
       Spectrum_d total=mp_bxdf->TotalScattering(Vector3D_d(0.5,0.5,0.5).Normalized(), SamplesSequence2D(&samples[0], (&samples[0]) + samples.size()));
-      CustomAssertDelta(total, Spectrum_d(0.5059), 0.0004); // This is an empirical value.
+      CustomAssertDelta(total, Spectrum_d(0.5178), 0.0004); // This is an empirical value.
       }
 
     void test_FresnelBlend_TotalScattering2()
@@ -134,7 +133,7 @@ class FresnelBlendTestSuite : public CxxTest::TestSuite
       SamplesSequence2D sequence2(&samples2[0], (&samples2[0]) + samples2.size());
 
       Spectrum_d total=mp_bxdf->TotalScattering(true, sequence1, sequence2);
-      CustomAssertDelta(total, Spectrum_d(0.5205), 0.005); // This is an empirical value.
+      CustomAssertDelta(total, Spectrum_d(0.5341), 0.005); // This is an empirical value.
       }
 
   private:

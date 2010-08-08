@@ -598,6 +598,10 @@
 				Name="Header Files"
 				>
 				<File
+					RelativePath=".\MicrofacetDistributions\AnisotropicDistribution.h"
+					>
+				</File>
+				<File
 					RelativePath=".\MicrofacetDistributions\BlinnDistribution.h"
 					>
 				</File>
