@@ -342,7 +342,7 @@ void* SamplerBasedRenderer::IntegratorFilter::operator()(void* ip_chunk)
   {
   int prev_thread_priority = 0;
   if (m_low_thread_priority)
-    prev_thread_priority = CoreUtils::SetThreadPriority(THREAD_PRIORITY_LOWEST);
+    prev_thread_priority = CoreUtils::SetCurrentThreadPriority(THREAD_PRIORITY_LOWEST);
 
   PixelsChunk *p_chunk = static_cast<PixelsChunk*>(ip_chunk);
   MemoryPool *p_pool = p_chunk->GetMemoryPool();
@@ -407,7 +407,7 @@ void* SamplerBasedRenderer::IntegratorFilter::operator()(void* ip_chunk)
     }
 
   if (m_low_thread_priority)
-    CoreUtils::SetThreadPriority(prev_thread_priority);
+    CoreUtils::SetCurrentThreadPriority(prev_thread_priority);
   return p_chunk;
   }
 

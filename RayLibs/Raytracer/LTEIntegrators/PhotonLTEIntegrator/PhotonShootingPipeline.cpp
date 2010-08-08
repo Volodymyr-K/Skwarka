@@ -82,7 +82,7 @@ void* PhotonLTEIntegrator::PhotonsShootingFilter::operator()(void* ip_chunk)
   {
   int prev_thread_priority = 0;
   if (m_low_thread_priority)
-    prev_thread_priority = CoreUtils::SetThreadPriority(THREAD_PRIORITY_LOWEST);
+    prev_thread_priority = CoreUtils::SetCurrentThreadPriority(THREAD_PRIORITY_LOWEST);
 
   PhotonsChunk *p_chunk = static_cast<PhotonsChunk*>(ip_chunk);
   MemoryPool *p_pool = p_chunk->mp_memory_pool;
@@ -229,7 +229,7 @@ void* PhotonLTEIntegrator::PhotonsShootingFilter::operator()(void* ip_chunk)
     } // for (size_t path_index=path_begin; path_index<path_end; ++path_index)
 
   if (m_low_thread_priority)
-    CoreUtils::SetThreadPriority(prev_thread_priority);
+    CoreUtils::SetCurrentThreadPriority(prev_thread_priority);
   return p_chunk;
   }
 

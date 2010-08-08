@@ -20,6 +20,7 @@ class Renderer: public ReferenceCounted
     * Renders the scene for the specified camera.
     * The rendered image will be saved to the camera's film. The film is cleared before rendering, so the previous image will be lost.
     * @param ip_camera Camera in the scene for which the image is to be rendered.
+    * @param i_low_thread_priority Specifies OS scheduling priority for tbb threads that perform rendering. Use true to set low priority and false for default priority.
     */
     virtual void Render(intrusive_ptr<const Camera> ip_camera, bool i_low_thread_priority = false) const = 0;
 
