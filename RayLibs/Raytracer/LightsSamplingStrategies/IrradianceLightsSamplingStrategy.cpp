@@ -1,6 +1,5 @@
 #include "IrradianceLightsSamplingStrategy.h"
 #include <Math/MathRoutines.h>
-#include <cstring>
 
 IrradianceLightsSamplingStrategy::IrradianceLightsSamplingStrategy(const LightSources &i_light_sources): LightsSamplingStrategy(),
 m_light_sources(i_light_sources)
@@ -108,8 +107,9 @@ void IrradianceLightsSamplingStrategy::_Weights_To_CDF(double *io_lights_CDF) co
     }
   else
     {
-    // If all lights have zero weights we just always sample the last one.
-    memset(io_lights_CDF, 0, m_total_lights_num*sizeof(double));
-    io_lights_CDF[m_total_lights_num-1]=1.0;
+    // If all lights have zero power luminance we sample them with equal probabilities.
+    double inv = 1.0/m_total_lights_num;
+    for(size_t i=0;i<m_total_lights_num;++i)
+      io_lights_CDF[i] = (i+1.0) * inv;
     }
   }

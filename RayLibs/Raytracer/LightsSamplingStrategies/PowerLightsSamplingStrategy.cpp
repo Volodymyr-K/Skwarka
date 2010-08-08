@@ -35,13 +35,18 @@ PowerLightsSamplingStrategy::PowerLightsSamplingStrategy(const LightSources &i_l
 
   // Normalize CDF values.
   double total_power = mp_lights_CDF[m_lights_num-1];
-  if (total_power != 0.0)
+  if (total_power > 0.0)
+    {
+    double inv = 1.0/total_power;
     for(size_t i=0;i<m_lights_num;++i)
-      mp_lights_CDF[i] /= total_power;
+      mp_lights_CDF[i] *= inv;
+    }
   else
     {
-    // If all lights have zero power luminance we just always sample the last one.
-    mp_lights_CDF[m_lights_num-1]=1.0;
+    // If all lights have zero power luminance we sample them with equal probabilities.
+    double inv = 1.0/m_lights_num;
+    for(size_t i=0;i<m_lights_num;++i)
+      mp_lights_CDF[i] = (i+1.0) * inv;
     }
   }
 
