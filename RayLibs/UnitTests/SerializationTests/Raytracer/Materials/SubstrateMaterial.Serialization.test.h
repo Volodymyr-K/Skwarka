@@ -8,10 +8,6 @@
 #include <Raytracer/Core/DifferentialGeometry.h>
 #include <Raytracer/Core/BSDF.h>
 #include <Raytracer/Materials/SubstrateMaterial.h>
-#include <Raytracer/BxDFs/FresnelBlend.h>
-#include <Raytracer/MicrofacetDistributions/BlinnDistribution.h>
-#include <Raytracer/MicrofacetDistributions/AnisotropicDistribution.h>
-#include <Raytracer/Core/Fresnel.h>
 #include <Raytracer/Textures/ConstantTexture.h>
 #include <boost/archive/binary_iarchive.hpp>
 #include <boost/archive/binary_oarchive.hpp>
@@ -22,11 +18,11 @@
 typedef boost::iostreams::basic_array_sink<char> SinkDevice;
 typedef boost::iostreams::basic_array_source<char> SourceDevice;
 
-class SubstrateSerializationTestSuite : public CxxTest::TestSuite
+class SubstrateMaterialSerializationTestSuite : public CxxTest::TestSuite
   {
   public:
 
-    void test_Substrate_Serialization_Isotropic()
+    void test_SubstrateMaterial_Serialization_Isotropic()
       {
       Spectrum_d diffuse_reflectance(0.4,0.5,0.6), specular_reflectance(0.5);
       intrusive_ptr<Texture<Spectrum_d> > p_diffuse_reflectance( new ConstantTexture<Spectrum_d>(diffuse_reflectance) );
@@ -57,7 +53,7 @@ class SubstrateSerializationTestSuite : public CxxTest::TestSuite
       TS_ASSERT_EQUALS(val1,val2);
       }
 
-    void test_Substrate_Serialization_Anisotropic()
+    void test_SubstrateMaterial_Serialization_Anisotropic()
       {
       Spectrum_d diffuse_reflectance(0.4,0.5,0.6), specular_reflectance(0.5);
       intrusive_ptr<Texture<Spectrum_d> > p_diffuse_reflectance( new ConstantTexture<Spectrum_d>(diffuse_reflectance) );

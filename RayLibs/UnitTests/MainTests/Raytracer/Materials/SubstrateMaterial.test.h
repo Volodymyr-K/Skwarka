@@ -14,11 +14,11 @@
 #include <Raytracer/Core/Fresnel.h>
 #include "Mocks/TextureMock.h"
 
-class SubstrateTestSuite : public CxxTest::TestSuite
+class SubstrateMaterialTestSuite : public CxxTest::TestSuite
   {
   public:
 
-    void test_Substrate_Isotropic()
+    void test_SubstrateMaterial_Isotropic()
       {
       Spectrum_d diffuse_reflectance(0.4,0.5,0.6), specular_reflectance(0.5);
       intrusive_ptr<Texture<Spectrum_d> > p_diffuse_reflectance( new TextureMock<Spectrum_d>(diffuse_reflectance) );
@@ -45,7 +45,7 @@ class SubstrateTestSuite : public CxxTest::TestSuite
       CustomAssertDelta(val, val2, (1e-6));
       }
 
-    void test_Substrate_Anisotropic()
+    void test_SubstrateMaterial_Anisotropic()
       {
       Spectrum_d diffuse_reflectance(0.4,0.5,0.6), specular_reflectance(0.5);
       intrusive_ptr<Texture<Spectrum_d> > p_diffuse_reflectance( new TextureMock<Spectrum_d>(diffuse_reflectance) );

@@ -19,11 +19,11 @@
 typedef boost::iostreams::basic_array_sink<char> SinkDevice;
 typedef boost::iostreams::basic_array_source<char> SourceDevice;
 
-class TransparentSerializationTestSuite : public CxxTest::TestSuite
+class TransparentMaterialSerializationTestSuite : public CxxTest::TestSuite
   {
   public:
 
-    void test_Transparent_Serialization()
+    void test_TransparentMaterial_Serialization()
       {
       intrusive_ptr<Texture<Spectrum_d> > p_reflectance_texture( new ConstantTexture<Spectrum_d>(Spectrum_d(0.9,0.8,0.7)) );
       intrusive_ptr<Texture<Spectrum_d> > p_transmittance_texture( new ConstantTexture<Spectrum_d>(Spectrum_d(0.5,0.6,0.7)) );

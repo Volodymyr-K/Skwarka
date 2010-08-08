@@ -11,11 +11,11 @@
 #include <Raytracer/BxDFs/OrenNayar.h>
 #include "Mocks/TextureMock.h"
 
-class MatteTestSuite : public CxxTest::TestSuite
+class MatteMaterialTestSuite : public CxxTest::TestSuite
   {
   public:
     // Tests for the case when sigma is zero.
-    void test_Matte_EvaluateZeroSigma()
+    void test_MatteMaterial_EvaluateZeroSigma()
       {
       intrusive_ptr<Texture<Spectrum_d> > p_reflectance( new TextureMock<Spectrum_d>(Spectrum_d(1.0,0.5,0.1)) );
       intrusive_ptr<TextureMock<double> > p_sigma( new TextureMock<double>(0.0) );
@@ -36,7 +36,7 @@ class MatteTestSuite : public CxxTest::TestSuite
       }
 
     // Tests for the case when sigma is not zero, the returned value should match OrenNayar BxDF.
-    void test_Matte_EvaluateNotZeroSigma()
+    void test_MatteMaterial_EvaluateNotZeroSigma()
       {
       intrusive_ptr<Texture<Spectrum_d> > p_reflectance( new TextureMock<Spectrum_d>(Spectrum_d(1.0,0.5,0.1)) );
       intrusive_ptr<TextureMock<double> > p_sigma( new TextureMock<double>(0.1) );

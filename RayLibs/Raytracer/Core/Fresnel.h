@@ -142,7 +142,7 @@ inline void ApproximateFresnelParameters(const Spectrum_d &i_reflection, Spectru
   for(unsigned char i=0;i<3;++i)
     {
     // We use value 2.0 as the first guess for the absorption coefficient value.
-    // It works pretty well for most of the conductor materials.
+    // It works pretty well for most of the conducting materials.
     double k=2.0;
 
     if (i_reflection[i]>=1.0)

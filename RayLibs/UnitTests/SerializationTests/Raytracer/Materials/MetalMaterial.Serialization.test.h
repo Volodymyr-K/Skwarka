@@ -20,11 +20,11 @@
 typedef boost::iostreams::basic_array_sink<char> SinkDevice;
 typedef boost::iostreams::basic_array_source<char> SourceDevice;
 
-class MetalSerializationTestSuite : public CxxTest::TestSuite
+class MetalMaterialSerializationTestSuite : public CxxTest::TestSuite
   {
   public:
 
-    void test_Metal_Serialization_Isotropic()
+    void test_MetalMaterial_Serialization_Isotropic()
       {
       Spectrum_d refreactive_index(0.41,1.15,1.18), absorption(4.2,2.66,2.5);
       intrusive_ptr<Texture<Spectrum_d> > p_refreactive_index( new ConstantTexture<Spectrum_d>(refreactive_index) );
@@ -55,7 +55,7 @@ class MetalSerializationTestSuite : public CxxTest::TestSuite
       TS_ASSERT_EQUALS(val1,val2);
       }
 
-    void test_Metal_Serialization_Anisotropic()
+    void test_MetalMaterial_Serialization_Anisotropic()
       {
       Spectrum_d refreactive_index(0.41,1.15,1.18), absorption(4.2,2.66,2.5);
       intrusive_ptr<Texture<Spectrum_d> > p_refreactive_index( new ConstantTexture<Spectrum_d>(refreactive_index) );

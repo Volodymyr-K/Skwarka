@@ -11,7 +11,7 @@
 #include "Mocks/TextureMock.h"
 #include <Math/ThreadSafeRandom.h>
 
-class TransparentTestSuite : public CxxTest::TestSuite
+class TransparentMaterialTestSuite : public CxxTest::TestSuite
   {
   public:
     void setUp()
@@ -33,7 +33,7 @@ class TransparentTestSuite : public CxxTest::TestSuite
       }
 
     // Tests that the material returns a BSDF with one reflective specular and one reflective transmitting component.
-    void test_Transparent_Components()
+    void test_TransparentMaterial_Components()
       {
       MemoryPool pool;
       DifferentialGeometry dg;
@@ -47,7 +47,7 @@ class TransparentTestSuite : public CxxTest::TestSuite
       TS_ASSERT_EQUALS(p_bsdf->GetComponentsNum(BxDFType(BSDF_TRANSMISSION | BSDF_SPECULAR)), 1);
       }
 
-    void test_Transparent_RefractiveIndex()
+    void test_TransparentMaterial_RefractiveIndex()
       {
       MemoryPool pool;
       DifferentialGeometry dg;
@@ -58,7 +58,7 @@ class TransparentTestSuite : public CxxTest::TestSuite
       TS_ASSERT_EQUALS(p_bsdf->GetRefractiveIndex(), m_refractive_index);
       }
 
-    void test_Transparent_SpecularReflection()
+    void test_TransparentMaterial_SpecularReflection()
       {
       MemoryPool pool;
       DifferentialGeometry dg;
@@ -80,7 +80,7 @@ class TransparentTestSuite : public CxxTest::TestSuite
       TS_ASSERT_DELTA(f[0]/mp_reflectance[0], f[2]/mp_reflectance[2], 1e-10);
       }
 
-    void test_Transparent_SpecularTransmittance()
+    void test_TransparentMaterial_SpecularTransmittance()
       {
       MemoryPool pool;
       DifferentialGeometry dg;

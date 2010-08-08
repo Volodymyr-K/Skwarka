@@ -14,11 +14,11 @@
 #include <Raytracer/Core/Fresnel.h>
 #include "Mocks/TextureMock.h"
 
-class MetalTestSuite : public CxxTest::TestSuite
+class MetalMaterialTestSuite : public CxxTest::TestSuite
   {
   public:
 
-    void test_Metal_Isotropic()
+    void test_MetalMaterial_Isotropic()
       {
       Spectrum_d refreactive_index(0.41,1.15,1.18), absorption(4.2,2.66,2.5);
       intrusive_ptr<Texture<Spectrum_d> > p_refreactive_index( new TextureMock<Spectrum_d>(refreactive_index) );
@@ -45,7 +45,7 @@ class MetalTestSuite : public CxxTest::TestSuite
       CustomAssertDelta(val, val2, (1e-6));
       }
 
-    void test_Metal_Anisotropic()
+    void test_MetalMaterial_Anisotropic()
       {
       Spectrum_d refreactive_index(0.41,1.15,1.18), absorption(4.2,2.66,2.5);
       intrusive_ptr<Texture<Spectrum_d> > p_refreactive_index( new TextureMock<Spectrum_d>(refreactive_index) );

@@ -445,6 +445,10 @@
 						>
 					</File>
 					<File
+						RelativePath=".\MainTests\Raytracer\Materials\PlasticMaterial.test.h"
+						>
+					</File>
+					<File
 						RelativePath=".\MainTests\Raytracer\Materials\SubstrateMaterial.test.h"
 						>
 					</File>
@@ -864,6 +868,14 @@
 			</File>
 			<File
 				RelativePath=".\PhotonLTEIntegrator.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\PlasticMaterial.Serialization.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\PlasticMaterial.test.cpp"
 				>
 			</File>
 			<File
@@ -1512,6 +1524,10 @@
 					</File>
 					<File
 						RelativePath=".\SerializationTests\Raytracer\Materials\MetalMaterial.Serialization.test.h"
+						>
+					</File>
+					<File
+						RelativePath=".\SerializationTests\Raytracer\Materials\PlasticMaterial.Serialization.test.h"
 						>
 					</File>
 					<File

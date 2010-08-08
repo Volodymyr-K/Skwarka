@@ -1,5 +1,5 @@
-#ifndef MATTE_MATERIAL_SERIALIZATION_TEST_H
-#define MATTE_MATERIAL_SERIALIZATION_TEST_H
+#ifndef PLASTIC_MATERIAL_SERIALIZATION_TEST_H
+#define PLASTIC_MATERIAL_SERIALIZATION_TEST_H
 
 #include <cxxtest/TestSuite.h>
 #include <UnitTests/TestHelpers/CustomValueTraits.h>
@@ -7,8 +7,7 @@
 #include <Raytracer/Core/Material.h>
 #include <Raytracer/Core/DifferentialGeometry.h>
 #include <Raytracer/Core/BSDF.h>
-#include <Raytracer/Materials/MatteMaterial.h>
-#include <Raytracer/BxDFs/OrenNayar.h>
+#include <Raytracer/Materials/PlasticMaterial.h>
 #include <Raytracer/Textures/ConstantTexture.h>
 #include <boost/archive/binary_iarchive.hpp>
 #include <boost/archive/binary_oarchive.hpp>
@@ -19,17 +18,18 @@
 typedef boost::iostreams::basic_array_sink<char> SinkDevice;
 typedef boost::iostreams::basic_array_source<char> SourceDevice;
 
-class MatteMaterialSerializationTestSuite : public CxxTest::TestSuite
+class PlasticMaterialSerializationTestSuite : public CxxTest::TestSuite
   {
   public:
 
-    void test_MatteMaterial_Serialization()
+    void test_PlasticMaterial_Serialization_Isotropic()
       {
-      intrusive_ptr<Texture<Spectrum_d> > p_reflectance( new ConstantTexture<Spectrum_d>(Spectrum_d(1.0,0.5,0.1)) );
-      intrusive_ptr<ConstantTexture<double> > p_sigma( new ConstantTexture<double>(0.2) );
+      Spectrum_d diffuse_reflectance(0.4,0.5,0.6), glossy_reflectance(0.3);
+      intrusive_ptr<Texture<Spectrum_d> > p_diffuse_reflectance( new ConstantTexture<Spectrum_d>(diffuse_reflectance) );
+      intrusive_ptr<Texture<Spectrum_d> > p_glossy_reflectance( new ConstantTexture<Spectrum_d>(glossy_reflectance) );
+      intrusive_ptr<Texture<double> > p_roughness( new ConstantTexture<double>(0.025) );
 
-      intrusive_ptr<Material> p_material1(new MatteMaterial(p_reflectance, p_sigma));
-
+      intrusive_ptr<Material> p_material1(new PlasticMaterial(p_diffuse_reflectance, p_glossy_reflectance, p_roughness));
         {
         boost::iostreams::stream_buffer<SinkDevice> buffer(m_data, m_buffer_size);
         boost::archive::binary_oarchive output_archive(buffer);
@@ -48,8 +48,8 @@ class MatteMaterialSerializationTestSuite : public CxxTest::TestSuite
       dg.m_geometric_normal=dg.m_shading_normal=Vector3D_d(0.0,0.0,1.0);
       dg.m_tangent=Vector3D_d(1.0,0.0,0.0);
 
-      Spectrum_d val1 = p_material1->GetBSDF(dg, 0, pool)->Evaluate(Vector3D_d(0.0,0.0,1.0), Vector3D_d(0.0,0.0,1.0));
-      Spectrum_d val2 = p_material2->GetBSDF(dg, 0, pool)->Evaluate(Vector3D_d(0.0,0.0,1.0), Vector3D_d(0.0,0.0,1.0));
+      Spectrum_d val1 = p_material1->GetBSDF(dg, 0, pool)->Evaluate(Vector3D_d(0.5,0.0,1.0).Normalized(), Vector3D_d(-0.5,0.0,1.0).Normalized());
+      Spectrum_d val2 = p_material2->GetBSDF(dg, 0, pool)->Evaluate(Vector3D_d(0.5,0.0,1.0).Normalized(), Vector3D_d(-0.5,0.0,1.0).Normalized());
       TS_ASSERT_EQUALS(val1,val2);
       }
 
@@ -58,4 +58,4 @@ class MatteMaterialSerializationTestSuite : public CxxTest::TestSuite
     char m_data[m_buffer_size];
   };
 
-#endif // MATTE_MATERIAL_SERIALIZATION_TEST_H
+#endif // PLASTIC_MATERIAL_SERIALIZATION_TEST_H

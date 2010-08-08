@@ -17,20 +17,20 @@ class SubstrateMaterial: public Material
   {
   public:
     /**
-    * Creates SubstrateMaterial instance with the specified textures defining the reflectances and microfacet distribution.
+    * Creates SubstrateMaterial instance with the specified textures defining the reflectances and roughness.
     * The roughness is constant for U and V directions and thus the material is isotropic.
-    * @param ip_diffuse_reflectance The texture defining the reflectance(color) of the diffuse surface. Each spectrum component should be positive.
-    * @param ip_specular_reflectance The texture defining the reflectance of the glossy layer at normal incidence. Each spectrum component should be positive.
+    * @param ip_diffuse_reflectance The texture defining the reflectance(color) of the diffuse surface. Each spectrum component should be in [0;1] range.
+    * @param ip_specular_reflectance The texture defining the reflectance of the glossy layer at normal incidence. Each spectrum component should be in [0;1] range.
     * @param ip_roughness The texture defining the roughness of the surface. Values should be in [0;1] range.
     */
     SubstrateMaterial(intrusive_ptr<const Texture<Spectrum_d> > ip_diffuse_reflectance, intrusive_ptr<const Texture<Spectrum_d> > ip_specular_reflectance, 
       intrusive_ptr<const Texture<double> > ip_roughness);
 
     /**
-    * Creates SubstrateMaterial instance with the specified textures defining the reflectances and microfacet distribution.
+    * Creates SubstrateMaterial instance with the specified textures defining the reflectances and roughness.
     * The roughness can be different for U and V directions and thus the material is anisotropic.
-    * @param ip_diffuse_reflectance The texture defining the reflectance(color) of the diffuse surface. Each spectrum component should be positive.
-    * @param ip_specular_reflectance The texture defining the reflectance of the glossy layer at normal incidence. Each spectrum component should be positive.
+    * @param ip_diffuse_reflectance The texture defining the reflectance(color) of the diffuse surface. Each spectrum component should be in [0;1] range..
+    * @param ip_specular_reflectance The texture defining the reflectance of the glossy layer at normal incidence. Each spectrum component should be in [0;1] range.
     * @param ip_u_roughness The texture defining the roughness of the surface in U direction. Values should be in [0;1] range.
     * @param ip_v_roughness The texture defining the roughness of the surface in U direction. Values should be in [0;1] range.
     */
@@ -70,7 +70,7 @@ class SubstrateMaterial: public Material
     virtual const BSDF *GetBSDF(const DifferentialGeometry &i_dg, size_t i_triangle_index, MemoryPool &i_pool) const;
 
   private:
-    intrusive_ptr<const Texture<Spectrum_d> > mp_specular_reflectance, mp_diffuse_reflectance;
+    intrusive_ptr<const Texture<Spectrum_d> > mp_diffuse_reflectance, mp_specular_reflectance;
 
     intrusive_ptr<const Texture<double> > mp_roughness, mp_u_roughness, mp_v_roughness;
   };

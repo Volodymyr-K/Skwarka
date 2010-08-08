@@ -41,12 +41,18 @@ const BSDF *TransparentMaterial::GetBSDF(const DifferentialGeometry &i_dg, size_
   r.Clamp(0.0, 1.0);
   t.Clamp(0.0, 1.0);
 
-  FresnelDielectric fresnel(m_refractive_index, 1.0);
-  BxDF *p_reflection = new ( i_pool.Alloc(sizeof(SpecularReflection<FresnelDielectric>)) ) SpecularReflection<FresnelDielectric>(r, fresnel);
-  p_bsdf->AddBxDF(p_reflection);
+  if (r.IsBlack()==false)
+    {
+    FresnelDielectric fresnel(m_refractive_index, 1.0);
+    BxDF *p_reflection = new ( i_pool.Alloc(sizeof(SpecularReflection<FresnelDielectric>)) ) SpecularReflection<FresnelDielectric>(r, fresnel);
+    p_bsdf->AddBxDF(p_reflection);
+    }
 
-  BxDF *p_transmission = new ( i_pool.Alloc(sizeof(SpecularTransmission)) ) SpecularTransmission(t, m_refractive_index, 1.0);
-  p_bsdf->AddBxDF(p_transmission);
+  if (t.IsBlack()==false)
+    {
+    BxDF *p_transmission = new ( i_pool.Alloc(sizeof(SpecularTransmission)) ) SpecularTransmission(t, m_refractive_index, 1.0);
+    p_bsdf->AddBxDF(p_transmission);
+    }
 
   return p_bsdf;
   }
