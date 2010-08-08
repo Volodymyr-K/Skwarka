@@ -239,8 +239,10 @@ Spectrum<T> Spectrum<T>::operator/(double i_value) const
   {
   ASSERT(IsNaN(i_value)==false);
   ASSERT(i_value != 0.0);
-  double inv = 1.0 / i_value;
-  return (*this) * inv;
+  return Spectrum<T>(
+    (T) (m_rgb[0]/i_value), 
+    (T) (m_rgb[1]/i_value), 
+    (T) (m_rgb[2]/i_value));
   }
 
 template<typename T>
@@ -248,8 +250,10 @@ Spectrum<T> &Spectrum<T>::operator/=(double i_value)
   {
   ASSERT(IsNaN(i_value)==false);
   ASSERT(i_value != 0.0);
-  double inv = 1.0 / i_value;
-  (*this)*=inv;
+
+  m_rgb[0]=(T)(m_rgb[0]/i_value);
+  m_rgb[1]=(T)(m_rgb[1]/i_value);
+  m_rgb[2]=(T)(m_rgb[2]/i_value);
   return *this;
   }
 
