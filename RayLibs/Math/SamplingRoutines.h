@@ -65,17 +65,17 @@ namespace SamplingRoutines
   double CosineHemispherePDF(double i_cos_theta);
 
   /**
-  * Maps 2D sample in [0;1]^2 to a direction lying inside of the cone with specified opening angle.
+  * Maps 2D sample in [0;1]^2 to a direction lying inside of the cone with specified spread angle.
   * The axis of the cone is equal to Z axis.
   * @param i_sample Input 2D sample in [0;1]^2.
-  * @param i_cos_theta_max Cosine of the cone opening angle. Should be in [0;1) range.
+  * @param i_cos_theta_max Cosine of the cone spread angle. Should be in [0;1) range.
   * @return Resulting 3D vector inside the cone. Should be normalized.
   */
   Vector3D_d UniformConeSampling(const Point2D_d i_sample, double i_cos_theta_max);
 
   /**
-  * Returns PDF value for uniform cone sampling for the specified specified opening angle.
-  * @param i_cos_theta_max Cosine of the cone opening angle. Should be in [0;1) range.
+  * Returns PDF value for uniform cone sampling for the specified specified spread angle.
+  * @param i_cos_theta_max Cosine of the cone spread angle. Should be in [0;1) range.
   * @return PDF value.
   */
   double UniformConePDF(double i_cos_theta_max);

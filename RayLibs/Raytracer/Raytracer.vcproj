@@ -641,6 +641,10 @@
 					RelativePath=".\LightSources\PointLight.h"
 					>
 				</File>
+				<File
+					RelativePath=".\LightSources\SpotPointLight.h"
+					>
+				</File>
 			</Filter>
 			<Filter
 				Name="Source Files"
@@ -659,6 +663,10 @@
 				</File>
 				<File
 					RelativePath=".\LightSources\PointLight.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\LightSources\SpotPointLight.cpp"
 					>
 				</File>
 			</Filter>

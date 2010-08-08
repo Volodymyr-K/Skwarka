@@ -5,6 +5,7 @@
 #include <UnitTests/TestHelpers/CustomValueTraits.h>
 #include <Raytracer/LightSources/PointLight.h>
 #include <Math/ThreadSafeRandom.h>
+#include <Math/SamplingRoutines.h>
 #include <vector>
 
 class PointLightTestSuite : public CxxTest::TestSuite
@@ -43,7 +44,11 @@ class PointLightTestSuite : public CxxTest::TestSuite
       Spectrum_d intensity(1.0,2.0,3.0);
       intrusive_ptr<DeltaLightSource> p_light(new PointLight(light_pos, intensity));
 
-      size_t num_samples=1000;
+      size_t num_samples_sqrt=100, num_samples=num_samples_sqrt*num_samples_sqrt;
+      std::vector<Point2D_d> samples(num_samples_sqrt*num_samples_sqrt);
+      SamplingRoutines::StratifiedSampling2D(samples.begin(),num_samples_sqrt,num_samples_sqrt,true);
+
+      Spectrum_d sum;
       for(size_t i=0;i<num_samples;++i)
         {
         Point2D_d sample(RandomDouble(1.0), RandomDouble(1.0));
@@ -54,34 +59,41 @@ class PointLightTestSuite : public CxxTest::TestSuite
         if (sampled_irradiance != intensity)
           {
           TS_FAIL("Wrong radiance value.");
-          break;
+          return;
           }
 
         if (photon_ray.m_direction.IsNormalized() == false)
           {
           TS_FAIL("The photon ray direction is not normalized.");
-          break;
+          return;
           }
 
         if (photon_ray(photon_ray.m_min_t) != light_pos)
           {
           TS_FAIL("Wrong photon ray.");
-          break;
+          return;
           }
 
         if (IsPositiveInf(photon_ray.m_max_t)==false)
           {
           TS_FAIL("Photon ray is bounded.");
-          break;
+          return;
           }
 
         if (pdf <= 0.0)
           {
           TS_FAIL("PDF value is not positive.");
-          break;
+          return;
           }
 
+        // Integrate the irradiance value to check it later.
+        sum += sampled_irradiance / pdf;
         }
+
+      // Check that the integrated irradiance is equal to the light's power.
+      sum /= num_samples;
+      Spectrum_d power = p_light->Power();
+      CustomAssertDelta(sum, power, 1e-6);
       }
   };
 

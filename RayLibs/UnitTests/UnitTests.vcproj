@@ -488,6 +488,10 @@
 						RelativePath=".\MainTests\Raytracer\LightSources\PointLight.test.h"
 						>
 					</File>
+					<File
+						RelativePath=".\MainTests\Raytracer\LightSources\SpotPointLight.test.h"
+						>
+					</File>
 				</Filter>
 				<Filter
 					Name="Renderers"
@@ -1000,6 +1004,14 @@
 			</File>
 			<File
 				RelativePath=".\SphericalMapping2D.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\SpotPointLight.Serialization.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\SpotPointLight.test.cpp"
 				>
 			</File>
 			<File
@@ -1556,6 +1568,10 @@
 					</File>
 					<File
 						RelativePath=".\SerializationTests\Raytracer\LightSources\PointLight.Serialization.test.h"
+						>
+					</File>
+					<File
+						RelativePath=".\SerializationTests\Raytracer\LightSources\SpotPointLight.Serialization.test.h"
 						>
 					</File>
 				</Filter>

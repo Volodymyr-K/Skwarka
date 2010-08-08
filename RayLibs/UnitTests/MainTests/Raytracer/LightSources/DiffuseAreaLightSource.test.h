@@ -146,8 +146,11 @@ class DiffuseAreaLightSourceTestSuite : public CxxTest::TestSuite
 
     void test_DiffuseAreaLightSource_SamplePhoton()
       {
-      size_t num_samples=10000;
+      size_t num_samples_sqrt=100, num_samples=num_samples_sqrt*num_samples_sqrt;
+      std::vector<Point2D_d> samples(num_samples_sqrt*num_samples_sqrt);
+      SamplingRoutines::StratifiedSampling2D(samples.begin(),num_samples_sqrt,num_samples_sqrt,true);
 
+      Spectrum_d sum;
       for(size_t i=0;i<num_samples;++i)
         {
         Ray photon_ray;
@@ -157,32 +160,38 @@ class DiffuseAreaLightSourceTestSuite : public CxxTest::TestSuite
         if (pdf<0.0)
           {
           TS_FAIL("PDF value is negative.");
-          break;
+          return;
           }
 
         size_t triangle_index;
         if (_IsPointOnMeshSurface(photon_ray.m_origin, triangle_index) == false)
           {
           TS_FAIL("Sampled point is not on the mesh surface.");
-          break;
+          return;
           }
 
         Vector3D_d normal = Convert<double>(mp_mesh->GetTriangleNormal(triangle_index));
         if (normal*photon_ray.m_direction<0.0)
           {
           TS_FAIL("Photon ray direction is invalid.");
-          break;
+          return;
           }
 
         double cos_value = normal*photon_ray.m_direction;
         if (sampled_irradiance != Spectrum_d(1.0)*cos_value)
           {
           TS_FAIL("Sampled irradiance is incorrect.");
-          break;
+          return;
           }
 
+        // Integrate the irradiance value to check it later.
+        sum += sampled_irradiance / pdf;
         }
 
+      // Check that the integrated irradiance is equal to the light's power.
+      sum /= num_samples;
+      Spectrum_d power = mp_area_light->Power();
+      CustomAssertDelta(sum, power, 1e-5);
       }
 
   private:
