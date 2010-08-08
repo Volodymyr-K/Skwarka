@@ -446,7 +446,8 @@ T MIPMap<T>::Evaluate(const Point2D_d &i_point, Vector2D_d i_dxy_1, Vector2D_d i
     return _Interpolate(0, i_point);
 
   // Clamp ellipse eccentricity if too large.
-  if (minor_length * m_max_anisotropy < major_length) {
+  if (minor_length * m_max_anisotropy < major_length && minor_length > 0.0)
+    {
     double scale = major_length / (minor_length * m_max_anisotropy);
     i_dxy_2 *= scale;
     minor_length *= scale;

@@ -79,6 +79,8 @@ Spectrum_d Microfacet<Fresnel,MicrofacetDistribution>::Evaluate(const Vector3D_d
 
   double cos_theta_incident = fabs(i_incident[2]);
   double cos_theta_exitant = fabs(i_exitant[2]);
+  if (cos_theta_incident==0.0 || cos_theta_exitant==0.0)
+    return Spectrum_d();
 
   Vector3D_d half_angle(i_incident + i_exitant);
   if (half_angle[0]==0.0 && half_angle[1]==0.0 && half_angle[2]==0.0)
