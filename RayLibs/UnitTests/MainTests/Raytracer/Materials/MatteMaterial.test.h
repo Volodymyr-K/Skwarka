@@ -17,7 +17,7 @@ class MatteMaterialTestSuite : public CxxTest::TestSuite
     // Tests for the case when sigma is zero.
     void test_MatteMaterial_EvaluateZeroSigma()
       {
-      intrusive_ptr<Texture<Spectrum_d> > p_reflectance( new TextureMock<Spectrum_d>(Spectrum_d(1.0,0.5,0.1)) );
+      intrusive_ptr<Texture<SpectrumCoef_d> > p_reflectance( new TextureMock<SpectrumCoef_d>(SpectrumCoef_d(1.0,0.5,0.1)) );
       intrusive_ptr<TextureMock<double> > p_sigma( new TextureMock<double>(0.0) );
       
       intrusive_ptr<Material> p_material(new MatteMaterial(p_reflectance, p_sigma));
@@ -31,14 +31,14 @@ class MatteMaterialTestSuite : public CxxTest::TestSuite
       TS_ASSERT(p_bsdf != NULL);
       TS_ASSERT_EQUALS(p_bsdf->GetComponentsNum(), 1);
 
-      Spectrum_d val = p_bsdf->Evaluate(Vector3D_d(0.0,0.0,1.0), Vector3D_d(0.0,0.0,1.0));
-      CustomAssertDelta(val, Spectrum_d(1.0,0.5,0.1)*INV_PI, (1e-6));
+      SpectrumCoef_d val = p_bsdf->Evaluate(Vector3D_d(0.0,0.0,1.0), Vector3D_d(0.0,0.0,1.0));
+      CustomAssertDelta(val, SpectrumCoef_d(1.0,0.5,0.1)*INV_PI, (1e-6));
       }
 
     // Tests for the case when sigma is not zero, the returned value should match OrenNayar BxDF.
     void test_MatteMaterial_EvaluateNotZeroSigma()
       {
-      intrusive_ptr<Texture<Spectrum_d> > p_reflectance( new TextureMock<Spectrum_d>(Spectrum_d(1.0,0.5,0.1)) );
+      intrusive_ptr<Texture<SpectrumCoef_d> > p_reflectance( new TextureMock<SpectrumCoef_d>(SpectrumCoef_d(1.0,0.5,0.1)) );
       intrusive_ptr<TextureMock<double> > p_sigma( new TextureMock<double>(0.1) );
 
       intrusive_ptr<Material> p_material(new MatteMaterial(p_reflectance, p_sigma));
@@ -52,8 +52,8 @@ class MatteMaterialTestSuite : public CxxTest::TestSuite
       TS_ASSERT(p_bsdf != NULL);
       TS_ASSERT_EQUALS(p_bsdf->GetComponentsNum(), 1);
 
-      Spectrum_d val = p_bsdf->Evaluate(Vector3D_d(0.0,0.0,1.0), Vector3D_d(0.0,0.0,1.0));
-      Spectrum_d val2 = OrenNayar(Spectrum_d(1.0,0.5,0.1), 0.1).Evaluate(Vector3D_d(0.0,0.0,1.0), Vector3D_d(0.0,0.0,1.0));
+      SpectrumCoef_d val = p_bsdf->Evaluate(Vector3D_d(0.0,0.0,1.0), Vector3D_d(0.0,0.0,1.0));
+      SpectrumCoef_d val2 = OrenNayar(SpectrumCoef_d(1.0,0.5,0.1), 0.1).Evaluate(Vector3D_d(0.0,0.0,1.0), Vector3D_d(0.0,0.0,1.0));
 
       CustomAssertDelta(val, val2, (1e-6));
       }

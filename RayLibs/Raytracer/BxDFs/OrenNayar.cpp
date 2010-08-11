@@ -1,7 +1,7 @@
 #include "OrenNayar.h"
 #include <Math/MathRoutines.h>
 
-OrenNayar::OrenNayar(Spectrum_d i_reflectance, double i_sigma):
+OrenNayar::OrenNayar(SpectrumCoef_d i_reflectance, double i_sigma):
 BxDF(BxDFType(BSDF_REFLECTION | BSDF_DIFFUSE)), m_reflectance(i_reflectance)
   {
   ASSERT(InRange(i_reflectance,0.0,1.0));
@@ -13,7 +13,7 @@ BxDF(BxDFType(BSDF_REFLECTION | BSDF_DIFFUSE)), m_reflectance(i_reflectance)
   }
 
 // The method does not check if the vectors are in the same hemisphere.
-Spectrum_d OrenNayar::Evaluate(const Vector3D_d &i_incident, const Vector3D_d &i_exitant) const
+SpectrumCoef_d OrenNayar::Evaluate(const Vector3D_d &i_incident, const Vector3D_d &i_exitant) const
   {
   double cos_theta_incident = i_incident[2], cos_theta_exitant = i_exitant[2];
 

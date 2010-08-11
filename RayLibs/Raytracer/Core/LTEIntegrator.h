@@ -80,7 +80,7 @@ class LTEIntegrator: public ReferenceCounted
     * @param i_ts Thread specifics (memory pool, random number generator etc.).
     * @return Resulting radiance value.
     */
-    virtual Spectrum_d _MediaRadianceAndTranmsittance(const RayDifferential &i_ray, const Sample *ip_sample, Spectrum_d &o_transmittance, ThreadSpecifics i_ts) const = 0;
+    virtual Spectrum_d _MediaRadianceAndTranmsittance(const RayDifferential &i_ray, const Sample *ip_sample, SpectrumCoef_d &o_transmittance, ThreadSpecifics i_ts) const = 0;
 
     /**
     * Requests 1D and 2D samples sequences needed for the surface part of the LTE integration.

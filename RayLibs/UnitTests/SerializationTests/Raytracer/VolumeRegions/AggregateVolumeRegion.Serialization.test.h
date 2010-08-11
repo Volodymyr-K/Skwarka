@@ -26,13 +26,13 @@ class AggregateVolumeRegionSerializationTestSuite : public CxxTest::TestSuite
       {
       BBox3D_d bounds1(Point3D_d(0,0,0), Point3D_d(2,2,2));
       Spectrum_d emission1(1,1.5,2);
-      Spectrum_d absorption1(5,7,9);
-      Spectrum_d scattering1(0.1,0.0,0.9);
+      SpectrumCoef_d absorption1(5,7,9);
+      SpectrumCoef_d scattering1(0.1,0.0,0.9);
 
       BBox3D_d bounds2(Point3D_d(1,1,1), Point3D_d(3,3,3));
       Spectrum_d emission2(2,0.5,1);
-      Spectrum_d absorption2(2,1,4);
-      Spectrum_d scattering2(5.1,0.3,3.9);
+      SpectrumCoef_d absorption2(2,1,4);
+      SpectrumCoef_d scattering2(5.1,0.3,3.9);
 
       intrusive_ptr<PhaseFunction> p_phase_function( new RayleighPhaseFunction );
       intrusive_ptr<VolumeRegion> p_region1(new HomogeneousVolumeRegion(bounds1, emission1, absorption1, scattering1, p_phase_function));

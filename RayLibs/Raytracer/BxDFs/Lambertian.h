@@ -15,13 +15,13 @@ class Lambertian: public BxDF
     * Creates Lambertian instance with the specified reflectance.
     * @param i_reflectance The total hemisphere reflectance. Each spectrum component should be in [0;1] range.
     */
-    Lambertian(Spectrum_d i_reflectance);
+    Lambertian(SpectrumCoef_d i_reflectance);
 
     /**
     * Returns BxDF value for the specified incident and exitant directions.
     * The returned value is constant over the entire hemisphere.
     */
-    virtual Spectrum_d Evaluate(const Vector3D_d &i_incident, const Vector3D_d &i_exitant) const;
+    virtual SpectrumCoef_d Evaluate(const Vector3D_d &i_incident, const Vector3D_d &i_exitant) const;
 
     /**
     * Returns total scattering (i.e. fraction of scattered light) assuming a unit of light coming from the specified incident direction.
@@ -29,7 +29,7 @@ class Lambertian: public BxDF
     * @param i_samples 2D Samples sequence to be used for sampling the hemisphere. Should have at least one sample.
     * @return Total scattering value.
     */
-    virtual Spectrum_d TotalScattering(const Vector3D_d &i_incident, SamplesSequence2D i_samples) const;
+    virtual SpectrumCoef_d TotalScattering(const Vector3D_d &i_incident, SamplesSequence2D i_samples) const;
 
     /**
     * Returns total scattering (i.e. fraction of scattered light) assuming a light coming uniformly from the specified hemisphere.
@@ -41,10 +41,10 @@ class Lambertian: public BxDF
     * @param i_samples2 Second samples sequence. Should have the same number of elements that i_samples1 has.
     * @return Total scattering value.
     */
-    virtual Spectrum_d TotalScattering(bool i_hemisphere, SamplesSequence2D i_samples1, SamplesSequence2D i_samples2) const;
+    virtual SpectrumCoef_d TotalScattering(bool i_hemisphere, SamplesSequence2D i_samples1, SamplesSequence2D i_samples2) const;
 
   private:
-    Spectrum_d m_reflectance, m_reflectance_inv_pi;
+    SpectrumCoef_d m_reflectance, m_reflectance_inv_pi;
   };
 
 #endif // LAMBERTIAN_H

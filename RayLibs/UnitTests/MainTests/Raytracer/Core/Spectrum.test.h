@@ -64,7 +64,7 @@ class SpectrumTestSuite : public CxxTest::TestSuite
     void test_Spectrum_Mult()
       {
       Spectrum_d s1(1.5,2.0, 3.0);
-      Spectrum_d s2(1.0,-10.0,2.0);
+      SpectrumCoef_d s2(1.0,-10.0,2.0);
       Spectrum_d s_mult=s1*s2;
       TS_ASSERT_EQUALS(s_mult, Spectrum_d(1.5,-20.0,6.0));
       }
@@ -72,7 +72,7 @@ class SpectrumTestSuite : public CxxTest::TestSuite
     void test_Spectrum_MultAssign()
       {
       Spectrum_d s1(1.5,2.0, 3.0);
-      Spectrum_d s2(1.0,10.0,2.0);
+      SpectrumCoef_d s2(1.0,10.0,2.0);
       Spectrum_d s_mult=s1;
       s_mult*=s2;
       TS_ASSERT_EQUALS(s_mult, Spectrum_d(1.5,20.0,6.0));
@@ -81,7 +81,7 @@ class SpectrumTestSuite : public CxxTest::TestSuite
     void test_Spectrum_Div()
       {
       Spectrum_d s1(1.5,2.0, 3.0);
-      Spectrum_d s2(1.0,-10.0,2.0);
+      SpectrumCoef_d s2(1.0,-10.0,2.0);
       Spectrum_d s_div=s1/s2;
       TS_ASSERT_EQUALS(s_div, Spectrum_d(1.5,-0.2,1.5));
       }
@@ -89,7 +89,7 @@ class SpectrumTestSuite : public CxxTest::TestSuite
     void test_Spectrum_DivAssign()
       {
       Spectrum_d s1(1.5,2.0, 3.0);
-      Spectrum_d s2(1.0,10.0,2.0);
+      SpectrumCoef_d s2(1.0,10.0,2.0);
       Spectrum_d s_div=s1;
       s_div/=s2;
       TS_ASSERT_EQUALS(s_div, Spectrum_d(1.5,0.2,1.5));

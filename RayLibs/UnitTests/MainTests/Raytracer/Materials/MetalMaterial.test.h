@@ -20,9 +20,9 @@ class MetalMaterialTestSuite : public CxxTest::TestSuite
 
     void test_MetalMaterial_Isotropic()
       {
-      Spectrum_d refreactive_index(0.41,1.15,1.18), absorption(4.2,2.66,2.5);
-      intrusive_ptr<Texture<Spectrum_d> > p_refreactive_index( new TextureMock<Spectrum_d>(refreactive_index) );
-      intrusive_ptr<Texture<Spectrum_d> > p_absorption( new TextureMock<Spectrum_d>(absorption) );
+      SpectrumCoef_d refreactive_index(0.41,1.15,1.18), absorption(4.2,2.66,2.5);
+      intrusive_ptr<Texture<SpectrumCoef_d> > p_refreactive_index( new TextureMock<SpectrumCoef_d>(refreactive_index) );
+      intrusive_ptr<Texture<SpectrumCoef_d> > p_absorption( new TextureMock<SpectrumCoef_d>(absorption) );
       intrusive_ptr<Texture<double> > p_roughness( new TextureMock<double>(1.0) );
 
       intrusive_ptr<Material> p_material(new MetalMaterial(p_refreactive_index, p_absorption, p_roughness));
@@ -36,20 +36,20 @@ class MetalMaterialTestSuite : public CxxTest::TestSuite
       TS_ASSERT(p_bsdf != NULL);
       TS_ASSERT_EQUALS(p_bsdf->GetComponentsNum(), 1);
 
-      Spectrum_d val = p_bsdf->Evaluate(Vector3D_d(0.5,0.0,1.0).Normalized(), Vector3D_d(-0.5,0.0,1.0).Normalized());
+      SpectrumCoef_d val = p_bsdf->Evaluate(Vector3D_d(0.5,0.0,1.0).Normalized(), Vector3D_d(-0.5,0.0,1.0).Normalized());
 
       typedef Microfacet<FresnelConductor,BlinnDistribution> BlinnMicrofacetMetal;
-      BlinnMicrofacetMetal metal(Spectrum_d(1.0), FresnelConductor(refreactive_index, absorption), BlinnDistribution(1.0));
-      Spectrum_d val2 = metal.Evaluate(Vector3D_d(0.5,0.0,1.0).Normalized(), Vector3D_d(-0.5,0.0,1.0).Normalized());
+      BlinnMicrofacetMetal metal(SpectrumCoef_d(1.0), FresnelConductor(refreactive_index, absorption), BlinnDistribution(1.0));
+      SpectrumCoef_d val2 = metal.Evaluate(Vector3D_d(0.5,0.0,1.0).Normalized(), Vector3D_d(-0.5,0.0,1.0).Normalized());
 
       CustomAssertDelta(val, val2, (1e-6));
       }
 
     void test_MetalMaterial_Anisotropic()
       {
-      Spectrum_d refreactive_index(0.41,1.15,1.18), absorption(4.2,2.66,2.5);
-      intrusive_ptr<Texture<Spectrum_d> > p_refreactive_index( new TextureMock<Spectrum_d>(refreactive_index) );
-      intrusive_ptr<Texture<Spectrum_d> > p_absorption( new TextureMock<Spectrum_d>(absorption) );
+      SpectrumCoef_d refreactive_index(0.41,1.15,1.18), absorption(4.2,2.66,2.5);
+      intrusive_ptr<Texture<SpectrumCoef_d> > p_refreactive_index( new TextureMock<SpectrumCoef_d>(refreactive_index) );
+      intrusive_ptr<Texture<SpectrumCoef_d> > p_absorption( new TextureMock<SpectrumCoef_d>(absorption) );
       intrusive_ptr<Texture<double> > p_u_roughness( new TextureMock<double>(1.0) );
       intrusive_ptr<Texture<double> > p_v_roughness( new TextureMock<double>(10.0) );
 
@@ -64,11 +64,11 @@ class MetalMaterialTestSuite : public CxxTest::TestSuite
       TS_ASSERT(p_bsdf != NULL);
       TS_ASSERT_EQUALS(p_bsdf->GetComponentsNum(), 1);
 
-      Spectrum_d val = p_bsdf->Evaluate(Vector3D_d(0.5,0.0,1.0).Normalized(), Vector3D_d(-0.5,0.0,1.0).Normalized());
+      SpectrumCoef_d val = p_bsdf->Evaluate(Vector3D_d(0.5,0.0,1.0).Normalized(), Vector3D_d(-0.5,0.0,1.0).Normalized());
 
       typedef Microfacet<FresnelConductor,AnisotropicDistribution> AnisotropicMicrofacetMetal;
-      AnisotropicMicrofacetMetal metal(Spectrum_d(1.0), FresnelConductor(refreactive_index, absorption), AnisotropicDistribution(1.0,10.0));
-      Spectrum_d val2 = metal.Evaluate(Vector3D_d(0.5,0.0,1.0).Normalized(), Vector3D_d(-0.5,0.0,1.0).Normalized());
+      AnisotropicMicrofacetMetal metal(SpectrumCoef_d(1.0), FresnelConductor(refreactive_index, absorption), AnisotropicDistribution(1.0,10.0));
+      SpectrumCoef_d val2 = metal.Evaluate(Vector3D_d(0.5,0.0,1.0).Normalized(), Vector3D_d(-0.5,0.0,1.0).Normalized());
 
       CustomAssertDelta(val, val2, (1e-6));
       }

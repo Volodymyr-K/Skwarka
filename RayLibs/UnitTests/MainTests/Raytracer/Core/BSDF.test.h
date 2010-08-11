@@ -67,13 +67,13 @@ class BSDFTestSuite : public CxxTest::TestSuite
       Vector3D_d incident=Vector3D_d(0.5,0.5,0.5).Normalized();
       Vector3D_d exitant=Vector3D_d(-0.5,0.5,0.5).Normalized();
 
-      Spectrum_d v1 = mp_bsdf->Evaluate(incident,exitant);
+      SpectrumCoef_d v1 = mp_bsdf->Evaluate(incident,exitant);
 
       mp_bsdf->AddBxDF(&bxdf1);
-      Spectrum_d v2 = mp_bsdf->Evaluate(incident,exitant);
+      SpectrumCoef_d v2 = mp_bsdf->Evaluate(incident,exitant);
 
       mp_bsdf->AddBxDF(&bxdf2);
-      Spectrum_d v3 = mp_bsdf->Evaluate(incident,exitant);
+      SpectrumCoef_d v3 = mp_bsdf->Evaluate(incident,exitant);
 
       TS_ASSERT(v1.IsBlack());
       TS_ASSERT(v2.IsBlack()==false);
@@ -90,8 +90,8 @@ class BSDFTestSuite : public CxxTest::TestSuite
 
       Vector3D_d incident=Vector3D_d(0.5,0.5,0.5).Normalized();
       Vector3D_d exitant=Vector3D_d(-0.5,0.5,0.5).Normalized();
-      Spectrum_d glossy_only = mp_bsdf->Evaluate(incident,exitant,BxDFType(BSDF_REFLECTION|BSDF_GLOSSY));
-      Spectrum_d all = mp_bsdf->Evaluate(incident,exitant,BxDFType(BSDF_ALL));
+      SpectrumCoef_d glossy_only = mp_bsdf->Evaluate(incident,exitant,BxDFType(BSDF_REFLECTION|BSDF_GLOSSY));
+      SpectrumCoef_d all = mp_bsdf->Evaluate(incident,exitant,BxDFType(BSDF_ALL));
 
       TS_ASSERT(glossy_only.IsBlack()==false);
       TS_ASSERT_EQUALS(all,2.0*glossy_only);
@@ -116,18 +116,18 @@ class BSDFTestSuite : public CxxTest::TestSuite
         Vector3D_d exitant;
         double pdf;
         BxDFType type;
-        Spectrum_d val=mp_bsdf->Sample(incident, exitant, pdf, type);
+        SpectrumCoef_d val=mp_bsdf->Sample(incident, exitant, pdf, type);
 
         if (IsSpecular(type))
           {
-          if (val != Spectrum_d(0.1/incident[2]))
+          if (val != SpectrumCoef_d(0.1/incident[2]))
             correct=false;
           if (pdf != 1.0/3)
             correct=false;
           }
         else
           {
-          if (val != Spectrum_d(INV_PI*0.4+INV_PI*0.3))
+          if (val != SpectrumCoef_d(INV_PI*0.4+INV_PI*0.3))
             correct=false;
           if (pdf != (bxdf1.PDF(incident,exitant)+bxdf2.PDF(incident,exitant)) / 3)
             correct=false;
@@ -149,11 +149,11 @@ class BSDFTestSuite : public CxxTest::TestSuite
       Vector3D_d exitant;
       double pdf;
       BxDFType type;
-      Spectrum_d val=mp_bsdf->Sample(incident, exitant, pdf, type, BxDFType(BSDF_REFLECTION|BSDF_GLOSSY));
+      SpectrumCoef_d val=mp_bsdf->Sample(incident, exitant, pdf, type, BxDFType(BSDF_REFLECTION|BSDF_GLOSSY));
 
       TS_ASSERT(type==BSDF_NONE);
       TS_ASSERT_EQUALS(pdf, 0.0);
-      TS_ASSERT_EQUALS(val,Spectrum_d(0.0));
+      TS_ASSERT_EQUALS(val,SpectrumCoef_d(0.0));
       }
 
     void test_BSDF_PDF()
@@ -173,7 +173,7 @@ class BSDFTestSuite : public CxxTest::TestSuite
         Vector3D_d exitant;
         double pdf;
         BxDFType type;
-        Spectrum_d val=mp_bsdf->Sample(incident, exitant, pdf, type);
+        SpectrumCoef_d val=mp_bsdf->Sample(incident, exitant, pdf, type);
 
         if (IsSpecular(type)==false)
           if (pdf != mp_bsdf->PDF(incident, exitant))
@@ -200,10 +200,10 @@ class BSDFTestSuite : public CxxTest::TestSuite
       SamplesSequence2D sequence(&samples[0], (&samples[0]) + samples.size());
 
       Vector3D_d incident=Vector3D_d(0.5,0.5,0.5).Normalized();
-      Spectrum_d total = mp_bsdf->TotalScattering(incident,sequence);
+      SpectrumCoef_d total = mp_bsdf->TotalScattering(incident,sequence);
 
       TS_ASSERT(total[0]<=1.0 && total[1]<=1.0 && total[2]<=1.0);
-      CustomAssertDelta(total, Spectrum_d(0.8,0.8,0.8), 0.00001);
+      CustomAssertDelta(total, SpectrumCoef_d(0.8,0.8,0.8), 0.00001);
       }
 
     void test_BSDF_TotalScattering2()
@@ -224,10 +224,10 @@ class BSDFTestSuite : public CxxTest::TestSuite
       SamplesSequence2D sequence1(&samples1[0], (&samples1[0]) + samples1.size());
       SamplesSequence2D sequence2(&samples2[0], (&samples2[0]) + samples2.size());
 
-      Spectrum_d total = mp_bsdf->TotalScattering(true, sequence1, sequence2);
+      SpectrumCoef_d total = mp_bsdf->TotalScattering(true, sequence1, sequence2);
 
       TS_ASSERT(total[0]<=1.0 && total[1]<=1.0 && total[2]<=1.0);
-      CustomAssertDelta(total, Spectrum_d(0.8,0.8,0.8), 0.01);
+      CustomAssertDelta(total, SpectrumCoef_d(0.8,0.8,0.8), 0.01);
       }
 
   private:

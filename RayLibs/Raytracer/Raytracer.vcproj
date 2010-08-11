@@ -264,6 +264,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\Core\SpectrumCoef.h"
+					>
+				</File>
+				<File
 					RelativePath=".\Core\Texture.h"
 					>
 				</File>
@@ -854,11 +858,11 @@
 				Name="Header Files"
 				>
 				<File
-					RelativePath=".\ImageSources\OpenEXRRgbaSpectrumImageSource.h"
+					RelativePath=".\ImageSources\OpenEXRRgbaImageSource.h"
 					>
 				</File>
 				<File
-					RelativePath=".\ImageSources\RGB24SpectrumImageSource.h"
+					RelativePath=".\ImageSources\RGB24ImageSource.h"
 					>
 				</File>
 			</Filter>

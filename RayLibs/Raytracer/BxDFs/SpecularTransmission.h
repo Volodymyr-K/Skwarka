@@ -19,13 +19,13 @@ class SpecularTransmission: public BxDF
     * @param i_refractive_index_inner Refractive index of the object. Should be positive.
     * @param i_refractive_index_outer Refractive index of the medium. Should be positive.
     */
-    SpecularTransmission(Spectrum_d i_transmittance, double i_refractive_index_inner, double i_refractive_index_outer);
+    SpecularTransmission(SpectrumCoef_d i_transmittance, double i_refractive_index_inner, double i_refractive_index_outer);
 
     /**
     * Returns BxDF value for the specified incident and exitant directions.
     * The specular implementation always returns black spectrum.
     */
-    virtual Spectrum_d Evaluate(const Vector3D_d &i_incident, const Vector3D_d &i_exitant) const;
+    virtual SpectrumCoef_d Evaluate(const Vector3D_d &i_incident, const Vector3D_d &i_exitant) const;
 
     /**
     * Samples BxDF value for the specified incident direction.
@@ -36,7 +36,7 @@ class SpecularTransmission: public BxDF
     * @param[out] o_pdf PDF value for the sampled exitant direction. Always equal to 1.0.
     * @return Sampled BxDF value. The value does not account for the radiance change due to the refractive index. The calling code must take care of that.
     */
-    virtual Spectrum_d Sample(const Vector3D_d &i_incident, Vector3D_d &o_exitant, const Point2D_d &i_sample, double &o_pdf) const;
+    virtual SpectrumCoef_d Sample(const Vector3D_d &i_incident, Vector3D_d &o_exitant, const Point2D_d &i_sample, double &o_pdf) const;
 
     /**
     * Returns PDF value for the specified incident and exitant direction.
@@ -53,7 +53,7 @@ class SpecularTransmission: public BxDF
     * @param i_samples 2D Samples sequence to be used for sampling the hemisphere. Should have at least one sample.
     * @return Total scattering value. Each spectrum component will be in [0;1] range.
     */
-    virtual Spectrum_d TotalScattering(const Vector3D_d &i_incident, SamplesSequence2D i_samples) const;
+    virtual SpectrumCoef_d TotalScattering(const Vector3D_d &i_incident, SamplesSequence2D i_samples) const;
 
     /**
     * Returns total scattering (i.e. fraction of scattered light) assuming a light coming uniformly from the specified hemisphere.
@@ -66,10 +66,10 @@ class SpecularTransmission: public BxDF
     * @param i_samples2 Second samples sequence. Should have the same number of elements that i_samples1 has.
     * @return Total scattering value. Each spectrum component will be in [0;1] range.
     */
-    virtual Spectrum_d TotalScattering(bool i_hemisphere, SamplesSequence2D i_samples1, SamplesSequence2D i_samples2) const;
+    virtual SpectrumCoef_d TotalScattering(bool i_hemisphere, SamplesSequence2D i_samples1, SamplesSequence2D i_samples2) const;
 
   private:
-    Spectrum_d m_transmittance;
+    SpectrumCoef_d m_transmittance;
 
     double m_refractive_index_inner, m_refractive_index_outer;
     FresnelDielectric m_fresnel;

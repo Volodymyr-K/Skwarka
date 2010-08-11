@@ -81,12 +81,16 @@ void serialize(Archive &i_ar, ConstantTexture<T> &i_texture, const unsigned int 
 // If you need to serialize a new specialization you have to add it here.
 typedef ConstantTexture<Spectrum_f> ConstantTexture_Spectrum_f;
 typedef ConstantTexture<Spectrum_d> ConstantTexture_Spectrum_d;
+typedef ConstantTexture<SpectrumCoef_f> ConstantTexture_SpectrumCoef_f;
+typedef ConstantTexture<SpectrumCoef_d> ConstantTexture_SpectrumCoef_d;
 typedef ConstantTexture<float> ConstantTexture_float;
 typedef ConstantTexture<double> ConstantTexture_double;
 
 #include <boost/serialization/export.hpp>
 BOOST_CLASS_EXPORT(ConstantTexture_Spectrum_f)
 BOOST_CLASS_EXPORT(ConstantTexture_Spectrum_d)
+BOOST_CLASS_EXPORT(ConstantTexture_SpectrumCoef_f)
+BOOST_CLASS_EXPORT(ConstantTexture_SpectrumCoef_d)
 BOOST_CLASS_EXPORT(ConstantTexture_float)
 BOOST_CLASS_EXPORT(ConstantTexture_double)
 

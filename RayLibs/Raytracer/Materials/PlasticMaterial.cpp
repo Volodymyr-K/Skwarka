@@ -7,7 +7,7 @@
 #include <Raytracer/Core/Fresnel.h>
 #include <Math/MathRoutines.h>
 
-PlasticMaterial::PlasticMaterial(intrusive_ptr<const Texture<Spectrum_d> > ip_diffuse_reflectance, intrusive_ptr<const Texture<Spectrum_d> > ip_glossy_reflectance, 
+PlasticMaterial::PlasticMaterial(intrusive_ptr<const Texture<SpectrumCoef_d> > ip_diffuse_reflectance, intrusive_ptr<const Texture<SpectrumCoef_d> > ip_glossy_reflectance, 
                                  intrusive_ptr<const Texture<double> > ip_roughness):
 Material(), mp_glossy_reflectance(ip_glossy_reflectance), mp_diffuse_reflectance(ip_diffuse_reflectance), mp_roughness(ip_roughness)
   {
@@ -16,12 +16,12 @@ Material(), mp_glossy_reflectance(ip_glossy_reflectance), mp_diffuse_reflectance
   ASSERT(ip_roughness);
   }
 
-intrusive_ptr<const Texture<Spectrum_d> > PlasticMaterial::GetDiffuseReflectanceTexture() const
+intrusive_ptr<const Texture<SpectrumCoef_d> > PlasticMaterial::GetDiffuseReflectanceTexture() const
   {
   return mp_diffuse_reflectance;
   }
 
-intrusive_ptr<const Texture<Spectrum_d> > PlasticMaterial::GetGlossyReflectanceTexture() const
+intrusive_ptr<const Texture<SpectrumCoef_d> > PlasticMaterial::GetGlossyReflectanceTexture() const
   {
   return mp_glossy_reflectance;
   }
@@ -35,8 +35,8 @@ const BSDF *PlasticMaterial::GetBSDF(const DifferentialGeometry &i_dg, size_t i_
   {
   BSDF *p_bsdf = new ( i_pool.Alloc(sizeof(BSDF)) ) BSDF(i_dg);
 
-  Spectrum_d diffuse = mp_diffuse_reflectance->Evaluate(i_dg, i_triangle_index);
-  Spectrum_d glossy = mp_glossy_reflectance->Evaluate(i_dg, i_triangle_index);
+  SpectrumCoef_d diffuse = mp_diffuse_reflectance->Evaluate(i_dg, i_triangle_index);
+  SpectrumCoef_d glossy = mp_glossy_reflectance->Evaluate(i_dg, i_triangle_index);
   ASSERT(InRange(diffuse+glossy, 0.0, 1.0));
 
   BxDF *p_lambertian_bxdf = new ( i_pool.Alloc(sizeof(Lambertian)) ) Lambertian(diffuse);

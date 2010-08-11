@@ -20,7 +20,7 @@ class GridDensityVolumeRegion: public DensityVolumeRegion
     /**
     * Creates GridDensityVolumeRegion instance with specified base emission, absorption, scattering, bounding box and the 3D array defining the density values.
     */
-    GridDensityVolumeRegion(const BBox3D_d &i_bounds, Spectrum_d &i_base_emission, Spectrum_d &i_base_absorption, Spectrum_d &i_base_scattering,
+    GridDensityVolumeRegion(const BBox3D_d &i_bounds, Spectrum_d &i_base_emission, SpectrumCoef_d &i_base_absorption, SpectrumCoef_d &i_base_scattering,
       intrusive_ptr<const PhaseFunction> ip_phase_function, const std::vector<std::vector<std::vector<double> > > &i_densities);
 
     /**
@@ -69,8 +69,8 @@ void save_construct_data(Archive &i_ar, const GridDensityVolumeRegion *ip_volume
   {
   BBox3D_d bounds = ip_volume->GetBounds();
   Spectrum_d base_emission = ip_volume->GetBaseEmission();
-  Spectrum_d base_absorption = ip_volume->GetBaseAbsorption();
-  Spectrum_d base_scattering = ip_volume->GetBaseScattering();
+  SpectrumCoef_d base_absorption = ip_volume->GetBaseAbsorption();
+  SpectrumCoef_d base_scattering = ip_volume->GetBaseScattering();
   intrusive_ptr<const PhaseFunction> p_phase_function = ip_volume->GetPhaseFunction();
 
   i_ar << bounds;
@@ -87,7 +87,8 @@ template<class Archive>
 void load_construct_data(Archive &i_ar, GridDensityVolumeRegion *ip_volume, const unsigned int i_version)
   {
   BBox3D_d bounds;
-  Spectrum_d base_emission, base_absorption, base_scattering;
+  Spectrum_d base_emission;
+  SpectrumCoef_d base_absorption, base_scattering;
   intrusive_ptr<const PhaseFunction> p_phase_function;
 
   i_ar >> bounds;

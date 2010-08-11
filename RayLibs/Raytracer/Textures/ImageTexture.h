@@ -125,6 +125,17 @@ class DefaultConverter<Spectrum<InputSpectrumType>, Spectrum<OutputSpectrumType>
       }
   };
 
+// Explicit specialization for SpectrumCoef type. Uses native SpectrumCoef conversion routine.
+template<typename InputSpectrumType, typename OutputSpectrumType>
+class DefaultConverter<SpectrumCoef<InputSpectrumType>, SpectrumCoef<OutputSpectrumType> >
+  {
+  public:
+    static SpectrumCoef<OutputSpectrumType> Convert(const SpectrumCoef<InputSpectrumType> &i_input)
+      {
+      return ::Convert<OutputSpectrumType>(i_input);
+      }
+  };
+
 /////////////////////////////////////////// Serialization ////////////////////////////////////////////////
 
 /**
@@ -167,6 +178,11 @@ void ImageTexture<MemoryType,ReturnType,Converter>::serialize(Archive &i_ar, con
 typedef ImageTexture<Spectrum_f, Spectrum_f, DefaultConverter<Spectrum_f,Spectrum_f> > ImageTexture_Spectrum_f_Spectrum_f;
 typedef ImageTexture<Spectrum_f, Spectrum_d, DefaultConverter<Spectrum_f,Spectrum_d> > ImageTexture_Spectrum_f_Spectrum_d;
 typedef ImageTexture<Spectrum_d, Spectrum_d, DefaultConverter<Spectrum_d,Spectrum_d> > ImageTexture_Spectrum_d_Spectrum_d;
+
+typedef ImageTexture<SpectrumCoef_f, SpectrumCoef_f, DefaultConverter<SpectrumCoef_f,SpectrumCoef_f> > ImageTexture_SpectrumCoef_f_SpectrumCoef_f;
+typedef ImageTexture<SpectrumCoef_f, SpectrumCoef_d, DefaultConverter<SpectrumCoef_f,SpectrumCoef_d> > ImageTexture_SpectrumCoef_f_SpectrumCoef_d;
+typedef ImageTexture<SpectrumCoef_d, SpectrumCoef_d, DefaultConverter<SpectrumCoef_d,SpectrumCoef_d> > ImageTexture_SpectrumCoef_d_SpectrumCoef_d;
+
 typedef ImageTexture<float, float, DefaultConverter<float,float> > ImageTexture_float_float;
 typedef ImageTexture<double, double, DefaultConverter<double,double> > ImageTexture_double_double;
 
@@ -174,6 +190,9 @@ typedef ImageTexture<double, double, DefaultConverter<double,double> > ImageText
 BOOST_CLASS_EXPORT(ImageTexture_Spectrum_f_Spectrum_f)
 BOOST_CLASS_EXPORT(ImageTexture_Spectrum_f_Spectrum_d)
 BOOST_CLASS_EXPORT(ImageTexture_Spectrum_d_Spectrum_d)
+BOOST_CLASS_EXPORT(ImageTexture_SpectrumCoef_f_SpectrumCoef_f)
+BOOST_CLASS_EXPORT(ImageTexture_SpectrumCoef_f_SpectrumCoef_d)
+BOOST_CLASS_EXPORT(ImageTexture_SpectrumCoef_d_SpectrumCoef_d)
 BOOST_CLASS_EXPORT(ImageTexture_float_float)
 BOOST_CLASS_EXPORT(ImageTexture_double_double)
 

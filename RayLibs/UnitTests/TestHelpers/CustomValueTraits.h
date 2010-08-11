@@ -147,4 +147,12 @@ void CustomAssertDelta(const Spectrum<T> &i_spectrum1, const Spectrum<T> &i_spec
   TS_ASSERT_DELTA(i_spectrum1[2],i_spectrum2[2],i_delta);
   }
 
+template<typename T>
+void CustomAssertDelta(const SpectrumCoef<T> &i_spectrum_coef1, const SpectrumCoef<T> &i_spectrum_coef2, T i_delta)
+  {
+  TS_ASSERT_DELTA(i_spectrum_coef1[0],i_spectrum_coef2[0],i_delta);
+  TS_ASSERT_DELTA(i_spectrum_coef1[1],i_spectrum_coef2[1],i_delta);
+  TS_ASSERT_DELTA(i_spectrum_coef1[2],i_spectrum_coef2[2],i_delta);
+  }
+
 #endif // CUSTOM_VALUE_TRAITS_H

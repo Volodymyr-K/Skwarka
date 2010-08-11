@@ -38,6 +38,7 @@
 #include <Raytracer/Textures/ConstantTexture.h>
 #include <Raytracer/Renderers/SamplerBasedRenderer.h>
 #include <Raytracer/LightSources/PointLight.h>
+#include <Raytracer/LightSources/SpotPointLight.h>
 #include <Raytracer/LightSources/ParallelLight.h>
 #include <Raytracer/LightSources/DiffuseAreaLightSource.h>
 #include <Raytracer/LTEIntegrators/DirectLightingLTEIntegrator.h>
@@ -54,6 +55,7 @@
 #include <Raytracer/Core/Fresnel.h>
 #include <Math/CompressedDirection.h>
 #include <Raytracer/Materials/SubstrateMaterial.h>
+#include <Raytracer/Materials/PlasticMaterial.h>
 #include <Raytracer/BxDFs/FresnelBlend.h>
 #include <Raytracer/MicrofacetDistributions/AnisotropicDistribution.h>
 #include <Raytracer/MicrofacetDistributions/BlinnDistribution.h>
@@ -65,8 +67,8 @@
 #include <Raytracer/PhaseFunctions/MieHazyPhaseFunction.h>
 #include <Raytracer/PhaseFunctions/MieMurkyPhaseFunction.h>
 #include <Raytracer/PhaseFunctions/RayleighPhaseFunction.h>
-#include <Raytracer/ImageSources/RGB24SpectrumImageSource.h>
-#include <Raytracer/ImageSources/OpenEXRRgbaSpectrumImageSource.h>
+#include <Raytracer/ImageSources/RGB24ImageSource.h>
+#include <Raytracer/ImageSources/OpenEXRRgbaImageSource.h>
 
 #include <boost/archive/binary_iarchive.hpp>
 #include <boost/archive/binary_oarchive.hpp>
@@ -114,18 +116,18 @@ intrusive_ptr<Primitive> LoadWallsPrimitive(std::string i_filename, bool i_smoot
   BMP Input;
   Input.ReadFromFile("walls.bmp");
 
-  std::vector<std::vector<Spectrum_f> > values(Input.TellHeight(),std::vector<Spectrum_f>(Input.TellWidth()));
+  std::vector<std::vector<SpectrumCoef_f> > values(Input.TellHeight(),std::vector<SpectrumCoef_f>(Input.TellWidth()));
   for( int j=0 ; j < Input.TellHeight() ; j++)
     {
     for( int i=0 ; i < Input.TellWidth() ; i++)
       {
-      values[j][i]=Spectrum_f(Input(i,j)->Red,Input(i,j)->Green,Input(i,j)->Blue)*1.0;
+      values[j][i]=SpectrumCoef_f(Input(i,j)->Red,Input(i,j)->Green,Input(i,j)->Blue)*1.0;
       values[j][i]/=255.0;
       }
     }
     
   intrusive_ptr<Mapping2D> p_mapping( new SphericalMapping2D(Point3D_d(-770,-2315,1500), Vector3D_d(0,0,1), Vector3D_d(1,0,0)) );
-  intrusive_ptr< ImageTexture<Spectrum_f,Spectrum_d> > p_text(new ImageTexture<Spectrum_f,Spectrum_d>(values, p_mapping) );
+  intrusive_ptr< ImageTexture<SpectrumCoef_f,SpectrumCoef_d> > p_text(new ImageTexture<SpectrumCoef_f,SpectrumCoef_d>(values, p_mapping) );
 
   intrusive_ptr<Texture<double> > p_sigma(new ConstantTexture<double> (0.04));
   intrusive_ptr<Material> p_material(new MatteMaterial(p_text, p_sigma));
@@ -134,11 +136,11 @@ intrusive_ptr<Primitive> LoadWallsPrimitive(std::string i_filename, bool i_smoot
   return p_primitive;
   }
 
-intrusive_ptr<Primitive> LoadDiffusePrimitive(std::string i_filename, bool i_smooth, Spectrum_d i_color)
+intrusive_ptr<Primitive> LoadDiffusePrimitive(std::string i_filename, bool i_smooth, SpectrumCoef_d i_color)
   {
   intrusive_ptr<TriangleMesh> p_mesh( LoadMeshFromStl(i_filename, i_smooth) );
 
-  intrusive_ptr<Texture<Spectrum_d> > p_reflectance(new ConstantTexture<Spectrum_d> (i_color));
+  intrusive_ptr<Texture<SpectrumCoef_d> > p_reflectance(new ConstantTexture<SpectrumCoef_d> (i_color));
   intrusive_ptr<Texture<double> > p_sigma(new ConstantTexture<double> (0.04));
   intrusive_ptr<Material> p_material(new MatteMaterial(p_reflectance, p_sigma));
 
@@ -146,23 +148,23 @@ intrusive_ptr<Primitive> LoadDiffusePrimitive(std::string i_filename, bool i_smo
   return p_primitive;
   }
 
-intrusive_ptr<Primitive> LoadGlassPrimitive(std::string i_filename, bool i_smooth, Spectrum_d i_color)
+intrusive_ptr<Primitive> LoadGlassPrimitive(std::string i_filename, bool i_smooth, SpectrumCoef_d i_color)
   {
   intrusive_ptr<TriangleMesh> p_mesh( LoadMeshFromStl(i_filename, i_smooth) );
 
-  intrusive_ptr<Texture<Spectrum_d> > p_reflectance(new ConstantTexture<Spectrum_d> (Spectrum_d(1.0)));
-  intrusive_ptr<Texture<Spectrum_d> > p_transmittance(new ConstantTexture<Spectrum_d> (i_color));
+  intrusive_ptr<Texture<SpectrumCoef_d> > p_reflectance(new ConstantTexture<SpectrumCoef_d> (SpectrumCoef_d(1.0)));
+  intrusive_ptr<Texture<SpectrumCoef_d> > p_transmittance(new ConstantTexture<SpectrumCoef_d> (i_color));
   intrusive_ptr<Material> p_material(new TransparentMaterial(p_reflectance, p_transmittance, 1.4));
 
   intrusive_ptr<Primitive> p_primitive(new Primitive(p_mesh, p_material));
   return p_primitive;
   }
 
-intrusive_ptr<Primitive> LoadMetalPrimitive(std::string i_filename, bool i_smooth, Spectrum_d i_color, double i_roughness)
+intrusive_ptr<Primitive> LoadMetalPrimitive(std::string i_filename, bool i_smooth, SpectrumCoef_d i_color, double i_roughness)
   {
   intrusive_ptr<TriangleMesh> p_mesh( LoadMeshFromStl(i_filename, i_smooth) );
 
-  intrusive_ptr<Texture<Spectrum_d> > p_refrlection(new ConstantTexture<Spectrum_d> (i_color));
+  intrusive_ptr<Texture<SpectrumCoef_d> > p_refrlection(new ConstantTexture<SpectrumCoef_d> (i_color));
   intrusive_ptr<Texture<double> > p_roughness(new ConstantTexture<double> (i_roughness));
   intrusive_ptr<Material> p_material(new MetalMaterial(p_refrlection, p_roughness));
 
@@ -207,10 +209,10 @@ inline void TestTracer::LoadMesh()
       values[j][i]=rgb;
       }
     }
-  intrusive_ptr<ImageSource<Spectrum_f> > p_image_source( new RGB24SpectrumImageSource<float>(values, 0.5/255.0) );
+  intrusive_ptr<ImageSource<SpectrumCoef_f> > p_image_source( new RGB24ImageSource<SpectrumCoef_f>(values, 0.5/255.0) );
 
   intrusive_ptr<Mapping2D> p_mapping( new UVMapping2D() );
-  intrusive_ptr< ImageTexture<Spectrum_f,Spectrum_d> > p_text(new ImageTexture<Spectrum_f,Spectrum_d>(p_image_source, p_mapping) );
+  intrusive_ptr< ImageTexture<SpectrumCoef_f,SpectrumCoef_d> > p_text(new ImageTexture<SpectrumCoef_f,SpectrumCoef_d>(p_image_source, p_mapping) );
 
   /////// Add ground primitive ///
     {
@@ -232,12 +234,12 @@ inline void TestTracer::LoadMesh()
     primitives.push_back(p_primitive);
     bbox.Unite(Convert<double>(p_ground_mesh->GetBounds()));
     }
-    /////// Add ground primitive ///
+    /////// Add ceiling primitive ///
     {
     std::vector<Point3D_f> vertices;
     std::vector<MeshTriangle> triangles;
-    vertices.push_back(Point3D_f(-25,-25,10));vertices.push_back(Point3D_f(25,-25,10));
-    vertices.push_back(Point3D_f(25,25,10));vertices.push_back(Point3D_f(-25,25,10));
+    vertices.push_back(Point3D_f(-25,-25,25));vertices.push_back(Point3D_f(25,-25,25));
+    vertices.push_back(Point3D_f(25,25,25));vertices.push_back(Point3D_f(-25,25,25));
 
     MeshTriangle t1(0,1,2);t1.m_uvs[0]=Point2D_f(1,1);t1.m_uvs[1]=Point2D_f(0,1);t1.m_uvs[2]=Point2D_f(0,0);
     MeshTriangle t2(2,3,0);t2.m_uvs[0]=Point2D_f(0,0);t2.m_uvs[1]=Point2D_f(1,0);t2.m_uvs[2]=Point2D_f(1,1);
@@ -245,13 +247,35 @@ inline void TestTracer::LoadMesh()
     triangles.push_back(t1);triangles.push_back(t2);
     intrusive_ptr<TriangleMesh> p_ceil_mesh = intrusive_ptr<TriangleMesh>( new TriangleMesh(vertices, triangles, true) );
 
-    intrusive_ptr<Texture<Spectrum_d> > p_refrlection(new ConstantTexture<Spectrum_d> (Spectrum_d(0.4,0.4,0.4)));
+    intrusive_ptr<Texture<SpectrumCoef_d> > p_reflection(new ConstantTexture<SpectrumCoef_d> (SpectrumCoef_d(0.4,0.4,0.4)));
     intrusive_ptr<Texture<double> > p_sigma(new ConstantTexture<double> (0.35));
-    intrusive_ptr<Material> p_material(new MatteMaterial(p_refrlection, p_sigma));
+    intrusive_ptr<Material> p_material(new MatteMaterial(p_reflection, p_sigma));
 
     intrusive_ptr<Primitive> p_primitive(new Primitive(p_ceil_mesh, p_material));
     primitives.push_back(p_primitive);
     bbox.Unite(Convert<double>(p_ceil_mesh->GetBounds()));
+    }
+
+    /////// Add light blocking primitive ///
+    {
+    std::vector<Point3D_f> vertices;
+    std::vector<MeshTriangle> triangles;
+    vertices.push_back(Point3D_f(-7,-8,16.9f));vertices.push_back(Point3D_f(9,-8,16.9f));
+    vertices.push_back(Point3D_f(9,8,16.9f));vertices.push_back(Point3D_f(-7,8,16.9f));
+
+    MeshTriangle t1(0,1,2);t1.m_uvs[0]=Point2D_f(1,1);t1.m_uvs[1]=Point2D_f(0,1);t1.m_uvs[2]=Point2D_f(0,0);
+    MeshTriangle t2(2,3,0);t2.m_uvs[0]=Point2D_f(0,0);t2.m_uvs[1]=Point2D_f(1,0);t2.m_uvs[2]=Point2D_f(1,1);
+
+    triangles.push_back(t1);triangles.push_back(t2);
+    intrusive_ptr<TriangleMesh> p_ceil_mesh = intrusive_ptr<TriangleMesh>( new TriangleMesh(vertices, triangles, true) );
+
+    intrusive_ptr<Texture<SpectrumCoef_d> > p_reflection(new ConstantTexture<SpectrumCoef_d> (SpectrumCoef_d(0.4,0.4,0.4)));
+    intrusive_ptr<Texture<double> > p_sigma(new ConstantTexture<double> (0.35));
+    intrusive_ptr<Material> p_material(new MatteMaterial(p_reflection, p_sigma));
+
+    intrusive_ptr<Primitive> p_primitive(new Primitive(p_ceil_mesh, p_material));
+    //primitives.push_back(p_primitive);
+    //bbox.Unite(Convert<double>(p_ceil_mesh->GetBounds()));
     }
 
 
@@ -260,7 +284,7 @@ inline void TestTracer::LoadMesh()
     std::vector<Point3D_f> vertices;
     std::vector<MeshTriangle> triangles;
     vertices.push_back(Point3D_f(-25,-12,-10));vertices.push_back(Point3D_f(25,-12,-10));
-    vertices.push_back(Point3D_f(25,-12,10));vertices.push_back(Point3D_f(-25,-12,10));
+    vertices.push_back(Point3D_f(25,-12,25));vertices.push_back(Point3D_f(-25,-12,25));
 
     MeshTriangle t1(0,1,2);t1.m_uvs[0]=Point2D_f(1,1);t1.m_uvs[1]=Point2D_f(0,1);t1.m_uvs[2]=Point2D_f(0,0);
     MeshTriangle t2(2,3,0);t2.m_uvs[0]=Point2D_f(0,0);t2.m_uvs[1]=Point2D_f(1,0);t2.m_uvs[2]=Point2D_f(1,1);
@@ -268,7 +292,7 @@ inline void TestTracer::LoadMesh()
     triangles.push_back(t1);triangles.push_back(t2);
     intrusive_ptr<TriangleMesh> p_wall_mesh = intrusive_ptr<TriangleMesh>( new TriangleMesh(vertices, triangles, true) );
 
-    intrusive_ptr<Texture<Spectrum_d> > p_refrlection(new ConstantTexture<Spectrum_d> (Spectrum_d(0.75,0.35,0.35)));
+    intrusive_ptr<Texture<SpectrumCoef_d> > p_refrlection(new ConstantTexture<SpectrumCoef_d> (SpectrumCoef_d(0.35,0.35,0.75)));
     intrusive_ptr<Texture<double> > p_sigma(new ConstantTexture<double> (0.35));
     intrusive_ptr<Material> p_material(new MatteMaterial(p_refrlection, p_sigma));
 
@@ -281,7 +305,7 @@ inline void TestTracer::LoadMesh()
     std::vector<Point3D_f> vertices;
     std::vector<MeshTriangle> triangles;
     vertices.push_back(Point3D_f(-25,12,-10));vertices.push_back(Point3D_f(25,12,-10));
-    vertices.push_back(Point3D_f(25,12,10));vertices.push_back(Point3D_f(-25,12,10));
+    vertices.push_back(Point3D_f(25,12,25));vertices.push_back(Point3D_f(-25,12,25));
 
     MeshTriangle t1(0,1,2);t1.m_uvs[0]=Point2D_f(1,1);t1.m_uvs[1]=Point2D_f(0,1);t1.m_uvs[2]=Point2D_f(0,0);
     MeshTriangle t2(2,3,0);t2.m_uvs[0]=Point2D_f(0,0);t2.m_uvs[1]=Point2D_f(1,0);t2.m_uvs[2]=Point2D_f(1,1);
@@ -289,7 +313,7 @@ inline void TestTracer::LoadMesh()
     triangles.push_back(t1);triangles.push_back(t2);
     intrusive_ptr<TriangleMesh> p_wall_mesh = intrusive_ptr<TriangleMesh>( new TriangleMesh(vertices, triangles, true) );
 
-    intrusive_ptr<Texture<Spectrum_d> > p_refrlection(new ConstantTexture<Spectrum_d> (Spectrum_d(0.35,0.75,0.35)));
+    intrusive_ptr<Texture<SpectrumCoef_d> > p_refrlection(new ConstantTexture<SpectrumCoef_d> (SpectrumCoef_d(0.35,0.75,0.35)));
     intrusive_ptr<Texture<double> > p_sigma(new ConstantTexture<double> (0.35));
     intrusive_ptr<Material> p_material(new MatteMaterial(p_refrlection, p_sigma));
 
@@ -302,7 +326,7 @@ inline void TestTracer::LoadMesh()
     std::vector<Point3D_f> vertices;
     std::vector<MeshTriangle> triangles;
     vertices.push_back(Point3D_f(-12,-25,-10));vertices.push_back(Point3D_f(-12,25,-10));
-    vertices.push_back(Point3D_f(-12,25,10));vertices.push_back(Point3D_f(-12,-25,10));
+    vertices.push_back(Point3D_f(-12,25,25));vertices.push_back(Point3D_f(-12,-25,25));
 
     MeshTriangle t1(0,1,2);t1.m_uvs[0]=Point2D_f(1,1);t1.m_uvs[1]=Point2D_f(0,1);t1.m_uvs[2]=Point2D_f(0,0);
     MeshTriangle t2(2,3,0);t2.m_uvs[0]=Point2D_f(0,0);t2.m_uvs[1]=Point2D_f(1,0);t2.m_uvs[2]=Point2D_f(1,1);
@@ -310,7 +334,7 @@ inline void TestTracer::LoadMesh()
     triangles.push_back(t1);triangles.push_back(t2);
     intrusive_ptr<TriangleMesh> p_wall_mesh = intrusive_ptr<TriangleMesh>( new TriangleMesh(vertices, triangles, true) );
 
-    intrusive_ptr<Texture<Spectrum_d> > p_refrlection(new ConstantTexture<Spectrum_d> (Spectrum_d(0.35,0.35,0.75)));
+    intrusive_ptr<Texture<SpectrumCoef_d> > p_refrlection(new ConstantTexture<SpectrumCoef_d> (SpectrumCoef_d(0.75,0.35,0.35)));
     intrusive_ptr<Texture<double> > p_sigma(new ConstantTexture<double> (0.35));
     intrusive_ptr<Material> p_material(new MatteMaterial(p_refrlection, p_sigma));
 
@@ -320,12 +344,12 @@ inline void TestTracer::LoadMesh()
     }
 
 
-  intrusive_ptr<Texture<Spectrum_d> > p_reflection(new ConstantTexture<Spectrum_d> (Spectrum_d(0.75)));
-  intrusive_ptr<Texture<double> > p_roughness(new ConstantTexture<double> (0.001));
+  intrusive_ptr<Texture<SpectrumCoef_d> > p_reflection(new ConstantTexture<SpectrumCoef_d> (SpectrumCoef_d(0.75)));
+  intrusive_ptr<Texture<double> > p_roughness(new ConstantTexture<double> (0.025));
   //intrusive_ptr<Material> p_material(new MetalMaterial(p_reflection, p_roughness));
 
-  intrusive_ptr<Texture<Spectrum_d> > p_yellow_reflection(new ConstantTexture<Spectrum_d> (Spectrum_d(0.4,0.4,0.1)));
-  intrusive_ptr<Texture<Spectrum_d> > p_white_reflection(new ConstantTexture<Spectrum_d> (Spectrum_d(0.4)));
+  intrusive_ptr<Texture<SpectrumCoef_d> > p_yellow_reflection(new ConstantTexture<SpectrumCoef_d> (SpectrumCoef_d(0.4,0.4,0.25)));
+  intrusive_ptr<Texture<SpectrumCoef_d> > p_white_reflection(new ConstantTexture<SpectrumCoef_d> (SpectrumCoef_d(0.4)));
   intrusive_ptr<Material> p_material(new SubstrateMaterial(p_yellow_reflection, p_white_reflection, p_roughness));
 
     {
@@ -346,29 +370,33 @@ inline void TestTracer::LoadMesh()
     Imf::Array2D<Imf::Rgba> image(height, width);
     readRgba1("env_lights/DH041LL.exr", image, width, height);
 
-    intrusive_ptr<ImageSource<Spectrum_f> > p_env_light_image_source( new OpenEXRRgbaSpectrumImageSource<float>(image, width, height, 1.0) );
+    //intrusive_ptr<ImageSource<Spectrum_f> > p_env_light_image_source( new OpenEXRRgbaImageSource<float>(image, width, height, 1.0) );
 
-    tbb::tick_count t0 = tbb::tick_count::now();
-    intrusive_ptr<InfiniteLightSource> p_inf_light( new ImageEnvironmentalLight(bbox, Transform(), p_env_light_image_source) );
-    tbb::tick_count t1 = tbb::tick_count::now();
-    printf("Creating light: %lf\n", (t1-t0).seconds());
+    //tbb::tick_count t0 = tbb::tick_count::now();
+    //intrusive_ptr<InfiniteLightSource> p_inf_light( new ImageEnvironmentalLight(bbox, Transform(), p_env_light_image_source) );
+    //tbb::tick_count t1 = tbb::tick_count::now();
+    //printf("Creating light: %lf\n", (t1-t0).seconds());
 
     //lights.m_infinite_light_sources.push_back(p_inf_light);
     }
 
     {
     Sphere s;
-    s.SetParameter("Center","5 -6 10");
+    s.SetParameter("Center","1 0 14");
     s.SetParameter("Radius","0.5");
     s.SetParameter("Subdivisions","5");
     intrusive_ptr<TriangleMesh> p_sphere( s.BuildMesh() );
-    intrusive_ptr<AreaLightSource> p_light( new DiffuseAreaLightSource(Spectrum_d(4*45000), p_sphere) );
+    intrusive_ptr<AreaLightSource> p_light( new DiffuseAreaLightSource(Spectrum_d(400000/M_PI), p_sphere) );
     intrusive_ptr<Primitive> p_sphere_primitive(new Primitive(p_sphere, p_material, p_light));
 
-    primitives.push_back(p_sphere_primitive);
-    lights.m_area_light_sources.push_back(p_light);
-    bbox.Unite(Convert<double>(p_sphere->GetBounds()));
+    //primitives.push_back(p_sphere_primitive);
+    //lights.m_area_light_sources.push_back(p_light);
+    //bbox.Unite(Convert<double>(p_sphere->GetBounds()));
     }
+
+  intrusive_ptr<DeltaLightSource> p_light_source( new SpotPointLight(Point3D_d(1,0,14), Vector3D_d(-2.0,2.0,-10.0).Normalized(), Spectrum_d(400000), M_PI_6, M_PI_6+0.5) );
+  //intrusive_ptr<DeltaLightSource> p_light_source( new PointLight(Point3D_d(1,0,14),  Spectrum_d(100000)) );
+  lights.m_delta_light_sources.push_back( p_light_source );
 
   mp_scene.reset(new Scene(primitives, NULL, lights));
   }
@@ -423,7 +451,7 @@ inline void TestTracer::RenderImage()
  
   tbb::task_scheduler_init init;
   t0 = tbb::tick_count::now();
-  p_renderer->Render(p_camera);
+  p_renderer->Render(p_camera, true);
   t1 = tbb::tick_count::now();
 
   printf("Rendering: %lf\n", (t1-t0).seconds());

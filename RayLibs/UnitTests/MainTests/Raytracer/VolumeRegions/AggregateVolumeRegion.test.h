@@ -17,13 +17,13 @@ class AggregateVolumeRegionTestSuite : public CxxTest::TestSuite
       {
       m_bounds1 = BBox3D_d(Point3D_d(0,0,0), Point3D_d(2,2,2));
       m_emission1 = Spectrum_d(1,1.5,2);
-      m_absorption1 = Spectrum_d(5,7,9);
-      m_scattering1 = Spectrum_d(0.1,0.0,0.9);
+      m_absorption1 = SpectrumCoef_d(5,7,9);
+      m_scattering1 = SpectrumCoef_d(0.1,0.0,0.9);
 
       m_bounds2 = BBox3D_d(Point3D_d(1,1,1), Point3D_d(3,3,3));
       m_emission2 = Spectrum_d(2,0.5,1);
-      m_absorption2 = Spectrum_d(2,1,4);
-      m_scattering2 = Spectrum_d(5.1,0.3,3.9);
+      m_absorption2 = SpectrumCoef_d(2,1,4);
+      m_scattering2 = SpectrumCoef_d(5.1,0.3,3.9);
 
       mp_region1.reset(new VolumeRegionMock(m_bounds1, m_emission1, m_absorption1, m_scattering1));
       mp_region2.reset(new VolumeRegionMock(m_bounds2, m_emission2, m_absorption2, m_scattering2));
@@ -89,8 +89,8 @@ class AggregateVolumeRegionTestSuite : public CxxTest::TestSuite
       for (size_t t=0;t<N;++t)
         {
         Point3D_d point(RandomDouble(10)-5, RandomDouble(10)-5, RandomDouble(10)-5);
-        Spectrum_d tmp = mp_aggregate->Absorption(point);
-        Spectrum_d correct = (m_bounds1.Inside(point) ? m_absorption1 : Spectrum_d(0.0)) + (m_bounds2.Inside(point) ? m_absorption2 : Spectrum_d(0.0));
+        SpectrumCoef_d tmp = mp_aggregate->Absorption(point);
+        SpectrumCoef_d correct = (m_bounds1.Inside(point) ? m_absorption1 : SpectrumCoef_d(0.0)) + (m_bounds2.Inside(point) ? m_absorption2 : SpectrumCoef_d(0.0));
         TS_ASSERT_EQUALS(tmp, correct);
         }
       }
@@ -101,8 +101,8 @@ class AggregateVolumeRegionTestSuite : public CxxTest::TestSuite
       for (size_t t=0;t<N;++t)
         {
         Point3D_d point(RandomDouble(10)-5, RandomDouble(10)-5, RandomDouble(10)-5);
-        Spectrum_d tmp = mp_aggregate->Scattering(point);
-        Spectrum_d correct = (m_bounds1.Inside(point) ? m_scattering1 : Spectrum_d(0.0)) + (m_bounds2.Inside(point) ? m_scattering2 : Spectrum_d(0.0));
+        SpectrumCoef_d tmp = mp_aggregate->Scattering(point);
+        SpectrumCoef_d correct = (m_bounds1.Inside(point) ? m_scattering1 : SpectrumCoef_d(0.0)) + (m_bounds2.Inside(point) ? m_scattering2 : SpectrumCoef_d(0.0));
         TS_ASSERT_EQUALS(tmp, correct);
         }
       }
@@ -113,8 +113,8 @@ class AggregateVolumeRegionTestSuite : public CxxTest::TestSuite
       for (size_t t=0;t<N;++t)
         {
         Point3D_d point(RandomDouble(10)-5, RandomDouble(10)-5, RandomDouble(10)-5);
-        Spectrum_d tmp = mp_aggregate->Attenuation(point);
-        Spectrum_d correct = (m_bounds1.Inside(point) ? m_absorption1+m_scattering1 : Spectrum_d(0.0)) + (m_bounds2.Inside(point) ? m_absorption2+m_scattering2 : Spectrum_d(0.0));
+        SpectrumCoef_d tmp = mp_aggregate->Attenuation(point);
+        SpectrumCoef_d correct = (m_bounds1.Inside(point) ? m_absorption1+m_scattering1 : SpectrumCoef_d(0.0)) + (m_bounds2.Inside(point) ? m_absorption2+m_scattering2 : SpectrumCoef_d(0.0));
         TS_ASSERT_EQUALS(tmp, correct);
         }
       }
@@ -144,11 +144,11 @@ class AggregateVolumeRegionTestSuite : public CxxTest::TestSuite
         double length = RandomDouble(10.0);
         Ray ray(point, direction, length);
 
-        Spectrum_d tmp = mp_aggregate->OpticalThickness(ray, 1.0, 0.0);
+        SpectrumCoef_d tmp = mp_aggregate->OpticalThickness(ray, 1.0, 0.0);
 
         double t0, t1, u0, u1;
-        Spectrum_d correct = (m_bounds1.Intersect(ray, &t0, &t1) ? fabs(t1-t0)*(m_absorption1+m_scattering1) : Spectrum_d(0.0)) +
-          (m_bounds2.Intersect(ray, &u0, &u1) ? fabs(u1-u0)*(m_absorption2+m_scattering2) : Spectrum_d(0.0));
+        SpectrumCoef_d correct = (m_bounds1.Intersect(ray, &t0, &t1) ? fabs(t1-t0)*(m_absorption1+m_scattering1) : SpectrumCoef_d(0.0)) +
+          (m_bounds2.Intersect(ray, &u0, &u1) ? fabs(u1-u0)*(m_absorption2+m_scattering2) : SpectrumCoef_d(0.0));
         TS_ASSERT_EQUALS(tmp, correct);
         }
       }
@@ -156,10 +156,12 @@ class AggregateVolumeRegionTestSuite : public CxxTest::TestSuite
 
   private:
     BBox3D_d m_bounds1;
-    Spectrum_d m_emission1, m_absorption1, m_scattering1;
+    Spectrum_d m_emission1;
+    SpectrumCoef_d m_absorption1, m_scattering1;
 
     BBox3D_d m_bounds2;
-    Spectrum_d m_emission2, m_absorption2, m_scattering2;
+    Spectrum_d m_emission2;
+    SpectrumCoef_d m_absorption2, m_scattering2;
 
     intrusive_ptr<VolumeRegion> mp_aggregate, mp_region1, mp_region2;
   };

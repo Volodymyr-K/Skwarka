@@ -75,7 +75,7 @@ class BxDF
     * Returns BxDF value for the specified incident and exitant directions.
     * All specular BxDFs must return black spectrum.
     */
-    virtual Spectrum_d Evaluate(const Vector3D_d &i_incident, const Vector3D_d &i_exitant) const = 0;
+    virtual SpectrumCoef_d Evaluate(const Vector3D_d &i_incident, const Vector3D_d &i_exitant) const = 0;
 
     /**
     * Samples BxDF value for the specified incident direction.
@@ -87,7 +87,7 @@ class BxDF
     * @param[out] o_pdf PDF value for the sampled exitant direction. The returned value should be greater or equal than zero.
     * @return Sampled BxDF value.
     */
-    virtual Spectrum_d Sample(const Vector3D_d &i_incident, Vector3D_d &o_exitant, const Point2D_d &i_sample, double &o_pdf) const;
+    virtual SpectrumCoef_d Sample(const Vector3D_d &i_incident, Vector3D_d &o_exitant, const Point2D_d &i_sample, double &o_pdf) const;
 
     /**
     * Returns PDF value for the specified incident and exitant direction.
@@ -106,7 +106,7 @@ class BxDF
     * @param i_samples 2D Samples sequence to be used for sampling the hemisphere. Should have at least one sample.
     * @return Total scattering value. Each spectrum component will be in [0;1] range.
     */
-    virtual Spectrum_d TotalScattering(const Vector3D_d &i_incident, SamplesSequence2D i_samples) const;
+    virtual SpectrumCoef_d TotalScattering(const Vector3D_d &i_incident, SamplesSequence2D i_samples) const;
 
     /**
     * Returns total scattering (i.e. fraction of scattered light) assuming a light coming uniformly from the specified hemisphere.
@@ -119,7 +119,7 @@ class BxDF
     * @param i_samples2 Second samples sequence. Should have the same number of elements that i_samples1 has.
     * @return Total scattering value. Each spectrum component will be in [0;1] range.
     */
-    virtual Spectrum_d TotalScattering(bool i_hemisphere, SamplesSequence2D i_samples1, SamplesSequence2D i_samples2) const;
+    virtual SpectrumCoef_d TotalScattering(bool i_hemisphere, SamplesSequence2D i_samples1, SamplesSequence2D i_samples2) const;
 
   protected:
     /**

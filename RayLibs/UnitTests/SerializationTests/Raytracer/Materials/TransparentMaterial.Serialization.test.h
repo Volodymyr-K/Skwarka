@@ -25,8 +25,8 @@ class TransparentMaterialSerializationTestSuite : public CxxTest::TestSuite
 
     void test_TransparentMaterial_Serialization()
       {
-      intrusive_ptr<Texture<Spectrum_d> > p_reflectance_texture( new ConstantTexture<Spectrum_d>(Spectrum_d(0.9,0.8,0.7)) );
-      intrusive_ptr<Texture<Spectrum_d> > p_transmittance_texture( new ConstantTexture<Spectrum_d>(Spectrum_d(0.5,0.6,0.7)) );
+      intrusive_ptr<Texture<SpectrumCoef_d> > p_reflectance_texture( new ConstantTexture<SpectrumCoef_d>(SpectrumCoef_d(0.9,0.8,0.7)) );
+      intrusive_ptr<Texture<SpectrumCoef_d> > p_transmittance_texture( new ConstantTexture<SpectrumCoef_d>(SpectrumCoef_d(0.5,0.6,0.7)) );
 
       intrusive_ptr<Material> p_material1(new TransparentMaterial(p_reflectance_texture, p_transmittance_texture, 1.5));
         {
@@ -54,8 +54,8 @@ class TransparentMaterialSerializationTestSuite : public CxxTest::TestSuite
       Point2D_d sample2D(RandomDouble(1.0), RandomDouble(1.0));
       double sample1D = RandomDouble(1.0);
 
-      Spectrum_d f1 = p_material1->GetBSDF(dg, 0, pool)->Sample(incident, exitant1, sample2D, sample1D, pdf1, sampled_type1, BSDF_ALL_TRANSMISSION);
-      Spectrum_d f2 = p_material2->GetBSDF(dg, 0, pool)->Sample(incident, exitant2, sample2D, sample1D, pdf2, sampled_type2, BSDF_ALL_TRANSMISSION);
+      SpectrumCoef_d f1 = p_material1->GetBSDF(dg, 0, pool)->Sample(incident, exitant1, sample2D, sample1D, pdf1, sampled_type1, BSDF_ALL_TRANSMISSION);
+      SpectrumCoef_d f2 = p_material2->GetBSDF(dg, 0, pool)->Sample(incident, exitant2, sample2D, sample1D, pdf2, sampled_type2, BSDF_ALL_TRANSMISSION);
 
       TS_ASSERT_EQUALS(f1,f2);
       TS_ASSERT_EQUALS(exitant1,exitant2);

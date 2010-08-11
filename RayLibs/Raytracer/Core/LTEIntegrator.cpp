@@ -35,7 +35,7 @@ Spectrum_d LTEIntegrator::Radiance(const RayDifferential &i_ray, const Sample *i
         radiance += lights.m_infinite_light_sources[i]->Radiance(i_ray);
       }
 
-  Spectrum_d transmittance(1.0);
+  SpectrumCoef_d transmittance(1.0);
   Spectrum_d volume_radiance = _MediaRadianceAndTranmsittance(intersection_ray, ip_sample, transmittance, i_ts);
 
   return radiance * transmittance + volume_radiance;
@@ -59,7 +59,7 @@ Spectrum_d LTEIntegrator::_SpecularReflect(const RayDifferential &i_ray, const I
   Vector3D_d incident = i_ray.m_base_ray.m_direction*(-1.0);
   ASSERT(incident.IsNormalized());
 
-  Spectrum_d brdf = ip_bsdf->Sample(incident, exitant, pdf, sampled_type, BxDFType(BSDF_REFLECTION | BSDF_SPECULAR));
+  SpectrumCoef_d brdf = ip_bsdf->Sample(incident, exitant, pdf, sampled_type, BxDFType(BSDF_REFLECTION | BSDF_SPECULAR));
   ASSERT(sampled_type==BxDFType(BSDF_REFLECTION | BSDF_SPECULAR) || sampled_type==BSDF_NONE);
 
   if (brdf.IsBlack()==false && fabs(exitant*dg.m_shading_normal)>DBL_EPS)
@@ -91,7 +91,7 @@ Spectrum_d LTEIntegrator::_SpecularTransmit(const RayDifferential &i_ray, const 
   if (fabs(incident*dg.m_shading_normal)<DBL_EPS)
     return Spectrum_d();
 
-  Spectrum_d btdf = ip_bsdf->Sample(incident, exitant, pdf, sampled_type, BxDFType(BSDF_TRANSMISSION | BSDF_SPECULAR));
+  SpectrumCoef_d btdf = ip_bsdf->Sample(incident, exitant, pdf, sampled_type, BxDFType(BSDF_TRANSMISSION | BSDF_SPECULAR));
   ASSERT(sampled_type==BxDFType(BSDF_TRANSMISSION | BSDF_SPECULAR) || sampled_type==BSDF_NONE);
 
   if (btdf.IsBlack()==false && fabs(exitant*dg.m_shading_normal)>DBL_EPS)

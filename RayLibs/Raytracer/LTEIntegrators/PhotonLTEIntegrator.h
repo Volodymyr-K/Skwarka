@@ -126,12 +126,12 @@ class PhotonLTEIntegrator: public LTEIntegrator
     * @param i_ts Thread specifics (memory pool, random number generator etc.).
     * @return Resulting radiance value.
     */
-    virtual Spectrum_d _MediaRadianceAndTranmsittance(const RayDifferential &i_ray, const Sample *ip_sample, Spectrum_d &o_transmittance, ThreadSpecifics i_ts) const;
+    virtual Spectrum_d _MediaRadianceAndTranmsittance(const RayDifferential &i_ray, const Sample *ip_sample, SpectrumCoef_d &o_transmittance, ThreadSpecifics i_ts) const;
 
     /**
     * Helper private method that computes media transmittance for the specified ray.
     */
-    Spectrum_d _MediaTransmittance(const Ray &i_ray, ThreadSpecifics i_ts) const;
+    SpectrumCoef_d _MediaTransmittance(const Ray &i_ray, ThreadSpecifics i_ts) const;
 
     /**
     * Helper private method that traces final gather rays to estimate indirect illumination (caustic aside).

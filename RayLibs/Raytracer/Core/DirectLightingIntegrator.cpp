@@ -70,12 +70,12 @@ Spectrum_d DirectLightingIntegrator::ComputeDirectLighting(const Intersection &i
     Spectrum_d light = light_sources.m_delta_light_sources[i]->Lighting(i_intersection.m_dg.m_point, lighting_ray);
     if (light.IsBlack()==false)
       {
-      Spectrum_d reflectance = ip_bsdf->Evaluate(lighting_ray.m_direction, i_view_direction);
+      SpectrumCoef_d reflectance = ip_bsdf->Evaluate(lighting_ray.m_direction, i_view_direction);
 
       lighting_ray.m_min_t = CoreUtils::GetNextMinT(i_intersection, lighting_ray.m_direction);
       if (reflectance.IsBlack()==false && mp_scene->IntersectTest(lighting_ray) == false)
         {
-        Spectrum_d transmittance = _MediaTransmittance(lighting_ray, i_ts);
+        SpectrumCoef_d transmittance = _MediaTransmittance(lighting_ray, i_ts);
         radiance.AddWeighted(reflectance*light*transmittance, fabs(lighting_ray.m_direction*i_intersection.m_dg.m_shading_normal));
         }
       }
@@ -282,7 +282,7 @@ Spectrum_d DirectLightingIntegrator::_SampleBSDF(const Intersection &i_intersect
     double bsdf_pdf=0.0;
     BxDFType sampled_type;
     Vector3D_d lighting_direction;
-    Spectrum_d reflectance = ip_bsdf->Sample(i_view_direction, lighting_direction, bxdf_sample, component_sample, bsdf_pdf, sampled_type, BxDFType(BSDF_ALL & ~BSDF_SPECULAR));
+    SpectrumCoef_d reflectance = ip_bsdf->Sample(i_view_direction, lighting_direction, bxdf_sample, component_sample, bsdf_pdf, sampled_type, BxDFType(BSDF_ALL & ~BSDF_SPECULAR));
     if (bsdf_pdf>0.0 && reflectance.IsBlack()==false)
       {
       Ray lighting_ray(i_intersection.m_dg.m_point, lighting_direction);
@@ -363,15 +363,15 @@ size_t DirectLightingIntegrator::_GetAreaLightIndex(const AreaLightSource *ip_ar
   return m_area_lights_sorted[l].second;
   }
 
-Spectrum_d DirectLightingIntegrator::_MediaTransmittance(const Ray &i_ray, ThreadSpecifics i_ts) const
+SpectrumCoef_d DirectLightingIntegrator::_MediaTransmittance(const Ray &i_ray, ThreadSpecifics i_ts) const
   {
   ASSERT(i_ray.m_direction.IsNormalized());
   ASSERT(i_ts.mp_pool && i_ts.mp_random_generator);
 
   const VolumeRegion *p_volume = mp_scene->GetVolumeRegion_RawPtr();
   if (p_volume==NULL)
-    return Spectrum_d(1.0);
+    return SpectrumCoef_d(1.0);
 
-  Spectrum_d opt_thickness = p_volume->OpticalThickness(i_ray, m_media_step_size, (*i_ts.mp_random_generator)(1.0));
-  return Spectrum_d(exp(-opt_thickness[0]), exp(-opt_thickness[1]), exp(-opt_thickness[2]));
+  SpectrumCoef_d opt_thickness = p_volume->OpticalThickness(i_ray, m_media_step_size, (*i_ts.mp_random_generator)(1.0));
+  return SpectrumCoef_d(exp(-opt_thickness[0]), exp(-opt_thickness[1]), exp(-opt_thickness[2]));
   }

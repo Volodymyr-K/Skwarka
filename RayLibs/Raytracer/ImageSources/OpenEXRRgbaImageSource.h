@@ -3,35 +3,36 @@
 
 #include <Common/Common.h>
 #include <Raytracer/Core/ImageSource.h>
+#include <Raytracer/Core/Spectrum.h>
 #include <ImfRgba.h>
 #include <ImfArray.h>
 
 /**
-* ImageSource implementation that converts Open EXR Rgba image to Spectrum image.
+* ImageSource implementation that converts Open EXR Rgba image to 2D array of the specified type (see template parameter of the class).
 * In Rgba color from the Open EXR library each color component is defined by the "half" type which is two bytes long.
-* The template parameter is the type of the Spectrum.
+* The template parameter is the target type of the conversion. The type should support constructor with (float, float, float) parameters.
 */
 template <typename T>
-class OpenEXRRgbaSpectrumImageSource: public ImageSource<Spectrum<T> >
+class OpenEXRRgbaImageSource: public ImageSource<T>
   {
   public:
     /**
-    * Creates OpenEXRRgbaSpectrumImageSource with the specified Open EXR Rgba image and the scale factor.
-    * The image values will be multiplied by the scale factor during conversion to Spectrum type.
+    * Creates OpenEXRRgbaImageSource with the specified Open EXR Rgba image and the scale factor.
+    * The image values will be multiplied by the scale factor during conversion to the target type.
     */
-    OpenEXRRgbaSpectrumImageSource(const std::vector<std::vector<Imf::Rgba> > &i_values, double i_scale = 1.0);
+    OpenEXRRgbaImageSource(const std::vector<std::vector<Imf::Rgba> > &i_values, double i_scale = 1.0);
 
     /**
-    * Creates OpenEXRRgbaSpectrumImageSource with the specified Open EXR array of Rgba values and the scale factor.
-    * The image values will be multiplied by the scale factor during conversion to Spectrum type.
+    * Creates OpenEXRRgbaImageSource with the specified Open EXR array of Rgba values and the scale factor.
+    * The image values will be multiplied by the scale factor during conversion to the target type.
     */
-    OpenEXRRgbaSpectrumImageSource(const Imf::Array2D<Imf::Rgba> &i_values, size_t i_width, size_t i_height, double i_scale = 1.0);
+    OpenEXRRgbaImageSource(const Imf::Array2D<Imf::Rgba> &i_values, size_t i_width, size_t i_height, double i_scale = 1.0);
 
     /**
-    * Gets 2D array of values (image) of Spectrum type.
+    * Gets 2D array of values (image) of the target type.
     * The method should always return the same image for the same class instance.
     */
-    void GetImage(std::vector<std::vector<Spectrum<T> > > &o_image) const;
+    void GetImage(std::vector<std::vector<T> > &o_image) const;
 
     /**
     * Returns height of the image, i.e. the size of the outer vector which defines the image.
@@ -48,7 +49,7 @@ class OpenEXRRgbaSpectrumImageSource: public ImageSource<Spectrum<T> >
     friend class boost::serialization::access;
 
     /**   
-    * Serializes OpenEXRRgbaSpectrumImageSource to/from the specified Archive. This method is used by the boost serialization framework.
+    * Serializes OpenEXRRgbaImageSource to/from the specified Archive. This method is used by the boost serialization framework.
     */
     template<class Archive>
     void serialize(Archive &i_ar, const unsigned int i_version);
@@ -62,14 +63,14 @@ class OpenEXRRgbaSpectrumImageSource: public ImageSource<Spectrum<T> >
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 template <typename T>
-OpenEXRRgbaSpectrumImageSource<T>::OpenEXRRgbaSpectrumImageSource(const std::vector<std::vector<Imf::Rgba> > &i_values, double i_scale): m_values(i_values), m_scale(i_scale)
+OpenEXRRgbaImageSource<T>::OpenEXRRgbaImageSource(const std::vector<std::vector<Imf::Rgba> > &i_values, double i_scale): m_values(i_values), m_scale(i_scale)
   {
   for(size_t i=1;i<m_values.size();++i)
     ASSERT(m_values[i].size()==m_values[0].size());
   }
 
 template <typename T>
-OpenEXRRgbaSpectrumImageSource<T>::OpenEXRRgbaSpectrumImageSource(const Imf::Array2D<Imf::Rgba> &i_values, size_t i_width, size_t i_height, double i_scale):
+OpenEXRRgbaImageSource<T>::OpenEXRRgbaImageSource(const Imf::Array2D<Imf::Rgba> &i_values, size_t i_width, size_t i_height, double i_scale):
 m_values(i_height, std::vector<Imf::Rgba>(i_width)), m_scale(i_scale)
   {
   for(size_t i=0;i<i_height;++i)
@@ -82,7 +83,7 @@ m_values(i_height, std::vector<Imf::Rgba>(i_width)), m_scale(i_scale)
   }
 
 template <typename T>
-void OpenEXRRgbaSpectrumImageSource<T>::GetImage(std::vector<std::vector<Spectrum<T> > > &o_image) const
+void OpenEXRRgbaImageSource<T>::GetImage(std::vector<std::vector<T> > &o_image) const
   {
   o_image.resize(m_values.size());
 
@@ -90,59 +91,64 @@ void OpenEXRRgbaSpectrumImageSource<T>::GetImage(std::vector<std::vector<Spectru
     {
     const std::vector<Imf::Rgba> &source_row = m_values[i];
 
-    std::vector<Spectrum<T> > &dest_row = o_image[i];
+    std::vector<T> &dest_row = o_image[i];
     dest_row.resize(m_values[i].size());
 
     // Just copy the values and multiply them by the scale factor.
     for(size_t j=0;j<m_values[i].size();++j)
-      dest_row[j] = Spectrum<T>(static_cast<T>(source_row[j].r), static_cast<T>(source_row[j].g), static_cast<T>(source_row[j].b)) * m_scale;
+      dest_row[j] = T(static_cast<float>(source_row[j].r), static_cast<float>(source_row[j].g), static_cast<float>(source_row[j].b)) * m_scale;
     }
   }
 
 template <typename T>
-size_t OpenEXRRgbaSpectrumImageSource<T>::GetHeight() const
+size_t OpenEXRRgbaImageSource<T>::GetHeight() const
   {
   return m_values.size();
   }
 
 template <typename T>
-size_t OpenEXRRgbaSpectrumImageSource<T>::GetWidth() const
+size_t OpenEXRRgbaImageSource<T>::GetWidth() const
   {
   return m_values.empty() ? 0 : m_values[0].size();
   }
 
 /**
-* Constructs OpenEXRRgbaSpectrumImageSource with the data from the specified Archive. This method is used by the boost serialization framework.
+* Constructs OpenEXRRgbaImageSource with the data from the specified Archive. This method is used by the boost serialization framework.
 */
 template<typename T, class Archive>
-void load_construct_data(Archive &i_ar, OpenEXRRgbaSpectrumImageSource<T> *ip_image_source, const unsigned int i_version)
+void load_construct_data(Archive &i_ar, OpenEXRRgbaImageSource<T> *ip_image_source, const unsigned int i_version)
   {
   // Construct with some dummy data, it will be serialized later in serialize() method.
   std::vector<std::vector<Imf::Rgba> > image(1, std::vector<Imf::Rgba>(1));
-  ::new(ip_image_source)OpenEXRRgbaSpectrumImageSource<T>(image, 1.0);
+  ::new(ip_image_source)OpenEXRRgbaImageSource<T>(image, 1.0);
   }
 
 /**
-* Serializes OpenEXRRgbaSpectrumImageSource to/from the specified Archive. This method is used by the boost serialization framework.
+* Serializes OpenEXRRgbaImageSource to/from the specified Archive. This method is used by the boost serialization framework.
 */
 template <typename T>
 template<class Archive>
-void OpenEXRRgbaSpectrumImageSource<T>::serialize(Archive &i_ar, const unsigned int i_version)
+void OpenEXRRgbaImageSource<T>::serialize(Archive &i_ar, const unsigned int i_version)
   {
-  i_ar & boost::serialization::base_object<ImageSource<Spectrum<T> > >(*this);
+  i_ar & boost::serialization::base_object<ImageSource<T> >(*this);
   i_ar & m_values;
   i_ar & m_scale;
   }
 
-// The following code exports different specializations of the OpenEXRRgbaSpectrumImageSource template in the boost serialization framework.
+// The following code exports different specializations of the OpenEXRRgbaImageSource template in the boost serialization framework.
 // If you need to serialize a new specialization you have to add it here.
-typedef OpenEXRRgbaSpectrumImageSource<float> OpenEXRRgbaSpectrumImageSource_float;
-typedef OpenEXRRgbaSpectrumImageSource<double> OpenEXRRgbaSpectrumImageSource_double;
+typedef OpenEXRRgbaImageSource<Spectrum_f> OpenEXRRgbaImageSource_Spectrum_float;
+typedef OpenEXRRgbaImageSource<Spectrum_d> OpenEXRRgbaImageSource_Spectrum_double;
+
+typedef OpenEXRRgbaImageSource<SpectrumCoef_f> OpenEXRRgbaImageSource_SpectrumCoef_float;
+typedef OpenEXRRgbaImageSource<SpectrumCoef_d> OpenEXRRgbaImageSource_SpectrumCoef_double;
+
 
 #include <boost/serialization/export.hpp>
-BOOST_CLASS_EXPORT(OpenEXRRgbaSpectrumImageSource_float)
-BOOST_CLASS_EXPORT(OpenEXRRgbaSpectrumImageSource_double)
-
+BOOST_CLASS_EXPORT(OpenEXRRgbaImageSource_Spectrum_float)
+BOOST_CLASS_EXPORT(OpenEXRRgbaImageSource_Spectrum_double)
+BOOST_CLASS_EXPORT(OpenEXRRgbaImageSource_SpectrumCoef_float)
+BOOST_CLASS_EXPORT(OpenEXRRgbaImageSource_SpectrumCoef_double)
 
 /////////////////////////////////// Serialization for Open EXR classes ////////////////////////////////////////
 

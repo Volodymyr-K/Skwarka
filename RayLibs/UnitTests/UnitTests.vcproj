@@ -333,6 +333,10 @@
 						>
 					</File>
 					<File
+						RelativePath=".\MainTests\Raytracer\Core\SpectrumCoef.test.h"
+						>
+					</File>
+					<File
 						RelativePath=".\MainTests\Raytracer\Core\TriangleAccelerator.test.h"
 						>
 					</File>
@@ -565,11 +569,11 @@
 					Name="ImageSources"
 					>
 					<File
-						RelativePath=".\MainTests\Raytracer\ImageSources\OpenEXRRgbaSpectrumImageSource.test.h"
+						RelativePath=".\MainTests\Raytracer\ImageSources\OpenEXRRgbaImageSource.test.h"
 						>
 					</File>
 					<File
-						RelativePath=".\MainTests\Raytracer\ImageSources\RGB24SpectrumImageSource.test.h"
+						RelativePath=".\MainTests\Raytracer\ImageSources\RGB24ImageSource.test.h"
 						>
 					</File>
 				</Filter>
@@ -843,11 +847,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\OpenEXRRgbaSpectrumImageSource.Serialization.test.cpp"
+				RelativePath=".\OpenEXRRgbaImageSource.Serialization.test.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\OpenEXRRgbaSpectrumImageSource.test.cpp"
+				RelativePath=".\OpenEXRRgbaImageSource.test.cpp"
 				>
 			</File>
 			<File
@@ -939,11 +943,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\RGB24SpectrumImageSource.Serialization.test.cpp"
+				RelativePath=".\RGB24ImageSource.Serialization.test.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\RGB24SpectrumImageSource.test.cpp"
+				RelativePath=".\RGB24ImageSource.test.cpp"
 				>
 			</File>
 			<File
@@ -984,6 +988,14 @@
 			</File>
 			<File
 				RelativePath=".\Spectrum.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\SpectrumCoef.Serialization.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\SpectrumCoef.test.cpp"
 				>
 			</File>
 			<File
@@ -1327,7 +1339,7 @@
 			Name="TestHelpers"
 			>
 			<File
-				RelativePath=".\Helpers\CustomValueTraits.h"
+				RelativePath=".\TestHelpers\CustomValueTraits.h"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -1345,7 +1357,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\Helpers\SamplingTestHelper.h"
+				RelativePath=".\TestHelpers\SamplingTestHelper.h"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -1363,7 +1375,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\Helpers\TriangleMeshTestHelper.h"
+				RelativePath=".\TestHelpers\TriangleMeshTestHelper.h"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -1487,6 +1499,10 @@
 						>
 					</File>
 					<File
+						RelativePath=".\SerializationTests\Raytracer\Core\SpectrumCoef.Serialization.test.h"
+						>
+					</File>
+					<File
 						RelativePath=".\SerializationTests\Raytracer\Core\TriangleMesh.Serialization.test.h"
 						>
 					</File>
@@ -1595,11 +1611,11 @@
 					Name="ImageSources"
 					>
 					<File
-						RelativePath=".\SerializationTests\Raytracer\ImageSources\OpenEXRRgbaSpectrumImageSource.Serialization.test.h"
+						RelativePath=".\SerializationTests\Raytracer\ImageSources\OpenEXRRgbaImageSource.Serialization.test.h"
 						>
 					</File>
 					<File
-						RelativePath=".\SerializationTests\Raytracer\ImageSources\RGB24SpectrumImageSource.Serialization.test.h"
+						RelativePath=".\SerializationTests\Raytracer\ImageSources\RGB24ImageSource.Serialization.test.h"
 						>
 					</File>
 				</Filter>

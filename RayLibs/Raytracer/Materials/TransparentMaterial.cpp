@@ -6,7 +6,7 @@
 #include <Raytracer/Core/Fresnel.h>
 #include <Math/MathRoutines.h>
 
-TransparentMaterial::TransparentMaterial(intrusive_ptr<const Texture<Spectrum_d> > ip_reflectance, intrusive_ptr<const Texture<Spectrum_d> > ip_transmittance, double i_refractive_index):
+TransparentMaterial::TransparentMaterial(intrusive_ptr<const Texture<SpectrumCoef_d> > ip_reflectance, intrusive_ptr<const Texture<SpectrumCoef_d> > ip_transmittance, double i_refractive_index):
 Material(), mp_reflectance(ip_reflectance), mp_transmittance(ip_transmittance), m_refractive_index(i_refractive_index)
   {
   ASSERT(ip_reflectance);
@@ -17,12 +17,12 @@ Material(), mp_reflectance(ip_reflectance), mp_transmittance(ip_transmittance), 
     m_refractive_index=0.0;
   }
 
-intrusive_ptr<const Texture<Spectrum_d> > TransparentMaterial::GetReflectanceTexture() const
+intrusive_ptr<const Texture<SpectrumCoef_d> > TransparentMaterial::GetReflectanceTexture() const
   {
   return mp_reflectance;
   }
 
-intrusive_ptr<const Texture<Spectrum_d> > TransparentMaterial::GetTransmittanceTexture() const
+intrusive_ptr<const Texture<SpectrumCoef_d> > TransparentMaterial::GetTransmittanceTexture() const
   {
   return mp_transmittance;
   }
@@ -36,8 +36,8 @@ const BSDF *TransparentMaterial::GetBSDF(const DifferentialGeometry &i_dg, size_
   {
   BSDF *p_bsdf = new ( i_pool.Alloc(sizeof(BSDF)) ) BSDF(i_dg, m_refractive_index);
 
-  Spectrum_d r = mp_reflectance->Evaluate(i_dg, i_triangle_index);
-  Spectrum_d t = mp_transmittance->Evaluate(i_dg, i_triangle_index);
+  SpectrumCoef_d r = mp_reflectance->Evaluate(i_dg, i_triangle_index);
+  SpectrumCoef_d t = mp_transmittance->Evaluate(i_dg, i_triangle_index);
   r.Clamp(0.0, 1.0);
   t.Clamp(0.0, 1.0);
 

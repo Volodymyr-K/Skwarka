@@ -1,10 +1,12 @@
-#ifndef RGB24_SPECTRUM_IMAGE_SOURCE_SERIALIZATION_TEST_H
-#define RGB24_SPECTRUM_IMAGE_SOURCE_SERIALIZATION_TEST_H
+#ifndef OPENEXR_RGBA_SPECTRUM_IMAGE_SOURCE_SERIALIZATION_TEST_H
+#define OPENEXR_RGBA_SPECTRUM_IMAGE_SOURCE_SERIALIZATION_TEST_H
 
 #include <cxxtest/TestSuite.h>
 #include <UnitTests/TestHelpers/CustomValueTraits.h>
-#include <Raytracer/ImageSources/RGB24SpectrumImageSource.h>
+#include <Raytracer/ImageSources/OpenEXRRgbaImageSource.h>
 #include <Math/ThreadSafeRandom.h>
+#include <ImfRgba.h>
+#include <ImfArray.h>
 #include <vector>
 
 #include <boost/archive/binary_iarchive.hpp>
@@ -16,24 +18,25 @@
 typedef boost::iostreams::basic_array_sink<char> SinkDevice;
 typedef boost::iostreams::basic_array_source<char> SourceDevice;
 
-class RGB24SpectrumImageSourceSerializationTestSuite : public CxxTest::TestSuite
+class OpenEXRRgbaImageSourceSerializationTestSuite : public CxxTest::TestSuite
   {
   public:
-    void test_RGB24SpectrumImageSource_Serialization()
+    void test_OpenEXRRgbaImageSource_Serialization()
       {
       size_t width = 123, height=234;
-      std::vector<std::vector<RGB24> > values(height, std::vector<RGB24>(width));
+      std::vector<std::vector<Imf::Rgba> > values(height, std::vector<Imf::Rgba>(width));
       double scale = 1.0/255.0;
 
       for(size_t i=0;i<height;++i)
         for(size_t j=0;j<width;++j)
           {
-          values[i][j].m_rgb[0]=(unsigned char)RandomInt(256);
-          values[i][j].m_rgb[1]=(unsigned char)RandomInt(256);
-          values[i][j].m_rgb[2]=(unsigned char)RandomInt(256);
+          values[i][j].r = (float)RandomDouble(1000);
+          values[i][j].g = (float)RandomDouble(1000);
+          values[i][j].b = (float)RandomDouble(1000);
+          values[i][j].a = 0.f;
           }
 
-      intrusive_ptr<ImageSource<Spectrum_f> > p_image_source1( new RGB24SpectrumImageSource<float>(values, scale) );
+      intrusive_ptr<ImageSource<Spectrum_f> > p_image_source1( new OpenEXRRgbaImageSource<Spectrum_f>(values, scale) );
         {
         boost::iostreams::stream_buffer<SinkDevice> buffer(m_data, m_buffer_size);
         boost::archive::binary_oarchive output_archive(buffer);
@@ -54,7 +57,7 @@ class RGB24SpectrumImageSourceSerializationTestSuite : public CxxTest::TestSuite
       p_image_source1->GetImage(image1);
       p_image_source2->GetImage(image2);
       if (image1 != image2)
-        TS_FAIL("OpenEXRRgbaSpectrumImageSource serialization test failed.");
+        TS_FAIL("OpenEXRRgbaImageSource serialization test failed.");
       }
 
   private:
@@ -62,4 +65,4 @@ class RGB24SpectrumImageSourceSerializationTestSuite : public CxxTest::TestSuite
     char m_data[m_buffer_size];
   };
 
-#endif // RGB24_SPECTRUM_IMAGE_SOURCE_SERIALIZATION_TEST_H
+#endif // OPENEXR_RGBA_SPECTRUM_IMAGE_SOURCE_SERIALIZATION_TEST_H

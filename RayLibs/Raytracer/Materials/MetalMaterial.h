@@ -23,7 +23,7 @@ class MetalMaterial: public Material
     * @param ip_absorption The texture defining the absorption of the metal. Each spectrum component should be positive.
     * @param ip_roughness The texture defining the roughness of the surface. Values should be in [0;1] range.
     */
-    MetalMaterial(intrusive_ptr<const Texture<Spectrum_d> > ip_refractive_index, intrusive_ptr<const Texture<Spectrum_d> > ip_absorption,
+    MetalMaterial(intrusive_ptr<const Texture<SpectrumCoef_d> > ip_refractive_index, intrusive_ptr<const Texture<SpectrumCoef_d> > ip_absorption,
       intrusive_ptr<const Texture<double> > ip_roughness);
 
     /**
@@ -34,7 +34,7 @@ class MetalMaterial: public Material
     * @param ip_u_roughness The texture defining the roughness of the surface in U direction. Values should be in [0;1] range.
     * @param ip_v_roughness The texture defining the roughness of the surface in U direction. Values should be in [0;1] range.
     */
-    MetalMaterial(intrusive_ptr<const Texture<Spectrum_d> > ip_refractive_index, intrusive_ptr<const Texture<Spectrum_d> > ip_absorption,
+    MetalMaterial(intrusive_ptr<const Texture<SpectrumCoef_d> > ip_refractive_index, intrusive_ptr<const Texture<SpectrumCoef_d> > ip_absorption,
       intrusive_ptr<const Texture<double> > ip_u_roughness, intrusive_ptr<const Texture<double> > ip_v_roughness);
 
     /**
@@ -44,7 +44,7 @@ class MetalMaterial: public Material
     * @param ip_reflectance The texture defining the total hemisphere reflectance. Each spectrum component should be in [0;1] range.
     * @param ip_roughness The texture defining the roughness of the surface. Values should be in [0;1] range.
     */
-    MetalMaterial(intrusive_ptr<const Texture<Spectrum_d> > ip_reflectance, intrusive_ptr<const Texture<double> > ip_roughness);
+    MetalMaterial(intrusive_ptr<const Texture<SpectrumCoef_d> > ip_reflectance, intrusive_ptr<const Texture<double> > ip_roughness);
 
     /**
     * Creates MetalMaterial instance with the specified textures defining the reflectance and roughness.
@@ -54,14 +54,14 @@ class MetalMaterial: public Material
     * @param ip_u_roughness The texture defining the roughness of the surface in U direction. Values should be in [0;1] range.
     * @param ip_v_roughness The texture defining the roughness of the surface in U direction. Values should be in [0;1] range.
     */
-    MetalMaterial(intrusive_ptr<const Texture<Spectrum_d> > ip_reflectance,
+    MetalMaterial(intrusive_ptr<const Texture<SpectrumCoef_d> > ip_reflectance,
       intrusive_ptr<const Texture<double> > ip_u_roughness, intrusive_ptr<const Texture<double> > ip_v_roughness);
 
-    intrusive_ptr<const Texture<Spectrum_d> > GetRefractiveIndexTexture() const;
+    intrusive_ptr<const Texture<SpectrumCoef_d> > GetRefractiveIndexTexture() const;
 
-    intrusive_ptr<const Texture<Spectrum_d> > GetAbsoprtionTexture() const;
+    intrusive_ptr<const Texture<SpectrumCoef_d> > GetAbsoprtionTexture() const;
 
-    intrusive_ptr<const Texture<Spectrum_d> > GetReflectanceTexture() const;
+    intrusive_ptr<const Texture<SpectrumCoef_d> > GetReflectanceTexture() const;
 
     /**
     * Returns texture defining the roughness of the material.
@@ -92,7 +92,7 @@ class MetalMaterial: public Material
     virtual const BSDF *GetBSDF(const DifferentialGeometry &i_dg, size_t i_triangle_index, MemoryPool &i_pool) const;
 
   private:
-    intrusive_ptr<const Texture<Spectrum_d> > mp_refractive_index, mp_absorption, mp_reflectance;
+    intrusive_ptr<const Texture<SpectrumCoef_d> > mp_refractive_index, mp_absorption, mp_reflectance;
 
     intrusive_ptr<const Texture<double> > mp_roughness, mp_u_roughness, mp_v_roughness;
   };
@@ -106,9 +106,9 @@ class MetalMaterial: public Material
 template<class Archive>
 void save_construct_data(Archive &i_ar, const MetalMaterial *ip_material, const unsigned int i_version)
   {
-  intrusive_ptr<const Texture<Spectrum_d> > p_refractive_index = ip_material->GetRefractiveIndexTexture();
-  intrusive_ptr<const Texture<Spectrum_d> > p_absorption = ip_material->GetAbsoprtionTexture();
-  intrusive_ptr<const Texture<Spectrum_d> > p_reflectance = ip_material->GetReflectanceTexture();
+  intrusive_ptr<const Texture<SpectrumCoef_d> > p_refractive_index = ip_material->GetRefractiveIndexTexture();
+  intrusive_ptr<const Texture<SpectrumCoef_d> > p_absorption = ip_material->GetAbsoprtionTexture();
+  intrusive_ptr<const Texture<SpectrumCoef_d> > p_reflectance = ip_material->GetReflectanceTexture();
   intrusive_ptr<const Texture<double> > p_roughness = ip_material->GetRoughnessTexture();
   intrusive_ptr<const Texture<double> > p_u_roughness = ip_material->GetURoughnessTexture();
   intrusive_ptr<const Texture<double> > p_v_roughness = ip_material->GetVRoughnessTexture();
@@ -127,7 +127,7 @@ void save_construct_data(Archive &i_ar, const MetalMaterial *ip_material, const 
 template<class Archive>
 void load_construct_data(Archive &i_ar, MetalMaterial *ip_material, const unsigned int i_version)
   {
-  intrusive_ptr<const Texture<Spectrum_d> > p_refractive_index, p_absorption, p_reflectance;
+  intrusive_ptr<const Texture<SpectrumCoef_d> > p_refractive_index, p_absorption, p_reflectance;
   intrusive_ptr<const Texture<double> > p_roughness, p_u_roughness, p_v_roughness;
 
   i_ar >> p_refractive_index;

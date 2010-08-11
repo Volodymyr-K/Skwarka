@@ -26,9 +26,9 @@ class MetalMaterialSerializationTestSuite : public CxxTest::TestSuite
 
     void test_MetalMaterial_Serialization_Isotropic()
       {
-      Spectrum_d refreactive_index(0.41,1.15,1.18), absorption(4.2,2.66,2.5);
-      intrusive_ptr<Texture<Spectrum_d> > p_refreactive_index( new ConstantTexture<Spectrum_d>(refreactive_index) );
-      intrusive_ptr<Texture<Spectrum_d> > p_absorption( new ConstantTexture<Spectrum_d>(absorption) );
+      SpectrumCoef_d refreactive_index(0.41,1.15,1.18), absorption(4.2,2.66,2.5);
+      intrusive_ptr<Texture<SpectrumCoef_d> > p_refreactive_index( new ConstantTexture<SpectrumCoef_d>(refreactive_index) );
+      intrusive_ptr<Texture<SpectrumCoef_d> > p_absorption( new ConstantTexture<SpectrumCoef_d>(absorption) );
       intrusive_ptr<Texture<double> > p_roughness( new ConstantTexture<double>(1.0) );
 
       intrusive_ptr<Material> p_material1(new MetalMaterial(p_refreactive_index, p_absorption, p_roughness));
@@ -50,16 +50,16 @@ class MetalMaterialSerializationTestSuite : public CxxTest::TestSuite
       dg.m_geometric_normal=dg.m_shading_normal=Vector3D_d(0.0,0.0,1.0);
       dg.m_tangent=Vector3D_d(1.0,0.0,0.0);
 
-      Spectrum_d val1 = p_material1->GetBSDF(dg, 0, pool)->Evaluate(Vector3D_d(0.5,0.0,1.0).Normalized(), Vector3D_d(-0.5,0.0,1.0).Normalized());
-      Spectrum_d val2 = p_material2->GetBSDF(dg, 0, pool)->Evaluate(Vector3D_d(0.5,0.0,1.0).Normalized(), Vector3D_d(-0.5,0.0,1.0).Normalized());
+      SpectrumCoef_d val1 = p_material1->GetBSDF(dg, 0, pool)->Evaluate(Vector3D_d(0.5,0.0,1.0).Normalized(), Vector3D_d(-0.5,0.0,1.0).Normalized());
+      SpectrumCoef_d val2 = p_material2->GetBSDF(dg, 0, pool)->Evaluate(Vector3D_d(0.5,0.0,1.0).Normalized(), Vector3D_d(-0.5,0.0,1.0).Normalized());
       TS_ASSERT_EQUALS(val1,val2);
       }
 
     void test_MetalMaterial_Serialization_Anisotropic()
       {
-      Spectrum_d refreactive_index(0.41,1.15,1.18), absorption(4.2,2.66,2.5);
-      intrusive_ptr<Texture<Spectrum_d> > p_refreactive_index( new ConstantTexture<Spectrum_d>(refreactive_index) );
-      intrusive_ptr<Texture<Spectrum_d> > p_absorption( new ConstantTexture<Spectrum_d>(absorption) );
+      SpectrumCoef_d refreactive_index(0.41,1.15,1.18), absorption(4.2,2.66,2.5);
+      intrusive_ptr<Texture<SpectrumCoef_d> > p_refreactive_index( new ConstantTexture<SpectrumCoef_d>(refreactive_index) );
+      intrusive_ptr<Texture<SpectrumCoef_d> > p_absorption( new ConstantTexture<SpectrumCoef_d>(absorption) );
       intrusive_ptr<Texture<double> > p_u_roughness( new ConstantTexture<double>(1.0) );
       intrusive_ptr<Texture<double> > p_v_roughness( new ConstantTexture<double>(10.0) );
 
@@ -82,8 +82,8 @@ class MetalMaterialSerializationTestSuite : public CxxTest::TestSuite
       dg.m_geometric_normal=dg.m_shading_normal=Vector3D_d(0.0,0.0,1.0);
       dg.m_tangent=Vector3D_d(1.0,0.0,0.0);
 
-      Spectrum_d val1 = p_material1->GetBSDF(dg, 0, pool)->Evaluate(Vector3D_d(0.5,0.0,1.0).Normalized(), Vector3D_d(-0.5,0.0,1.0).Normalized());
-      Spectrum_d val2 = p_material2->GetBSDF(dg, 0, pool)->Evaluate(Vector3D_d(0.5,0.0,1.0).Normalized(), Vector3D_d(-0.5,0.0,1.0).Normalized());
+      SpectrumCoef_d val1 = p_material1->GetBSDF(dg, 0, pool)->Evaluate(Vector3D_d(0.5,0.0,1.0).Normalized(), Vector3D_d(-0.5,0.0,1.0).Normalized());
+      SpectrumCoef_d val2 = p_material2->GetBSDF(dg, 0, pool)->Evaluate(Vector3D_d(0.5,0.0,1.0).Normalized(), Vector3D_d(-0.5,0.0,1.0).Normalized());
       TS_ASSERT_EQUALS(val1,val2);
       }
 

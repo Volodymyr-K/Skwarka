@@ -21,7 +21,7 @@ class FresnelBlendTestSuite : public CxxTest::TestSuite
       BlinnDistribution blinn(20.0);
       typedef FresnelBlend<BlinnDistribution> BlinnFresnelBlend;
 
-      mp_bxdf = shared_ptr<BxDF>( new BlinnFresnelBlend(Spectrum_d(0.5), Spectrum_d(0.3), blinn) );
+      mp_bxdf = shared_ptr<BxDF>( new BlinnFresnelBlend(SpectrumCoef_d(0.5), SpectrumCoef_d(0.3), blinn) );
       }
 
     void tearDown()
@@ -38,8 +38,8 @@ class FresnelBlendTestSuite : public CxxTest::TestSuite
       {
       Vector3D_d v1=Vector3D_d(0.2,0.5,0.8).Normalized(); 
       Vector3D_d v2=Vector3D_d(-0.1,-0.3,0.9).Normalized();
-      Spectrum_d val1 = mp_bxdf->Evaluate(v1, v2);
-      Spectrum_d val2 = mp_bxdf->Evaluate(v2, v1);
+      SpectrumCoef_d val1 = mp_bxdf->Evaluate(v1, v2);
+      SpectrumCoef_d val2 = mp_bxdf->Evaluate(v2, v1);
 
       TS_ASSERT_EQUALS(val1,val2);
       }
@@ -55,7 +55,7 @@ class FresnelBlendTestSuite : public CxxTest::TestSuite
 
         double pdf;
         Vector3D_d exitant;
-        Spectrum_d sp = mp_bxdf->Sample(Vector3D_d(0.5,0.5,0.5).Normalized(), exitant, sample, pdf);
+        SpectrumCoef_d sp = mp_bxdf->Sample(Vector3D_d(0.5,0.5,0.5).Normalized(), exitant, sample, pdf);
 
         if (pdf<0.0)
           correct=false;
@@ -78,7 +78,7 @@ class FresnelBlendTestSuite : public CxxTest::TestSuite
         double pdf;
         Vector3D_d incident=Vector3D_d(0.5,0.5,0.5).Normalized();
         Vector3D_d exitant;
-        Spectrum_d sp = mp_bxdf->Sample(incident, exitant, sample, pdf);
+        SpectrumCoef_d sp = mp_bxdf->Sample(incident, exitant, sample, pdf);
 
         double pdf2 = mp_bxdf->PDF(incident,exitant);
         if (fabs(pdf-pdf2)>(1e-5)*pdf)
@@ -117,8 +117,8 @@ class FresnelBlendTestSuite : public CxxTest::TestSuite
       std::vector<Point2D_d> samples(num_samples_sqrt*num_samples_sqrt);
       SamplingRoutines::StratifiedSampling2D(samples.begin(),num_samples_sqrt,num_samples_sqrt,true);
 
-      Spectrum_d total=mp_bxdf->TotalScattering(Vector3D_d(0.5,0.5,0.5).Normalized(), SamplesSequence2D(&samples[0], (&samples[0]) + samples.size()));
-      CustomAssertDelta(total, Spectrum_d(0.5178), 0.0004); // This is an empirical value.
+      SpectrumCoef_d total=mp_bxdf->TotalScattering(Vector3D_d(0.5,0.5,0.5).Normalized(), SamplesSequence2D(&samples[0], (&samples[0]) + samples.size()));
+      CustomAssertDelta(total, SpectrumCoef_d(0.5178), 0.0004); // This is an empirical value.
       }
 
     void test_FresnelBlend_TotalScattering2()
@@ -132,8 +132,8 @@ class FresnelBlendTestSuite : public CxxTest::TestSuite
       SamplesSequence2D sequence1(&samples1[0], (&samples1[0]) + samples1.size());
       SamplesSequence2D sequence2(&samples2[0], (&samples2[0]) + samples2.size());
 
-      Spectrum_d total=mp_bxdf->TotalScattering(true, sequence1, sequence2);
-      CustomAssertDelta(total, Spectrum_d(0.5341), 0.005); // This is an empirical value.
+      SpectrumCoef_d total=mp_bxdf->TotalScattering(true, sequence1, sequence2);
+      CustomAssertDelta(total, SpectrumCoef_d(0.5341), 0.005); // This is an empirical value.
       }
 
   private:

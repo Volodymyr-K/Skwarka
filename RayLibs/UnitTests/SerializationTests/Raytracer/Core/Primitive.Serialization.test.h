@@ -28,7 +28,7 @@ class PrimitiveSerializationTestSuite : public CxxTest::TestSuite
 
     void test_Primitive_Serialization()
       {
-      intrusive_ptr<Texture<Spectrum_d> > p_reflectance( new ConstantTexture<Spectrum_d>(Spectrum_d(1.0)) );
+      intrusive_ptr<Texture<SpectrumCoef_d> > p_reflectance( new ConstantTexture<SpectrumCoef_d>(SpectrumCoef_d(1.0)) );
       intrusive_ptr<Texture<double> > p_sigma( new ConstantTexture<double>(0.1) );
 
       intrusive_ptr<TriangleMesh> p_mesh = TriangleMeshHelper::ConstructSphere(Point3D_d(1,2,3), 3.14, 5);

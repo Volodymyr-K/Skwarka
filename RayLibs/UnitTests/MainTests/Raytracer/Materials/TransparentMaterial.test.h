@@ -16,11 +16,11 @@ class TransparentMaterialTestSuite : public CxxTest::TestSuite
   public:
     void setUp()
       {
-      mp_reflectance = Spectrum_d(0.9,0.8,0.7);
-      mp_transmittance = Spectrum_d(0.5,0.6,0.7);
+      mp_reflectance = SpectrumCoef_d(0.9,0.8,0.7);
+      mp_transmittance = SpectrumCoef_d(0.5,0.6,0.7);
 
-      intrusive_ptr<Texture<Spectrum_d> > p_reflectance_texture( new TextureMock<Spectrum_d>(mp_reflectance) );
-      intrusive_ptr<Texture<Spectrum_d> > p_transmittance_texture( new TextureMock<Spectrum_d>(mp_transmittance) );
+      intrusive_ptr<Texture<SpectrumCoef_d> > p_reflectance_texture( new TextureMock<SpectrumCoef_d>(mp_reflectance) );
+      intrusive_ptr<Texture<SpectrumCoef_d> > p_transmittance_texture( new TextureMock<SpectrumCoef_d>(mp_transmittance) );
 
       m_refractive_index=1.5;
 
@@ -70,7 +70,7 @@ class TransparentMaterialTestSuite : public CxxTest::TestSuite
       Vector3D_d exitant;
       double pdf;
       BxDFType sampled_type;
-      Spectrum_d f = p_bsdf->Sample(incident, exitant, Point2D_d(RandomDouble(1.0), RandomDouble(1.0)), RandomDouble(1.0), pdf, sampled_type, BSDF_ALL_REFLECTION);
+      SpectrumCoef_d f = p_bsdf->Sample(incident, exitant, Point2D_d(RandomDouble(1.0), RandomDouble(1.0)), RandomDouble(1.0), pdf, sampled_type, BSDF_ALL_REFLECTION);
 
       TS_ASSERT(sampled_type == BxDFType(BSDF_REFLECTION | BSDF_SPECULAR));
       TS_ASSERT(exitant == Vector3D_d(-incident[0],-incident[1],incident[2]));
@@ -92,7 +92,7 @@ class TransparentMaterialTestSuite : public CxxTest::TestSuite
       Vector3D_d exitant;
       double pdf;
       BxDFType sampled_type;
-      Spectrum_d f = p_bsdf->Sample(incident, exitant, Point2D_d(RandomDouble(1.0), RandomDouble(1.0)), RandomDouble(1.0), pdf, sampled_type, BSDF_ALL_TRANSMISSION);
+      SpectrumCoef_d f = p_bsdf->Sample(incident, exitant, Point2D_d(RandomDouble(1.0), RandomDouble(1.0)), RandomDouble(1.0), pdf, sampled_type, BSDF_ALL_TRANSMISSION);
 
       TS_ASSERT(sampled_type == BxDFType(BSDF_TRANSMISSION | BSDF_SPECULAR));
       TS_ASSERT(exitant[2]<0.0);
@@ -104,7 +104,7 @@ class TransparentMaterialTestSuite : public CxxTest::TestSuite
 
   private:
     intrusive_ptr<Material> mp_material;
-    Spectrum_d mp_reflectance, mp_transmittance;
+    SpectrumCoef_d mp_reflectance, mp_transmittance;
     double m_refractive_index;
   };
 

@@ -3,16 +3,16 @@
 
 #include <cxxtest/TestSuite.h>
 #include <UnitTests/TestHelpers/CustomValueTraits.h>
-#include <Raytracer/ImageSources/OpenEXRRgbaSpectrumImageSource.h>
+#include <Raytracer/ImageSources/OpenEXRRgbaImageSource.h>
 #include <Math/ThreadSafeRandom.h>
 #include <ImfRgba.h>
 #include <ImfArray.h>
 #include <vector>
 
-class OpenEXRRgbaSpectrumImageSourceTestSuite : public CxxTest::TestSuite
+class OpenEXRRgbaImageSourceTestSuite : public CxxTest::TestSuite
   {
   public:
-    void test_OpenEXRRgbaSpectrumImageSource_InitializedFromVector()
+    void test_OpenEXRRgbaImageSource_InitializedFromVector()
       {
       size_t width = 123, height=234;
       std::vector<std::vector<Imf::Rgba> > values(height, std::vector<Imf::Rgba>(width));
@@ -27,7 +27,7 @@ class OpenEXRRgbaSpectrumImageSourceTestSuite : public CxxTest::TestSuite
           values[i][j].a = 0.f;
           }
 
-      intrusive_ptr<ImageSource<Spectrum_f> > p_image_source( new OpenEXRRgbaSpectrumImageSource<float>(values, scale) );
+      intrusive_ptr<ImageSource<Spectrum_f> > p_image_source( new OpenEXRRgbaImageSource<Spectrum_f>(values, scale) );
 
       TS_ASSERT_EQUALS(p_image_source->GetHeight(), height);
       TS_ASSERT_EQUALS(p_image_source->GetWidth(), width);
@@ -40,13 +40,13 @@ class OpenEXRRgbaSpectrumImageSourceTestSuite : public CxxTest::TestSuite
           Spectrum_f tmp(values[i][j].r,values[i][j].g,values[i][j].b);
           if (image[i][j] != tmp*scale)
             {
-            TS_FAIL("OpenEXRRgbaSpectrumImageSource test failed.");
+            TS_FAIL("OpenEXRRgbaImageSource test failed.");
             return;
             }
           }
       }
 
-    void test_OpenEXRRgbaSpectrumImageSource_InitializedFromOpenEXRArray2D()
+    void test_OpenEXRRgbaImageSource_InitializedFromOpenEXRArray2D()
       {
       size_t width = 123, height=234;
 
@@ -62,7 +62,7 @@ class OpenEXRRgbaSpectrumImageSourceTestSuite : public CxxTest::TestSuite
           values[i][j].a = 0.f;
           }
 
-        intrusive_ptr<ImageSource<Spectrum_f> > p_image_source( new OpenEXRRgbaSpectrumImageSource<float>(values, width, height, scale) );
+        intrusive_ptr<ImageSource<Spectrum_f> > p_image_source( new OpenEXRRgbaImageSource<Spectrum_f>(values, width, height, scale) );
 
         TS_ASSERT_EQUALS(p_image_source->GetHeight(), height);
         TS_ASSERT_EQUALS(p_image_source->GetWidth(), width);
@@ -75,7 +75,7 @@ class OpenEXRRgbaSpectrumImageSourceTestSuite : public CxxTest::TestSuite
             Spectrum_f tmp(values[i][j].r,values[i][j].g,values[i][j].b);
             if (image[i][j] != tmp*scale)
               {
-              TS_FAIL("OpenEXRRgbaSpectrumImageSource test failed.");
+              TS_FAIL("OpenEXRRgbaImageSource test failed.");
               return;
               }
             }

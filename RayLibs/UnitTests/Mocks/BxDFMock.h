@@ -18,15 +18,15 @@ class BxDFMock: public BxDF
       {
       }
 
-    Spectrum_d Evaluate(const Vector3D_d &i_incident, const Vector3D_d &i_exitant) const
+    SpectrumCoef_d Evaluate(const Vector3D_d &i_incident, const Vector3D_d &i_exitant) const
       {
       if (IsSpecular(GetType()))
-        return Spectrum_d(0.0);
+        return SpectrumCoef_d(0.0);
       else
-        return m_R*Spectrum_d(INV_PI);
+        return m_R*SpectrumCoef_d(INV_PI);
       }
 
-    Spectrum_d Sample(const Vector3D_d &i_incident, Vector3D_d &o_exitant, const Point2D_d &i_sample, double &o_pdf) const
+    SpectrumCoef_d Sample(const Vector3D_d &i_incident, Vector3D_d &o_exitant, const Point2D_d &i_sample, double &o_pdf) const
       {
       if (IsSpecular(GetType()))
         {
@@ -37,7 +37,7 @@ class BxDFMock: public BxDF
           o_exitant[2]=-o_exitant[2];
 
         o_pdf=1.0;
-        return Spectrum_d(m_R)/fabs(i_incident[2]);
+        return SpectrumCoef_d(m_R)/fabs(i_incident[2]);
         }
       else
         return BxDF::Sample(i_incident,o_exitant,i_sample,o_pdf);

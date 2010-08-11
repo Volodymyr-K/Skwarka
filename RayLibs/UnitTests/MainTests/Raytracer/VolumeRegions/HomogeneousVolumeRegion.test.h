@@ -17,8 +17,8 @@ class HomogeneousVolumeRegionTestSuite : public CxxTest::TestSuite
       {
       m_bounds = BBox3D_d(Point3D_d(1,2,3), Point3D_d(10,20,30));
       m_emission = Spectrum_d(1,1.5,2);
-      m_absorption = Spectrum_d(5,7,9);
-      m_scattering = Spectrum_d(0.1,0.0,0.9);
+      m_absorption = SpectrumCoef_d(5,7,9);
+      m_scattering = SpectrumCoef_d(0.1,0.0,0.9);
       intrusive_ptr<PhaseFunction> p_phase_function( new PhaseFunctionMock );
 
       mp_volume.reset(new HomogeneousVolumeRegion(m_bounds, m_emission, m_absorption, m_scattering, p_phase_function));
@@ -73,8 +73,8 @@ class HomogeneousVolumeRegionTestSuite : public CxxTest::TestSuite
       for (size_t t=0;t<N;++t)
         {
         Point3D_d point(RandomDouble(60)-30, RandomDouble(60)-30, RandomDouble(60)-30);
-        Spectrum_d tmp = mp_volume->Absorption(point);
-        Spectrum_d correct = m_bounds.Inside(point) ? m_absorption : Spectrum_d(0.0);
+        SpectrumCoef_d tmp = mp_volume->Absorption(point);
+        SpectrumCoef_d correct = m_bounds.Inside(point) ? m_absorption : SpectrumCoef_d(0.0);
         TS_ASSERT_EQUALS(tmp, correct);
         }
       }
@@ -85,8 +85,8 @@ class HomogeneousVolumeRegionTestSuite : public CxxTest::TestSuite
       for (size_t t=0;t<N;++t)
         {
         Point3D_d point(RandomDouble(60)-30, RandomDouble(60)-30, RandomDouble(60)-30);
-        Spectrum_d tmp = mp_volume->Scattering(point);
-        Spectrum_d correct = m_bounds.Inside(point) ? m_scattering : Spectrum_d(0.0);
+        SpectrumCoef_d tmp = mp_volume->Scattering(point);
+        SpectrumCoef_d correct = m_bounds.Inside(point) ? m_scattering : SpectrumCoef_d(0.0);
         TS_ASSERT_EQUALS(tmp, correct);
         }
       }
@@ -97,8 +97,8 @@ class HomogeneousVolumeRegionTestSuite : public CxxTest::TestSuite
       for (size_t t=0;t<N;++t)
         {
         Point3D_d point(RandomDouble(60)-30, RandomDouble(60)-30, RandomDouble(60)-30);
-        Spectrum_d tmp = mp_volume->Attenuation(point);
-        Spectrum_d correct = m_bounds.Inside(point) ? m_absorption+m_scattering : Spectrum_d(0.0);
+        SpectrumCoef_d tmp = mp_volume->Attenuation(point);
+        SpectrumCoef_d correct = m_bounds.Inside(point) ? m_absorption+m_scattering : SpectrumCoef_d(0.0);
         TS_ASSERT_EQUALS(tmp, correct);
         }
       }
@@ -129,17 +129,18 @@ class HomogeneousVolumeRegionTestSuite : public CxxTest::TestSuite
         double length = RandomDouble(60.0);
         Ray ray(point, direction, length);
 
-        Spectrum_d tmp = mp_volume->OpticalThickness(ray, 1.0, 0.0);
+        SpectrumCoef_d tmp = mp_volume->OpticalThickness(ray, 1.0, 0.0);
 
         double t0, t1;
-        Spectrum_d correct = m_bounds.Intersect(ray, &t0, &t1) ? fabs(t1-t0)*(m_absorption+m_scattering) : Spectrum_d(0.0);
+        SpectrumCoef_d correct = m_bounds.Intersect(ray, &t0, &t1) ? fabs(t1-t0)*(m_absorption+m_scattering) : SpectrumCoef_d(0.0);
         TS_ASSERT_EQUALS(tmp, correct);
         }
       }
 
   private:
     BBox3D_d m_bounds;
-    Spectrum_d m_emission, m_absorption, m_scattering;
+    Spectrum_d m_emission;
+    SpectrumCoef_d m_absorption, m_scattering;
 
     intrusive_ptr<VolumeRegion> mp_volume;
   };

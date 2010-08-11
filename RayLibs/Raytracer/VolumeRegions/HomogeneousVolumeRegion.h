@@ -18,7 +18,7 @@ class HomogeneousVolumeRegion: public VolumeRegion
     * Creates HomogeneousVolumeRegion instance with specified bounding box, emission, absorption and scattering.
     * The constructor also takes an instance of the phase function.
     */
-    HomogeneousVolumeRegion(const BBox3D_d &i_bounds, Spectrum_d &i_emission, Spectrum_d &i_absorption, Spectrum_d &i_scattering, intrusive_ptr<const PhaseFunction> ip_phase_function);
+    HomogeneousVolumeRegion(const BBox3D_d &i_bounds, Spectrum_d &i_emission, SpectrumCoef_d &i_absorption, SpectrumCoef_d &i_scattering, intrusive_ptr<const PhaseFunction> ip_phase_function);
 
     /**
     * Returns bounding box of the volume region.
@@ -27,9 +27,9 @@ class HomogeneousVolumeRegion: public VolumeRegion
 
     Spectrum_d GetEmission() const;
 
-    Spectrum_d GetAbsorption() const;
+    SpectrumCoef_d GetAbsorption() const;
 
-    Spectrum_d GetScattering() const;
+    SpectrumCoef_d GetScattering() const;
 
     intrusive_ptr<const PhaseFunction> GetPhaseFunction() const;
 
@@ -50,17 +50,17 @@ class HomogeneousVolumeRegion: public VolumeRegion
     /**
     * Returns absorption density of the volume region at the specified point.
     */
-    Spectrum_d Absorption(const Point3D_d &i_point) const;
+    SpectrumCoef_d Absorption(const Point3D_d &i_point) const;
 
     /**
     * Returns scattering density of the volume region at the specified point.
     */
-    Spectrum_d Scattering(const Point3D_d &i_point) const;
+    SpectrumCoef_d Scattering(const Point3D_d &i_point) const;
 
     /**
     * Returns attenuation density (which is the sum absorption and scattering) of the volume region at the specified point.
     */
-    Spectrum_d Attenuation(const Point3D_d &i_point) const;
+    SpectrumCoef_d Attenuation(const Point3D_d &i_point) const;
 
     /**
     * Returns value of the phase function at the specified point for the specified incoming and outgoing directions.
@@ -82,12 +82,13 @@ class HomogeneousVolumeRegion: public VolumeRegion
     * Should be in [0;1) range. Not used by this implementation.
     * @return Optical thickness.
     */
-    Spectrum_d OpticalThickness(const Ray &i_ray, double i_step, double i_offset_sample) const;
+    SpectrumCoef_d OpticalThickness(const Ray &i_ray, double i_step, double i_offset_sample) const;
 
   private:
     BBox3D_d m_bounds;
 
-    Spectrum_d m_emission, m_absorption, m_scattering, m_attenuation;
+    Spectrum_d m_emission;
+    SpectrumCoef_d m_absorption, m_scattering, m_attenuation;
 
     intrusive_ptr<const PhaseFunction> mp_phase_function;
   };
@@ -103,8 +104,8 @@ void save_construct_data(Archive &i_ar, const HomogeneousVolumeRegion *ip_volume
   {
   BBox3D_d bounds = ip_volume->GetBounds();
   Spectrum_d emission = ip_volume->GetEmission();
-  Spectrum_d absorption = ip_volume->GetAbsorption();
-  Spectrum_d scattering = ip_volume->GetScattering();
+  SpectrumCoef_d absorption = ip_volume->GetAbsorption();
+  SpectrumCoef_d scattering = ip_volume->GetScattering();
   intrusive_ptr<const PhaseFunction> p_phase_function = ip_volume->GetPhaseFunction();
 
   i_ar << bounds;
@@ -121,7 +122,8 @@ template<class Archive>
 void load_construct_data(Archive &i_ar, HomogeneousVolumeRegion *ip_volume, const unsigned int i_version)
   {
   BBox3D_d bounds;
-  Spectrum_d emission, absorption, scattering;
+  Spectrum_d emission;
+  SpectrumCoef_d absorption, scattering;
   intrusive_ptr<const PhaseFunction> p_phase_function;
 
   i_ar >> bounds;

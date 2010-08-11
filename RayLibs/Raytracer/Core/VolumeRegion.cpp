@@ -1,7 +1,7 @@
 #include "VolumeRegion.h"
 
-DensityVolumeRegion::DensityVolumeRegion(const BBox3D_d &i_bounds, Spectrum_d &i_base_emission, Spectrum_d &i_base_absorption,
-                                         Spectrum_d &i_base_scattering, intrusive_ptr<const PhaseFunction> ip_phase_function):
+DensityVolumeRegion::DensityVolumeRegion(const BBox3D_d &i_bounds, Spectrum_d &i_base_emission, SpectrumCoef_d &i_base_absorption,
+                                         SpectrumCoef_d &i_base_scattering, intrusive_ptr<const PhaseFunction> ip_phase_function):
 m_bounds(i_bounds), m_base_emission(i_base_emission), m_base_absorption(i_base_absorption), m_base_scattering(i_base_scattering), mp_phase_function(ip_phase_function)
   {
   ASSERT(ip_phase_function);
@@ -27,12 +27,12 @@ Spectrum_d DensityVolumeRegion::GetBaseEmission() const
   return m_base_emission;
   }
 
-Spectrum_d DensityVolumeRegion::GetBaseAbsorption() const
+SpectrumCoef_d DensityVolumeRegion::GetBaseAbsorption() const
   {
   return m_base_absorption;
   }
 
-Spectrum_d DensityVolumeRegion::GetBaseScattering() const
+SpectrumCoef_d DensityVolumeRegion::GetBaseScattering() const
   {
   return m_base_scattering;
   }
@@ -47,17 +47,17 @@ Spectrum_d DensityVolumeRegion::Emission(const Point3D_d &i_point) const
   return _Density(i_point) * m_base_emission;
   }
 
-Spectrum_d DensityVolumeRegion::Absorption(const Point3D_d &i_point) const
+SpectrumCoef_d DensityVolumeRegion::Absorption(const Point3D_d &i_point) const
   {
   return _Density(i_point) * m_base_absorption;
   }
 
-Spectrum_d DensityVolumeRegion::Scattering(const Point3D_d &i_point) const
+SpectrumCoef_d DensityVolumeRegion::Scattering(const Point3D_d &i_point) const
   {
   return _Density(i_point) * m_base_scattering;
   }
 
-Spectrum_d DensityVolumeRegion::Attenuation(const Point3D_d &i_point) const
+SpectrumCoef_d DensityVolumeRegion::Attenuation(const Point3D_d &i_point) const
   {
   return _Density(i_point) * m_base_attenuation;
   }
@@ -67,14 +67,14 @@ double DensityVolumeRegion::Phase(const Point3D_d &i_point, const Vector3D_d &i_
   return m_bounds.Inside(i_point) ? mp_phase_function->ScatteringPDF(i_incoming, i_outgoing) : 0.0;
   }
 
-Spectrum_d DensityVolumeRegion::OpticalThickness(const Ray &i_ray, double i_step, double i_offset_sample) const
+SpectrumCoef_d DensityVolumeRegion::OpticalThickness(const Ray &i_ray, double i_step, double i_offset_sample) const
   {
   ASSERT(i_ray.m_direction.IsNormalized());
   ASSERT(i_step > 0.0 && i_offset_sample >= 0.0 && i_offset_sample < 1.0);
 
   double t_begin, t_end;
   if (this->Intersect(i_ray, &t_begin, &t_end)==false)
-    return Spectrum_d(0.0);
+    return SpectrumCoef_d(0.0);
 
   double optical_thickness = 0.0;
   double t = t_begin, step = i_step;

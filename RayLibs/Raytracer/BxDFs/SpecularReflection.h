@@ -19,13 +19,13 @@ class SpecularReflection: public BxDF
     * @param i_reflectance The reflectance(color) of the surface. Each spectrum component should be in [0;1] range.
     * @param i_fresnel Fresnel implementation.
     */
-    SpecularReflection(Spectrum_d i_reflectance, const Fresnel &i_fresnel);
+    SpecularReflection(SpectrumCoef_d i_reflectance, const Fresnel &i_fresnel);
 
     /**
     * Returns BxDF value for the specified incident and exitant directions.
     * The specular implementation always returns black spectrum.
     */
-    virtual Spectrum_d Evaluate(const Vector3D_d &i_incident, const Vector3D_d &i_exitant) const;
+    virtual SpectrumCoef_d Evaluate(const Vector3D_d &i_incident, const Vector3D_d &i_exitant) const;
 
     /**
     * Samples BxDF value for the specified incident direction.
@@ -36,7 +36,7 @@ class SpecularReflection: public BxDF
     * @param[out] o_pdf PDF value for the sampled exitant direction. Always equal to 1.0.
     * @return Sampled BxDF value.
     */
-    virtual Spectrum_d Sample(const Vector3D_d &i_incident, Vector3D_d &o_exitant, const Point2D_d &i_sample, double &o_pdf) const;
+    virtual SpectrumCoef_d Sample(const Vector3D_d &i_incident, Vector3D_d &o_exitant, const Point2D_d &i_sample, double &o_pdf) const;
 
     /**
     * Returns PDF value for the specified incident and exitant direction.
@@ -53,7 +53,7 @@ class SpecularReflection: public BxDF
     * @param i_samples 2D Samples sequence to be used for sampling the hemisphere. Should have at least one sample.
     * @return Total scattering value. Each spectrum component will be in [0;1] range.
     */
-    virtual Spectrum_d TotalScattering(const Vector3D_d &i_incident, SamplesSequence2D i_samples) const;
+    virtual SpectrumCoef_d TotalScattering(const Vector3D_d &i_incident, SamplesSequence2D i_samples) const;
 
     /**
     * Returns total scattering (i.e. fraction of scattered light) assuming a light coming uniformly from the specified hemisphere.
@@ -66,10 +66,10 @@ class SpecularReflection: public BxDF
     * @param i_samples2 Second samples sequence. Should have the same number of elements that i_samples1 has.
     * @return Total scattering value. Each spectrum component will be in [0;1] range.
     */
-    virtual Spectrum_d TotalScattering(bool i_hemisphere, SamplesSequence2D i_samples1, SamplesSequence2D i_samples2) const;
+    virtual SpectrumCoef_d TotalScattering(bool i_hemisphere, SamplesSequence2D i_samples1, SamplesSequence2D i_samples2) const;
 
   private:
-    Spectrum_d m_reflectance;
+    SpectrumCoef_d m_reflectance;
     Fresnel m_fresnel;
   };
 
@@ -77,23 +77,23 @@ class SpecularReflection: public BxDF
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename Fresnel>
-SpecularReflection<Fresnel>::SpecularReflection(Spectrum_d i_reflectance, const Fresnel &i_fresnel):
+SpecularReflection<Fresnel>::SpecularReflection(SpectrumCoef_d i_reflectance, const Fresnel &i_fresnel):
 BxDF(BxDFType(BSDF_REFLECTION | BSDF_SPECULAR)), m_reflectance(i_reflectance), m_fresnel(i_fresnel)
   {
   ASSERT(InRange(i_reflectance,0.0,1.0));
   }
 
 template<typename Fresnel>
-Spectrum_d SpecularReflection<Fresnel>::Evaluate(const Vector3D_d &i_incident, const Vector3D_d &i_exitant) const
+SpectrumCoef_d SpecularReflection<Fresnel>::Evaluate(const Vector3D_d &i_incident, const Vector3D_d &i_exitant) const
   {
   ASSERT(i_incident.IsNormalized());
   ASSERT(i_exitant.IsNormalized());
 
-  return Spectrum_d(0.0);
+  return SpectrumCoef_d(0.0);
   }
 
 template<typename Fresnel>
-Spectrum_d SpecularReflection<Fresnel>::Sample(const Vector3D_d &i_incident, Vector3D_d &o_exitant, const Point2D_d &i_sample, double &o_pdf) const
+SpectrumCoef_d SpecularReflection<Fresnel>::Sample(const Vector3D_d &i_incident, Vector3D_d &o_exitant, const Point2D_d &i_sample, double &o_pdf) const
   {
   ASSERT(i_sample[0]>=0.0 && i_sample[0]<=1.0);
   ASSERT(i_sample[1]>=0.0 && i_sample[1]<=1.0);
@@ -102,7 +102,7 @@ Spectrum_d SpecularReflection<Fresnel>::Sample(const Vector3D_d &i_incident, Vec
   o_exitant=Vector3D_d(-i_incident[0],-i_incident[1],i_incident[2]);
   o_pdf=1.0;
 
-  Spectrum_d fresnel = m_fresnel(i_incident[2]);
+  SpectrumCoef_d fresnel = m_fresnel(i_incident[2]);
   ASSERT(InRange(fresnel,0.0,1.0));
 
   return m_reflectance * fresnel;
@@ -118,18 +118,18 @@ double SpecularReflection<Fresnel>::PDF(const Vector3D_d &i_incident, const Vect
   }
 
 template<typename Fresnel>
-Spectrum_d SpecularReflection<Fresnel>::TotalScattering(const Vector3D_d &i_incident, SamplesSequence2D i_samples) const
+SpectrumCoef_d SpecularReflection<Fresnel>::TotalScattering(const Vector3D_d &i_incident, SamplesSequence2D i_samples) const
   {
   ASSERT(i_incident.IsNormalized());
 
-  Spectrum_d fresnel = m_fresnel(i_incident[2]);
+  SpectrumCoef_d fresnel = m_fresnel(i_incident[2]);
   ASSERT(InRange(fresnel,0.0,1.0));
 
   return m_reflectance * fresnel;
   }
 
 template<typename Fresnel>
-Spectrum_d SpecularReflection<Fresnel>::TotalScattering(bool i_hemisphere, SamplesSequence2D i_samples1, SamplesSequence2D i_samples2) const
+SpectrumCoef_d SpecularReflection<Fresnel>::TotalScattering(bool i_hemisphere, SamplesSequence2D i_samples1, SamplesSequence2D i_samples2) const
   {
   // Here we don't really need two samples for one integral's sample since specular reflection defines the reflected direction uniquely.
   size_t num_samples = std::distance(i_samples1.m_begin, i_samples1.m_end);
@@ -137,7 +137,7 @@ Spectrum_d SpecularReflection<Fresnel>::TotalScattering(bool i_hemisphere, Sampl
 
   double Z_sign = i_hemisphere ? 1.0 : -1.0;
 
-  Spectrum_d ret;
+  SpectrumCoef_d ret;
   SamplesSequence2D::Iterator it=i_samples1.m_begin;
   for(size_t i=0;i<num_samples;++i)
     {
@@ -146,7 +146,7 @@ Spectrum_d SpecularReflection<Fresnel>::TotalScattering(bool i_hemisphere, Sampl
     Vector3D_d incident = SamplingRoutines::UniformHemisphereSampling(sample_incident);
     ASSERT(incident.IsNormalized() && incident[2]>=0.0);
 
-    Spectrum_d fresnel = m_fresnel(incident[2]*Z_sign);
+    SpectrumCoef_d fresnel = m_fresnel(incident[2]*Z_sign);
     ASSERT(InRange(fresnel,0.0,1.0));
 
     ret.AddWeighted(fresnel, incident[2]);

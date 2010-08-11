@@ -1,7 +1,7 @@
 #include "HomogeneousVolumeRegion.h"
 
-HomogeneousVolumeRegion::HomogeneousVolumeRegion(const BBox3D_d &i_bounds, Spectrum_d &i_emission, Spectrum_d &i_absorption,
-                                                 Spectrum_d &i_scattering, intrusive_ptr<const PhaseFunction> ip_phase_function):
+HomogeneousVolumeRegion::HomogeneousVolumeRegion(const BBox3D_d &i_bounds, Spectrum_d &i_emission, SpectrumCoef_d &i_absorption,
+                                                 SpectrumCoef_d &i_scattering, intrusive_ptr<const PhaseFunction> ip_phase_function):
 m_bounds(i_bounds), m_emission(i_emission), m_absorption(i_absorption), m_scattering(i_scattering), mp_phase_function(ip_phase_function)
   {
   ASSERT(InRange(i_emission, 0.0, DBL_INF));
@@ -21,12 +21,12 @@ Spectrum_d HomogeneousVolumeRegion::GetEmission() const
   return m_emission;
   }
 
-Spectrum_d HomogeneousVolumeRegion::GetAbsorption() const
+SpectrumCoef_d HomogeneousVolumeRegion::GetAbsorption() const
   {
   return m_absorption;
   }
 
-Spectrum_d HomogeneousVolumeRegion::GetScattering() const
+SpectrumCoef_d HomogeneousVolumeRegion::GetScattering() const
   {
   return m_scattering;
   }
@@ -46,19 +46,19 @@ Spectrum_d HomogeneousVolumeRegion::Emission(const Point3D_d &i_point) const
   return m_bounds.Inside(i_point) ? m_emission : Spectrum_d(0.0);
   }
 
-Spectrum_d HomogeneousVolumeRegion::Absorption(const Point3D_d &i_point) const
+SpectrumCoef_d HomogeneousVolumeRegion::Absorption(const Point3D_d &i_point) const
   {
-  return m_bounds.Inside(i_point) ? m_absorption : Spectrum_d(0.0);
+  return m_bounds.Inside(i_point) ? m_absorption : SpectrumCoef_d(0.0);
   }
 
-Spectrum_d HomogeneousVolumeRegion::Scattering(const Point3D_d &i_point) const
+SpectrumCoef_d HomogeneousVolumeRegion::Scattering(const Point3D_d &i_point) const
   {
-  return m_bounds.Inside(i_point) ? m_scattering : Spectrum_d(0.0);
+  return m_bounds.Inside(i_point) ? m_scattering : SpectrumCoef_d(0.0);
   }
 
-Spectrum_d HomogeneousVolumeRegion::Attenuation(const Point3D_d &i_point) const
+SpectrumCoef_d HomogeneousVolumeRegion::Attenuation(const Point3D_d &i_point) const
   {
-  return m_bounds.Inside(i_point) ? m_attenuation : Spectrum_d(0.0);
+  return m_bounds.Inside(i_point) ? m_attenuation : SpectrumCoef_d(0.0);
   }
 
 double HomogeneousVolumeRegion::Phase(const Point3D_d &i_point, const Vector3D_d &i_incoming, const Vector3D_d &i_outgoing) const
@@ -66,7 +66,7 @@ double HomogeneousVolumeRegion::Phase(const Point3D_d &i_point, const Vector3D_d
   return m_bounds.Inside(i_point) ? mp_phase_function->ScatteringPDF(i_incoming, i_outgoing) : 0.0;
   }
 
-Spectrum_d HomogeneousVolumeRegion::OpticalThickness(const Ray &i_ray, double i_step, double i_offset_sample) const
+SpectrumCoef_d HomogeneousVolumeRegion::OpticalThickness(const Ray &i_ray, double i_step, double i_offset_sample) const
   {
   ASSERT(i_ray.m_direction.IsNormalized());
   ASSERT(i_step > 0.0 && i_offset_sample >= 0.0 && i_offset_sample < 1.0);
@@ -75,5 +75,5 @@ Spectrum_d HomogeneousVolumeRegion::OpticalThickness(const Ray &i_ray, double i_
   if (m_bounds.Intersect(i_ray, &t_begin, &t_end))
     return fabs(t_end-t_begin) * m_attenuation;
   else
-    return Spectrum_d(0.0);
+    return SpectrumCoef_d(0.0);
   }

@@ -46,19 +46,19 @@ class AggregateVolumeRegion: public VolumeRegion
     * Returns aggregated absorption density of the volume region at the specified point.
     * The aggregated value is a sum of corresponding values of the underlying volume regions.
     */
-    Spectrum_d Absorption(const Point3D_d &i_point) const;
+    SpectrumCoef_d Absorption(const Point3D_d &i_point) const;
 
     /**
     * Returns aggregated scattering density of the volume region at the specified point.
     * The aggregated value is a sum of corresponding values of the underlying volume regions.
     */
-    Spectrum_d Scattering(const Point3D_d &i_point) const;
+    SpectrumCoef_d Scattering(const Point3D_d &i_point) const;
 
     /**
     * Returns aggregated attenuation density (which is the sum absorption and scattering) of the volume region at the specified point.
     * The aggregated value is a sum of corresponding values of the underlying volume regions.
     */
-    Spectrum_d Attenuation(const Point3D_d &i_point) const;
+    SpectrumCoef_d Attenuation(const Point3D_d &i_point) const;
 
     /**
     * Returns aggregated value of the phase function at the specified point for the specified incoming and outgoing directions.
@@ -81,7 +81,7 @@ class AggregateVolumeRegion: public VolumeRegion
     * Should be in [0;1) range. Not used by this implementation.
     * @return Optical thickness.
     */
-    Spectrum_d OpticalThickness(const Ray &i_ray, double i_step, double i_offset_sample) const;
+    SpectrumCoef_d OpticalThickness(const Ray &i_ray, double i_step, double i_offset_sample) const;
 
   private:
     std::vector<intrusive_ptr<const VolumeRegion> > m_volume_regions;

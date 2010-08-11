@@ -36,17 +36,17 @@ class VolumeRegion: public ReferenceCounted
     /**
     * Returns absorption density of the volume region at the specified point.
     */
-    virtual Spectrum_d Absorption(const Point3D_d &i_point) const = 0;
+    virtual SpectrumCoef_d Absorption(const Point3D_d &i_point) const = 0;
 
     /**
     * Returns scattering density of the volume region at the specified point.
     */
-    virtual Spectrum_d Scattering(const Point3D_d &i_point) const = 0;
+    virtual SpectrumCoef_d Scattering(const Point3D_d &i_point) const = 0;
     
     /**
     * Returns attenuation density (which is the sum absorption and scattering) of the volume region at the specified point.
     */
-    virtual Spectrum_d Attenuation(const Point3D_d &i_point) const = 0;
+    virtual SpectrumCoef_d Attenuation(const Point3D_d &i_point) const = 0;
 
     /**
     * Returns value of the phase function at the specified point for the specified incoming and outgoing directions.
@@ -67,7 +67,7 @@ class VolumeRegion: public ReferenceCounted
     * @param i_offset_sample The sample value used for MonteCarlo integration to choose position in the segments for evaluating attenuation value. Should be in [0;1) range.
     * @return Optical thickness.
     */
-    virtual Spectrum_d OpticalThickness(const Ray &i_ray, double i_step, double i_offset_sample) const = 0;
+    virtual SpectrumCoef_d OpticalThickness(const Ray &i_ray, double i_step, double i_offset_sample) const = 0;
 
     virtual ~VolumeRegion() {};
 
@@ -92,7 +92,8 @@ class DensityVolumeRegion: public VolumeRegion
     * Creates DensityVolumeRegion instance with specified base emission, absorption and scattering. The real properties are evaluated by multiplying the base values by the density.
     * The constructor also takes ans instance of the phase function.
     */
-    DensityVolumeRegion(const BBox3D_d &i_bounds, Spectrum_d &i_base_emission, Spectrum_d &i_base_absorption, Spectrum_d &i_base_scattering, intrusive_ptr<const PhaseFunction> ip_phase_function);
+    DensityVolumeRegion(const BBox3D_d &i_bounds, Spectrum_d &i_base_emission, SpectrumCoef_d &i_base_absorption,
+      SpectrumCoef_d &i_base_scattering, intrusive_ptr<const PhaseFunction> ip_phase_function);
 
     /**
     * Returns bounding box of the volume region.
@@ -101,9 +102,9 @@ class DensityVolumeRegion: public VolumeRegion
 
     Spectrum_d GetBaseEmission() const;
 
-    Spectrum_d GetBaseAbsorption() const;
+    SpectrumCoef_d GetBaseAbsorption() const;
 
-    Spectrum_d GetBaseScattering() const;
+    SpectrumCoef_d GetBaseScattering() const;
 
     intrusive_ptr<const PhaseFunction> GetPhaseFunction() const;
 
@@ -117,19 +118,19 @@ class DensityVolumeRegion: public VolumeRegion
     * Returns absorption density of the volume region at the specified point.
     * The method multiplies the base value by the density of the media particles.
     */
-    Spectrum_d Absorption(const Point3D_d &i_point) const;
+    SpectrumCoef_d Absorption(const Point3D_d &i_point) const;
 
     /**
     * Returns scattering density of the volume region at the specified point.
     * The method multiplies the base value by the density of the media particles.
     */
-    Spectrum_d Scattering(const Point3D_d &i_point) const;
+    SpectrumCoef_d Scattering(const Point3D_d &i_point) const;
 
     /**
     * Returns attenuation density (which is the sum absorption and scattering) of the volume region at the specified point.
     * The method multiplies the base value by the density of the media particles.
     */
-    Spectrum_d Attenuation(const Point3D_d &i_point) const;
+    SpectrumCoef_d Attenuation(const Point3D_d &i_point) const;
 
     /**
     * Returns value of the phase function at the specified point for the specified incoming and outgoing directions.
@@ -150,7 +151,7 @@ class DensityVolumeRegion: public VolumeRegion
     * @param i_offset_sample The sample value used for MonteCarlo integration to choose position in the segments for evaluating attenuation value. Should be in [0;1) range.
     * @return Optical thickness.
     */
-    virtual Spectrum_d OpticalThickness(const Ray &i_ray, double i_step, double i_offset_sample) const;
+    virtual SpectrumCoef_d OpticalThickness(const Ray &i_ray, double i_step, double i_offset_sample) const;
 
   private:
     /**
@@ -160,7 +161,8 @@ class DensityVolumeRegion: public VolumeRegion
 
   private:
     BBox3D_d m_bounds;
-    Spectrum_d m_base_emission, m_base_absorption, m_base_scattering, m_base_attenuation;
+    Spectrum_d m_base_emission;
+    SpectrumCoef_d m_base_absorption, m_base_scattering, m_base_attenuation;
 
     intrusive_ptr<const PhaseFunction> mp_phase_function;
   };

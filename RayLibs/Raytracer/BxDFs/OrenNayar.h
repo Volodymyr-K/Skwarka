@@ -18,15 +18,15 @@ class OrenNayar: public BxDF
     * @param i_reflectance The total hemisphere reflectance. Each spectrum component should be in [0;1] range.
     * @param i_sigma Roughness of the surface. Should be in [0;1] range.
     */
-    OrenNayar(Spectrum_d i_reflectance, double i_sigma);
+    OrenNayar(SpectrumCoef_d i_reflectance, double i_sigma);
 
     /**
     * Returns BxDF value for the specified incident and exitant directions.
     */
-    virtual Spectrum_d Evaluate(const Vector3D_d &i_incident, const Vector3D_d &i_exitant) const;
+    virtual SpectrumCoef_d Evaluate(const Vector3D_d &i_incident, const Vector3D_d &i_exitant) const;
 
   private:
-    Spectrum_d m_reflectance;
+    SpectrumCoef_d m_reflectance;
     double m_A, m_B;
   };
 

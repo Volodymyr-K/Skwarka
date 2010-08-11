@@ -5,14 +5,14 @@
 #include <Raytracer/BxDFs/OrenNayar.h>
 #include <Math/MathRoutines.h>
 
-MatteMaterial::MatteMaterial(intrusive_ptr<const Texture<Spectrum_d> > ip_reflectance, intrusive_ptr<const Texture<double> > ip_sigma):
+MatteMaterial::MatteMaterial(intrusive_ptr<const Texture<SpectrumCoef_d> > ip_reflectance, intrusive_ptr<const Texture<double> > ip_sigma):
 Material(), mp_reflectance(ip_reflectance), mp_sigma(ip_sigma)
   {
   ASSERT(ip_reflectance);
   ASSERT(ip_sigma);
   }
 
-intrusive_ptr<const Texture<Spectrum_d> > MatteMaterial::GetReflectanceTexture() const
+intrusive_ptr<const Texture<SpectrumCoef_d> > MatteMaterial::GetReflectanceTexture() const
   {
   return mp_reflectance;
   }
@@ -26,7 +26,7 @@ const BSDF *MatteMaterial::GetBSDF(const DifferentialGeometry &i_dg, size_t i_tr
   {
   BSDF *p_bsdf = new ( i_pool.Alloc(sizeof(BSDF)) ) BSDF(i_dg);
 
-  Spectrum_d r = mp_reflectance->Evaluate(i_dg, i_triangle_index);
+  SpectrumCoef_d r = mp_reflectance->Evaluate(i_dg, i_triangle_index);
   r.Clamp(0.0, 1.0);
 
   double sig = MathRoutines::Clamp(mp_sigma->Evaluate(i_dg, i_triangle_index), 0.0, 1.0);

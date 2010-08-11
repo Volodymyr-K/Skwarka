@@ -83,7 +83,7 @@ class DirectLightingIntegrator: public ReferenceCounted
     /**
     * Helper private method that computes volume transmittance.
     */
-    Spectrum_d _MediaTransmittance(const Ray &i_ray, ThreadSpecifics i_ts) const;
+    SpectrumCoef_d _MediaTransmittance(const Ray &i_ray, ThreadSpecifics i_ts) const;
 
   private:
     // Internal types.

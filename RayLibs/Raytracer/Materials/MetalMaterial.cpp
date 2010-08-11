@@ -7,7 +7,7 @@
 #include <Raytracer/Core/Fresnel.h>
 #include <Math/MathRoutines.h>
 
-MetalMaterial::MetalMaterial(intrusive_ptr<const Texture<Spectrum_d> > ip_refractive_index, intrusive_ptr<const Texture<Spectrum_d> > ip_absorption,
+MetalMaterial::MetalMaterial(intrusive_ptr<const Texture<SpectrumCoef_d> > ip_refractive_index, intrusive_ptr<const Texture<SpectrumCoef_d> > ip_absorption,
              intrusive_ptr<const Texture<double> > ip_roughness):
 Material(), mp_refractive_index(ip_refractive_index), mp_absorption(ip_absorption), mp_roughness(ip_roughness)
   {
@@ -16,7 +16,7 @@ Material(), mp_refractive_index(ip_refractive_index), mp_absorption(ip_absorptio
   ASSERT(ip_roughness);
   }
 
-MetalMaterial::MetalMaterial(intrusive_ptr<const Texture<Spectrum_d> > ip_refractive_index, intrusive_ptr<const Texture<Spectrum_d> > ip_absorption,
+MetalMaterial::MetalMaterial(intrusive_ptr<const Texture<SpectrumCoef_d> > ip_refractive_index, intrusive_ptr<const Texture<SpectrumCoef_d> > ip_absorption,
              intrusive_ptr<const Texture<double> > ip_u_roughness, intrusive_ptr<const Texture<double> > ip_v_roughness):
 Material(), mp_refractive_index(ip_refractive_index), mp_absorption(ip_absorption), mp_u_roughness(ip_u_roughness), mp_v_roughness(ip_v_roughness)
   {
@@ -26,14 +26,14 @@ Material(), mp_refractive_index(ip_refractive_index), mp_absorption(ip_absorptio
   ASSERT(ip_v_roughness);
   }
 
-MetalMaterial::MetalMaterial(intrusive_ptr<const Texture<Spectrum_d> > ip_reflectance, intrusive_ptr<const Texture<double> > ip_roughness):
+MetalMaterial::MetalMaterial(intrusive_ptr<const Texture<SpectrumCoef_d> > ip_reflectance, intrusive_ptr<const Texture<double> > ip_roughness):
   Material(), mp_reflectance(ip_reflectance), mp_roughness(ip_roughness)
     {
     ASSERT(ip_reflectance);
     ASSERT(ip_roughness);
     }
 
-MetalMaterial::MetalMaterial(intrusive_ptr<const Texture<Spectrum_d> > ip_reflectance, intrusive_ptr<const Texture<double> > ip_u_roughness, intrusive_ptr<const Texture<double> > ip_v_roughness):
+MetalMaterial::MetalMaterial(intrusive_ptr<const Texture<SpectrumCoef_d> > ip_reflectance, intrusive_ptr<const Texture<double> > ip_u_roughness, intrusive_ptr<const Texture<double> > ip_v_roughness):
 Material(), mp_reflectance(ip_reflectance), mp_u_roughness(ip_u_roughness), mp_v_roughness(ip_v_roughness)
   {
   ASSERT(ip_reflectance);
@@ -41,17 +41,17 @@ Material(), mp_reflectance(ip_reflectance), mp_u_roughness(ip_u_roughness), mp_v
   ASSERT(ip_v_roughness);
   }
 
-intrusive_ptr<const Texture<Spectrum_d> > MetalMaterial::GetRefractiveIndexTexture() const
+intrusive_ptr<const Texture<SpectrumCoef_d> > MetalMaterial::GetRefractiveIndexTexture() const
   {
   return mp_refractive_index;
   }
 
-intrusive_ptr<const Texture<Spectrum_d> > MetalMaterial::GetAbsoprtionTexture() const
+intrusive_ptr<const Texture<SpectrumCoef_d> > MetalMaterial::GetAbsoprtionTexture() const
   {
   return mp_absorption;
   }
 
-intrusive_ptr<const Texture<Spectrum_d> > MetalMaterial::GetReflectanceTexture() const
+intrusive_ptr<const Texture<SpectrumCoef_d> > MetalMaterial::GetReflectanceTexture() const
   {
   return mp_reflectance;
   }
@@ -75,7 +75,7 @@ const BSDF *MetalMaterial::GetBSDF(const DifferentialGeometry &i_dg, size_t i_tr
   {
   BSDF *p_bsdf = new ( i_pool.Alloc(sizeof(BSDF)) ) BSDF(i_dg);
 
-  Spectrum_d r, a;
+  SpectrumCoef_d r, a;
   if (mp_refractive_index && mp_absorption)
     {
     r = mp_refractive_index->Evaluate(i_dg, i_triangle_index);
@@ -84,7 +84,7 @@ const BSDF *MetalMaterial::GetBSDF(const DifferentialGeometry &i_dg, size_t i_tr
   else
     {
     ASSERT(mp_reflectance);
-    Spectrum_d reflectance = mp_reflectance->Evaluate(i_dg, i_triangle_index);
+    SpectrumCoef_d reflectance = mp_reflectance->Evaluate(i_dg, i_triangle_index);
     reflectance.Clamp(0.0, 1.0);
 
     ApproximateFresnelParameters(reflectance, r, a);
@@ -98,7 +98,7 @@ const BSDF *MetalMaterial::GetBSDF(const DifferentialGeometry &i_dg, size_t i_tr
     double roughness = MathRoutines::Clamp(mp_roughness->Evaluate(i_dg, i_triangle_index), 0.001, 1.0);
     BlinnDistribution blinn(1.0/roughness);
 
-    p_bxdf = new ( i_pool.Alloc(sizeof(BlinnMicrofacetMetal)) ) BlinnMicrofacetMetal(Spectrum_d(1.0), fresnel, blinn);
+    p_bxdf = new ( i_pool.Alloc(sizeof(BlinnMicrofacetMetal)) ) BlinnMicrofacetMetal(SpectrumCoef_d(1.0), fresnel, blinn);
     }
   else
     {
@@ -109,7 +109,7 @@ const BSDF *MetalMaterial::GetBSDF(const DifferentialGeometry &i_dg, size_t i_tr
     double v_roughness = MathRoutines::Clamp(mp_v_roughness->Evaluate(i_dg, i_triangle_index), 0.001, 1.0);
     AnisotropicDistribution anisotropic(1.0/u_roughness, 1.0/v_roughness);
 
-    p_bxdf = new ( i_pool.Alloc(sizeof(AnisotropicMicrofacetMetal)) ) AnisotropicMicrofacetMetal(Spectrum_d(1.0), fresnel, anisotropic);
+    p_bxdf = new ( i_pool.Alloc(sizeof(AnisotropicMicrofacetMetal)) ) AnisotropicMicrofacetMetal(SpectrumCoef_d(1.0), fresnel, anisotropic);
     }
 
   p_bsdf->AddBxDF(p_bxdf);

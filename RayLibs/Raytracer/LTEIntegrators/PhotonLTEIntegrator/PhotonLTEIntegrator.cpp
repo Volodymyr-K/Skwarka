@@ -464,7 +464,7 @@ Spectrum_d PhotonLTEIntegrator::_FinalGather(const Intersection &i_intersection,
 
   size_t gather_rays = 0;
   Vector3D_d *p_gather_directions = (Vector3D_d*)p_pool->Alloc( 2 * gather_samples * sizeof(Vector3D_d) );
-  Spectrum_d *p_gather_weights = (Spectrum_d*)p_pool->Alloc( 2 * gather_samples * sizeof(Spectrum_d) );
+  SpectrumCoef_d *p_gather_weights = (SpectrumCoef_d*)p_pool->Alloc( 2 * gather_samples * sizeof(SpectrumCoef_d) );
 
   // Sample BSDF.
   SamplesSequence1D::Iterator iterator_1D = bsdf_1D_samples.m_begin;
@@ -477,7 +477,7 @@ Spectrum_d PhotonLTEIntegrator::_FinalGather(const Intersection &i_intersection,
     double bsdf_pdf = 0.0;
     BxDFType sampled_type;
     Vector3D_d exitant;
-    Spectrum_d reflectance = ip_bsdf->Sample(i_incident, exitant, bxdf_sample, component_sample, bsdf_pdf, sampled_type, BxDFType(BSDF_ALL & ~BSDF_SPECULAR));
+    SpectrumCoef_d reflectance = ip_bsdf->Sample(i_incident, exitant, bxdf_sample, component_sample, bsdf_pdf, sampled_type, BxDFType(BSDF_ALL & ~BSDF_SPECULAR));
     if (bsdf_pdf>0.0 && reflectance.IsBlack()==false)
       {
       // Compute PDF for photon-sampling for the sampled direction.
@@ -512,7 +512,7 @@ Spectrum_d PhotonLTEIntegrator::_FinalGather(const Intersection &i_intersection,
     Vector3D_d direction_local = SamplingRoutines::UniformConeSampling(*iterator_2D, cos_gather_angle);
     Vector3D_d exitant = direction_local[0]*e2 + direction_local[1]*e3 + direction_local[2]*photon_directions[sampled_index];
 
-    Spectrum_d reflectance = ip_bsdf->Evaluate(i_incident, exitant);
+    SpectrumCoef_d reflectance = ip_bsdf->Evaluate(i_incident, exitant);
     if (reflectance.IsBlack()==false)
       {
       double bsdf_pdf = ip_bsdf->PDF(i_incident, exitant);
@@ -634,15 +634,15 @@ double PhotonLTEIntegrator::_PhotonKernel(double i_dist_sqr, double i_max_dist_s
   return 3.0 * INV_PI * tmp * tmp;
   }
 
-Spectrum_d PhotonLTEIntegrator::_MediaRadianceAndTranmsittance(const RayDifferential &i_ray, const Sample *ip_sample, Spectrum_d &o_transmittance, ThreadSpecifics i_ts) const
+Spectrum_d PhotonLTEIntegrator::_MediaRadianceAndTranmsittance(const RayDifferential &i_ray, const Sample *ip_sample, SpectrumCoef_d &o_transmittance, ThreadSpecifics i_ts) const
   {
   // TBD
-  o_transmittance = Spectrum_d(1.0);
+  o_transmittance = SpectrumCoef_d(1.0);
   return Spectrum_d(0.0);
   }
 
-Spectrum_d PhotonLTEIntegrator::_MediaTransmittance(const Ray &i_ray, ThreadSpecifics i_ts) const
+SpectrumCoef_d PhotonLTEIntegrator::_MediaTransmittance(const Ray &i_ray, ThreadSpecifics i_ts) const
   {
   // TBD
-  return Spectrum_d(1.0);
+  return SpectrumCoef_d(1.0);
   }

@@ -19,11 +19,11 @@ class TransparentMaterial: public Material
     * Creates TransparentMaterial object with the specified textures defining the reflectivity and transparency of the material
     * and the specified refractive index which is assumed to be constant everywhere.
     */
-    TransparentMaterial(intrusive_ptr<const Texture<Spectrum_d> > ip_reflectance, intrusive_ptr<const Texture<Spectrum_d> > ip_transmittance, double i_refractive_index);
+    TransparentMaterial(intrusive_ptr<const Texture<SpectrumCoef_d> > ip_reflectance, intrusive_ptr<const Texture<SpectrumCoef_d> > ip_transmittance, double i_refractive_index);
 
-    intrusive_ptr<const Texture<Spectrum_d> > GetReflectanceTexture() const;
+    intrusive_ptr<const Texture<SpectrumCoef_d> > GetReflectanceTexture() const;
 
-    intrusive_ptr<const Texture<Spectrum_d> > GetTransmittanceTexture() const;
+    intrusive_ptr<const Texture<SpectrumCoef_d> > GetTransmittanceTexture() const;
 
     double GetRefractiveIndex() const;
 
@@ -38,7 +38,7 @@ class TransparentMaterial: public Material
     virtual const BSDF *GetBSDF(const DifferentialGeometry &i_dg, size_t i_triangle_index, MemoryPool &i_pool) const;
 
   private:
-    intrusive_ptr<const Texture<Spectrum_d> > mp_reflectance, mp_transmittance;
+    intrusive_ptr<const Texture<SpectrumCoef_d> > mp_reflectance, mp_transmittance;
 
     double m_refractive_index;
   };
@@ -52,8 +52,8 @@ class TransparentMaterial: public Material
 template<class Archive>
 void save_construct_data(Archive &i_ar, const TransparentMaterial *ip_material, const unsigned int i_version)
   {
-  intrusive_ptr<const Texture<Spectrum_d> > p_reflectance = ip_material->GetReflectanceTexture();
-  intrusive_ptr<const Texture<Spectrum_d> > p_transmittance = ip_material->GetTransmittanceTexture();
+  intrusive_ptr<const Texture<SpectrumCoef_d> > p_reflectance = ip_material->GetReflectanceTexture();
+  intrusive_ptr<const Texture<SpectrumCoef_d> > p_transmittance = ip_material->GetTransmittanceTexture();
   double refractive_index = ip_material->GetRefractiveIndex();
 
   i_ar << p_reflectance;
@@ -67,7 +67,7 @@ void save_construct_data(Archive &i_ar, const TransparentMaterial *ip_material, 
 template<class Archive>
 void load_construct_data(Archive &i_ar, TransparentMaterial *ip_material, const unsigned int i_version)
   {
-  intrusive_ptr<const Texture<Spectrum_d> > p_reflectance, p_transmittance;
+  intrusive_ptr<const Texture<SpectrumCoef_d> > p_reflectance, p_transmittance;
   double refractive_index;
 
   i_ar >> p_reflectance;

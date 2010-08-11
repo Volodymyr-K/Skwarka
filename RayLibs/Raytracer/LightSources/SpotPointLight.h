@@ -18,9 +18,9 @@ class SpotPointLight: public DeltaLightSource
     * Creates SpotPointLight instance with the specified position, cone direction, intensity value and spread angles of the inner and outer cones.
     * @param i_position Position of the point light.
     * @param i_direction Direction of the cones. Should be normalized.
-    * @i_intensity Intensity of the light emitted inside the inner cone.
-    * @i_internal_cone_angle Spread angle of the inner cone (in radians). Should be in [0;PI] range. Should be lesser or equal than i_outer_cone_angle.
-    * @i_outer_cone_angle Spread angle of the outer cone (in radians). Should be in [0;PI] range. Should be greater or equal than i_internal_cone_angle.
+    * @param i_intensity Intensity of the light emitted inside the inner cone.
+    * @param i_internal_cone_angle Spread angle of the inner cone (in radians). Should be in [0;PI] range. Should be lesser or equal than i_outer_cone_angle.
+    * @param i_outer_cone_angle Spread angle of the outer cone (in radians). Should be in [0;PI] range. Should be greater or equal than i_internal_cone_angle.
     */
     SpotPointLight(const Point3D_d &i_position, Vector3D_d i_direction, const Spectrum_d &i_intensity, double i_internal_cone_angle, double i_outer_cone_angle);
 

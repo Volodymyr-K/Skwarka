@@ -197,7 +197,7 @@ void* PhotonLTEIntegrator::PhotonsShootingFilter::operator()(void* ip_chunk)
         component_sample = (*p_rng)(1.0);
         }
 
-      Spectrum_d bsdf = p_photon_BSDF->Sample(incident, exitant, bsdf_sample, component_sample, bsdf_pdf, sampled_type);
+      SpectrumCoef_d bsdf = p_photon_BSDF->Sample(incident, exitant, bsdf_sample, component_sample, bsdf_pdf, sampled_type);
       if (bsdf_pdf == 0.0)
         break;
 

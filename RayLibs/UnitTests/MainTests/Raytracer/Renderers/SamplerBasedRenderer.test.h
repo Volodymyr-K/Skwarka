@@ -40,7 +40,7 @@ class SamplerBasedRendererTestSuite : public CxxTest::TestSuite
       lights.m_infinite_light_sources.push_back(p_infinite_light);
       //////////////////////
 
-      intrusive_ptr<const VolumeRegion> p_volume( new VolumeRegionMock(BBox3D_d(Point3D_d(-1,-1,-1),Point3D_d(1,1,1)), Spectrum_d(0), Spectrum_d(0.5), Spectrum_d(0.5)) );
+      intrusive_ptr<const VolumeRegion> p_volume( new VolumeRegionMock(BBox3D_d(Point3D_d(-1,-1,-1),Point3D_d(1,1,1)), Spectrum_d(0), SpectrumCoef_d(0.5), SpectrumCoef_d(0.5)) );
 
       mp_scene.reset( new Scene(m_primitives, p_volume, lights) );
 
@@ -67,19 +67,26 @@ class SamplerBasedRendererTestSuite : public CxxTest::TestSuite
       p_renderer->Render(mp_camera);
       intrusive_ptr<Film> film = mp_camera->GetFilm();
 
-      bool to_break=false;
-      for(size_t x=0;x<film->GetXResolution() && to_break==false;++x)
+      for(size_t x=0;x<film->GetXResolution();++x)
         for(size_t y=0;y<film->GetXResolution();++y)
           {
           Spectrum_d spectrum;
           bool pixel_computed = film->GetPixel(Point2D_i(x,y), spectrum);
 
-          if (pixel_computed==false) {TS_FAIL("Film pixel can not be computed.");to_break=false;break;}
+          if (pixel_computed==false)
+            {
+            TS_FAIL("Film pixel can not be computed.");
+            return;
+            }
 
           // Since the mesh is a unit radius sphere with a point light in its center we can compute the radiance analytically.
           Spectrum_d analytical_spectrum = Spectrum_d(100.0)*INV_PI * exp(-1.0) * exp(-1.0); // exp is multiplied twice to account for light attenuation and camera ray attenuation.
           Spectrum_d dif = analytical_spectrum-spectrum;
-          if (fabs(dif[0])>0.02 || fabs(dif[0])>0.02 || fabs(dif[0])>0.02) {TS_FAIL("Wrong spectrum value.");to_break=false;break;}
+          if (fabs(dif[0])>0.02 || fabs(dif[0])>0.02 || fabs(dif[0])>0.02)
+            {
+            TS_FAIL("Wrong spectrum value.");
+            return;
+            }
           }
       }
 

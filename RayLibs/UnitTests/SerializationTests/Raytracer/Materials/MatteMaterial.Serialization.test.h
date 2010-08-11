@@ -25,7 +25,7 @@ class MatteMaterialSerializationTestSuite : public CxxTest::TestSuite
 
     void test_MatteMaterial_Serialization()
       {
-      intrusive_ptr<Texture<Spectrum_d> > p_reflectance( new ConstantTexture<Spectrum_d>(Spectrum_d(1.0,0.5,0.1)) );
+      intrusive_ptr<Texture<SpectrumCoef_d> > p_reflectance( new ConstantTexture<SpectrumCoef_d>(SpectrumCoef_d(1.0,0.5,0.1)) );
       intrusive_ptr<ConstantTexture<double> > p_sigma( new ConstantTexture<double>(0.2) );
 
       intrusive_ptr<Material> p_material1(new MatteMaterial(p_reflectance, p_sigma));
@@ -48,8 +48,8 @@ class MatteMaterialSerializationTestSuite : public CxxTest::TestSuite
       dg.m_geometric_normal=dg.m_shading_normal=Vector3D_d(0.0,0.0,1.0);
       dg.m_tangent=Vector3D_d(1.0,0.0,0.0);
 
-      Spectrum_d val1 = p_material1->GetBSDF(dg, 0, pool)->Evaluate(Vector3D_d(0.0,0.0,1.0), Vector3D_d(0.0,0.0,1.0));
-      Spectrum_d val2 = p_material2->GetBSDF(dg, 0, pool)->Evaluate(Vector3D_d(0.0,0.0,1.0), Vector3D_d(0.0,0.0,1.0));
+      SpectrumCoef_d val1 = p_material1->GetBSDF(dg, 0, pool)->Evaluate(Vector3D_d(0.0,0.0,1.0), Vector3D_d(0.0,0.0,1.0));
+      SpectrumCoef_d val2 = p_material2->GetBSDF(dg, 0, pool)->Evaluate(Vector3D_d(0.0,0.0,1.0), Vector3D_d(0.0,0.0,1.0));
       TS_ASSERT_EQUALS(val1,val2);
       }
 

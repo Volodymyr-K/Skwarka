@@ -43,7 +43,7 @@ class BxDFTestSuite : public CxxTest::TestSuite
 
         double pdf;
         Vector3D_d exitant;
-        Spectrum_d sp = bxdf->Sample(Vector3D_d(0.5,0.5,0.5).Normalized(), exitant, sample, pdf);
+        SpectrumCoef_d sp = bxdf->Sample(Vector3D_d(0.5,0.5,0.5).Normalized(), exitant, sample, pdf);
 
         if (pdf<=0.0 || pdf!=bxdf->PDF(Vector3D_d(0.5,0.5,0.5).Normalized(),exitant))
           correct_pdf=false;
@@ -60,10 +60,10 @@ class BxDFTestSuite : public CxxTest::TestSuite
       std::vector<Point2D_d> samples(num_samples);
       SamplingRoutines::LatinHypercubeSampling2D(samples.begin(),num_samples,true);
 
-      Spectrum_d total=bxdf->TotalScattering(Vector3D_d(0.5,0.5,0.5).Normalized(), SamplesSequence2D(&samples[0], (&samples[0]) + samples.size()));
+      SpectrumCoef_d total=bxdf->TotalScattering(Vector3D_d(0.5,0.5,0.5).Normalized(), SamplesSequence2D(&samples[0], (&samples[0]) + samples.size()));
 
       TS_ASSERT(total[0]<=1.0 && total[1]<=1.0 && total[2]<=1.0);
-      CustomAssertDelta(total, Spectrum_d(1.0,1.0,1.0), 0.03);
+      CustomAssertDelta(total, SpectrumCoef_d(1.0,1.0,1.0), 0.03);
       }
 
     void test_BxDF_TotalScattering2()
@@ -78,10 +78,10 @@ class BxDFTestSuite : public CxxTest::TestSuite
       SamplesSequence2D sequence1(&samples1[0], (&samples1[0]) + samples1.size());
       SamplesSequence2D sequence2(&samples2[0], (&samples2[0]) + samples2.size());
 
-      Spectrum_d total=bxdf->TotalScattering(true, sequence1, sequence2);
+      SpectrumCoef_d total=bxdf->TotalScattering(true, sequence1, sequence2);
 
       TS_ASSERT(total[0]<=1.0 && total[1]<=1.0 && total[2]<=1.0);
-      CustomAssertDelta(total, Spectrum_d(1.0,1.0,1.0), 0.03);
+      CustomAssertDelta(total, SpectrumCoef_d(1.0,1.0,1.0), 0.03);
       }
   };
 

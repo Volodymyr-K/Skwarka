@@ -52,8 +52,8 @@ class DirectLightingIntegratorTestSuite : public CxxTest::TestSuite
       p_sampler->GetNextSubSampler(1, &m_rng)->GetNextSample(p_sample);
       Spectrum_d radiance = p_integrator->ComputeDirectLighting(isect, ray.m_direction*(-1.0), p_bsdf, p_sample.get(), m_ts);
 
-      // We use mock BxDF which is a Lambertian one so the reflectance is Spectrum_d(1.0)/M_PI.
-      CustomAssertDelta(radiance, Spectrum_d(100)/(9*9) * Spectrum_d(1.0)/M_PI, 1e-4);
+      // We use mock BxDF which is a Lambertian one so the reflectance is SpectrumCoef_d(1.0)/M_PI.
+      CustomAssertDelta(radiance, Spectrum_d(100)/(9*9) * SpectrumCoef_d(1.0)/M_PI, 1e-4);
       }
 
     // There are infinity lights in the scene.
@@ -113,7 +113,7 @@ class DirectLightingIntegratorTestSuite : public CxxTest::TestSuite
       Spectrum_d radiance = p_integrator->ComputeDirectLighting(isect, ray.m_direction*(-1.0), p_bsdf, p_sample.get(), m_ts);
 
       // Compute the estimate numerically.
-      // We use mock BxDF which is a Lambertian one so the reflectance is Spectrum_d(1.0)/M_PI.
+      // We use mock BxDF which is a Lambertian one so the reflectance is SpectrumCoef_d(1.0)/M_PI.
       double cos_integrated = _ComputeCosineIntegral(isect.m_dg, Point3D_d(0,10,0), 1);
       Spectrum_d area_light_estimate_1 = Spectrum_d(10) * cos_integrated * INV_PI;
       Spectrum_d area_light_estimate_2 = Spectrum_d(20) * cos_integrated * INV_PI; // Here we reuse the same cos_integrated because they are equal for both spheres.
@@ -146,7 +146,7 @@ class DirectLightingIntegratorTestSuite : public CxxTest::TestSuite
       Spectrum_d radiance = p_integrator->ComputeDirectLighting(isect, ray.m_direction*(-1.0), p_bsdf, NULL, m_ts); // Call without Sample.
 
       // Compute the estimate numerically.
-      // We use mock BxDF which is a Lambertian one so the reflectance is Spectrum_d(1.0)/M_PI.
+      // We use mock BxDF which is a Lambertian one so the reflectance is SpectrumCoef_d(1.0)/M_PI.
       double cos_integrated = _ComputeCosineIntegral(isect.m_dg, Point3D_d(0,10,0), 1);
       Spectrum_d area_light_estimate_1 = Spectrum_d(10) * cos_integrated * INV_PI;
       Spectrum_d area_light_estimate_2 = Spectrum_d(20) * cos_integrated * INV_PI; // Here we reuse the same cos_integrated because they are equal for both spheres.

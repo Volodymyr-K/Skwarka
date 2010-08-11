@@ -20,9 +20,9 @@ class MatteMaterial: public Material
     * @param ip_reflectance The texture defining the total hemisphere reflectance. Each spectrum component should be in [0;1] range.
     * @param ip_sigma The texture defining the roughness of the surface. Values should be in [0;1] range.
     */
-    MatteMaterial(intrusive_ptr<const Texture<Spectrum_d> > ip_reflectance, intrusive_ptr<const Texture<double> > ip_sigma);
+    MatteMaterial(intrusive_ptr<const Texture<SpectrumCoef_d> > ip_reflectance, intrusive_ptr<const Texture<double> > ip_sigma);
 
-    intrusive_ptr<const Texture<Spectrum_d> > GetReflectanceTexture() const;
+    intrusive_ptr<const Texture<SpectrumCoef_d> > GetReflectanceTexture() const;
 
     intrusive_ptr<const Texture<double> > GetSigmaTexture() const;
 
@@ -37,7 +37,7 @@ class MatteMaterial: public Material
     virtual const BSDF *GetBSDF(const DifferentialGeometry &i_dg, size_t i_triangle_index, MemoryPool &i_pool) const;
 
   private:
-    intrusive_ptr<const Texture<Spectrum_d> > mp_reflectance;
+    intrusive_ptr<const Texture<SpectrumCoef_d> > mp_reflectance;
 
     intrusive_ptr<const Texture<double> > mp_sigma;
   };
@@ -51,7 +51,7 @@ class MatteMaterial: public Material
 template<class Archive>
 void save_construct_data(Archive &i_ar, const MatteMaterial *ip_material, const unsigned int i_version)
   {
-  intrusive_ptr<const Texture<Spectrum_d> > p_reflectance = ip_material->GetReflectanceTexture();
+  intrusive_ptr<const Texture<SpectrumCoef_d> > p_reflectance = ip_material->GetReflectanceTexture();
   intrusive_ptr<const Texture<double> > p_sigma = ip_material->GetSigmaTexture();
 
   i_ar << p_reflectance;
@@ -64,7 +64,7 @@ void save_construct_data(Archive &i_ar, const MatteMaterial *ip_material, const 
 template<class Archive>
 void load_construct_data(Archive &i_ar, MatteMaterial *ip_material, const unsigned int i_version)
   {
-  intrusive_ptr<const Texture<Spectrum_d> > p_reflectance;
+  intrusive_ptr<const Texture<SpectrumCoef_d> > p_reflectance;
   intrusive_ptr<const Texture<double> > p_sigma;
 
   i_ar >> p_reflectance;

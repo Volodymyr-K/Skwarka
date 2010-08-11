@@ -22,12 +22,12 @@ class FresnelBlend: public BxDF
     * @param i_specular_reflectance The reflectance of the glossy layer at normal incidence. Each spectrum component should be in [0;1] range.
     * @param i_distribution MicrofacetDistribution implementation.
     */
-    FresnelBlend(Spectrum_d i_diffuse_reflectance, Spectrum_d i_specular_reflectance, const MicrofacetDistribution &i_distribution);
+    FresnelBlend(SpectrumCoef_d i_diffuse_reflectance, SpectrumCoef_d i_specular_reflectance, const MicrofacetDistribution &i_distribution);
 
     /**
     * Returns BxDF value for the specified incident and exitant directions.
     */
-    virtual Spectrum_d Evaluate(const Vector3D_d &i_incident, const Vector3D_d &i_exitant) const;
+    virtual SpectrumCoef_d Evaluate(const Vector3D_d &i_incident, const Vector3D_d &i_exitant) const;
 
     /**
     * Samples BxDF value for the specified incident direction.
@@ -39,7 +39,7 @@ class FresnelBlend: public BxDF
     * @param[out] o_pdf PDF value for the sampled exitant direction. The returned value should be greater or equal than zero.
     * @return Sampled BxDF value.
     */
-    virtual Spectrum_d Sample(const Vector3D_d &i_incident, Vector3D_d &o_exitant, const Point2D_d &i_sample, double &o_pdf) const;
+    virtual SpectrumCoef_d Sample(const Vector3D_d &i_incident, Vector3D_d &o_exitant, const Point2D_d &i_sample, double &o_pdf) const;
 
     /**
     * Returns PDF value for the specified incident and exitant direction.
@@ -53,10 +53,10 @@ class FresnelBlend: public BxDF
     /**
     * Returns approximation of the fresnel term.
     */
-    Spectrum_d _SchlickFresnel(double i_cos_theta) const;
+    SpectrumCoef_d _SchlickFresnel(double i_cos_theta) const;
 
   private:
-    Spectrum_d m_specular_reflectance, m_diffuse_reflectance;
+    SpectrumCoef_d m_specular_reflectance, m_diffuse_reflectance;
     MicrofacetDistribution m_distribution;
 
     // Probabilities of sampling the diffuse and the glossy component.
@@ -73,7 +73,7 @@ const size_t FresnelBlend_SamplesNum = 20;
 extern const double FresnelBlend_DiffuseProbs[FresnelBlend_SamplesNum][FresnelBlend_SamplesNum];
 
 template<typename MicrofacetDistribution>
-FresnelBlend<MicrofacetDistribution>::FresnelBlend(Spectrum_d i_diffuse_reflectance, Spectrum_d i_specular_reflectance, const MicrofacetDistribution &i_distribution):
+FresnelBlend<MicrofacetDistribution>::FresnelBlend(SpectrumCoef_d i_diffuse_reflectance, SpectrumCoef_d i_specular_reflectance, const MicrofacetDistribution &i_distribution):
 BxDF(BxDFType(BSDF_REFLECTION | BSDF_GLOSSY)), m_diffuse_reflectance(i_diffuse_reflectance), m_specular_reflectance(i_specular_reflectance), m_distribution(i_distribution)
   {
   ASSERT(InRange(i_diffuse_reflectance, 0.0, 1.0));
@@ -92,7 +92,7 @@ BxDF(BxDFType(BSDF_REFLECTION | BSDF_GLOSSY)), m_diffuse_reflectance(i_diffuse_r
   }
 
 template<typename MicrofacetDistribution>
-Spectrum_d FresnelBlend<MicrofacetDistribution>::Evaluate(const Vector3D_d &i_incident, const Vector3D_d &i_exitant) const
+SpectrumCoef_d FresnelBlend<MicrofacetDistribution>::Evaluate(const Vector3D_d &i_incident, const Vector3D_d &i_exitant) const
   {
   ASSERT(i_incident.IsNormalized());
   ASSERT(i_exitant.IsNormalized());
@@ -104,16 +104,16 @@ Spectrum_d FresnelBlend<MicrofacetDistribution>::Evaluate(const Vector3D_d &i_in
   half_angle.Normalize();
   double cosine_half_angle = i_exitant*half_angle;
 
-  Spectrum_d diffuse = (28.0/(23.0*M_PI)) * m_diffuse_reflectance * (Spectrum_d(1.0) - m_specular_reflectance) *
+  SpectrumCoef_d diffuse = (28.0/(23.0*M_PI)) * m_diffuse_reflectance * (SpectrumCoef_d(1.0) - m_specular_reflectance) *
     (1.0 - pow(1.0 - 0.5*cos_theta_exitant, 5.0)) * (1.0 - pow(1.0 - 0.5*cos_theta_incident, 5.0));
 
-  Spectrum_d specular = m_distribution.Evaluate(half_angle) / (4.0 * fabs(cosine_half_angle) * std::max(cos_theta_exitant, cos_theta_incident)) * _SchlickFresnel(cosine_half_angle);
+  SpectrumCoef_d specular = m_distribution.Evaluate(half_angle) / (4.0 * fabs(cosine_half_angle) * std::max(cos_theta_exitant, cos_theta_incident)) * _SchlickFresnel(cosine_half_angle);
   return diffuse + specular;
   }
 
 template<typename MicrofacetDistribution>
-Spectrum_d FresnelBlend<MicrofacetDistribution>::Sample(const Vector3D_d &i_incident, Vector3D_d &o_exitant,
-                                                              const Point2D_d &i_sample, double &o_pdf) const
+SpectrumCoef_d FresnelBlend<MicrofacetDistribution>::Sample(const Vector3D_d &i_incident, Vector3D_d &o_exitant,
+                                                            const Point2D_d &i_sample, double &o_pdf) const
   {
   ASSERT(i_sample[0]>=0.0 && i_sample[0]<=1.0);
   ASSERT(i_sample[1]>=0.0 && i_sample[1]<=1.0);
@@ -146,7 +146,7 @@ Spectrum_d FresnelBlend<MicrofacetDistribution>::Sample(const Vector3D_d &i_inci
     if (i_incident[2]*o_exitant[2]<0.0)
       {
       o_pdf = m_specular_probability*microfaced_pdf; // Diffuse PDF is zero in this case.
-      return Spectrum_d(0.0);
+      return SpectrumCoef_d(0.0);
       }
     else
       o_pdf = m_diffuse_probability*fabs(o_exitant[2])*INV_PI + m_specular_probability*microfaced_pdf;
@@ -168,10 +168,10 @@ double FresnelBlend<MicrofacetDistribution>::PDF(const Vector3D_d &i_incident, c
   }
 
 template<typename MicrofacetDistribution>
-Spectrum_d FresnelBlend<MicrofacetDistribution>::_SchlickFresnel(double i_cos_theta) const
+SpectrumCoef_d FresnelBlend<MicrofacetDistribution>::_SchlickFresnel(double i_cos_theta) const
   {
   ASSERT(i_cos_theta>=0.0 && i_cos_theta<=1.0);
-  return m_specular_reflectance + pow(1.0-i_cos_theta, 5.0) * (Spectrum_d(1.0) - m_specular_reflectance);
+  return m_specular_reflectance + pow(1.0-i_cos_theta, 5.0) * (SpectrumCoef_d(1.0) - m_specular_reflectance);
   }
 
 #endif // FRESNEL_BLEND_H

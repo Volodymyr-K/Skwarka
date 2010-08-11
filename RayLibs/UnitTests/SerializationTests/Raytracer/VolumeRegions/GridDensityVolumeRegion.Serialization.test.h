@@ -23,7 +23,8 @@ class GridDensityVolumeRegionSerializationTestSuite : public CxxTest::TestSuite
     void test_GridDensityVolumeRegion_Serialization()
       {
       BBox3D_d bounds(Point3D_d(1,2,3), Point3D_d(10,20,30));
-      Spectrum_d emission(1,1.5,2), absorption(5,7,9), scattering(0.1,0.0,0.9);
+      Spectrum_d emission(1,1.5,2);
+      SpectrumCoef_d absorption(5,7,9), scattering(0.1,0.0,0.9);
       intrusive_ptr<PhaseFunction> p_phase_function( new RayleighPhaseFunction );
 
       size_t size_x=20, size_y=30, size_z=40;

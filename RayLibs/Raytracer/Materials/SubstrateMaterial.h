@@ -23,7 +23,7 @@ class SubstrateMaterial: public Material
     * @param ip_specular_reflectance The texture defining the reflectance of the glossy layer at normal incidence. Each spectrum component should be in [0;1] range.
     * @param ip_roughness The texture defining the roughness of the surface. Values should be in [0;1] range.
     */
-    SubstrateMaterial(intrusive_ptr<const Texture<Spectrum_d> > ip_diffuse_reflectance, intrusive_ptr<const Texture<Spectrum_d> > ip_specular_reflectance, 
+    SubstrateMaterial(intrusive_ptr<const Texture<SpectrumCoef_d> > ip_diffuse_reflectance, intrusive_ptr<const Texture<SpectrumCoef_d> > ip_specular_reflectance, 
       intrusive_ptr<const Texture<double> > ip_roughness);
 
     /**
@@ -34,12 +34,12 @@ class SubstrateMaterial: public Material
     * @param ip_u_roughness The texture defining the roughness of the surface in U direction. Values should be in [0;1] range.
     * @param ip_v_roughness The texture defining the roughness of the surface in U direction. Values should be in [0;1] range.
     */
-    SubstrateMaterial(intrusive_ptr<const Texture<Spectrum_d> > ip_diffuse_reflectance, intrusive_ptr<const Texture<Spectrum_d> > ip_specular_reflectance, 
+    SubstrateMaterial(intrusive_ptr<const Texture<SpectrumCoef_d> > ip_diffuse_reflectance, intrusive_ptr<const Texture<SpectrumCoef_d> > ip_specular_reflectance, 
       intrusive_ptr<const Texture<double> > ip_u_roughness, intrusive_ptr<const Texture<double> > ip_v_roughness);
 
-    intrusive_ptr<const Texture<Spectrum_d> > GetDiffuseReflectanceTexture() const;
+    intrusive_ptr<const Texture<SpectrumCoef_d> > GetDiffuseReflectanceTexture() const;
 
-    intrusive_ptr<const Texture<Spectrum_d> > GetSpecularReflectanceTexture() const;
+    intrusive_ptr<const Texture<SpectrumCoef_d> > GetSpecularReflectanceTexture() const;
 
     /**
     * Returns texture defining the roughness of the specular surface.
@@ -70,7 +70,7 @@ class SubstrateMaterial: public Material
     virtual const BSDF *GetBSDF(const DifferentialGeometry &i_dg, size_t i_triangle_index, MemoryPool &i_pool) const;
 
   private:
-    intrusive_ptr<const Texture<Spectrum_d> > mp_diffuse_reflectance, mp_specular_reflectance;
+    intrusive_ptr<const Texture<SpectrumCoef_d> > mp_diffuse_reflectance, mp_specular_reflectance;
 
     intrusive_ptr<const Texture<double> > mp_roughness, mp_u_roughness, mp_v_roughness;
   };
@@ -84,8 +84,8 @@ class SubstrateMaterial: public Material
 template<class Archive>
 void save_construct_data(Archive &i_ar, const SubstrateMaterial *ip_material, const unsigned int i_version)
   {
-  intrusive_ptr<const Texture<Spectrum_d> > p_diffuse_reflectance = ip_material->GetDiffuseReflectanceTexture();
-  intrusive_ptr<const Texture<Spectrum_d> > p_specular_reflectance = ip_material->GetSpecularReflectanceTexture();
+  intrusive_ptr<const Texture<SpectrumCoef_d> > p_diffuse_reflectance = ip_material->GetDiffuseReflectanceTexture();
+  intrusive_ptr<const Texture<SpectrumCoef_d> > p_specular_reflectance = ip_material->GetSpecularReflectanceTexture();
   intrusive_ptr<const Texture<double> > p_roughness = ip_material->GetRoughnessTexture();
   intrusive_ptr<const Texture<double> > p_u_roughness = ip_material->GetURoughnessTexture();
   intrusive_ptr<const Texture<double> > p_v_roughness = ip_material->GetVRoughnessTexture();
@@ -103,7 +103,7 @@ void save_construct_data(Archive &i_ar, const SubstrateMaterial *ip_material, co
 template<class Archive>
 void load_construct_data(Archive &i_ar, SubstrateMaterial *ip_material, const unsigned int i_version)
   {
-  intrusive_ptr<const Texture<Spectrum_d> > p_diffuse_reflectance, p_specular_reflectance;
+  intrusive_ptr<const Texture<SpectrumCoef_d> > p_diffuse_reflectance, p_specular_reflectance;
   intrusive_ptr<const Texture<double> > p_roughness, p_u_roughness, p_v_roughness;
 
   i_ar >> p_diffuse_reflectance;

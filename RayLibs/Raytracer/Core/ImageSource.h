@@ -7,7 +7,7 @@
 * An abstract class defining the contract for getting 2D array of values.
 * Implementations of the class provide 2D array of values (i.e. image) of the specified type (see template parameter of the class).
 * This allows for having a convenient way to convert 2D array of values of one type to another type.
-* For example, the implementation can store image in RGB format where each component is defined by unsigend char and return the image in Spectrum_f format.
+* For example, the implementation can store image in RGB format where each component is defined by unsigend char and return the image in SpectrumCoef_f format.
 * More importantly, the implementations are also used by MIPMap to serialize the input image in a more compact way (as in the above example with RGB image).
 * 
 * @warning The implementations must be constant in the sense that the same instance must always return the same image. It should not have a mutable state or depend

@@ -49,9 +49,9 @@ Spectrum_d AggregateVolumeRegion::Emission(const Point3D_d &i_point) const
   return ret;
   }
 
-Spectrum_d AggregateVolumeRegion::Absorption(const Point3D_d &i_point) const
+SpectrumCoef_d AggregateVolumeRegion::Absorption(const Point3D_d &i_point) const
   {
-  Spectrum_d ret;
+  SpectrumCoef_d ret;
 
   for (size_t i=0;i<m_volume_regions.size();++i)
     ret += m_volume_regions[i]->Absorption(i_point);
@@ -59,9 +59,9 @@ Spectrum_d AggregateVolumeRegion::Absorption(const Point3D_d &i_point) const
   return ret;
   }
 
-Spectrum_d AggregateVolumeRegion::Scattering(const Point3D_d &i_point) const
+SpectrumCoef_d AggregateVolumeRegion::Scattering(const Point3D_d &i_point) const
   {
-  Spectrum_d ret;
+  SpectrumCoef_d ret;
 
   for (size_t i=0;i<m_volume_regions.size();++i)
     ret += m_volume_regions[i]->Scattering(i_point);
@@ -69,9 +69,9 @@ Spectrum_d AggregateVolumeRegion::Scattering(const Point3D_d &i_point) const
   return ret;
   }
 
-Spectrum_d AggregateVolumeRegion::Attenuation(const Point3D_d &i_point) const
+SpectrumCoef_d AggregateVolumeRegion::Attenuation(const Point3D_d &i_point) const
   {
-  Spectrum_d ret;
+  SpectrumCoef_d ret;
 
   for (size_t i=0;i<m_volume_regions.size();++i)
     ret += m_volume_regions[i]->Attenuation(i_point);
@@ -96,9 +96,9 @@ double AggregateVolumeRegion::Phase(const Point3D_d &i_point, const Vector3D_d &
     return 0.0;
   }
 
-Spectrum_d AggregateVolumeRegion::OpticalThickness(const Ray &i_ray, double i_step, double i_offset_sample) const
+SpectrumCoef_d AggregateVolumeRegion::OpticalThickness(const Ray &i_ray, double i_step, double i_offset_sample) const
   {
-  Spectrum_d ret;
+  SpectrumCoef_d ret;
 
   for (size_t i=0;i<m_volume_regions.size();++i)
     ret += m_volume_regions[i]->OpticalThickness(i_ray, i_step, i_offset_sample);

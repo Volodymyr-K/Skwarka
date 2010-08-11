@@ -3,7 +3,7 @@
 #include <Math/MathRoutines.h>
 #include <Math/SamplingRoutines.h>
 
-Spectrum_d BxDF::Sample(const Vector3D_d &i_incident, Vector3D_d &o_exitant, const Point2D_d &i_sample, double &o_pdf) const
+SpectrumCoef_d BxDF::Sample(const Vector3D_d &i_incident, Vector3D_d &o_exitant, const Point2D_d &i_sample, double &o_pdf) const
   {
   ASSERT(i_sample[0]>=0.0 && i_sample[0]<1.0);
   ASSERT(i_sample[1]>=0.0 && i_sample[1]<1.0);
@@ -26,20 +26,20 @@ double BxDF::PDF(const Vector3D_d &i_incident, const Vector3D_d &i_exitant) cons
   return same_hemisphere == IsReflection(m_type) ? fabs(i_exitant[2]) * INV_PI : 0.0;
   }
 
-Spectrum_d BxDF::TotalScattering(const Vector3D_d &i_incident, SamplesSequence2D i_samples) const
+SpectrumCoef_d BxDF::TotalScattering(const Vector3D_d &i_incident, SamplesSequence2D i_samples) const
   {
   size_t num_samples = std::distance(i_samples.m_begin, i_samples.m_end);
   ASSERT(num_samples > 0);
   ASSERT(i_incident.IsNormalized());
 
-  Spectrum_d ret;
+  SpectrumCoef_d ret;
   for(SamplesSequence2D::Iterator it=i_samples.m_begin;it!=i_samples.m_end;++it)
     {
     Point2D_d sample = *it;
 
     double pdf_exitant=0.0;
     Vector3D_d exitant;
-    Spectrum_d tmp = this->Sample(i_incident, exitant, sample, pdf_exitant);
+    SpectrumCoef_d tmp = this->Sample(i_incident, exitant, sample, pdf_exitant);
     ASSERT(exitant.IsNormalized());
     ASSERT(pdf_exitant >= 0.0);
 
@@ -54,7 +54,7 @@ Spectrum_d BxDF::TotalScattering(const Vector3D_d &i_incident, SamplesSequence2D
   return ret;
   }
 
-Spectrum_d BxDF::TotalScattering(bool i_hemisphere, SamplesSequence2D i_samples1, SamplesSequence2D i_samples2) const
+SpectrumCoef_d BxDF::TotalScattering(bool i_hemisphere, SamplesSequence2D i_samples1, SamplesSequence2D i_samples2) const
   {
   size_t num_samples = std::distance(i_samples1.m_begin, i_samples1.m_end);
   ASSERT(std::distance(i_samples2.m_begin, i_samples2.m_end) == num_samples);
@@ -62,7 +62,7 @@ Spectrum_d BxDF::TotalScattering(bool i_hemisphere, SamplesSequence2D i_samples1
 
   double Z_sign = i_hemisphere ? 1.0 : -1.0;
 
-  Spectrum_d ret;
+  SpectrumCoef_d ret;
   SamplesSequence2D::Iterator it1=i_samples1.m_begin;
   SamplesSequence2D::Iterator it2=i_samples2.m_begin;
   for(size_t i=0;i<num_samples;++i)
@@ -78,7 +78,7 @@ Spectrum_d BxDF::TotalScattering(bool i_hemisphere, SamplesSequence2D i_samples1
 
     Vector3D_d exitant;
     double pdf_exitant=0.0;
-    Spectrum_d tmp = this->Sample(incident, exitant, sample_exitant, pdf_exitant);
+    SpectrumCoef_d tmp = this->Sample(incident, exitant, sample_exitant, pdf_exitant);
     ASSERT(exitant.IsNormalized());
     ASSERT(pdf_exitant >= 0.0);
 

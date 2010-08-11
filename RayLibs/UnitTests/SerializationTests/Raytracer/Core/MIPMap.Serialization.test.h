@@ -5,7 +5,7 @@
 #include <UnitTests/TestHelpers/CustomValueTraits.h>
 #include <Raytracer/Core/MIPMap.h>
 #include <Raytracer/Core/Spectrum.h>
-#include <Raytracer/ImageSources/RGB24SpectrumImageSource.h>
+#include <Raytracer/ImageSources/RGB24ImageSource.h>
 #include <vector>
 #include <boost/archive/binary_iarchive.hpp>
 #include <boost/archive/binary_oarchive.hpp>
@@ -100,7 +100,7 @@ class MIPMapSerializationTestSuite : public CxxTest::TestSuite
             image[j][i].m_rgb[2]=255;
             }
 
-      intrusive_ptr<ImageSource<Spectrum_d> > p_image_source( new RGB24SpectrumImageSource<double>(image) );
+      intrusive_ptr<ImageSource<Spectrum_d> > p_image_source( new RGB24ImageSource<Spectrum_d>(image) );
       return intrusive_ptr<MIPMap<Spectrum_d> > (new MIPMap<Spectrum_d>(p_image_source,i_repeat,i_max_anisotropy));
       }
 

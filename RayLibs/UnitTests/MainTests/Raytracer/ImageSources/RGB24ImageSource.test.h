@@ -3,14 +3,14 @@
 
 #include <cxxtest/TestSuite.h>
 #include <UnitTests/TestHelpers/CustomValueTraits.h>
-#include <Raytracer/ImageSources/RGB24SpectrumImageSource.h>
+#include <Raytracer/ImageSources/RGB24ImageSource.h>
 #include <Math/ThreadSafeRandom.h>
 #include <vector>
 
-class RGB24SpectrumImageSourceTestSuite : public CxxTest::TestSuite
+class RGB24ImageSourceTestSuite : public CxxTest::TestSuite
   {
   public:
-    void test_RGB24SpectrumImageSource()
+    void test_RGB24ImageSource()
       {
       size_t width = 123, height=234;
       std::vector<std::vector<RGB24> > values(height, std::vector<RGB24>(width));
@@ -24,7 +24,7 @@ class RGB24SpectrumImageSourceTestSuite : public CxxTest::TestSuite
           values[i][j].m_rgb[2]=(unsigned char)RandomInt(256);
           }
 
-      intrusive_ptr<ImageSource<Spectrum_f> > p_image_source( new RGB24SpectrumImageSource<float>(values, scale) );
+      intrusive_ptr<ImageSource<Spectrum_f> > p_image_source( new RGB24ImageSource<Spectrum_f>(values, scale) );
 
       TS_ASSERT_EQUALS(p_image_source->GetHeight(), height);
       TS_ASSERT_EQUALS(p_image_source->GetWidth(), width);
@@ -37,7 +37,7 @@ class RGB24SpectrumImageSourceTestSuite : public CxxTest::TestSuite
           Spectrum_f tmp(values[i][j].m_rgb[0],values[i][j].m_rgb[1],values[i][j].m_rgb[2]);
           if (image[i][j] != tmp*scale)
             {
-            TS_FAIL("RGB24SpectrumImageSource test failed.");
+            TS_FAIL("RGB24ImageSource test failed.");
             return;
             }
           }

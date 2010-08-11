@@ -44,7 +44,7 @@ Spectrum_d DirectLightingLTEIntegrator::_SurfaceRadiance(const RayDifferential &
   return radiance;
   }
 
-Spectrum_d DirectLightingLTEIntegrator::_MediaRadianceAndTranmsittance(const RayDifferential &i_ray, const Sample *ip_sample, Spectrum_d &o_transmittance, ThreadSpecifics i_ts) const
+Spectrum_d DirectLightingLTEIntegrator::_MediaRadianceAndTranmsittance(const RayDifferential &i_ray, const Sample *ip_sample, SpectrumCoef_d &o_transmittance, ThreadSpecifics i_ts) const
   {
   ASSERT(i_ts.mp_pool && i_ts.mp_random_generator);
   MemoryPool *p_pool = i_ts.mp_pool;
@@ -56,7 +56,7 @@ Spectrum_d DirectLightingLTEIntegrator::_MediaRadianceAndTranmsittance(const Ray
   double t0, t1;
   if (p_volume==NULL || p_volume->Intersect(ray, &t0, &t1)==false || t0==t1)
     {
-    o_transmittance = Spectrum_d(1.0);
+    o_transmittance = SpectrumCoef_d(1.0);
     return Spectrum_d();
     }
 
@@ -86,7 +86,7 @@ Spectrum_d DirectLightingLTEIntegrator::_MediaRadianceAndTranmsittance(const Ray
   size_t infinite_lights = lights.m_infinite_light_sources.size();
   size_t num_lights = delta_lights+area_lights+infinite_lights;
 
-  Spectrum_d transmittance(1.0);
+  SpectrumCoef_d transmittance(1.0);
   Point3D_d point = ray(t0), prev_point;
   Vector3D_d direction = ray.m_direction * (-1.0);
 
@@ -113,7 +113,7 @@ Spectrum_d DirectLightingLTEIntegrator::_MediaRadianceAndTranmsittance(const Ray
     Ray delta_ray(prev_point, ray.m_direction, 0.0, Vector3D_d(point-prev_point).Length());
 
     // Note that we still use constant step size for the optical thickness calculation.
-    Spectrum_d opt_thickness = p_volume->OpticalThickness(delta_ray, base_step, offset2);
+    SpectrumCoef_d opt_thickness = p_volume->OpticalThickness(delta_ray, base_step, offset2);
 
     transmittance[0] *= exp(-opt_thickness[0]);
     transmittance[1] *= exp(-opt_thickness[1]);
@@ -121,7 +121,7 @@ Spectrum_d DirectLightingLTEIntegrator::_MediaRadianceAndTranmsittance(const Ray
 
     // Compute single-scattering source term.
     radiance += transmittance * p_volume->Emission(point);
-    Spectrum_d scattering = p_volume->Scattering(point);
+    SpectrumCoef_d scattering = p_volume->Scattering(point);
     if (scattering.IsBlack()==false && num_lights > 0)
       {
       // We sample all lights with uniform PDF.
@@ -161,17 +161,17 @@ Spectrum_d DirectLightingLTEIntegrator::_MediaRadianceAndTranmsittance(const Ray
   return radiance;
   }
 
-Spectrum_d DirectLightingLTEIntegrator::_MediaTransmittance(const Ray &i_ray, ThreadSpecifics i_ts) const
+SpectrumCoef_d DirectLightingLTEIntegrator::_MediaTransmittance(const Ray &i_ray, ThreadSpecifics i_ts) const
   {
   ASSERT(i_ts.mp_pool && i_ts.mp_random_generator);
 
   const VolumeRegion *p_volume = mp_scene->GetVolumeRegion_RawPtr();
   if (p_volume==NULL)
-    return Spectrum_d(1.0);
+    return SpectrumCoef_d(1.0);
 
   // Increase step size for secondary rays to reduce computation time.
-  Spectrum_d opt_thickness = p_volume->OpticalThickness(i_ray, 2.0*m_params.m_media_step_size, (*i_ts.mp_random_generator)(1.0));
-  return Spectrum_d(exp(-opt_thickness[0]), exp(-opt_thickness[1]), exp(-opt_thickness[2]));
+  SpectrumCoef_d opt_thickness = p_volume->OpticalThickness(i_ray, 2.0*m_params.m_media_step_size, (*i_ts.mp_random_generator)(1.0));
+  return SpectrumCoef_d(exp(-opt_thickness[0]), exp(-opt_thickness[1]), exp(-opt_thickness[2]));
   }
 
 void DirectLightingLTEIntegrator::_RequestSamples(intrusive_ptr<Sampler> ip_sampler)

@@ -1,14 +1,17 @@
 #ifndef SPECTRUM_H
 #define SPECTRUM_H
 
-#include <Common\Common.h>
+#include <Common/Common.h>
 #include <Math/MathRoutines.h>
+#include "SpectrumCoef.h"
 #include <istream>
 
 /**
-* Represents the spectrum of light (i.e. color).
+* Represents the light spectrum. It can be used to define radiance, radiance, flux and other light values.
+* Don't mix it up with the SpectrumCoef class (which is a dimensionless quantity) that is used to represent properties of surface or volume media like reflectivity of a surface, volume transmittance.
 * The spectrum is represented by the RGB model.
 * The template parameter corresponds to the type of the RGB components.
+* @sa SpectrumCoef
 */
 template<typename T>
 class Spectrum
@@ -24,11 +27,11 @@ class Spectrum
     Spectrum<T> operator-(const Spectrum<T> &i_spectrum) const;
     Spectrum<T> &operator-=(const Spectrum<T> &i_spectrum);
 
-    Spectrum<T> operator*(const Spectrum<T> &i_spectrum) const;
-    Spectrum<T> &operator*=(const Spectrum<T> &i_spectrum);
+    Spectrum<T> operator*(const SpectrumCoef<T> &i_spectrum_coef) const;
+    Spectrum<T> &operator*=(const SpectrumCoef<T> &i_spectrum_coef);
 
-    Spectrum<T> operator/(const Spectrum<T> &i_spectrum) const;
-    Spectrum<T> &operator/=(const Spectrum<T> &i_spectrum);
+    Spectrum<T> operator/(const SpectrumCoef<T> &i_spectrum_coef) const;
+    Spectrum<T> &operator/=(const SpectrumCoef<T> &i_spectrum_coef);
 
     Spectrum<T> operator*(double i_value) const;
     Spectrum<T> &operator*=(double i_value);
@@ -48,7 +51,7 @@ class Spectrum
     void Clamp(T i_low, T i_high);
 
     /**
-    * Adds a weighted Spectrum to this one. The method is needed for the efficiency.
+    * Adds a weighted Spectrum to this one. The method is more efficient than calling += and * operators.
     */
     void AddWeighted(const Spectrum &i_spectrum, T i_weight);
 
@@ -63,7 +66,7 @@ class Spectrum
     void XYZ(T o_xyz[3]) const;
 
     /**
-    * Returns luminance value of the spectrum (Y value of the XYZ).
+    * Returns luminance value of the spectrum (Y value of the XYZ representation).
     */
     T Luminance() const;
 
@@ -73,6 +76,9 @@ class Spectrum
 
 template<typename T1, typename T2>
 Spectrum<T2> operator*(T1 i_value, const Spectrum<T2> &i_spectrum);
+
+template<typename T>
+Spectrum<T> operator*(const SpectrumCoef<T> i_spectrum_coef, const Spectrum<T> &i_spectrum);
 
 /**
 * Reads Spectrum from the input stream.
@@ -177,37 +183,37 @@ Spectrum<T> &Spectrum<T>::operator-=(const Spectrum<T> &i_spectrum)
   }
 
 template<typename T>
-Spectrum<T> Spectrum<T>::operator*(const Spectrum<T> &i_spectrum) const
+Spectrum<T> Spectrum<T>::operator*(const SpectrumCoef<T> &i_spectrum_coef) const
   {
-  return Spectrum<T>(m_rgb[0]*i_spectrum.m_rgb[0], m_rgb[1]*i_spectrum.m_rgb[1], m_rgb[2]*i_spectrum.m_rgb[2]);
+  return Spectrum<T>(m_rgb[0]*i_spectrum_coef[0], m_rgb[1]*i_spectrum_coef[1], m_rgb[2]*i_spectrum_coef[2]);
   }
 
 template<typename T>
-Spectrum<T> &Spectrum<T>::operator*=(const Spectrum<T> &i_spectrum)
+Spectrum<T> &Spectrum<T>::operator*=(const SpectrumCoef<T> &i_spectrum_coef)
   {
-  m_rgb[0]*=i_spectrum.m_rgb[0];
-  m_rgb[1]*=i_spectrum.m_rgb[1];
-  m_rgb[2]*=i_spectrum.m_rgb[2];
+  m_rgb[0]*=i_spectrum_coef[0];
+  m_rgb[1]*=i_spectrum_coef[1];
+  m_rgb[2]*=i_spectrum_coef[2];
 
   return *this;
   }
 
 template<typename T>
-Spectrum<T> Spectrum<T>::operator/(const Spectrum<T> &i_spectrum) const
+Spectrum<T> Spectrum<T>::operator/(const SpectrumCoef<T> &i_spectrum_coef) const
   {
-  ASSERT(i_spectrum.m_rgb[0]!=0.0 && i_spectrum.m_rgb[1]!=0.0 && i_spectrum.m_rgb[2]!=0.0);
+  ASSERT(i_spectrum_coef[0]!=0.0 && i_spectrum_coef[1]!=0.0 && i_spectrum_coef[2]!=0.0);
 
-  return Spectrum<T>(m_rgb[0]/i_spectrum.m_rgb[0], m_rgb[1]/i_spectrum.m_rgb[1], m_rgb[2]/i_spectrum.m_rgb[2]);
+  return Spectrum<T>(m_rgb[0]/i_spectrum_coef[0], m_rgb[1]/i_spectrum_coef[1], m_rgb[2]/i_spectrum_coef[2]);
   }
 
 template<typename T>
-Spectrum<T> &Spectrum<T>::operator/=(const Spectrum<T> &i_spectrum)
+Spectrum<T> &Spectrum<T>::operator/=(const SpectrumCoef<T> &i_spectrum_coef)
   {
-  ASSERT(i_spectrum.m_rgb[0]!=0.0 && i_spectrum.m_rgb[1]!=0.0 && i_spectrum.m_rgb[2]!=0.0);
+  ASSERT(i_spectrum_coef[0]!=0.0 && i_spectrum_coef[1]!=0.0 && i_spectrum_coef[2]!=0.0);
 
-  m_rgb[0]/=i_spectrum.m_rgb[0];
-  m_rgb[1]/=i_spectrum.m_rgb[1];
-  m_rgb[2]/=i_spectrum.m_rgb[2];
+  m_rgb[0]/=i_spectrum_coef[0];
+  m_rgb[1]/=i_spectrum_coef[1];
+  m_rgb[2]/=i_spectrum_coef[2];
 
   return *this;
   }
@@ -340,6 +346,12 @@ Spectrum<T2> operator*(T1 i_value, const Spectrum<T2> &i_spectrum)
   {
   ASSERT(IsNaN(i_value)==false);
   return i_spectrum*i_value;
+  }
+
+template<typename T>
+Spectrum<T> operator*(const SpectrumCoef<T> i_spectrum_coef, const Spectrum<T> &i_spectrum)
+  {
+  return i_spectrum*i_spectrum_coef;
   }
 
 template <class charT, class traits, typename T>

@@ -62,7 +62,7 @@ class BSDF
     * Returns BxDF value for the specified incident and exitant directions.
     * Only BxDF components matching specified flags are considered.
     */
-    Spectrum_d Evaluate(const Vector3D_d &i_incident, const Vector3D_d &i_exitant, BxDFType i_flags=BSDF_ALL) const;
+    SpectrumCoef_d Evaluate(const Vector3D_d &i_incident, const Vector3D_d &i_exitant, BxDFType i_flags=BSDF_ALL) const;
 
     /**
     * Samples BSDF value for the specified incident direction.
@@ -80,7 +80,7 @@ class BSDF
     * @param i_flags Specifies the subset of BxDF components to be sampled.
     * @return Sampled BSDF value.
     */
-    Spectrum_d Sample(const Vector3D_d &i_incident, Vector3D_d &o_exitant,
+    SpectrumCoef_d Sample(const Vector3D_d &i_incident, Vector3D_d &o_exitant,
       const Point2D_d &i_sample, double i_component_sample, double &o_pdf, BxDFType &o_sampled_type, BxDFType i_flags=BSDF_ALL) const;
 
     /**
@@ -88,7 +88,7 @@ class BSDF
     * The method is identical to the other Sample() method of the class except that the sample value is generated using
     * a random generator. Please refer to the other Sample() method for the details.
     */
-    Spectrum_d Sample(const Vector3D_d &i_incident, Vector3D_d &o_exitant,
+    SpectrumCoef_d Sample(const Vector3D_d &i_incident, Vector3D_d &o_exitant,
       double &o_pdf, BxDFType &o_sampled_type, BxDFType i_flags=BSDF_ALL) const;
 
     /**
@@ -109,7 +109,7 @@ class BSDF
     * @param i_flags Specifies the subset of BxDF components.
     * @return Total scattering value. Each spectrum component will be in [0;1] range.
     */
-    Spectrum_d TotalScattering(const Vector3D_d &i_incident, SamplesSequence2D i_samples, BxDFType i_flags=BSDF_ALL) const;
+    SpectrumCoef_d TotalScattering(const Vector3D_d &i_incident, SamplesSequence2D i_samples, BxDFType i_flags=BSDF_ALL) const;
 
     /**
     * Returns total scattering (i.e. fraction of scattered light) assuming a light coming uniformly from the specified hemisphere.
@@ -122,7 +122,7 @@ class BSDF
     * @param i_flags Specifies the subset of BxDF components.
     * @return Total scattering value. Each spectrum component will be in [0;1] range.
     */
-    Spectrum_d TotalScattering(bool i_hemisphere, SamplesSequence2D i_samples1, SamplesSequence2D i_samples2, BxDFType i_flags=BSDF_ALL) const;
+    SpectrumCoef_d TotalScattering(bool i_hemisphere, SamplesSequence2D i_samples1, SamplesSequence2D i_samples2, BxDFType i_flags=BSDF_ALL) const;
 
   private:
     /**
@@ -138,7 +138,7 @@ class BSDF
     /**
     * A helper method that samples only specular components of the BSDF based on the luminance values of specular BxDFs.
     */
-    Spectrum_d _SampleSpecularOnly(const Vector3D_d &i_incident, Vector3D_d &o_exitant,
+    SpectrumCoef_d _SampleSpecularOnly(const Vector3D_d &i_incident, Vector3D_d &o_exitant,
       const Point2D_d &i_sample, double i_component_sample, double &o_pdf, BxDFType &o_sampled_type, BxDFType i_flags) const;
 
   private:

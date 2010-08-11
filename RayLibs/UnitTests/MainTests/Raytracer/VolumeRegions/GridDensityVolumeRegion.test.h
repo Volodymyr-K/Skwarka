@@ -18,8 +18,8 @@ class GridDensityVolumeRegionTestSuite : public CxxTest::TestSuite
       {
       m_bounds = BBox3D_d(Point3D_d(1,2,3), Point3D_d(10,20,30));
       m_emission = Spectrum_d(1,1.5,2);
-      m_absorption = Spectrum_d(5,7,9);
-      m_scattering = Spectrum_d(0.1,0.0,0.9);
+      m_absorption = SpectrumCoef_d(5,7,9);
+      m_scattering = SpectrumCoef_d(0.1,0.0,0.9);
       intrusive_ptr<PhaseFunction> p_phase_function( new PhaseFunctionMock );
 
       m_size_x=100;
@@ -86,8 +86,8 @@ class GridDensityVolumeRegionTestSuite : public CxxTest::TestSuite
       for (size_t t=0;t<N;++t)
         {
         Point3D_d point(RandomDouble(60)-30, RandomDouble(60)-30, RandomDouble(60)-30);
-        Spectrum_d tmp = mp_volume->Absorption(point);
-        Spectrum_d correct = _GetDensity(point) * m_absorption;
+        SpectrumCoef_d tmp = mp_volume->Absorption(point);
+        SpectrumCoef_d correct = _GetDensity(point) * m_absorption;
         TS_ASSERT_DELTA(tmp[0], correct[0], correct[0]*0.01);
         TS_ASSERT_DELTA(tmp[1], correct[1], correct[1]*0.01);
         TS_ASSERT_DELTA(tmp[2], correct[2], correct[2]*0.01);
@@ -100,8 +100,8 @@ class GridDensityVolumeRegionTestSuite : public CxxTest::TestSuite
       for (size_t t=0;t<N;++t)
         {
         Point3D_d point(RandomDouble(60)-30, RandomDouble(60)-30, RandomDouble(60)-30);
-        Spectrum_d tmp = mp_volume->Scattering(point);
-        Spectrum_d correct = _GetDensity(point) * m_scattering;
+        SpectrumCoef_d tmp = mp_volume->Scattering(point);
+        SpectrumCoef_d correct = _GetDensity(point) * m_scattering;
         TS_ASSERT_DELTA(tmp[0], correct[0], correct[0]*0.01);
         TS_ASSERT_DELTA(tmp[1], correct[1], correct[1]*0.01);
         TS_ASSERT_DELTA(tmp[2], correct[2], correct[2]*0.01);
@@ -114,8 +114,8 @@ class GridDensityVolumeRegionTestSuite : public CxxTest::TestSuite
       for (size_t t=0;t<N;++t)
         {
         Point3D_d point(RandomDouble(60)-30, RandomDouble(60)-30, RandomDouble(60)-30);
-        Spectrum_d tmp = mp_volume->Attenuation(point);
-        Spectrum_d correct = _GetDensity(point) * (m_absorption+m_scattering);
+        SpectrumCoef_d tmp = mp_volume->Attenuation(point);
+        SpectrumCoef_d correct = _GetDensity(point) * (m_absorption+m_scattering);
         TS_ASSERT_DELTA(tmp[0], correct[0], correct[0]*0.01);
         TS_ASSERT_DELTA(tmp[1], correct[1], correct[1]*0.01);
         TS_ASSERT_DELTA(tmp[2], correct[2], correct[2]*0.01);
@@ -148,10 +148,10 @@ class GridDensityVolumeRegionTestSuite : public CxxTest::TestSuite
         double length = RandomDouble(60.0);
         Ray ray(point, direction, length);
 
-        Spectrum_d tmp = mp_volume->OpticalThickness(ray, 0.1, 0.5);
+        SpectrumCoef_d tmp = mp_volume->OpticalThickness(ray, 0.1, 0.5);
 
         double t0, t1;
-        Spectrum_d correct;
+        SpectrumCoef_d correct;
         if (m_bounds.Intersect(ray, &t0, &t1))
           for(double t=t0;t<t1;t+=0.1)
             {
@@ -179,7 +179,8 @@ class GridDensityVolumeRegionTestSuite : public CxxTest::TestSuite
 
   private:
     BBox3D_d m_bounds;
-    Spectrum_d m_emission, m_absorption, m_scattering;
+    Spectrum_d m_emission;
+    SpectrumCoef_d m_absorption, m_scattering;
 
     size_t m_size_x, m_size_y, m_size_z;
     std::vector<std::vector<std::vector<double> > > m_densities;

@@ -2,7 +2,7 @@
 #include <Math/SamplingRoutines.h>
 #include <cmath>
 
-SpecularTransmission::SpecularTransmission(Spectrum_d i_transmittance, double i_refractive_index_inner, double i_refractive_index_outer):
+SpecularTransmission::SpecularTransmission(SpectrumCoef_d i_transmittance, double i_refractive_index_inner, double i_refractive_index_outer):
 BxDF(BxDFType(BSDF_TRANSMISSION | BSDF_SPECULAR)), m_transmittance(i_transmittance),
 m_refractive_index_inner(i_refractive_index_inner), m_refractive_index_outer(i_refractive_index_outer),
 m_fresnel(i_refractive_index_inner, i_refractive_index_outer)
@@ -12,15 +12,15 @@ m_fresnel(i_refractive_index_inner, i_refractive_index_outer)
   ASSERT(i_refractive_index_inner>0.0 && i_refractive_index_outer>0.0);
   }
 
-Spectrum_d SpecularTransmission::Evaluate(const Vector3D_d &i_incident, const Vector3D_d &i_exitant) const
+SpectrumCoef_d SpecularTransmission::Evaluate(const Vector3D_d &i_incident, const Vector3D_d &i_exitant) const
   {
   ASSERT(i_incident.IsNormalized());
   ASSERT(i_exitant.IsNormalized());
 
-  return Spectrum_d(0.0);
+  return SpectrumCoef_d(0.0);
   }
 
-Spectrum_d SpecularTransmission::Sample(const Vector3D_d &i_incident, Vector3D_d &o_exitant, const Point2D_d &i_sample, double &o_pdf) const
+SpectrumCoef_d SpecularTransmission::Sample(const Vector3D_d &i_incident, Vector3D_d &o_exitant, const Point2D_d &i_sample, double &o_pdf) const
   {
   ASSERT(i_sample[0]>=0.0 && i_sample[0]<=1.0);
   ASSERT(i_sample[1]>=0.0 && i_sample[1]<=1.0);
@@ -45,17 +45,17 @@ Spectrum_d SpecularTransmission::Sample(const Vector3D_d &i_incident, Vector3D_d
   if (sin_theta_exitant_sqr >= 1.0)
     {
     o_exitant=Vector3D_d(-i_incident[0],-i_incident[1],i_incident[2]);
-    return Spectrum_d(0.0);
+    return SpectrumCoef_d(0.0);
     }
 
   double cos_theta_exitant = sqrt(1.0-sin_theta_exitant_sqr);
 
   o_exitant=Vector3D_d(-i_incident[0]*eta, -i_incident[1]*eta, cos_theta_exitant*Z_sign);
 
-  Spectrum_d fresnel = m_fresnel(i_incident[2]);
+  SpectrumCoef_d fresnel = m_fresnel(i_incident[2]);
   ASSERT(InRange(fresnel,0.0,1.0));
 
-  return ((Spectrum_d(1.0)-fresnel) * m_transmittance);
+  return ((SpectrumCoef_d(1.0)-fresnel) * m_transmittance);
   }
 
 double SpecularTransmission::PDF(const Vector3D_d &i_incident, const Vector3D_d &i_exitant) const
@@ -66,7 +66,7 @@ double SpecularTransmission::PDF(const Vector3D_d &i_incident, const Vector3D_d 
   return 0.0;
   }
 
-Spectrum_d SpecularTransmission::TotalScattering(const Vector3D_d &i_incident, SamplesSequence2D i_samples) const
+SpectrumCoef_d SpecularTransmission::TotalScattering(const Vector3D_d &i_incident, SamplesSequence2D i_samples) const
   {
   ASSERT(i_incident.IsNormalized());
 
@@ -78,15 +78,15 @@ Spectrum_d SpecularTransmission::TotalScattering(const Vector3D_d &i_incident, S
 
   // Handle total internal reflection for transmission.
   if (sin_theta_exitant_sqr >= 1.0)
-    return Spectrum_d(0.0);
+    return SpectrumCoef_d(0.0);
 
-  Spectrum_d fresnel = m_fresnel(i_incident[2]);
+  SpectrumCoef_d fresnel = m_fresnel(i_incident[2]);
   ASSERT(InRange(fresnel,0.0,1.0));
 
-  return (Spectrum_d(1.0)-fresnel) * m_transmittance;
+  return (SpectrumCoef_d(1.0)-fresnel) * m_transmittance;
   }
 
-Spectrum_d SpecularTransmission::TotalScattering(bool i_hemisphere, SamplesSequence2D i_samples1, SamplesSequence2D i_samples2) const
+SpectrumCoef_d SpecularTransmission::TotalScattering(bool i_hemisphere, SamplesSequence2D i_samples1, SamplesSequence2D i_samples2) const
   {
   // Here we don't really need two samples for one integral's sample since specular transmission defines the reflected direction uniquely.
   size_t num_samples = std::distance(i_samples1.m_begin, i_samples1.m_end);
@@ -106,7 +106,7 @@ Spectrum_d SpecularTransmission::TotalScattering(bool i_hemisphere, SamplesSeque
 
   double eta_sqr = eta*eta;
 
-  Spectrum_d ret;
+  SpectrumCoef_d ret;
   SamplesSequence2D::Iterator it=i_samples1.m_begin;
   for(size_t i=0;i<num_samples;++i)
     {
@@ -123,10 +123,10 @@ Spectrum_d SpecularTransmission::TotalScattering(bool i_hemisphere, SamplesSeque
     if (sin_theta_exitant_sqr >= 1.0)
       continue;
 
-    Spectrum_d fresnel = m_fresnel(incident[2]*Z_sign);
+    SpectrumCoef_d fresnel = m_fresnel(incident[2]*Z_sign);
     ASSERT(InRange(fresnel,0.0,1.0));
 
-    ret.AddWeighted(Spectrum_d(1.0)-fresnel, incident[2]);
+    ret.AddWeighted(SpectrumCoef_d(1.0)-fresnel, incident[2]);
     }
 
   ret *= m_transmittance*(2.0/num_samples);

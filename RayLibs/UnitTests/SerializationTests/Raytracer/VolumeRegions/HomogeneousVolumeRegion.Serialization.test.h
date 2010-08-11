@@ -23,7 +23,8 @@ class HomogeneousVolumeRegionSerializationTestSuite : public CxxTest::TestSuite
     void test_HomogeneousVolumeRegion_Serialization()
       {
       BBox3D_d bounds(Point3D_d(1,2,3), Point3D_d(10,20,30));
-      Spectrum_d emission(1,1.5,2), absorption(5,7,9), scattering(0.1,0.0,0.9);
+      Spectrum_d emission(1,1.5,2);
+      SpectrumCoef_d absorption(5,7,9), scattering(0.1,0.0,0.9);
       intrusive_ptr<PhaseFunction> p_phase_function( new RayleighPhaseFunction );
 
       intrusive_ptr<VolumeRegion> p_volume1(new HomogeneousVolumeRegion(bounds, emission, absorption, scattering, p_phase_function));

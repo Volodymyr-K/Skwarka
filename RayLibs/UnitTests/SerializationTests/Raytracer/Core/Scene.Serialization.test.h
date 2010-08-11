@@ -47,7 +47,7 @@ class SceneSerializationTestSuite : public CxxTest::TestSuite
         bounds=Union(bounds, Convert<double>(primitives[i]->GetTriangleMesh()->GetBounds()) );
 
       intrusive_ptr<PhaseFunction> p_phase_function( new RayleighPhaseFunction );
-      intrusive_ptr<VolumeRegion> p_volume( new HomogeneousVolumeRegion(bounds, Spectrum_d(1.0), Spectrum_d(0.1), Spectrum_d(0.1), p_phase_function) );
+      intrusive_ptr<VolumeRegion> p_volume( new HomogeneousVolumeRegion(bounds, Spectrum_d(1.0), SpectrumCoef_d(0.1), SpectrumCoef_d(0.1), p_phase_function) );
       intrusive_ptr<Scene> p_scene1(new Scene(primitives, p_volume, light_sources));
 
         {
@@ -91,7 +91,7 @@ class SceneSerializationTestSuite : public CxxTest::TestSuite
     intrusive_ptr<Primitive> _CreateDummyPrimitive(const Point3D_f &i_origin)
       {
       intrusive_ptr<TriangleMesh> p_mesh( TriangleMeshHelper::ConstructTetrahedron(i_origin) );
-      intrusive_ptr<Texture<Spectrum_d> > p_reflectance( new ConstantTexture<Spectrum_d>(Spectrum_d(1.0)) );
+      intrusive_ptr<Texture<SpectrumCoef_d> > p_reflectance( new ConstantTexture<SpectrumCoef_d>(SpectrumCoef_d(1.0)) );
       intrusive_ptr<Texture<double> > p_sigma( new ConstantTexture<double>(0.1) );
       intrusive_ptr<Material> p_material( new MatteMaterial(p_reflectance, p_sigma) );
       intrusive_ptr<AreaLightSource> p_area_light( new DiffuseAreaLightSource(Spectrum_d(1.0), p_mesh) );
