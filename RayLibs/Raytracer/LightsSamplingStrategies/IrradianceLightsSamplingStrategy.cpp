@@ -1,4 +1,5 @@
 #include "IrradianceLightsSamplingStrategy.h"
+#include <Raytracer/Core/SpectrumRoutines.h>
 #include <Math/MathRoutines.h>
 
 IrradianceLightsSamplingStrategy::IrradianceLightsSamplingStrategy(const LightSources &i_light_sources): LightsSamplingStrategy(),
@@ -11,7 +12,7 @@ m_light_sources(i_light_sources)
   for(size_t i=0;i<m_area_lights_num;++i)
     {
     BBox3D_d bbox = Convert<double>(m_light_sources.m_area_light_sources[i]->GetTriangleMesh_RawPtr()->GetBounds());
-    double power = m_light_sources.m_area_light_sources[i]->Power().Luminance();
+    double power = SpectrumRoutines::Luminance(m_light_sources.m_area_light_sources[i]->Power());
     m_area_lights_intensities.push_back( power/(M_PI*bbox.Area()) );
     }
   }
@@ -24,7 +25,7 @@ void IrradianceLightsSamplingStrategy::GetLightsCDF(const Point3D_d &i_point, do
     return;
 
   for(size_t i=0;i<m_infinity_lights_num;++i)
-    o_lights_CDF[i] = m_light_sources.m_infinite_light_sources[i]->Fluence().Luminance();
+    o_lights_CDF[i] = SpectrumRoutines::Luminance(m_light_sources.m_infinite_light_sources[i]->Fluence());
 
   for(size_t i=0;i<m_area_lights_num;++i)
     {
@@ -47,7 +48,7 @@ void IrradianceLightsSamplingStrategy::GetLightsCDF(const Point3D_d &i_point, co
     return;
 
   for(size_t i=0;i<m_infinity_lights_num;++i)
-    o_lights_CDF[i] = m_light_sources.m_infinite_light_sources[i]->Irradiance(i_normal).Luminance();
+    o_lights_CDF[i] =SpectrumRoutines::Luminance( m_light_sources.m_infinite_light_sources[i]->Irradiance(i_normal));
 
   for(size_t i=0;i<m_area_lights_num;++i)
     {

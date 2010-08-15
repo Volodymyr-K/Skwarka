@@ -7,11 +7,12 @@
 
 /**
 * Represents the spectrum of a light multiplier.
-* SpectrumCoef is a dimensionless quantity that can be used to define a reflectivity of a surface, volume transmittance etc.
+* SpectrumCoef is a dimensionless quantity that can be used to define a surface reflectivity, volume transmittance etc.
 * Don't mix it up with the Spectrum class that is used to represent real light values like radiance or flux.
-* The data is represented by the RGB model.
-* The template parameter corresponds to the type of the RGB components.
-* @sa Spectrum
+* The spectrum data is represented by a piecewise-constant function with three segments on the wavelengths domain.
+* The actual wavelength segments are not defined by this class, see SpectrumRoutines namespace for the details.
+* The template parameter corresponds to the type of the spectrum values (e.g. float, double).
+* @sa Spectrum, SpectrumRoutines
 */
 template<typename T>
 class SpectrumCoef
@@ -19,7 +20,7 @@ class SpectrumCoef
   public:
     SpectrumCoef();
     explicit SpectrumCoef(T i_value);
-    SpectrumCoef(T i_r, T i_g, T i_b);
+    SpectrumCoef(T i_value1, T i_value2, T i_value3);
 
     SpectrumCoef<T> operator+(const SpectrumCoef<T> &i_spectrum) const;
     SpectrumCoef<T> &operator+=(const SpectrumCoef<T> &i_spectrum);
@@ -39,8 +40,8 @@ class SpectrumCoef
     SpectrumCoef<T> operator/(double i_value) const;
     SpectrumCoef<T> &operator/=(double i_value);
 
-    bool operator==(const SpectrumCoef<T> &i_point) const;
-    bool operator!=(const SpectrumCoef<T> &i_point) const;
+    bool operator==(const SpectrumCoef<T> &i_spectrum) const;
+    bool operator!=(const SpectrumCoef<T> &i_spectrum) const;
 
     T operator[](unsigned char i_index) const;
     T &operator[](unsigned char i_index);
@@ -60,13 +61,9 @@ class SpectrumCoef
     */
     bool IsBlack() const;
 
-    /**
-    * Returns luminance value of the spectrum (Y value of the XYZ representation).
-    */
-    T Luminance() const;
-
   private:
-    T m_rgb[3];
+    // Values of the piecewise-constant spectrum function.
+    T m_values[3];
   };
 
 template<typename T1, typename T2>
@@ -117,9 +114,9 @@ typedef SpectrumCoef<double> SpectrumCoef_d;
 template<typename T>
 SpectrumCoef<T>::SpectrumCoef()
   {
-  m_rgb[0]=0;
-  m_rgb[1]=0;
-  m_rgb[2]=0;
+  m_values[0]=0;
+  m_values[1]=0;
+  m_values[2]=0;
   }
 
 template<typename T>
@@ -127,33 +124,33 @@ SpectrumCoef<T>::SpectrumCoef(T i_value)
   {
   ASSERT(IsNaN(i_value)==false);
 
-  m_rgb[0]=i_value;
-  m_rgb[1]=i_value;
-  m_rgb[2]=i_value;
+  m_values[0]=i_value;
+  m_values[1]=i_value;
+  m_values[2]=i_value;
   }
 
 template<typename T>
-SpectrumCoef<T>::SpectrumCoef(T i_r, T i_g, T i_b)
+SpectrumCoef<T>::SpectrumCoef(T i_value1, T i_value2, T i_value3)
   {
-  ASSERT(IsNaN(i_r)==false && IsNaN(i_g)==false && IsNaN(i_b)==false);
+  ASSERT(IsNaN(i_value1)==false && IsNaN(i_value2)==false && IsNaN(i_value3)==false);
 
-  m_rgb[0]=i_r;
-  m_rgb[1]=i_g;
-  m_rgb[2]=i_b;
+  m_values[0]=i_value1;
+  m_values[1]=i_value2;
+  m_values[2]=i_value3;
   }
 
 template<typename T>
 SpectrumCoef<T> SpectrumCoef<T>::operator+(const SpectrumCoef<T> &i_spectrum) const
   {
-  return SpectrumCoef<T>(m_rgb[0]+i_spectrum.m_rgb[0], m_rgb[1]+i_spectrum.m_rgb[1], m_rgb[2]+i_spectrum.m_rgb[2]);
+  return SpectrumCoef<T>(m_values[0]+i_spectrum.m_values[0], m_values[1]+i_spectrum.m_values[1], m_values[2]+i_spectrum.m_values[2]);
   }
 
 template<typename T>
 SpectrumCoef<T> &SpectrumCoef<T>::operator+=(const SpectrumCoef<T> &i_spectrum)
   {
-  m_rgb[0]+=i_spectrum.m_rgb[0];
-  m_rgb[1]+=i_spectrum.m_rgb[1];
-  m_rgb[2]+=i_spectrum.m_rgb[2];
+  m_values[0]+=i_spectrum.m_values[0];
+  m_values[1]+=i_spectrum.m_values[1];
+  m_values[2]+=i_spectrum.m_values[2];
 
   return *this;
   }
@@ -161,15 +158,15 @@ SpectrumCoef<T> &SpectrumCoef<T>::operator+=(const SpectrumCoef<T> &i_spectrum)
 template<typename T>
 SpectrumCoef<T> SpectrumCoef<T>::operator-(const SpectrumCoef<T> &i_spectrum) const
   {
-  return SpectrumCoef<T>(m_rgb[0]-i_spectrum.m_rgb[0], m_rgb[1]-i_spectrum.m_rgb[1], m_rgb[2]-i_spectrum.m_rgb[2]);
+  return SpectrumCoef<T>(m_values[0]-i_spectrum.m_values[0], m_values[1]-i_spectrum.m_values[1], m_values[2]-i_spectrum.m_values[2]);
   }
 
 template<typename T>
 SpectrumCoef<T> &SpectrumCoef<T>::operator-=(const SpectrumCoef<T> &i_spectrum)
   {
-  m_rgb[0]-=i_spectrum.m_rgb[0];
-  m_rgb[1]-=i_spectrum.m_rgb[1];
-  m_rgb[2]-=i_spectrum.m_rgb[2];
+  m_values[0]-=i_spectrum.m_values[0];
+  m_values[1]-=i_spectrum.m_values[1];
+  m_values[2]-=i_spectrum.m_values[2];
 
   return *this;
   }
@@ -177,15 +174,15 @@ SpectrumCoef<T> &SpectrumCoef<T>::operator-=(const SpectrumCoef<T> &i_spectrum)
 template<typename T>
 SpectrumCoef<T> SpectrumCoef<T>::operator*(const SpectrumCoef<T> &i_spectrum) const
   {
-  return SpectrumCoef<T>(m_rgb[0]*i_spectrum.m_rgb[0], m_rgb[1]*i_spectrum.m_rgb[1], m_rgb[2]*i_spectrum.m_rgb[2]);
+  return SpectrumCoef<T>(m_values[0]*i_spectrum.m_values[0], m_values[1]*i_spectrum.m_values[1], m_values[2]*i_spectrum.m_values[2]);
   }
 
 template<typename T>
 SpectrumCoef<T> &SpectrumCoef<T>::operator*=(const SpectrumCoef<T> &i_spectrum)
   {
-  m_rgb[0]*=i_spectrum.m_rgb[0];
-  m_rgb[1]*=i_spectrum.m_rgb[1];
-  m_rgb[2]*=i_spectrum.m_rgb[2];
+  m_values[0]*=i_spectrum.m_values[0];
+  m_values[1]*=i_spectrum.m_values[1];
+  m_values[2]*=i_spectrum.m_values[2];
 
   return *this;
   }
@@ -193,19 +190,19 @@ SpectrumCoef<T> &SpectrumCoef<T>::operator*=(const SpectrumCoef<T> &i_spectrum)
 template<typename T>
 SpectrumCoef<T> SpectrumCoef<T>::operator/(const SpectrumCoef<T> &i_spectrum) const
   {
-  ASSERT(i_spectrum.m_rgb[0]!=0.0 && i_spectrum.m_rgb[1]!=0.0 && i_spectrum.m_rgb[2]!=0.0);
+  ASSERT(i_spectrum.m_values[0]!=0.0 && i_spectrum.m_values[1]!=0.0 && i_spectrum.m_values[2]!=0.0);
 
-  return SpectrumCoef<T>(m_rgb[0]/i_spectrum.m_rgb[0], m_rgb[1]/i_spectrum.m_rgb[1], m_rgb[2]/i_spectrum.m_rgb[2]);
+  return SpectrumCoef<T>(m_values[0]/i_spectrum.m_values[0], m_values[1]/i_spectrum.m_values[1], m_values[2]/i_spectrum.m_values[2]);
   }
 
 template<typename T>
 SpectrumCoef<T> &SpectrumCoef<T>::operator/=(const SpectrumCoef<T> &i_spectrum)
   {
-  ASSERT(i_spectrum.m_rgb[0]!=0.0 && i_spectrum.m_rgb[1]!=0.0 && i_spectrum.m_rgb[2]!=0.0);
+  ASSERT(i_spectrum.m_values[0]!=0.0 && i_spectrum.m_values[1]!=0.0 && i_spectrum.m_values[2]!=0.0);
 
-  m_rgb[0]/=i_spectrum.m_rgb[0];
-  m_rgb[1]/=i_spectrum.m_rgb[1];
-  m_rgb[2]/=i_spectrum.m_rgb[2];
+  m_values[0]/=i_spectrum.m_values[0];
+  m_values[1]/=i_spectrum.m_values[1];
+  m_values[2]/=i_spectrum.m_values[2];
 
   return *this;
   }
@@ -216,9 +213,9 @@ SpectrumCoef<T> SpectrumCoef<T>::operator*(double i_value) const
   ASSERT(IsNaN(i_value)==false);
 
   return SpectrumCoef<T>(
-    (T) (m_rgb[0]*i_value), 
-    (T) (m_rgb[1]*i_value), 
-    (T) (m_rgb[2]*i_value));
+    (T) (m_values[0]*i_value), 
+    (T) (m_values[1]*i_value), 
+    (T) (m_values[2]*i_value));
   }
 
 template<typename T>
@@ -226,9 +223,9 @@ SpectrumCoef<T> &SpectrumCoef<T>::operator*=(double i_value)
   {
   ASSERT(IsNaN(i_value)==false);
 
-  m_rgb[0]=(T)(m_rgb[0]*i_value);
-  m_rgb[1]=(T)(m_rgb[1]*i_value);
-  m_rgb[2]=(T)(m_rgb[2]*i_value);
+  m_values[0]=(T)(m_values[0]*i_value);
+  m_values[1]=(T)(m_values[1]*i_value);
+  m_values[2]=(T)(m_values[2]*i_value);
   return *this;
   }
 
@@ -238,9 +235,9 @@ SpectrumCoef<T> SpectrumCoef<T>::operator/(double i_value) const
   ASSERT(IsNaN(i_value)==false);
   ASSERT(i_value != 0.0);
   return SpectrumCoef<T>(
-    (T) (m_rgb[0]/i_value), 
-    (T) (m_rgb[1]/i_value), 
-    (T) (m_rgb[2]/i_value));
+    (T) (m_values[0]/i_value), 
+    (T) (m_values[1]/i_value), 
+    (T) (m_values[2]/i_value));
   }
 
 template<typename T>
@@ -249,72 +246,65 @@ SpectrumCoef<T> &SpectrumCoef<T>::operator/=(double i_value)
   ASSERT(IsNaN(i_value)==false);
   ASSERT(i_value != 0.0);
 
-  m_rgb[0]=(T)(m_rgb[0]/i_value);
-  m_rgb[1]=(T)(m_rgb[1]/i_value);
-  m_rgb[2]=(T)(m_rgb[2]/i_value);
+  m_values[0]=(T)(m_values[0]/i_value);
+  m_values[1]=(T)(m_values[1]/i_value);
+  m_values[2]=(T)(m_values[2]/i_value);
   return *this;
   }
 
 template<typename T>
-bool SpectrumCoef<T>::operator==(const SpectrumCoef<T> &i_point) const
+bool SpectrumCoef<T>::operator==(const SpectrumCoef<T> &i_spectrum) const
   {
-  if (m_rgb[0] != i_point.m_rgb[0]) return false;
-  if (m_rgb[1] != i_point.m_rgb[1]) return false;
-  if (m_rgb[2] != i_point.m_rgb[2]) return false;
+  if (m_values[0] != i_spectrum.m_values[0]) return false;
+  if (m_values[1] != i_spectrum.m_values[1]) return false;
+  if (m_values[2] != i_spectrum.m_values[2]) return false;
   return true;
   }
 
 template<typename T>
-bool SpectrumCoef<T>::operator!=(const SpectrumCoef<T> &i_point) const
+bool SpectrumCoef<T>::operator!=(const SpectrumCoef<T> &i_spectrum) const
   {
-  return !operator==(i_point);
+  return !operator==(i_spectrum);
   }
 
 template<typename T>
 T SpectrumCoef<T>::operator[](unsigned char i_index) const
   {
   ASSERT(i_index>=0 && i_index<3);
-  return m_rgb[i_index];
+  return m_values[i_index];
   }
 
 template<typename T>
 T &SpectrumCoef<T>::operator[](unsigned char i_index)
   {
   ASSERT(i_index>=0 && i_index<3);
-  return m_rgb[i_index];
+  return m_values[i_index];
   }
 
 template<typename T>
 void SpectrumCoef<T>::Clamp(T i_low, T i_high)
   {
   ASSERT(i_low<=i_high);
-  m_rgb[0]=MathRoutines::Clamp(m_rgb[0], i_low, i_high);
-  m_rgb[1]=MathRoutines::Clamp(m_rgb[1], i_low, i_high);
-  m_rgb[2]=MathRoutines::Clamp(m_rgb[2], i_low, i_high);
+  m_values[0]=MathRoutines::Clamp(m_values[0], i_low, i_high);
+  m_values[1]=MathRoutines::Clamp(m_values[1], i_low, i_high);
+  m_values[2]=MathRoutines::Clamp(m_values[2], i_low, i_high);
   }
 
 template<typename T>
 void SpectrumCoef<T>::AddWeighted(const SpectrumCoef &i_spectrum, T i_weight)
   {
   ASSERT(IsNaN(i_weight)==false);
-  m_rgb[0] += i_weight * i_spectrum.m_rgb[0];
-  m_rgb[1] += i_weight * i_spectrum.m_rgb[1];
-  m_rgb[2] += i_weight * i_spectrum.m_rgb[2];
+  m_values[0] += i_weight * i_spectrum.m_values[0];
+  m_values[1] += i_weight * i_spectrum.m_values[1];
+  m_values[2] += i_weight * i_spectrum.m_values[2];
   }
 
 template<typename T>
 bool SpectrumCoef<T>::IsBlack() const
   {  
-  return m_rgb[0] == (T)0.0 && m_rgb[1] == (T)0.0 && m_rgb[2] == (T)0.0;
+  return m_values[0] == (T)0.0 && m_values[1] == (T)0.0 && m_values[2] == (T)0.0;
   }
 
-template<typename T>
-T SpectrumCoef<T>::Luminance() const
-  {
-  const T YWeight[3] = {(T)0.212671, (T)0.715160, (T)0.072169};
-
-  return YWeight[0]*m_rgb[0] + YWeight[1]*m_rgb[1] + YWeight[2]*m_rgb[2];
-  }
 template<typename T1, typename T2>
 SpectrumCoef<T2> operator*(T1 i_value, const SpectrumCoef<T2> &i_spectrum)
   {

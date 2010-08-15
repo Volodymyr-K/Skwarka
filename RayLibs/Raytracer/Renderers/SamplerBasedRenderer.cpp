@@ -4,6 +4,7 @@
 #include <Math/RandomGenerator.h>
 #include <Raytracer/Core/CoreCommon.h>
 #include <Raytracer/Core/CoreUtils.h>
+#include <Raytracer/Core/SpectrumRoutines.h>
 #include <tbb/pipeline.h>
 #include <vector>
 
@@ -430,7 +431,7 @@ void* SamplerBasedRenderer::IntegratorFilter::operator()(void* ip_chunk)
       radiance = Spectrum_d(0.0);
       }
     else
-      if (radiance.Luminance() < -DBL_EPS)
+      if (SpectrumRoutines::Luminance(radiance) < -DBL_EPS)
         {
         if (mp_log)
           mp_log->LogMessage(Log::WARNING_LEVEL, "Negative luminance value returned for image sample. Setting to black.");

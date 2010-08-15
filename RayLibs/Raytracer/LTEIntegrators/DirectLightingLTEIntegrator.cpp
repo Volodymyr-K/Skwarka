@@ -1,4 +1,5 @@
 #include "DirectLightingLTEIntegrator.h"
+#include <Raytracer/Core/SpectrumRoutines.h>
 #include <Math/ThreadSafeRandom.h>
 #include <Math/SamplingRoutines.h>
 
@@ -152,7 +153,7 @@ Spectrum_d DirectLightingLTEIntegrator::_MediaRadianceAndTranmsittance(const Ray
       }
 
     // Increase the step size. The step size is inversely proportional to the transmittance.
-    double luminance = transmittance.Luminance();
+    double luminance = SpectrumRoutines::Luminance(transmittance);
     if (luminance < DBL_EPS) break;
     step = base_step / luminance;
     }

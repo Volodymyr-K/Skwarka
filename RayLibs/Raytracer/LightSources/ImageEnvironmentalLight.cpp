@@ -1,4 +1,5 @@
 #include "ImageEnvironmentalLight.h"
+#include <Raytracer/Core/SpectrumRoutines.h>
 #include <Math/CompressedDirection.h>
 #include <Math/MathRoutines.h>
 
@@ -101,7 +102,7 @@ void ImageEnvironmentalLight::_Build(size_t i_node_index, size_t i_depth, const 
 
         m_nodes[i_node_index].m_total_radiance += pixel_radiance;
 
-        CDF_cols[x] = pixel_radiance.Luminance();
+        CDF_cols[x] = SpectrumRoutines::Luminance(pixel_radiance);
         if (x>i_begin[0]) CDF_cols[x] += CDF_cols[x-1];
         }
 
@@ -175,11 +176,11 @@ void ImageEnvironmentalLight::_PrecomputeData()
       size_t right_index = m_nodes[i].m_right_child;
 
       // Normalize PDF values.
-      double children_pdf_sum = m_nodes[left_index].m_total_radiance.Luminance() + m_nodes[right_index].m_total_radiance.Luminance();
+      double children_pdf_sum = SpectrumRoutines::Luminance(m_nodes[left_index].m_total_radiance+m_nodes[right_index].m_total_radiance);
       double inv_children_pdf_sum = children_pdf_sum>0 ? 1.0/children_pdf_sum : 0.0;
 
-      m_nodes_spherical_PDF[left_index] = (float) (m_nodes[left_index].m_total_radiance.Luminance() * inv_children_pdf_sum);
-      m_nodes_spherical_PDF[right_index] = (float) (m_nodes[right_index].m_total_radiance.Luminance() * inv_children_pdf_sum);
+      m_nodes_spherical_PDF[left_index] = (float) (SpectrumRoutines::Luminance(m_nodes[left_index].m_total_radiance) * inv_children_pdf_sum);
+      m_nodes_spherical_PDF[right_index] = (float) (SpectrumRoutines::Luminance(m_nodes[right_index].m_total_radiance) * inv_children_pdf_sum);
       }
   m_nodes_spherical_PDF[0] = 1.f;
   }
@@ -223,7 +224,7 @@ Spectrum_d ImageEnvironmentalLight::_PrecomputeIrradiance(size_t i_node_index, c
     average_cos = std::max(average_cos, 0.1);
 
     Spectrum_d irradiance = average_cos * m_nodes[i_node_index].m_total_radiance;
-    op_nodes_PDF[i_node_index] = (float)irradiance.Luminance();
+    op_nodes_PDF[i_node_index] = (float)SpectrumRoutines::Luminance(irradiance);
 
     return irradiance;
     }
@@ -233,7 +234,7 @@ Spectrum_d ImageEnvironmentalLight::_PrecomputeIrradiance(size_t i_node_index, c
     irradiance += _PrecomputeIrradiance(i_node_index+1, i_normal, i_normal_angles, op_nodes_PDF);
     irradiance += _PrecomputeIrradiance(m_nodes[i_node_index].m_right_child, i_normal, i_normal_angles, op_nodes_PDF);
 
-    op_nodes_PDF[i_node_index] = (float)irradiance.Luminance();
+    op_nodes_PDF[i_node_index] = (float)SpectrumRoutines::Luminance(irradiance);
 
     // Normalize PDF values.
     double children_pdf_sum = op_nodes_PDF[i_node_index+1]+op_nodes_PDF[m_nodes[i_node_index].m_right_child];

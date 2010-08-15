@@ -1,4 +1,5 @@
 #include "AggregateVolumeRegion.h"
+#include <Raytracer/Core/SpectrumRoutines.h>
 
 AggregateVolumeRegion::AggregateVolumeRegion(const std::vector<intrusive_ptr<const VolumeRegion> > &i_volume_regions): m_volume_regions(i_volume_regions)
   {
@@ -85,7 +86,7 @@ double AggregateVolumeRegion::Phase(const Point3D_d &i_point, const Vector3D_d &
 
   for (size_t i=0;i<m_volume_regions.size();++i)
     {
-    double scattering = m_volume_regions[i]->Scattering(i_point).Luminance();
+    double scattering = SpectrumRoutines::Luminance(m_volume_regions[i]->Scattering(i_point));
     sum_weights += scattering;
     ret += scattering * m_volume_regions[i]->Phase(i_point, i_incoming, i_outgoing);
     }

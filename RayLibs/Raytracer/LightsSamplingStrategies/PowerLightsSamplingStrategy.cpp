@@ -1,4 +1,5 @@
 #include "PowerLightsSamplingStrategy.h"
+#include <Raytracer/Core/SpectrumRoutines.h>
 #include <cstring>
 
 PowerLightsSamplingStrategy::PowerLightsSamplingStrategy(const LightSources &i_light_sources): LightsSamplingStrategy()
@@ -17,7 +18,7 @@ PowerLightsSamplingStrategy::PowerLightsSamplingStrategy(const LightSources &i_l
 
   for(size_t i=0;i<infinity_lights_num;++i)
     {
-    mp_lights_CDF[i] = i_light_sources.m_infinite_light_sources[i]->Power().Luminance();
+    mp_lights_CDF[i] = SpectrumRoutines::Luminance(i_light_sources.m_infinite_light_sources[i]->Power());
     ASSERT(mp_lights_CDF[i] >= 0.0);
     if (i>0)
       mp_lights_CDF[i] += mp_lights_CDF[i-1];
@@ -26,7 +27,7 @@ PowerLightsSamplingStrategy::PowerLightsSamplingStrategy(const LightSources &i_l
   for(size_t i=0;i<area_lights_num;++i)
     {
     size_t j=infinity_lights_num+i;
-    mp_lights_CDF[j] = i_light_sources.m_area_light_sources[i]->Power().Luminance();
+    mp_lights_CDF[j] = SpectrumRoutines::Luminance(i_light_sources.m_area_light_sources[i]->Power());
     ASSERT(mp_lights_CDF[j] >= 0.0);
 
     if (j>0)

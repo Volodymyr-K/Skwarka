@@ -3,6 +3,7 @@
 
 #include <Raytracer/Core/BxDF.h>
 #include <Raytracer/Core/Fresnel.h>
+#include <Raytracer/Core/SpectrumRoutines.h>
 #include <Math/SamplingRoutines.h>
 
 /**
@@ -80,8 +81,8 @@ BxDF(BxDFType(BSDF_REFLECTION | BSDF_GLOSSY)), m_diffuse_reflectance(i_diffuse_r
   ASSERT(InRange(i_specular_reflectance, 0.0, 1.0));
 
   // Lookup for the probabilities to sample diffuse and glossy parts of the FresnelBlend.
-  size_t diffuse_index = std::min(size_t(i_diffuse_reflectance.Luminance()*FresnelBlend_SamplesNum), FresnelBlend_SamplesNum-1);
-  size_t specular_index = std::min(size_t(i_specular_reflectance.Luminance()*FresnelBlend_SamplesNum), FresnelBlend_SamplesNum-1);
+  size_t diffuse_index = std::min(size_t(SpectrumRoutines::Luminance(i_diffuse_reflectance)*FresnelBlend_SamplesNum), FresnelBlend_SamplesNum-1);
+  size_t specular_index = std::min(size_t(SpectrumRoutines::Luminance(i_specular_reflectance)*FresnelBlend_SamplesNum), FresnelBlend_SamplesNum-1);
 
   m_diffuse_probability = FresnelBlend_DiffuseProbs[diffuse_index][specular_index];
   m_specular_probability = 1.0-m_diffuse_probability;

@@ -285,6 +285,10 @@
 						>
 					</File>
 					<File
+						RelativePath=".\MainTests\Raytracer\Core\Color.test.h"
+						>
+					</File>
+					<File
 						RelativePath=".\MainTests\Raytracer\Core\CoreUtils.test.h"
 						>
 					</File>
@@ -338,6 +342,10 @@
 					</File>
 					<File
 						RelativePath=".\MainTests\Raytracer\Core\SpectrumCoef.test.h"
+						>
+					</File>
+					<File
+						RelativePath=".\MainTests\Raytracer\Core\SpectrumRoutines.test.h"
 						>
 					</File>
 					<File
@@ -664,6 +672,14 @@
 			</File>
 			<File
 				RelativePath=".\Camera.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Color.Serialization.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Color.test.cpp"
 				>
 			</File>
 			<File
@@ -1008,6 +1024,10 @@
 			</File>
 			<File
 				RelativePath=".\SpectrumCoef.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\SpectrumRoutines.test.cpp"
 				>
 			</File>
 			<File
@@ -1498,6 +1518,10 @@
 				<Filter
 					Name="Core"
 					>
+					<File
+						RelativePath=".\SerializationTests\Raytracer\Core\Color.Serialization.test.h"
+						>
+					</File>
 					<File
 						RelativePath=".\SerializationTests\Raytracer\Core\MIPMap.Serialization.test.h"
 						>

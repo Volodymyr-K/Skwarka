@@ -1,5 +1,6 @@
 #include "BSDF.h"
 #include "Sample.h"
+#include "SpectrumRoutines.h"
 #include <Math/ThreadSafeRandom.h>
 #include <Math/SamplingRoutines.h>
 #include <vector>
@@ -83,7 +84,7 @@ SpectrumCoef_d BSDF::_SampleSpecularOnly(const Vector3D_d &i_incident, Vector3D_
 
       bsdfs[num_matched] = m_BxDFs[i]->Sample(incident_local, exitants[num_matched], i_sample, pdfs[num_matched]);
       indices[num_matched] = i;
-      luminances[num_matched] = bsdfs[num_matched].Luminance();
+      luminances[num_matched] = SpectrumRoutines::Luminance(bsdfs[num_matched]);
       luminance_sum += luminances[num_matched];
 
       ++num_matched;

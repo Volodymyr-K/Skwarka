@@ -177,24 +177,6 @@ class SpectrumTestSuite : public CxxTest::TestSuite
       TS_ASSERT(non_black.IsBlack()==false);
       }
 
-    void test_Spectrum_XYZ()
-      {
-      Spectrum_d s(1.0,2.0,3.0);
-      double xyz[3];
-      s.XYZ(xyz);
-      TS_ASSERT(xyz[0]>=0.0 && xyz[1]>=0.0 && xyz[2]>=0.0);
-      }
-
-    void test_Spectrum_Luminance()
-      {
-      Spectrum_d s(1.0,2.0,3.0);
-      double xyz[3];
-      s.XYZ(xyz);
-
-      double luminance = s.Luminance();
-      TS_ASSERT_EQUALS(luminance, xyz[1]);
-      }
-
     void test_Spectrum_OutputStream()
       {
       Spectrum_d s1(1.1,-2.2,3.0);

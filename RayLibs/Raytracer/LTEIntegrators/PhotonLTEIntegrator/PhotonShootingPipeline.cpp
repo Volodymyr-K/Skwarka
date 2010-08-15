@@ -4,6 +4,7 @@
 #include <Math/SamplingRoutines.h>
 #include <Math/ThreadSafeRandom.h>
 #include <Raytracer/Core/CoreUtils.h>
+#include <Raytracer/Core/SpectrumRoutines.h>
 #include <tbb/pipeline.h>
 
 ///////////////////////////////////////// PhotonsInputFilter //////////////////////////////////////////////
@@ -210,7 +211,7 @@ void* PhotonLTEIntegrator::PhotonsShootingFilter::operator()(void* ip_chunk)
       // Possibly terminate photon path with Russian roulette.
       // We use the termination probability equal to the luminance change due to the scattering.
       // The effect is that the weight's luminance won't change if the pass is not terminated.
-      double continue_probability = std::min(1.0, weight_new.Luminance() / weight.Luminance());
+      double continue_probability = std::min(1.0, SpectrumRoutines::Luminance(weight_new) / SpectrumRoutines::Luminance(weight));
       if ((*p_rng)(1.0) > continue_probability)
         break;
 

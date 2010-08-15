@@ -4,6 +4,7 @@
 #include <Math/SamplingRoutines.h>
 #include <Math/ThreadSafeRandom.h>
 #include <Raytracer/Core/CoreUtils.h>
+#include <Raytracer/Core/SpectrumRoutines.h>
 #include <tbb/pipeline.h>
 
 // 0.87 cosine value corresponds to 30 degrees angle.
@@ -64,7 +65,7 @@ void PhotonLTEIntegrator::_GetLightsPowerCDF(const LightSources &i_light_sources
 
   for(size_t i=0;i<delta_lights_num;++i)
     {
-    o_lights_CDF[i] = i_light_sources.m_delta_light_sources[i]->Power().Luminance();
+    o_lights_CDF[i] = SpectrumRoutines::Luminance(i_light_sources.m_delta_light_sources[i]->Power());
     ASSERT(o_lights_CDF[i] >= 0.0);
     if (i>0)
       o_lights_CDF[i] += o_lights_CDF[i-1];
@@ -73,7 +74,7 @@ void PhotonLTEIntegrator::_GetLightsPowerCDF(const LightSources &i_light_sources
   for(size_t i=0;i<infinite_lights_num;++i)
     {
     size_t j=delta_lights_num+i;
-    o_lights_CDF[j] = i_light_sources.m_infinite_light_sources[i]->Power().Luminance();
+    o_lights_CDF[j] = SpectrumRoutines::Luminance(i_light_sources.m_infinite_light_sources[i]->Power());
     ASSERT(o_lights_CDF[j] >= 0.0);
     if (j>0)
       o_lights_CDF[j] += o_lights_CDF[j-1];
@@ -82,7 +83,7 @@ void PhotonLTEIntegrator::_GetLightsPowerCDF(const LightSources &i_light_sources
   for(size_t i=0;i<area_lights_num;++i)
     {
     size_t j=delta_lights_num+infinite_lights_num+i;
-    o_lights_CDF[j] = i_light_sources.m_area_light_sources[i]->Power().Luminance();
+    o_lights_CDF[j] = SpectrumRoutines::Luminance(i_light_sources.m_area_light_sources[i]->Power());
     ASSERT(o_lights_CDF[j] >= 0.0);
 
     if (j>0)

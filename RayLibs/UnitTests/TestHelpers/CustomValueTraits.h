@@ -6,6 +6,7 @@
 #include <Math/Vector2D.h>
 #include <Math/Vector3D.h>
 #include <Raytracer/Core/Spectrum.h>
+#include <Raytracer/Core/Color.h>
 #include <sstream>
 
 /*
@@ -107,7 +108,62 @@ namespace CxxTest
     private:
       char m_buffer[256];
     };
+
+  template<class T>
+  class ValueTraits< SpectrumCoef<T> >
+    {
+    public:
+      ValueTraits(const SpectrumCoef<T> &i_spectrum_coef)
+        {
+        std::stringstream m_sstream;
+        m_sstream << "( " << i_spectrum_coef << " )";
+        m_sstream.getline(m_buffer,256);
+        }
+      const char *asString() const
+        {
+        return m_buffer;
+        }
+    private:
+      char m_buffer[256];
+    };
+
+  template<class T>
+  class ValueTraits< RGBColor<T> >
+    {
+    public:
+      ValueTraits(const RGBColor<T> &i_color)
+        {
+        std::stringstream m_sstream;
+        m_sstream << "( " << i_color[0] << " " << i_color[1] << " " << i_color[2] << " )";
+        m_sstream.getline(m_buffer,256);
+        }
+      const char *asString() const
+        {
+        return m_buffer;
+        }
+    private:
+      char m_buffer[256];
+    };  
+  
+  template<class T>
+  class ValueTraits< XYZColor<T> >
+    {
+    public:
+      ValueTraits(const XYZColor<T> &i_color)
+        {
+        std::stringstream m_sstream;
+        m_sstream << "( " << i_color[0] << " " << i_color[1] << " " << i_color[2] << " )";
+        m_sstream.getline(m_buffer,256);
+        }
+      const char *asString() const
+        {
+        return m_buffer;
+        }
+    private:
+      char m_buffer[256];
+    };  
   };
+
 
 template<typename T>
 void CustomAssertDelta(const Point3D<T> &i_point1, const Point3D<T> &i_point2, T i_delta)
