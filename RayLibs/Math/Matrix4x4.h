@@ -1,5 +1,5 @@
-#ifndef MATRIX_H
-#define MATRIX_H
+#ifndef MATRIX_4X4_H
+#define MATRIX_4X4_H
 
 #include <Common/Common.h>
 #include <cstring>
@@ -88,10 +88,10 @@ Matrix4x4<T>::Matrix4x4(bool i_identity)
 
 template<typename T>
 Matrix4x4<T>::Matrix4x4(
-          T i_v00, T i_v01, T i_v02, T i_v03,
-          T i_v10, T i_v11, T i_v12, T i_v13,
-          T i_v20, T i_v21, T i_v22, T i_v23,
-          T i_v30, T i_v31, T i_v32, T i_v33)
+                        T i_v00, T i_v01, T i_v02, T i_v03,
+                        T i_v10, T i_v11, T i_v12, T i_v13,
+                        T i_v20, T i_v21, T i_v22, T i_v23,
+                        T i_v30, T i_v31, T i_v32, T i_v33)
   {
   m_values[0][0]=i_v00;m_values[0][1]=i_v01;m_values[0][2]=i_v02;m_values[0][3]=i_v03;
   m_values[1][0]=i_v10;m_values[1][1]=i_v11;m_values[1][2]=i_v12;m_values[1][3]=i_v13;
@@ -330,4 +330,4 @@ void serialize(Archive &i_ar, Matrix4x4<T> &i_matrix, const unsigned int i_versi
 BOOST_CLASS_IMPLEMENTATION(Matrix4x4_f, boost::serialization::object_serializable)
 BOOST_CLASS_IMPLEMENTATION(Matrix4x4_d, boost::serialization::object_serializable)
 
-#endif // MATRIX_H
+#endif // MATRIX_4X4_H

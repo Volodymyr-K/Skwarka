@@ -39,8 +39,6 @@ template<typename T>
 bool IsNaN(T i_value)
   {
   // The generic implementation always returns false.
-  
-  ASSERT(0 && "IsNaN() is not implemented for this type.");
   return false;
   }
 

@@ -199,7 +199,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Matrix.h"
+				RelativePath=".\Matrix3x3.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Matrix4x4.h"
 				>
 			</File>
 			<File

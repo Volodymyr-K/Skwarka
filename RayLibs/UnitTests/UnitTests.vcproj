@@ -218,7 +218,11 @@
 					>
 				</File>
 				<File
-					RelativePath=".\MainTests\Math\Matrix.test.h"
+					RelativePath=".\MainTests\Math\Matrix3x3.test.h"
+					>
+				</File>
+				<File
+					RelativePath=".\MainTests\Math\Matrix4x4.test.h"
 					>
 				</File>
 				<File
@@ -795,11 +799,19 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Matrix.Serialization.test.cpp"
+				RelativePath=".\Matrix3x3.Serialization.test.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\Matrix.test.cpp"
+				RelativePath=".\Matrix3x3.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Matrix4x4.Serialization.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Matrix4x4.test.cpp"
 				>
 			</File>
 			<File
@@ -1420,7 +1432,11 @@
 					>
 				</File>
 				<File
-					RelativePath=".\SerializationTests\Math\Matrix.Serialization.test.h"
+					RelativePath=".\SerializationTests\Math\Matrix3x3.Serialization.test.h"
+					>
+				</File>
+				<File
+					RelativePath=".\SerializationTests\Math\Matrix4x4.Serialization.test.h"
 					>
 				</File>
 				<File

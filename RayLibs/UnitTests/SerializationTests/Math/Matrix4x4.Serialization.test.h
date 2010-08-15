@@ -1,9 +1,9 @@
-#ifndef MATRIX_SERIALIZATION_TEST_H
-#define MATRIX_SERIALIZATION_TEST_H
+#ifndef MATRIX_4X4_SERIALIZATION_TEST_H
+#define MATRIX_4X4_SERIALIZATION_TEST_H
 
 #include <cxxtest/TestSuite.h>
 #include <UnitTests/TestHelpers/CustomValueTraits.h>
-#include <Math/Matrix.h>
+#include <Math/Matrix4x4.h>
 #include <boost/archive/binary_iarchive.hpp>
 #include <boost/archive/binary_oarchive.hpp>
 
@@ -13,7 +13,7 @@
 typedef boost::iostreams::basic_array_sink<char> SinkDevice;
 typedef boost::iostreams::basic_array_source<char> SourceDevice;
 
-class MatrixSerializationTestSuite : public CxxTest::TestSuite
+class Matrix4x4SerializationTestSuite : public CxxTest::TestSuite
   { 
   public:
 
@@ -43,7 +43,7 @@ class MatrixSerializationTestSuite : public CxxTest::TestSuite
         for(size_t j=0;j<4;++j)
           if (matrix1.m_values[i][j] != matrix2.m_values[i][j])
             {
-            TS_FAIL("Matrix serialization test failed.");
+            TS_FAIL("Matrix4x4 serialization test failed.");
             return;
             }
       }
@@ -53,4 +53,4 @@ class MatrixSerializationTestSuite : public CxxTest::TestSuite
     char m_data[m_buffer_size];
   };
 
-#endif // MATRIX_SERIALIZATION_TEST_H
+#endif // MATRIX_4X4_SERIALIZATION_TEST_H

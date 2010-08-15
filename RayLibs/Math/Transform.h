@@ -2,7 +2,7 @@
 #define TRANSFORM_H
 
 #include <Common/Common.h>
-#include "Matrix.h"
+#include "Matrix4x4.h"
 #include "Point3D.h"
 #include "Vector3D.h"
 #include "Ray.h"
@@ -85,7 +85,7 @@ class Transform
     * Serializes Transform to/from the specified Archive. This method is used by the boost serialization framework.
     */
     template<typename Archive>
-    void serialize(Archive & ar, const unsigned int i_version);
+    void serialize(Archive &i_ar, const unsigned int i_version);
 
   private:
     Matrix4x4_d m_matrix, m_inverted_matrix;

@@ -1,12 +1,12 @@
-#ifndef MATRIX_TEST_H
-#define MATRIX_TEST_H
+#ifndef MATRIX_4X4_TEST_H
+#define MATRIX_4X4_TEST_H
 
 #include <cxxtest/TestSuite.h>
 #include <UnitTests/TestHelpers/CustomValueTraits.h>
-#include <Math/Matrix.h>
+#include <Math/Matrix4x4.h>
 #include <cstring>
 
-class MatrixTestSuite : public CxxTest::TestSuite
+class Matrix4x4TestSuite : public CxxTest::TestSuite
   {
   public:
     // Most of the tests from this suite operate with the same sample matrix, so it is initialized in the setUp() method once.
@@ -38,7 +38,7 @@ class MatrixTestSuite : public CxxTest::TestSuite
       // Nothing to clear.
       }
 
-    void test_Matrix_DefaultConstr()
+    void test_Matrix4x4_DefaultConstr()
       {
       Matrix4x4_d m;
       for(unsigned char i=0;i<4;++i)
@@ -46,7 +46,7 @@ class MatrixTestSuite : public CxxTest::TestSuite
           TS_ASSERT_EQUALS(m.m_values[i][j], 0.0);
       }
 
-    void test_Matrix_IdentityConstr()
+    void test_Matrix4x4_IdentityConstr()
       {
       Matrix4x4_d m(true);
       for(unsigned char i=0;i<4;++i)
@@ -54,7 +54,7 @@ class MatrixTestSuite : public CxxTest::TestSuite
           TS_ASSERT_EQUALS(m.m_values[i][j], (i==j ? 1.0 : 0.0));
       }
 
-    void test_Matrix_Add()
+    void test_Matrix4x4_Add()
       {
       Matrix4x4_d m_add=m_matrix1+m_matrix2;
       for(unsigned char i=0;i<4;++i)
@@ -62,7 +62,7 @@ class MatrixTestSuite : public CxxTest::TestSuite
           TS_ASSERT_EQUALS(m_add.m_values[i][j], m_elements[i][j]+m_elements2[i][j]);
       }
 
-    void test_Matrix_AddAssign()
+    void test_Matrix4x4_AddAssign()
       {
       Matrix4x4_d m_add=m_matrix1;
       m_add+=m_matrix2;
@@ -71,7 +71,7 @@ class MatrixTestSuite : public CxxTest::TestSuite
           TS_ASSERT_EQUALS(m_add.m_values[i][j], m_elements[i][j]+m_elements2[i][j]);
       }
 
-    void test_Matrix_Sub()
+    void test_Matrix4x4_Sub()
       {
       Matrix4x4_d m_sub=m_matrix1-m_matrix2;
       for(unsigned char i=0;i<4;++i)
@@ -79,7 +79,7 @@ class MatrixTestSuite : public CxxTest::TestSuite
           TS_ASSERT_EQUALS(m_sub.m_values[i][j], m_elements[i][j]-m_elements2[i][j]);
       }
 
-    void test_Matrix_SubAssign()
+    void test_Matrix4x4_SubAssign()
       {
       Matrix4x4_d m_sub=m_matrix1;
       m_sub-=m_matrix2;
@@ -88,7 +88,7 @@ class MatrixTestSuite : public CxxTest::TestSuite
           TS_ASSERT_EQUALS(m_sub.m_values[i][j], m_elements[i][j]-m_elements2[i][j]);
       }
     
-    void test_Matrix_ScalarMult()
+    void test_Matrix4x4_ScalarMult()
       {
       Matrix4x4_d m_mult=m_matrix1*1.5;
       for(unsigned char i=0;i<4;++i)
@@ -96,7 +96,7 @@ class MatrixTestSuite : public CxxTest::TestSuite
           TS_ASSERT_EQUALS(m_mult.m_values[i][j], m_elements[i][j]*1.5);
       }
 
-    void test_Matrix_ScalarMultAssign()
+    void test_Matrix4x4_ScalarMultAssign()
       {
       Matrix4x4_d m_mult=m_matrix1;
       m_mult*=1.5;
@@ -105,7 +105,7 @@ class MatrixTestSuite : public CxxTest::TestSuite
           TS_ASSERT_EQUALS(m_mult.m_values[i][j], m_elements[i][j]*1.5);
       }
 
-    void test_Matrix_ScalarPreMult()
+    void test_Matrix4x4_ScalarPreMult()
       {
       Matrix4x4_d m_mult=1.5*m_matrix1;
       for(unsigned char i=0;i<4;++i)
@@ -113,7 +113,7 @@ class MatrixTestSuite : public CxxTest::TestSuite
           TS_ASSERT_EQUALS(m_mult.m_values[i][j], m_elements[i][j]*1.5);
       }
 
-    void test_Matrix_PreMult()
+    void test_Matrix4x4_PreMult()
       {
       Matrix4x4_d m_mult=m_matrix1;
       m_mult.PreMultiply(m_matrix2);
@@ -126,7 +126,7 @@ class MatrixTestSuite : public CxxTest::TestSuite
           }
       }
 
-    void test_Matrix_PostMult()
+    void test_Matrix4x4_PostMult()
       {
       Matrix4x4_d m_mult=m_matrix1;
       m_mult.PostMultiply(m_matrix2);
@@ -139,7 +139,7 @@ class MatrixTestSuite : public CxxTest::TestSuite
           }
       }
 
-    void test_Matrix_OperatorMult()
+    void test_Matrix4x4_OperatorMult()
       {
       Matrix4x4_d m_mult=m_matrix1*m_matrix2;
       for(unsigned char i=0;i<4;++i)
@@ -151,7 +151,7 @@ class MatrixTestSuite : public CxxTest::TestSuite
           }
       }
 
-    void test_Matrix_Transposed()
+    void test_Matrix4x4_Transposed()
       {
       Matrix4x4_d m_trans=m_matrix1.Transposed();
       for(unsigned char i=0;i<4;++i)
@@ -159,7 +159,7 @@ class MatrixTestSuite : public CxxTest::TestSuite
           TS_ASSERT_EQUALS(m_trans.m_values[i][j], m_elements[j][i]);
       }
 
-    void test_Matrix_Inverted()
+    void test_Matrix4x4_Inverted()
       {
       Matrix4x4_d m_inv;
       bool not_singular=m_matrix1.Inverted(m_inv);
@@ -175,7 +175,7 @@ class MatrixTestSuite : public CxxTest::TestSuite
       }
 
     // Test for singular matrix inversion.
-    void test_Matrix_InvertedFail()
+    void test_Matrix4x4_InvertedFail()
       {
       Matrix4x4_d m_inv;
       bool not_singular=m_matrix2.Inverted(m_inv);
@@ -187,4 +187,4 @@ class MatrixTestSuite : public CxxTest::TestSuite
     Matrix4x4_d m_matrix1, m_matrix2;
   };
 
-#endif // MATRIX_TEST_H
+#endif // MATRIX_4X4_TEST_H

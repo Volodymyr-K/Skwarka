@@ -121,7 +121,7 @@ class AggregateVolumeRegionTestSuite : public CxxTest::TestSuite
 
     void test_AggregateVolumeRegion_Phase()
       {
-      size_t N=100;
+      size_t N=1000;
       for (size_t t=0;t<N;++t)
         {
         Point3D_d point(RandomDouble(10)-5, RandomDouble(10)-5, RandomDouble(10)-5);
@@ -130,7 +130,7 @@ class AggregateVolumeRegionTestSuite : public CxxTest::TestSuite
 
         double tmp = mp_aggregate->Phase(point,d1,d2);
         double correct = (m_bounds1.Inside(point) || m_bounds2.Inside(point)) ? 1.0/(4.0*M_PI) : 0.0;
-        TS_ASSERT_EQUALS(tmp, correct);
+        TS_ASSERT_DELTA(tmp, correct, (1e-10));
         }
       }
 
