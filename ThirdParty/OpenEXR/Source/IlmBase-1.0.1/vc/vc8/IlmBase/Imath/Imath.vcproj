@@ -126,7 +126,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="..\..\..\..\Iex;..\..\..\..\Half;..\..\..\..\Imath"
-				PreprocessorDefinitions="OPENEXR_DLL;WIN32;NDEBUG;_WINDOWS;_USRDLL;IMATH_EXPORTS"
+				PreprocessorDefinitions="OPENEXR_DLL;WIN32;NDEBUG;_WINDOWS;_USRDLL;IMATH_EXPORTS;_SECURE_SCL=0"
 				RuntimeLibrary="2"
 				EnableEnhancedInstructionSet="2"
 				ForceConformanceInForLoopScope="true"

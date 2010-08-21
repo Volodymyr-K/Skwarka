@@ -126,7 +126,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="..\..\..\..\IlmThread;..\..\..\..\Iex;..\..\..\..\config.windows"
-				PreprocessorDefinitions="OPENEXR_DLL;WIN32;NDEBUG;_WINDOWS;_USRDLL;ILMTHREAD_EXPORTS"
+				PreprocessorDefinitions="OPENEXR_DLL;WIN32;NDEBUG;_WINDOWS;_USRDLL;ILMTHREAD_EXPORTS;_SECURE_SCL=0"
 				RuntimeLibrary="2"
 				EnableEnhancedInstructionSet="2"
 				ForceConformanceInForLoopScope="true"

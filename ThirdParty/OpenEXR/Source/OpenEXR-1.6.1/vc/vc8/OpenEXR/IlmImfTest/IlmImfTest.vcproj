@@ -126,7 +126,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="..\..\..\..\IlmImfTest;..\..\..\..\config.windows;..\..\..\..\..\..\Deploy\include"
-				PreprocessorDefinitions="OPENEXR_DLL;WIN32;NDEBUG;_CONSOLE"
+				PreprocessorDefinitions="OPENEXR_DLL;WIN32;NDEBUG;_CONSOLE;_SECURE_SCL=0"
 				RuntimeLibrary="2"
 				EnableEnhancedInstructionSet="2"
 				ForceConformanceInForLoopScope="true"

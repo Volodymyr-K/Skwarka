@@ -126,7 +126,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="..\..\..\..\Iex;..\..\..\..\config.windows"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;IEX_EXPORTS"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;IEX_EXPORTS;_SECURE_SCL=0"
 				BasicRuntimeChecks="0"
 				RuntimeLibrary="2"
 				EnableEnhancedInstructionSet="2"
