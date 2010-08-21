@@ -12,33 +12,36 @@
 class OpenEXRRgbaImageSourceTestSuite : public CxxTest::TestSuite
   {
   public:
-    void test_OpenEXRRgbaImageSource_InitializedFromVector()
+    void test_OpenEXRRgbaImageSource()
       {
       size_t width = 123, height=234;
-      std::vector<std::vector<Imf::Rgba> > values(height, std::vector<Imf::Rgba>(width));
-      double scale = 1.0/255.0;
+      std::vector<Imf::Rgba> values(width*height);
+      double scale = 2.0;
 
       for(size_t i=0;i<height;++i)
         for(size_t j=0;j<width;++j)
           {
-          values[i][j].r = (float)RandomDouble(1000);
-          values[i][j].g = (float)RandomDouble(1000);
-          values[i][j].b = (float)RandomDouble(1000);
-          values[i][j].a = 0.f;
+          values[i*width+j].r = (float)RandomDouble(1000);
+          values[i*width+j].g = (float)RandomDouble(1000);
+          values[i*width+j].b = (float)RandomDouble(1000);
+          values[i*width+j].a = 0.f;
           }
 
-      intrusive_ptr<ImageSource<Spectrum_f> > p_image_source( new OpenEXRRgbaImageSource<Spectrum_f>(values, scale) );
+      intrusive_ptr<ImageSource<Spectrum_d> > p_image_source( new OpenEXRRgbaImageSource<Spectrum_d>(values, width, height, global_sRGB_E_ColorSystem, scale) );
 
       TS_ASSERT_EQUALS(p_image_source->GetHeight(), height);
       TS_ASSERT_EQUALS(p_image_source->GetWidth(), width);
 
-      std::vector<std::vector<Spectrum_f> > image;
+      std::vector<std::vector<Spectrum_d> > image;
       p_image_source->GetImage(image);
       for(size_t i=0;i<height;++i)
         for(size_t j=0;j<width;++j)
           {
-          Spectrum_f tmp(values[i][j].r,values[i][j].g,values[i][j].b);
-          if (image[i][j] != tmp*scale)
+          RGBColor_d rgb(values[i*width+j].r,values[i*width+j].g,values[i*width+j].b);
+          XYZColor_d xyz = global_sRGB_E_ColorSystem.RGB_To_XYZ(rgb);
+          Spectrum_d tmp = SpectrumRoutines::XYZToSpectrum(xyz);
+
+          if (InRange(image[i][j] - tmp*scale, -(1e-10), (1e-10))==false)
             {
             TS_FAIL("OpenEXRRgbaImageSource test failed.");
             return;
@@ -46,40 +49,6 @@ class OpenEXRRgbaImageSourceTestSuite : public CxxTest::TestSuite
           }
       }
 
-    void test_OpenEXRRgbaImageSource_InitializedFromOpenEXRArray2D()
-      {
-      size_t width = 123, height=234;
-
-      Imf::Array2D<Imf::Rgba> values(height, width);
-      double scale = 1.0/255.0;
-
-      for(size_t i=0;i<height;++i)
-        for(size_t j=0;j<width;++j)
-          {
-          values[i][j].r = (float)RandomDouble(1000);
-          values[i][j].g = (float)RandomDouble(1000);
-          values[i][j].b = (float)RandomDouble(1000);
-          values[i][j].a = 0.f;
-          }
-
-        intrusive_ptr<ImageSource<Spectrum_f> > p_image_source( new OpenEXRRgbaImageSource<Spectrum_f>(values, width, height, scale) );
-
-        TS_ASSERT_EQUALS(p_image_source->GetHeight(), height);
-        TS_ASSERT_EQUALS(p_image_source->GetWidth(), width);
-
-        std::vector<std::vector<Spectrum_f> > image;
-        p_image_source->GetImage(image);
-        for(size_t i=0;i<height;++i)
-          for(size_t j=0;j<width;++j)
-            {
-            Spectrum_f tmp(values[i][j].r,values[i][j].g,values[i][j].b);
-            if (image[i][j] != tmp*scale)
-              {
-              TS_FAIL("OpenEXRRgbaImageSource test failed.");
-              return;
-              }
-            }
-      }
   };
 
 #endif // OPENEXR_RGBA_SPECTRUM_IMAGE_SOURCE_TEST_H

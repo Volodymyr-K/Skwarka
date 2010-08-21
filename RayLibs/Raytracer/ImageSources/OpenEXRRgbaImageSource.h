@@ -4,33 +4,46 @@
 #include <Common/Common.h>
 #include <Raytracer/Core/ImageSource.h>
 #include <Raytracer/Core/Spectrum.h>
+#include <Raytracer/Core/SpectrumRoutines.h>
+#include <Raytracer/Core/Color.h>
+#include <ImfRgbaFile.h>
 #include <ImfRgba.h>
 #include <ImfArray.h>
+#include <ImfChromaticitiesAttribute.h>
+#include <string>
+#include <exception>
 
 /**
 * ImageSource implementation that converts Open EXR Rgba image to 2D array of the specified type (see template parameter of the class).
+* The class is also responsible for converting the RGB values from the specified RGB color space.
+* Note that OpenEXR does not use gamma correction so there's no need to de-gamma the RGB values.
 * In Rgba color from the Open EXR library each color component is defined by the "half" type which is two bytes long.
-* The template parameter is the target type of the conversion. The type should support constructor with (float, float, float) parameters.
+* The template parameter is the target type of the conversion. The following target types are supported: Spectrum_f, Spectrum_d, SpectrumCoef_f, SpectrumCoef_d.
 */
 template <typename T>
 class OpenEXRRgbaImageSource: public ImageSource<T>
   {
   public:
     /**
-    * Creates OpenEXRRgbaImageSource with the specified Open EXR Rgba image and the scale factor.
+    * Creates OpenEXRRgbaImageSource with the specified Open EXR Rgba image, RGB color space and the scale factor.
     * The image values will be multiplied by the scale factor during conversion to the target type.
+    * @param i_values Vector defining the 2D array in row-major order. Should have exactly i_width*i_height elements;
+    * @param i_width Width of the input 2D array.
+    * @param i_height Height of the input 2D array.
+    * @param i_color_system RGB color system in which the colors in the input arrays are defined.
+    * @param i_scale Scale factor for the resulting image values.
     */
-    OpenEXRRgbaImageSource(const std::vector<std::vector<Imf::Rgba> > &i_values, double i_scale = 1.0);
+    OpenEXRRgbaImageSource(const std::vector<Imf::Rgba> &i_values, size_t i_width, size_t i_height, const ColorSystem &i_color_system, double i_scale = 1.0);
 
     /**
-    * Creates OpenEXRRgbaImageSource with the specified Open EXR array of Rgba values and the scale factor.
+    * Creates OpenEXRRgbaImageSource from the specified OpenEXR file and with the specified scale factor.
+    * The RGB color space is read from the file's attributes. If it is not set in the attributes the default one is used (as per the OpenEXR's documentation it matches Rec. ITU-R BT.709-3)
     * The image values will be multiplied by the scale factor during conversion to the target type.
     */
-    OpenEXRRgbaImageSource(const Imf::Array2D<Imf::Rgba> &i_values, size_t i_width, size_t i_height, double i_scale = 1.0);
+    OpenEXRRgbaImageSource(std::string i_filename, double i_scale = 1.0);
 
     /**
     * Gets 2D array of values (image) of the target type.
-    * The method should always return the same image for the same class instance.
     */
     void GetImage(std::vector<std::vector<T> > &o_image) const;
 
@@ -45,6 +58,14 @@ class OpenEXRRgbaImageSource: public ImageSource<T>
     size_t GetWidth() const;
 
   private:
+    /**
+    * Helper private method that converts XYZColor to the target type.
+    * Specializations for Spectrum_f, Spectrum_d, SpectrumCoef_f and SpectrumCoef_d are provided.
+    * The generic template implementation is not provided and thus the class won't compile with other target types.
+    */
+    T _XYZ_To_T(const XYZColor_d &i_color) const;
+
+  private:
     // Needed for the boost serialization framework.  
     friend class boost::serialization::access;
 
@@ -55,7 +76,11 @@ class OpenEXRRgbaImageSource: public ImageSource<T>
     void serialize(Archive &i_ar, const unsigned int i_version);
 
   private:
-    std::vector<std::vector<Imf::Rgba> > m_values;
+    std::vector<Imf::Rgba> m_values;
+    size_t m_width, m_height;
+
+    ColorSystem m_color_system;
+
     double m_scale;
   };
 
@@ -63,53 +88,108 @@ class OpenEXRRgbaImageSource: public ImageSource<T>
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 template <typename T>
-OpenEXRRgbaImageSource<T>::OpenEXRRgbaImageSource(const std::vector<std::vector<Imf::Rgba> > &i_values, double i_scale): m_values(i_values), m_scale(i_scale)
+OpenEXRRgbaImageSource<T>::OpenEXRRgbaImageSource(const std::vector<Imf::Rgba> &i_values, size_t i_width, size_t i_height, const ColorSystem &i_color_system, double i_scale):
+m_values(i_values), m_width(i_width), m_height(i_height), m_color_system(i_color_system), m_scale(i_scale)
   {
-  for(size_t i=1;i<m_values.size();++i)
-    ASSERT(m_values[i].size()==m_values[0].size());
+  ASSERT(m_values.size()==m_width*m_height);
+
+  if (m_values.empty())
+    m_width=m_height=0;
   }
 
 template <typename T>
-OpenEXRRgbaImageSource<T>::OpenEXRRgbaImageSource(const Imf::Array2D<Imf::Rgba> &i_values, size_t i_width, size_t i_height, double i_scale):
-m_values(i_height, std::vector<Imf::Rgba>(i_width)), m_scale(i_scale)
+OpenEXRRgbaImageSource<T>::OpenEXRRgbaImageSource(std::string i_filename, double i_scale): m_scale(i_scale)
   {
-  for(size_t i=0;i<i_height;++i)
+  try
     {
-    std::vector<Imf::Rgba> &dest_row = m_values[i];
+    Imf::RgbaInputFile file(i_filename.c_str());
+    Imath::Box2i dw = file.dataWindow();
+    m_width  = dw.max.x - dw.min.x + 1;
+    m_height = dw.max.y - dw.min.y + 1;
+    m_values.resize(m_width*m_height);
 
-    for(size_t j=0;j<i_width;++j)
-      dest_row[j] = i_values[(long)i][(long)j];
+    file.setFrameBuffer(&m_values[0] - dw.min.x - dw.min.y * m_width, 1, m_width);
+    file.readPixels(dw.min.y, dw.max.y);
+
+    const Imf::ChromaticitiesAttribute *p_chromaticities = file.header().findTypedAttribute<Imf::ChromaticitiesAttribute>("chromaticities");
+    if (p_chromaticities)
+      {
+      const Imf::Chromaticities &chromaticities = p_chromaticities->value();
+      Point2D_d red(chromaticities.red.x, chromaticities.red.y);
+      Point2D_d green(chromaticities.green.x, chromaticities.green.y);
+      Point2D_d blue(chromaticities.blue.x, chromaticities.blue.y);
+      Point2D_d white(chromaticities.white.x, chromaticities.white.y);
+
+      m_color_system = ColorSystem(red, green, blue, white, 1.0);
+      }
+    else
+      {
+      // Set the default color system (as per the OpenEXR's documentation it matches Rec. ITU-R BT.709-3).
+      m_color_system = ColorSystem(Point2D_d(0.64,0.33), Point2D_d(0.30,0.60), Point2D_d(0.15,0.06), Point2D_d(0.3127,0.3290), 1.0);
+      }
+    }
+  catch (const std::exception &)
+    {
+    m_width=m_height=0;
+    m_values.clear();
     }
   }
 
 template <typename T>
 void OpenEXRRgbaImageSource<T>::GetImage(std::vector<std::vector<T> > &o_image) const
   {
-  o_image.resize(m_values.size());
+  o_image.assign(m_height, std::vector<T>(m_width));
 
-  for(size_t i=0;i<m_values.size();++i)
+  // Just copy the values and multiply them by the scale factor.
+  for(size_t i=0;i<m_height;++i)
     {
-    const std::vector<Imf::Rgba> &source_row = m_values[i];
-
     std::vector<T> &dest_row = o_image[i];
-    dest_row.resize(m_values[i].size());
+    size_t offset = i*m_width;
 
-    // Just copy the values and multiply them by the scale factor.
-    for(size_t j=0;j<m_values[i].size();++j)
-      dest_row[j] = T(static_cast<float>(source_row[j].r), static_cast<float>(source_row[j].g), static_cast<float>(source_row[j].b)) * m_scale;
+    for(size_t j=0;j<m_width;++j)
+      {
+      RGBColor_d rgb(static_cast<float>(m_values[offset+j].r), static_cast<float>(m_values[offset+j].g), static_cast<float>(m_values[offset+j].b));
+
+      T ret = _XYZ_To_T(m_color_system.RGB_To_XYZ(rgb));
+      dest_row[j] = ret * m_scale;
+      }
     }
   }
 
 template <typename T>
 size_t OpenEXRRgbaImageSource<T>::GetHeight() const
   {
-  return m_values.size();
+  return m_height;
   }
 
 template <typename T>
 size_t OpenEXRRgbaImageSource<T>::GetWidth() const
   {
-  return m_values.empty() ? 0 : m_values[0].size();
+  return m_width;
+  }
+
+template<>
+inline Spectrum_f OpenEXRRgbaImageSource<Spectrum_f>::_XYZ_To_T(const XYZColor_d &i_color) const
+  {
+  return Convert<float>(SpectrumRoutines::XYZToSpectrum(i_color));
+  }
+
+template<>
+inline Spectrum_d OpenEXRRgbaImageSource<Spectrum_d>::_XYZ_To_T(const XYZColor_d &i_color) const
+  {
+  return SpectrumRoutines::XYZToSpectrum(i_color);
+  }
+
+template<>
+inline SpectrumCoef_f OpenEXRRgbaImageSource<SpectrumCoef_f>::_XYZ_To_T(const XYZColor_d &i_color) const
+  {
+  return Convert<float>(SpectrumRoutines::XYZToSpectrumCoef(i_color));
+  }
+
+template<>
+inline SpectrumCoef_d OpenEXRRgbaImageSource<SpectrumCoef_d>::_XYZ_To_T(const XYZColor_d &i_color) const
+  {
+  return SpectrumRoutines::XYZToSpectrumCoef(i_color);
   }
 
 /**
@@ -119,8 +199,8 @@ template<typename T, class Archive>
 void load_construct_data(Archive &i_ar, OpenEXRRgbaImageSource<T> *ip_image_source, const unsigned int i_version)
   {
   // Construct with some dummy data, it will be serialized later in serialize() method.
-  std::vector<std::vector<Imf::Rgba> > image(1, std::vector<Imf::Rgba>(1));
-  ::new(ip_image_source)OpenEXRRgbaImageSource<T>(image, 1.0);
+  std::vector<Imf::Rgba> image(1);
+  ::new(ip_image_source)OpenEXRRgbaImageSource<T>(image, 1, 1, global_sRGB_E_ColorSystem, 1.0);
   }
 
 /**
@@ -132,6 +212,9 @@ void OpenEXRRgbaImageSource<T>::serialize(Archive &i_ar, const unsigned int i_ve
   {
   i_ar & boost::serialization::base_object<ImageSource<T> >(*this);
   i_ar & m_values;
+  i_ar & m_width;
+  i_ar & m_height;
+  i_ar & m_color_system;
   i_ar & m_scale;
   }
 

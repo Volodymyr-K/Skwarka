@@ -81,6 +81,38 @@ class ColorSerializationTestSuite : public CxxTest::TestSuite
       if (IsNaN(cf2[0])==false) TS_FAIL("NaN value serialization test failed.");
       }
 
+    void test_ColorSystem_Serialization()
+      {
+      ColorSystem cs1(Point2D_d(0.64, 0.33), Point2D_d(0.3, 0.6), Point2D_d(0.15, 0.06), Point2D_d(0.3127, 0.3290), 2.2);
+        {
+        boost::iostreams::stream_buffer<SinkDevice> buffer(m_data, m_buffer_size);
+        boost::archive::binary_oarchive output_archive(buffer);
+        output_archive << cs1;
+        } // archive and stream closed when destructors are called
+
+      ColorSystem cs2;
+        {
+        boost::iostreams::stream_buffer<SourceDevice> buffer(m_data, m_buffer_size);
+        boost::archive::binary_iarchive input_archive(buffer);
+        input_archive >> cs2;
+        } // archive and stream closed when destructors are called
+
+      RGBColor_d rgb(0.1,0.2,0.3);
+      XYZColor_d xyz1 = cs1.RGB_To_XYZ(rgb);
+      XYZColor_d xyz2 = cs2.RGB_To_XYZ(rgb);
+
+      TS_ASSERT_EQUALS(xyz1[0], xyz2[0]);
+      TS_ASSERT_EQUALS(xyz1[1], xyz2[1]);
+      TS_ASSERT_EQUALS(xyz1[2], xyz2[2]);
+
+      RGBColor_d rgb1 = cs1.GammaEncode(rgb);
+      RGBColor_d rgb2 = cs1.GammaEncode(rgb);
+
+      TS_ASSERT_EQUALS(rgb1[0], rgb2[0]);
+      TS_ASSERT_EQUALS(rgb1[1], rgb2[1]);
+      TS_ASSERT_EQUALS(rgb1[2], rgb2[2]);
+      }
+
   private:
     const static size_t m_buffer_size=16384;
     char m_data[m_buffer_size];

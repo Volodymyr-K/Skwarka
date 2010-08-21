@@ -4,6 +4,7 @@
 #include <Common/Common.h>
 #include <Math/Matrix3x3.h>
 #include <Math/Point2D.h>
+#include <Math/MathRoutines.h>
 
 /**
 * Represents RGB color in some RGB color space.
@@ -18,6 +19,11 @@ struct RGBColor
 
   T operator[](unsigned char i_index) const;
   T &operator[](unsigned char i_index);
+
+  /**
+  * Clamps the color components to the specified range.
+  */
+  void Clamp(T i_low, T i_high);
 
   T m_rgb[3];
   };
@@ -36,8 +42,25 @@ struct XYZColor
   T operator[](unsigned char i_index) const;
   T &operator[](unsigned char i_index);
 
+  /**
+  * Clamps the color components to the specified range.
+  */
+  void Clamp(T i_low, T i_high);
+
   T m_xyz[3];
   };
+
+/**
+* Returns true if all color components are in the specified range (inclusive).
+*/
+template<typename T>
+bool InRange(const RGBColor<T> &i_color, T i_low, T i_high);
+
+/**
+* Returns true if all color components are in the specified range (inclusive).
+*/
+template<typename T>
+bool InRange(const XYZColor<T> &i_color, T i_low, T i_high);
 
 typedef RGBColor<float> RGBColor_f;
 typedef RGBColor<double> RGBColor_d;
@@ -47,15 +70,21 @@ typedef XYZColor<double> XYZColor_d;
 
 /**
 * Represents color system defined by the CIE coordinates of its three primary colors and the coordinates of the white point.
-* The class provides methods to convert between RGB and XYZ color spaces.
+* The class provides methods to convert between RGB and XYZ color spaces and methods for gamma corrections of RGB colors.
 */
 class ColorSystem
   {
   public:
     /**
-    * Creates color system with the specified CIE coordinates of its three primary colors and the coordinates of the white point.
+    * Creates color system that corresponds to the CIE XYZ space with gamma equal to 1.0.
+    * This basically corresponds to the identity transformation between XYZ and RGB spaces.
     */
-    ColorSystem(Point2D_d i_red, Point2D_d i_green, Point2D_d i_blue, Point2D_d i_white);
+    ColorSystem();
+
+    /**
+    * Creates color system with the specified CIE coordinates of its three primary colors, coordinates of the white point and gamma value.
+    */
+    ColorSystem(Point2D_d i_red, Point2D_d i_green, Point2D_d i_blue, Point2D_d i_whitel, double i_gamma);
 
     Point2D_d GetRedPrimaryPoint() const;
 
@@ -64,6 +93,8 @@ class ColorSystem
     Point2D_d GetBluePrimaryPoint() const;
 
     Point2D_d GetWhitePoint() const;
+
+    double GetGamma() const;
 
     /**
     * Converts XYZ color to the RGB color space and (optionally) constrain the converted point to lie within the boundaries of the
@@ -79,16 +110,48 @@ class ColorSystem
     template<typename T>
     XYZColor<T> RGB_To_XYZ(const RGBColor<T> &i_rgb_color) const;
 
+    /**
+    * Gamma correction of the specified RGB color. Each color component is raised to the power of 1/gamma.
+    * @param i_rgb_color RGB color to be gamma corrected. All color elements must be in [0;1] range.
+    * @return Resulting gamma corrected color. All color elements will be in [0;1] range.
+    */
+    template<typename T>
+    RGBColor<T> GammaEncode(const RGBColor<T> &i_rgb_color) const;
+
+    /**
+    * Inverse gamma correction of the specified RGB color. Each color component is raised to the power of gamma.
+    * @param i_rgb_color RGB color to be gamma corrected. All color elements must be in [0;1] range.
+    * @return Resulting de-gamma corrected color. All color elements will be in [0;1] range.
+    */
+    template<typename T>
+    RGBColor<T> GammaDecode(const RGBColor<T> &i_rgb_color) const;
+
   private:
     double _Dot(const double i_a[3], const double i_b[3]) const;
 
   private:
+    // Needed for the boost serialization framework.
+    friend class boost::serialization::access;
+
+    /**
+    * Serializes ColorSystem to/from the specified Archive. This method is used by the boost serialization framework.
+    */
+    template<typename Archive>
+    void serialize(Archive &i_ar, const unsigned int i_version);
+
+  private:
     Point2D_d m_red, m_green, m_blue, m_white;
     Matrix3x3_d m_XYZ_To_RGB, m_RGB_To_XYZ;
+    double m_gamma, m_inv_gamma;
   };
 
-// Global instance of the ColorSystem that corresponds to the sRGB color space.
-extern const ColorSystem global_sRGB_ColorSystem;
+// Global instance of the ColorSystem that corresponds to the sRGB color space with D65 white point.
+// This color system is suitable to convert to/from the sRGB system for illuminants (see Spectrum class).
+extern const ColorSystem global_sRGB_D65_ColorSystem;
+
+// Global instance of the ColorSystem that corresponds to the sRGB color space with E white point.
+// This color system can be used to convert to/from the sRGB system for reflections (see SpectrumCoef class).
+extern const ColorSystem global_sRGB_E_ColorSystem;
 
 /////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -125,6 +188,24 @@ T &RGBColor<T>::operator[](unsigned char i_index)
   {
   ASSERT(i_index>=0 && i_index<3);
   return m_rgb[i_index];
+  }
+
+template<typename T>
+void RGBColor<T>::Clamp(T i_low, T i_high)
+  {
+  ASSERT(i_low<=i_high);
+  m_rgb[0]=MathRoutines::Clamp(m_rgb[0], i_low, i_high);
+  m_rgb[1]=MathRoutines::Clamp(m_rgb[1], i_low, i_high);
+  m_rgb[2]=MathRoutines::Clamp(m_rgb[2], i_low, i_high);
+  }
+
+template<typename T>
+bool InRange(const RGBColor<T> &i_color, T i_low, T i_high)
+  {
+  return
+    i_color[0]>=i_low && i_color[0]<=i_high &&
+    i_color[1]>=i_low && i_color[1]<=i_high &&
+    i_color[2]>=i_low && i_color[2]<=i_high;
   }
 
 /**
@@ -176,6 +257,24 @@ T &XYZColor<T>::operator[](unsigned char i_index)
   return m_xyz[i_index];
   }
 
+template<typename T>
+void XYZColor<T>::Clamp(T i_low, T i_high)
+  {
+  ASSERT(i_low<=i_high);
+  m_xyz[0]=MathRoutines::Clamp(m_xyz[0], i_low, i_high);
+  m_xyz[1]=MathRoutines::Clamp(m_xyz[1], i_low, i_high);
+  m_xyz[2]=MathRoutines::Clamp(m_xyz[2], i_low, i_high);
+  }
+
+template<typename T>
+bool InRange(const XYZColor<T> &i_color, T i_low, T i_high)
+  {
+  return
+    i_color[0]>=i_low && i_color[0]<=i_high &&
+    i_color[1]>=i_low && i_color[1]<=i_high &&
+    i_color[2]>=i_low && i_color[2]<=i_high;
+  }
+
 /**
 * Serializes XYZColor to/from the specified Archive. This method is used by the boost serialization framework.
 */
@@ -194,9 +293,17 @@ BOOST_CLASS_IMPLEMENTATION(XYZColor_d, boost::serialization::object_serializable
 
 ///////////////////////////////////////////// ColorSystem //////////////////////////////////////////////////
 
-inline ColorSystem::ColorSystem(Point2D_d i_red, Point2D_d i_green, Point2D_d i_blue, Point2D_d i_white):
-m_red(i_red), m_green(i_green), m_blue(i_blue), m_white(i_white)
+inline ColorSystem::ColorSystem():
+m_red(1.0,0.0), m_green(0.0,1.0), m_blue(0.0,0.0), m_white(1.0/3.0,1.0/3.0), m_gamma(1.0), m_inv_gamma(1.0), m_XYZ_To_RGB(true), m_RGB_To_XYZ(true)
   {
+  }
+
+inline ColorSystem::ColorSystem(Point2D_d i_red, Point2D_d i_green, Point2D_d i_blue, Point2D_d i_white, double i_gamma):
+m_red(i_red), m_green(i_green), m_blue(i_blue), m_white(i_white), m_gamma(i_gamma)
+  {
+  ASSERT(i_gamma>0.0);
+  m_inv_gamma = 1.0/i_gamma;
+
   /// The math and implementation was taken from the luxrender.
   double red[3] = {i_red[0] / i_red[1], 1.0, (1.0 - i_red[0] - i_red[1]) / i_red[1]};
   double green[3] = {i_green[0] / i_green[1], 1.0, (1.0 - i_green[0] - i_green[1]) / i_green[1]};
@@ -258,6 +365,11 @@ inline Point2D_d ColorSystem::GetWhitePoint() const
   return m_white;
   }
 
+inline double ColorSystem::GetGamma() const
+  {
+  return m_gamma;
+  }
+
 inline double ColorSystem::_Dot(const double i_a[3], const double i_b[3]) const
   {
   return i_a[0] * i_b[0] + i_a[1] * i_b[1] + i_a[2] * i_b[2];
@@ -310,45 +422,46 @@ XYZColor<T> ColorSystem::RGB_To_XYZ(const RGBColor<T> &i_rgb_color) const
   return XYZColor<T>((T)xyz[0], (T)xyz[1], (T)xyz[2]);
   }
 
-/**
-* Saves the data which is needed to construct ColorSystem to the specified Archive. This method is used by the boost serialization framework.
-*/
-template<class Archive>
-void save_construct_data(Archive &i_ar, const ColorSystem *ip_color_system, const unsigned int i_version)
+template<typename T>
+RGBColor<T> ColorSystem::GammaEncode(const RGBColor<T> &i_rgb_color) const
   {
-  Point2D_d red = ip_color_system->GetRedPrimaryPoint();
-  Point2D_d green = ip_color_system->GetGreenPrimaryPoint();
-  Point2D_d blue = ip_color_system->GetBluePrimaryPoint();
-  Point2D_d white = ip_color_system->GetWhitePoint();
+  ASSERT(InRange(i_rgb_color, (T)0.0, (T)1.0));
 
-  i_ar << red;
-  i_ar << green;
-  i_ar << blue;
-  i_ar << white;
+  RGBColor<T> ret=i_rgb_color;
+  ret.m_rgb[0] = (T)pow((double)ret.m_rgb[0], m_inv_gamma);
+  ret.m_rgb[1] = (T)pow((double)ret.m_rgb[1], m_inv_gamma);
+  ret.m_rgb[2] = (T)pow((double)ret.m_rgb[2], m_inv_gamma);
+  return ret;
   }
 
-/**
-* Constructs ColorSystem with the data from the specified Archive. This method is used by the boost serialization framework.
-*/
-template<class Archive>
-void load_construct_data(Archive &i_ar, ColorSystem *ip_color_system, const unsigned int i_version)
+template<typename T>
+RGBColor<T> ColorSystem::GammaDecode(const RGBColor<T> &i_rgb_color) const
   {
-  Point2D_d red, green, blue, white;
+  ASSERT(InRange(i_rgb_color, (T)0.0, (T)1.0));
 
-  i_ar >> red;
-  i_ar >> green;
-  i_ar >> blue;
-  i_ar >> white;
-
-  ::new(ip_color_system)ColorSystem(red, green, blue, white);
+  RGBColor<T> ret=i_rgb_color;
+  ret.m_rgb[0] = (T)pow((double)ret.m_rgb[0], m_gamma);
+  ret.m_rgb[1] = (T)pow((double)ret.m_rgb[1], m_gamma);
+  ret.m_rgb[2] = (T)pow((double)ret.m_rgb[2], m_gamma);
+  return ret;
   }
 
 /**
 * Serializes ColorSystem to/from the specified Archive. This method is used by the boost serialization framework.
 */
 template<class Archive>
-void serialize(Archive &i_ar, ColorSystem &i_color_system, const unsigned int i_version)
+void ColorSystem::serialize(Archive &i_ar, const unsigned int i_version)
   {
+  i_ar & m_red;
+  i_ar & m_green;
+  i_ar & m_blue;
+  i_ar & m_white;
+
+  i_ar & m_XYZ_To_RGB;
+  i_ar & m_RGB_To_XYZ;
+
+  i_ar & m_gamma;
+  i_ar & m_inv_gamma;
   }
 
 #endif // COLOR_H

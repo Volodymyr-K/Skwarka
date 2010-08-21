@@ -33,7 +33,7 @@ class RGB24ImageSourceSerializationTestSuite : public CxxTest::TestSuite
           values[i][j].m_rgb[2]=(unsigned char)RandomInt(256);
           }
 
-      intrusive_ptr<ImageSource<Spectrum_f> > p_image_source1( new RGB24ImageSource<Spectrum_f>(values, scale) );
+      intrusive_ptr<ImageSource<Spectrum_f> > p_image_source1( new RGB24ImageSource<Spectrum_f>(values, global_sRGB_E_ColorSystem, scale) );
         {
         boost::iostreams::stream_buffer<SinkDevice> buffer(m_data, m_buffer_size);
         boost::archive::binary_oarchive output_archive(buffer);
@@ -54,7 +54,7 @@ class RGB24ImageSourceSerializationTestSuite : public CxxTest::TestSuite
       p_image_source1->GetImage(image1);
       p_image_source2->GetImage(image2);
       if (image1 != image2)
-        TS_FAIL("OpenEXRRgbaImageSource serialization test failed.");
+        TS_FAIL("RGB24ImageSource serialization test failed.");
       }
 
   private:

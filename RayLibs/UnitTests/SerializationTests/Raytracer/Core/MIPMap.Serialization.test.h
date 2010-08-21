@@ -100,7 +100,7 @@ class MIPMapSerializationTestSuite : public CxxTest::TestSuite
             image[j][i].m_rgb[2]=255;
             }
 
-      intrusive_ptr<ImageSource<Spectrum_d> > p_image_source( new RGB24ImageSource<Spectrum_d>(image) );
+      intrusive_ptr<ImageSource<Spectrum_d> > p_image_source( new RGB24ImageSource<Spectrum_d>(image, global_sRGB_E_ColorSystem) );
       return intrusive_ptr<MIPMap<Spectrum_d> > (new MIPMap<Spectrum_d>(p_image_source,i_repeat,i_max_anisotropy));
       }
 

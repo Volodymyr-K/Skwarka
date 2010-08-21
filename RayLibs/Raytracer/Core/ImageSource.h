@@ -10,8 +10,9 @@
 * For example, the implementation can store image in RGB format where each component is defined by unsigend char and return the image in SpectrumCoef_f format.
 * More importantly, the implementations are also used by MIPMap to serialize the input image in a more compact way (as in the above example with RGB image).
 * 
-* @warning The implementations must be constant in the sense that the same instance must always return the same image. It should not have a mutable state or depend
-* on external sources (e.g. files). This is an important implication of the way ImageSources are used by MIPMap to serialize the input images.
+* @warning The serialization logic for MIPMap depends on the assumption that the implementations of this interface are constant in the sense that the same
+* instance always returns the same image. In other words implementations should not have mutable state or depend on external sources (e.g. files).
+* Otherwise the deserialized MIPMap is not guaranteed to be the same that the serialized one.
 */
 template <typename T>
 class ImageSource: public ReferenceCounted
@@ -20,7 +21,6 @@ class ImageSource: public ReferenceCounted
 
     /**
     * Gets 2D array of values (image).
-    * The method should always return the same image for the same class instance.
     */
     virtual void GetImage(std::vector<std::vector<T> > &o_image) const = 0;
 

@@ -7,6 +7,8 @@
 #include "Console.h"
 #include <Raytracer/Core/Renderer.h>
 #include <Raytracer/Core/Film.h>
+#include <Raytracer/Core/SpectrumRoutines.h>
+#include <Raytracer/Core/Color.h>
 
 static HINSTANCE	g_hInstance;
 static HWND			g_hWnd;
@@ -19,8 +21,8 @@ static const TCHAR* szWindowClass = _T("RayTracerWindowClass");
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK About(HWND, UINT, WPARAM, LPARAM);
 
-#define IMAGE_WIDTH 800/2
-#define IMAGE_HEIGHT 600/2
+#define IMAGE_WIDTH 800
+#define IMAGE_HEIGHT 600
 
 TestTracer *tracer;
 Console* g_console;
@@ -42,12 +44,17 @@ class MyDisplayUpdateCallback: public DisplayUpdateCallback
           {
           Spectrum_d sp;
           p_film->GetPixel(Point2D_i(x,y),sp);
+          RGBColor_d color = global_sRGB_D65_ColorSystem.XYZ_To_RGB(SpectrumRoutines::SpectrumToXYZ(sp),true);
+          color.Clamp(0.0,255.0);
+          color[0]/=255.0;color[1]/=255.0;color[2]/=255.0;
+          color = global_sRGB_D65_ColorSystem.GammaEncode(color);
+          color[0]*=255.0;color[1]*=255.0;color[2]*=255.0;
 
           unsigned int pixel_index = (unsigned int) ((y*width+x)*4);
           Byte* pixel = m_image;
-          pixel[pixel_index+2] = Byte(std::min(sp[0],255.0));
-          pixel[pixel_index+1] = Byte(std::min(sp[1],255.0));
-          pixel[pixel_index+0] = Byte(std::min(sp[2],255.0));
+          pixel[pixel_index+2] = Byte(color[0]);
+          pixel[pixel_index+1] = Byte(color[1]);
+          pixel[pixel_index+0] = Byte(color[2]);
           }
 
       BitBlt(GetDC(g_hWnd), 0, 0, tracer->GetImageWidth(), tracer->GetImageHeight(), g_memDC, 0, 0, SRCCOPY);

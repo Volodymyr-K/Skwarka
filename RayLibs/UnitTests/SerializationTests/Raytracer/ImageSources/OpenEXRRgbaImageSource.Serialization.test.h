@@ -24,19 +24,19 @@ class OpenEXRRgbaImageSourceSerializationTestSuite : public CxxTest::TestSuite
     void test_OpenEXRRgbaImageSource_Serialization()
       {
       size_t width = 123, height=234;
-      std::vector<std::vector<Imf::Rgba> > values(height, std::vector<Imf::Rgba>(width));
-      double scale = 1.0/255.0;
+      std::vector<Imf::Rgba> values(width*height);
+      double scale = 2.0;
 
       for(size_t i=0;i<height;++i)
         for(size_t j=0;j<width;++j)
           {
-          values[i][j].r = (float)RandomDouble(1000);
-          values[i][j].g = (float)RandomDouble(1000);
-          values[i][j].b = (float)RandomDouble(1000);
-          values[i][j].a = 0.f;
+          values[i*width+j].r = (float)RandomDouble(1000);
+          values[i*width+j].g = (float)RandomDouble(1000);
+          values[i*width+j].b = (float)RandomDouble(1000);
+          values[i*width+j].a = 0.f;
           }
 
-      intrusive_ptr<ImageSource<Spectrum_f> > p_image_source1( new OpenEXRRgbaImageSource<Spectrum_f>(values, scale) );
+      intrusive_ptr<ImageSource<Spectrum_f> > p_image_source1( new OpenEXRRgbaImageSource<Spectrum_f>(values, width, height, global_sRGB_E_ColorSystem, scale) );
         {
         boost::iostreams::stream_buffer<SinkDevice> buffer(m_data, m_buffer_size);
         boost::archive::binary_oarchive output_archive(buffer);

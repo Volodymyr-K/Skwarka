@@ -116,18 +116,22 @@ intrusive_ptr<Primitive> LoadWallsPrimitive(std::string i_filename, bool i_smoot
   BMP Input;
   Input.ReadFromFile("walls.bmp");
 
-  std::vector<std::vector<SpectrumCoef_f> > values(Input.TellHeight(),std::vector<SpectrumCoef_f>(Input.TellWidth()));
+  std::vector<std::vector<RGB24> > values(Input.TellHeight(),std::vector<RGB24>(Input.TellWidth()));
   for( int j=0 ; j < Input.TellHeight() ; j++)
     {
     for( int i=0 ; i < Input.TellWidth() ; i++)
       {
-      values[j][i]=SpectrumCoef_f(Input(i,j)->Red,Input(i,j)->Green,Input(i,j)->Blue)*1.0;
-      values[j][i]/=255.0;
+      RGB24 rgb;
+      rgb.m_rgb[0]=Input(i,j)->Red;
+      rgb.m_rgb[1]=Input(i,j)->Green;
+      rgb.m_rgb[2]=Input(i,j)->Blue;
+      values[j][i]=rgb;
       }
     }
-    
+  intrusive_ptr<ImageSource<SpectrumCoef_f> > p_image_source( new RGB24ImageSource<SpectrumCoef_f>(values, global_sRGB_E_ColorSystem, 0.8) );
+
   intrusive_ptr<Mapping2D> p_mapping( new SphericalMapping2D(Point3D_d(-770,-2315,1500), Vector3D_d(0,0,1), Vector3D_d(1,0,0)) );
-  intrusive_ptr< ImageTexture<SpectrumCoef_f,SpectrumCoef_d> > p_text(new ImageTexture<SpectrumCoef_f,SpectrumCoef_d>(values, p_mapping) );
+  intrusive_ptr< ImageTexture<SpectrumCoef_f,SpectrumCoef_d> > p_text(new ImageTexture<SpectrumCoef_f,SpectrumCoef_d>(p_image_source, p_mapping) );
 
   intrusive_ptr<Texture<double> > p_sigma(new ConstantTexture<double> (0.04));
   intrusive_ptr<Material> p_material(new MatteMaterial(p_text, p_sigma));
@@ -189,216 +193,115 @@ readRgba1 (const char fileName[],
   file.readPixels (dw.min.y, dw.max.y);
   }
 
+SpectrumCoef_d RGBToSpectrumCoef(double i_r, double i_g, double i_b)
+  {
+  double r = pow(i_r/255.0,2.2);
+  double g = pow(i_g/255.0,2.2);
+  double b = pow(i_b/255.0,2.2);
+  XYZColor_d xyz = global_sRGB_E_ColorSystem.RGB_To_XYZ(RGBColor_d(r,g,b));
+  return SpectrumRoutines::XYZToSpectrumCoef(xyz);
+  }
+
+Spectrum_d RGBToSpectrum(double i_r, double i_g, double i_b)
+  {
+  XYZColor_d xyz = global_sRGB_D65_ColorSystem.RGB_To_XYZ(RGBColor_d(i_r,i_g,i_b));
+  return SpectrumRoutines::XYZToSpectrum(xyz);
+  }
+
 inline void TestTracer::LoadMesh()
   {
-  BBox3D_d bbox;
   std::vector<intrusive_ptr<const Primitive> > primitives;
 
-  BMP Input;
-  Input.ReadFromFile("mendeleev.bmp");
+  //primitives.push_back(LoadWallsPrimitive("stls/walls.stl", false));
+  primitives.push_back(LoadDiffusePrimitive("stls/walls.stl", false, RGBToSpectrumCoef(248,244,180)));
+  primitives.push_back(LoadDiffusePrimitive("stls/floor.stl", false, RGBToSpectrumCoef(51,51,153)));
+  primitives.push_back(LoadDiffusePrimitive("stls/ceiling.stl", false, RGBToSpectrumCoef(230,230,240)));
+  primitives.push_back(LoadDiffusePrimitive("stls/window.stl", false, RGBToSpectrumCoef(238,194,121)));
 
-  std::vector<std::vector<RGB24> > values(Input.TellHeight(),std::vector<RGB24>(Input.TellWidth()));
-  for( int j=0 ; j < Input.TellHeight() ; j++)
-    {
-    for( int i=0 ; i < Input.TellWidth() ; i++)
-      {
-      RGB24 rgb;
-      rgb.m_rgb[0]=Input(i,j)->Red;
-      rgb.m_rgb[1]=Input(i,j)->Green;
-      rgb.m_rgb[2]=Input(i,j)->Blue;
-      values[j][i]=rgb;
-      }
-    }
-  intrusive_ptr<ImageSource<SpectrumCoef_f> > p_image_source( new RGB24ImageSource<SpectrumCoef_f>(values, 0.5/255.0) );
+  primitives.push_back(LoadDiffusePrimitive("stls/door.stl", false, RGBToSpectrumCoef(238,194,121)));
+  primitives.push_back(LoadGlassPrimitive("stls/door_glass.stl", false, RGBToSpectrumCoef(255.0,255.0,255.0)));
 
-  intrusive_ptr<Mapping2D> p_mapping( new UVMapping2D() );
-  intrusive_ptr< ImageTexture<SpectrumCoef_f,SpectrumCoef_d> > p_text(new ImageTexture<SpectrumCoef_f,SpectrumCoef_d>(p_image_source, p_mapping) );
+  primitives.push_back(LoadDiffusePrimitive("stls/table.stl", false, RGBToSpectrumCoef(238,194,121)));
+  primitives.push_back(LoadDiffusePrimitive("stls/chair1.stl", false, RGBToSpectrumCoef(127,90,48)));
+  primitives.push_back(LoadDiffusePrimitive("stls/chair2.stl", false, RGBToSpectrumCoef(127,90,48)));
+  primitives.push_back(LoadDiffusePrimitive("stls/chair3.stl", false, RGBToSpectrumCoef(127,90,48)));
 
-  /////// Add ground primitive ///
-    {
-    std::vector<Point3D_f> vertices;
-    std::vector<MeshTriangle> triangles;
-    vertices.push_back(Point3D_f(-25,-25,0));vertices.push_back(Point3D_f(25,-25,0));
-    vertices.push_back(Point3D_f(25,25,0));vertices.push_back(Point3D_f(-25,25,0));
+  primitives.push_back(LoadMetalPrimitive("stls/lamp1.stl", false, RGBToSpectrumCoef(240,240,240), 0.05));
+  primitives.push_back(LoadMetalPrimitive("stls/lamp2.stl", false, RGBToSpectrumCoef(240,240,240), 0.05));
 
-    MeshTriangle t1(0,1,2);t1.m_uvs[0]=Point2D_f(1,1);t1.m_uvs[1]=Point2D_f(0,1);t1.m_uvs[2]=Point2D_f(0,0);
-    MeshTriangle t2(2,3,0);t2.m_uvs[0]=Point2D_f(0,0);t2.m_uvs[1]=Point2D_f(1,0);t2.m_uvs[2]=Point2D_f(1,1);
+  primitives.push_back(LoadDiffusePrimitive("stls/shelf1.stl", false, RGBToSpectrumCoef(240,240,240)));
+  primitives.push_back(LoadDiffusePrimitive("stls/shelf2.stl", false, RGBToSpectrumCoef(240,240,240)));
+  primitives.push_back(LoadDiffusePrimitive("stls/upper_shelf.stl", false, RGBToSpectrumCoef(173,216,230)));
 
-    triangles.push_back(t1);triangles.push_back(t2);
-    intrusive_ptr<TriangleMesh> p_ground_mesh = intrusive_ptr<TriangleMesh>( new TriangleMesh(vertices, triangles, true) );
+  primitives.push_back(LoadGlassPrimitive("stls/fruit_plate.stl", true, RGBToSpectrumCoef(255,255,255)));
 
-    intrusive_ptr<Texture<double> > p_sigma(new ConstantTexture<double> (0.35));
-    intrusive_ptr<Material> p_material(new MatteMaterial(p_text, p_sigma));
+  primitives.push_back(LoadDiffusePrimitive("stls/oranges.stl", true, RGBToSpectrumCoef(240,165,0)));
+  primitives.push_back(LoadDiffusePrimitive("stls/strawberry.stl", true, RGBToSpectrumCoef(255,3,62)));
 
-    intrusive_ptr<Primitive> p_primitive(new Primitive(p_ground_mesh, p_material));
-    primitives.push_back(p_primitive);
-    bbox.Unite(Convert<double>(p_ground_mesh->GetBounds()));
-    }
-    /////// Add ceiling primitive ///
-    {
-    std::vector<Point3D_f> vertices;
-    std::vector<MeshTriangle> triangles;
-    vertices.push_back(Point3D_f(-25,-25,25));vertices.push_back(Point3D_f(25,-25,25));
-    vertices.push_back(Point3D_f(25,25,25));vertices.push_back(Point3D_f(-25,25,25));
+  primitives.push_back(LoadGlassPrimitive("stls/bottles.stl", true, RGBToSpectrumCoef(255,255,255)));
+  primitives.push_back(LoadDiffusePrimitive("stls/cups.stl", true, RGBToSpectrumCoef(240,240,240)));
+  primitives.push_back(LoadDiffusePrimitive("stls/shoes.stl", false, RGBToSpectrumCoef(240,240,240)));
 
-    MeshTriangle t1(0,1,2);t1.m_uvs[0]=Point2D_f(1,1);t1.m_uvs[1]=Point2D_f(0,1);t1.m_uvs[2]=Point2D_f(0,0);
-    MeshTriangle t2(2,3,0);t2.m_uvs[0]=Point2D_f(0,0);t2.m_uvs[1]=Point2D_f(1,0);t2.m_uvs[2]=Point2D_f(1,1);
+  primitives.push_back(LoadDiffusePrimitive("stls/cooker_plate.stl", false, RGBToSpectrumCoef(50,50,50)));
+  primitives.push_back(LoadDiffusePrimitive("stls/saucepan_handles.stl", false, RGBToSpectrumCoef(50,50,50)));
+  primitives.push_back(LoadMetalPrimitive("stls/saucepan.stl", true, RGBToSpectrumCoef(240,240,240), 0.1));
+  primitives.push_back(LoadMetalPrimitive("stls/teapot.stl", true, RGBToSpectrumCoef(240,205,0), 0.1));
+  primitives.push_back(LoadMetalPrimitive("stls/teapot2.stl", true, RGBToSpectrumCoef(240,205,0), 0.1));
+  primitives.push_back(LoadMetalPrimitive("stls/extractor_fan.stl", true, RGBToSpectrumCoef(201,192,187), 0.1));
 
-    triangles.push_back(t1);triangles.push_back(t2);
-    intrusive_ptr<TriangleMesh> p_ceil_mesh = intrusive_ptr<TriangleMesh>( new TriangleMesh(vertices, triangles, true) );
-
-    intrusive_ptr<Texture<SpectrumCoef_d> > p_reflection(new ConstantTexture<SpectrumCoef_d> (SpectrumCoef_d(0.4,0.4,0.4)));
-    intrusive_ptr<Texture<double> > p_sigma(new ConstantTexture<double> (0.35));
-    intrusive_ptr<Material> p_material(new MatteMaterial(p_reflection, p_sigma));
-
-    intrusive_ptr<Primitive> p_primitive(new Primitive(p_ceil_mesh, p_material));
-    primitives.push_back(p_primitive);
-    bbox.Unite(Convert<double>(p_ceil_mesh->GetBounds()));
-    }
-
-    /////// Add light blocking primitive ///
-    {
-    std::vector<Point3D_f> vertices;
-    std::vector<MeshTriangle> triangles;
-    vertices.push_back(Point3D_f(-7,-8,16.9f));vertices.push_back(Point3D_f(9,-8,16.9f));
-    vertices.push_back(Point3D_f(9,8,16.9f));vertices.push_back(Point3D_f(-7,8,16.9f));
-
-    MeshTriangle t1(0,1,2);t1.m_uvs[0]=Point2D_f(1,1);t1.m_uvs[1]=Point2D_f(0,1);t1.m_uvs[2]=Point2D_f(0,0);
-    MeshTriangle t2(2,3,0);t2.m_uvs[0]=Point2D_f(0,0);t2.m_uvs[1]=Point2D_f(1,0);t2.m_uvs[2]=Point2D_f(1,1);
-
-    triangles.push_back(t1);triangles.push_back(t2);
-    intrusive_ptr<TriangleMesh> p_ceil_mesh = intrusive_ptr<TriangleMesh>( new TriangleMesh(vertices, triangles, true) );
-
-    intrusive_ptr<Texture<SpectrumCoef_d> > p_reflection(new ConstantTexture<SpectrumCoef_d> (SpectrumCoef_d(0.4,0.4,0.4)));
-    intrusive_ptr<Texture<double> > p_sigma(new ConstantTexture<double> (0.35));
-    intrusive_ptr<Material> p_material(new MatteMaterial(p_reflection, p_sigma));
-
-    intrusive_ptr<Primitive> p_primitive(new Primitive(p_ceil_mesh, p_material));
-    //primitives.push_back(p_primitive);
-    //bbox.Unite(Convert<double>(p_ceil_mesh->GetBounds()));
-    }
-
-
-    /////// Add primitive 2 ///
-    {
-    std::vector<Point3D_f> vertices;
-    std::vector<MeshTriangle> triangles;
-    vertices.push_back(Point3D_f(-25,-12,-10));vertices.push_back(Point3D_f(25,-12,-10));
-    vertices.push_back(Point3D_f(25,-12,25));vertices.push_back(Point3D_f(-25,-12,25));
-
-    MeshTriangle t1(0,1,2);t1.m_uvs[0]=Point2D_f(1,1);t1.m_uvs[1]=Point2D_f(0,1);t1.m_uvs[2]=Point2D_f(0,0);
-    MeshTriangle t2(2,3,0);t2.m_uvs[0]=Point2D_f(0,0);t2.m_uvs[1]=Point2D_f(1,0);t2.m_uvs[2]=Point2D_f(1,1);
-
-    triangles.push_back(t1);triangles.push_back(t2);
-    intrusive_ptr<TriangleMesh> p_wall_mesh = intrusive_ptr<TriangleMesh>( new TriangleMesh(vertices, triangles, true) );
-
-    intrusive_ptr<Texture<SpectrumCoef_d> > p_refrlection(new ConstantTexture<SpectrumCoef_d> (SpectrumCoef_d(0.35,0.35,0.75)));
-    intrusive_ptr<Texture<double> > p_sigma(new ConstantTexture<double> (0.35));
-    intrusive_ptr<Material> p_material(new MatteMaterial(p_refrlection, p_sigma));
-
-    intrusive_ptr<Primitive> p_primitive(new Primitive(p_wall_mesh, p_material));
-    primitives.push_back(p_primitive);
-    bbox.Unite(Convert<double>(p_wall_mesh->GetBounds()));
-    }
-    /////// Add primitive 3 ///
-    {
-    std::vector<Point3D_f> vertices;
-    std::vector<MeshTriangle> triangles;
-    vertices.push_back(Point3D_f(-25,12,-10));vertices.push_back(Point3D_f(25,12,-10));
-    vertices.push_back(Point3D_f(25,12,25));vertices.push_back(Point3D_f(-25,12,25));
-
-    MeshTriangle t1(0,1,2);t1.m_uvs[0]=Point2D_f(1,1);t1.m_uvs[1]=Point2D_f(0,1);t1.m_uvs[2]=Point2D_f(0,0);
-    MeshTriangle t2(2,3,0);t2.m_uvs[0]=Point2D_f(0,0);t2.m_uvs[1]=Point2D_f(1,0);t2.m_uvs[2]=Point2D_f(1,1);
-
-    triangles.push_back(t1);triangles.push_back(t2);
-    intrusive_ptr<TriangleMesh> p_wall_mesh = intrusive_ptr<TriangleMesh>( new TriangleMesh(vertices, triangles, true) );
-
-    intrusive_ptr<Texture<SpectrumCoef_d> > p_refrlection(new ConstantTexture<SpectrumCoef_d> (SpectrumCoef_d(0.35,0.75,0.35)));
-    intrusive_ptr<Texture<double> > p_sigma(new ConstantTexture<double> (0.35));
-    intrusive_ptr<Material> p_material(new MatteMaterial(p_refrlection, p_sigma));
-
-    intrusive_ptr<Primitive> p_primitive(new Primitive(p_wall_mesh, p_material));
-    primitives.push_back(p_primitive);
-    bbox.Unite(Convert<double>(p_wall_mesh->GetBounds()));
-    }
-    /////// Add primitive 4 ///
-    {
-    std::vector<Point3D_f> vertices;
-    std::vector<MeshTriangle> triangles;
-    vertices.push_back(Point3D_f(-12,-25,-10));vertices.push_back(Point3D_f(-12,25,-10));
-    vertices.push_back(Point3D_f(-12,25,25));vertices.push_back(Point3D_f(-12,-25,25));
-
-    MeshTriangle t1(0,1,2);t1.m_uvs[0]=Point2D_f(1,1);t1.m_uvs[1]=Point2D_f(0,1);t1.m_uvs[2]=Point2D_f(0,0);
-    MeshTriangle t2(2,3,0);t2.m_uvs[0]=Point2D_f(0,0);t2.m_uvs[1]=Point2D_f(1,0);t2.m_uvs[2]=Point2D_f(1,1);
-
-    triangles.push_back(t1);triangles.push_back(t2);
-    intrusive_ptr<TriangleMesh> p_wall_mesh = intrusive_ptr<TriangleMesh>( new TriangleMesh(vertices, triangles, true) );
-
-    intrusive_ptr<Texture<SpectrumCoef_d> > p_refrlection(new ConstantTexture<SpectrumCoef_d> (SpectrumCoef_d(0.75,0.35,0.35)));
-    intrusive_ptr<Texture<double> > p_sigma(new ConstantTexture<double> (0.35));
-    intrusive_ptr<Material> p_material(new MatteMaterial(p_refrlection, p_sigma));
-
-    intrusive_ptr<Primitive> p_primitive(new Primitive(p_wall_mesh, p_material));
-    primitives.push_back(p_primitive);
-    bbox.Unite(Convert<double>(p_wall_mesh->GetBounds()));
-    }
-
-
-  intrusive_ptr<Texture<SpectrumCoef_d> > p_reflection(new ConstantTexture<SpectrumCoef_d> (SpectrumCoef_d(0.75)));
-  intrusive_ptr<Texture<double> > p_roughness(new ConstantTexture<double> (0.025));
-  //intrusive_ptr<Material> p_material(new MetalMaterial(p_reflection, p_roughness));
-
-  intrusive_ptr<Texture<SpectrumCoef_d> > p_yellow_reflection(new ConstantTexture<SpectrumCoef_d> (SpectrumCoef_d(0.4,0.4,0.25)));
-  intrusive_ptr<Texture<SpectrumCoef_d> > p_white_reflection(new ConstantTexture<SpectrumCoef_d> (SpectrumCoef_d(0.4)));
-  intrusive_ptr<Material> p_material(new SubstrateMaterial(p_yellow_reflection, p_white_reflection, p_roughness));
-
-    {
-    Sphere s;
-    s.SetParameter("Center","1 0 3.01");
-    s.SetParameter("Radius","3.0");
-    s.SetParameter("Subdivisions","7");
-    intrusive_ptr<TriangleMesh> p_sphere( s.BuildMesh() );
-    intrusive_ptr<Primitive> p_sphere_primitive(new Primitive(p_sphere, p_material, NULL));
-
-    primitives.push_back(p_sphere_primitive);
-    bbox.Unite(Convert<double>(p_sphere->GetBounds()));
-    }
+  primitives.push_back(LoadDiffusePrimitive("stls/frying_pan1_handle.stl", false, RGBToSpectrumCoef(50,50,50)));
+  primitives.push_back(LoadDiffusePrimitive("stls/frying_pan2_handle.stl", false, RGBToSpectrumCoef(50,50,50)));
+  primitives.push_back(LoadMetalPrimitive("stls/frying_pan1.stl", true, RGBToSpectrumCoef(240,40,50), 0.1));
+  primitives.push_back(LoadMetalPrimitive("stls/frying_pan2.stl", true, RGBToSpectrumCoef(201,192,187), 0.1));
 
   LightSources lights;
-    {
-    int height=0, width=0;
-    Imf::Array2D<Imf::Rgba> image(height, width);
-    readRgba1("env_lights/DH041LL.exr", image, width, height);
+/*
+  intrusive_ptr<InfiniteLightSource> p_inf_light( new InfiniteLightSourceMock(2.0*RGBToSpectrum(200.0,220.0,250.0), BBox3D_d(Point3D_d(-3000,-5000,-500),Point3D_d(1500,1000,3500) ) ) );
+  lights.m_infinite_light_sources.push_back(p_inf_light);
 
-    //intrusive_ptr<ImageSource<Spectrum_f> > p_env_light_image_source( new OpenEXRRgbaImageSource<float>(image, width, height, 1.0) );
+  intrusive_ptr<DeltaLightSource> p_parallel_light( new ParallelLight(Vector3D_d(-0.3,-0.5,-0.2).Normalized(), 0.8*RGBToSpectrum(M_PI*500.0, M_PI*500.0, M_PI*500.0), BBox3D_d(Point3D_d(-3000,-5000,-500),Point3D_d(1500,1000,3500) ) ) );
+  lights.m_delta_light_sources.push_back(p_parallel_light);
 
-    //tbb::tick_count t0 = tbb::tick_count::now();
-    //intrusive_ptr<InfiniteLightSource> p_inf_light( new ImageEnvironmentalLight(bbox, Transform(), p_env_light_image_source) );
-    //tbb::tick_count t1 = tbb::tick_count::now();
-    //printf("Creating light: %lf\n", (t1-t0).seconds());
-
-    //lights.m_infinite_light_sources.push_back(p_inf_light);
-    }
+*/
+  intrusive_ptr<ImageSource<Spectrum_f> > p_image_source( new OpenEXRRgbaImageSource<Spectrum_f>("env_lights/XYZ.exr") );
+  intrusive_ptr<InfiniteLightSource> p_inf_light( new ImageEnvironmentalLight(BBox3D_d(Point3D_d(-1,-1,-1)*10000,Point3D_d(1,1,1)*10000), Transform(), p_image_source) );
+  lights.m_infinite_light_sources.push_back(p_inf_light);
 
     {
+    intrusive_ptr<Texture<SpectrumCoef_d> > p_reflectance(new ConstantTexture<SpectrumCoef_d> (RGBToSpectrumCoef(212,175,55)*0.8));
+    intrusive_ptr<Texture<double> > p_sigma(new ConstantTexture<double> (0.04));
+    intrusive_ptr<Material> p_material(new MatteMaterial(p_reflectance, p_sigma));
+
     Sphere s;
-    s.SetParameter("Center","1 0 14");
-    s.SetParameter("Radius","0.5");
-    s.SetParameter("Subdivisions","5");
+    s.SetParameter("Center","-545 -1691 2130");
+    s.SetParameter("Radius","30");
+    s.SetParameter("Subdivisions","3");
     intrusive_ptr<TriangleMesh> p_sphere( s.BuildMesh() );
-    intrusive_ptr<AreaLightSource> p_light( new DiffuseAreaLightSource(Spectrum_d(400000/M_PI), p_sphere) );
-    intrusive_ptr<Primitive> p_sphere_primitive(new Primitive(p_sphere, p_material, p_light));
+    intrusive_ptr<AreaLightSource> p_area_light( new DiffuseAreaLightSource(RGBToSpectrum(200000,200000,200000), p_sphere) );
+    intrusive_ptr<Primitive> p_sphere_primitive(new Primitive(p_sphere, p_material, p_area_light));
 
-    //primitives.push_back(p_sphere_primitive);
-    //lights.m_area_light_sources.push_back(p_light);
-    //bbox.Unite(Convert<double>(p_sphere->GetBounds()));
+    primitives.push_back(p_sphere_primitive);
+    lights.m_area_light_sources.push_back(p_area_light);
     }
 
-  intrusive_ptr<DeltaLightSource> p_light_source( new SpotPointLight(Point3D_d(1,0,14), Vector3D_d(-2.0,2.0,-10.0).Normalized(), Spectrum_d(400000), M_PI_6, M_PI_6+0.5) );
-  //intrusive_ptr<DeltaLightSource> p_light_source( new PointLight(Point3D_d(1,0,14),  Spectrum_d(100000)) );
-  lights.m_delta_light_sources.push_back( p_light_source );
+    {
+    intrusive_ptr<Texture<SpectrumCoef_d> > p_reflectance(new ConstantTexture<SpectrumCoef_d> (RGBToSpectrumCoef(212,175,55)*0.8));
+    intrusive_ptr<Texture<double> > p_sigma(new ConstantTexture<double> (0.04));
+    intrusive_ptr<Material> p_material(new MatteMaterial(p_reflectance, p_sigma));
 
-  mp_scene.reset(new Scene(primitives, NULL, lights));
+    Sphere s;
+    s.SetParameter("Center","-1709 -600 1830");
+    s.SetParameter("Radius","30");
+    s.SetParameter("Subdivisions","3");
+    intrusive_ptr<TriangleMesh> p_sphere( s.BuildMesh() );
+    intrusive_ptr<AreaLightSource> p_area_light( new DiffuseAreaLightSource(RGBToSpectrum(300000,300000,300000), p_sphere) );
+    intrusive_ptr<Primitive> p_sphere_primitive(new Primitive(p_sphere, p_material, p_area_light));
+
+    primitives.push_back(p_sphere_primitive);
+    lights.m_area_light_sources.push_back(p_area_light);
+    }
+
+    mp_scene.reset(new Scene(primitives, NULL, lights));
   }
 
 inline void TestTracer::RenderImage()
@@ -412,12 +315,16 @@ inline void TestTracer::RenderImage()
   Point2D_i window_begin,window_end;
   p_film->GetSamplingExtent(window_begin, window_end);
 
-
+/*
   // sponza
   Point3D_d camera_pos(13,0,9);
   Point3D_d look_at(0,0,2);
   Vector3D_d direction = Vector3D_d(look_at-camera_pos).Normalized();
   intrusive_ptr<Camera> p_camera( new PerspectiveCamera( MakeLookAt(camera_pos,direction,Vector3D_d(0,0,1)), p_film, 0.001*12.000, 6, 1.22) );
+*/
+
+  Vector3D_d direction = Vector3D_d(-2441-831,-590+4331,1342-1194).Normalized();
+  intrusive_ptr<Camera> p_camera( new PerspectiveCamera( MakeLookAt(Point3D_d(831,-4331,1194),direction,Vector3D_d(0,0,1)), p_film, 0.001*12.000, 1300, 1.35) );
 
   intrusive_ptr<ImagePixelsOrder> pixel_order(new ConsecutiveImagePixelsOrder);
   //intrusive_ptr<ImagePixelsOrder> pixel_order(new RandomBlockedImagePixelsOrder);
@@ -442,7 +349,7 @@ inline void TestTracer::RenderImage()
   intrusive_ptr<PhotonLTEIntegrator> p_lte_int( new PhotonLTEIntegrator(mp_scene, params) );
   
   t0 = tbb::tick_count::now();
-  p_lte_int->ShootPhotons(0, 800000, 2000000);
+  p_lte_int->ShootPhotons(500000*0, 1000000, 2000000);
   t1 = tbb::tick_count::now();
   printf("Shooting: %lf\n", (t1-t0).seconds());
 
