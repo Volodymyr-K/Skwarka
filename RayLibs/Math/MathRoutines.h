@@ -371,7 +371,7 @@ namespace MathRoutines
     {
     ASSERT(i_vector.IsNormalized());
 
-    o_sin_theta=sqrt(std::max(0.0, 1.0 - i_vector[2]*i_vector[2]));
+    o_sin_theta=sqrt(i_vector[0]*i_vector[0] + i_vector[1]*i_vector[1]);
     o_cos_theta=i_vector[2];
 
     if (o_sin_theta>DBL_3D_EPS)

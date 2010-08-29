@@ -24,11 +24,6 @@ class InteractiveFilmTestSuite : public CxxTest::TestSuite
       // Nothing to clear.
       }
 
-    void test_InteractiveFilm_GetFilmFilter()
-      {
-      TS_ASSERT_EQUALS(mp_film->GetFilmFilter(), mp_filter);
-      }
-
     void test_InteractiveFilm_Extent()
       {
       Point2D_i begin, end;

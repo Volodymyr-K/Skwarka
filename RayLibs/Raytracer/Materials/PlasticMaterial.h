@@ -25,12 +25,6 @@ class PlasticMaterial: public Material
     PlasticMaterial(intrusive_ptr<const Texture<SpectrumCoef_d> > ip_diffuse_reflectance, intrusive_ptr<const Texture<SpectrumCoef_d> > ip_glossy_reflectance,
       intrusive_ptr<const Texture<double> > ip_roughness);
 
-    intrusive_ptr<const Texture<SpectrumCoef_d> > GetDiffuseReflectanceTexture() const;
-
-    intrusive_ptr<const Texture<SpectrumCoef_d> > GetGlossyReflectanceTexture() const;
-
-    intrusive_ptr<const Texture<double> > GetRoughnessTexture() const;
-
     /**
     * Returns a pointer to BSDF describing local scattering properties at the specified surface point.
     * The BSDF object and all its BxDFs is allocated using the provided MemoryPool.
@@ -42,6 +36,18 @@ class PlasticMaterial: public Material
     virtual const BSDF *GetBSDF(const DifferentialGeometry &i_dg, size_t i_triangle_index, MemoryPool &i_pool) const;
 
   private:
+    PlasticMaterial() {}; // Empty default constructor for the boost serialization framework.
+
+    // Needed for the boost serialization framework.  
+    friend class boost::serialization::access;
+
+    /**
+    * Serializes to/from the specified Archive. This method is used by the boost serialization framework.
+    */
+    template<class Archive>
+    void serialize(Archive &i_ar, const unsigned int i_version);
+
+  private:
     intrusive_ptr<const Texture<SpectrumCoef_d> > mp_diffuse_reflectance, mp_glossy_reflectance;
 
     intrusive_ptr<const Texture<double> > mp_roughness;
@@ -50,44 +56,13 @@ class PlasticMaterial: public Material
 /////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-/**
-* Saves the data which is needed to construct PlasticMaterial to the specified Archive. This method is used by the boost serialization framework.
-*/
 template<class Archive>
-void save_construct_data(Archive &i_ar, const PlasticMaterial *ip_material, const unsigned int i_version)
+void PlasticMaterial::serialize(Archive &i_ar, const unsigned int i_version)
   {
-  intrusive_ptr<const Texture<SpectrumCoef_d> > p_diffuse_reflectance = ip_material->GetDiffuseReflectanceTexture();
-  intrusive_ptr<const Texture<SpectrumCoef_d> > p_glossy_reflectance = ip_material->GetGlossyReflectanceTexture();
-  intrusive_ptr<const Texture<double> > p_roughness = ip_material->GetRoughnessTexture();
-
-  i_ar << p_diffuse_reflectance;
-  i_ar << p_glossy_reflectance;
-  i_ar << p_roughness;
-  }
-
-/**
-* Constructs PlasticMaterial with the data from the specified Archive. This method is used by the boost serialization framework.
-*/
-template<class Archive>
-void load_construct_data(Archive &i_ar, PlasticMaterial *ip_material, const unsigned int i_version)
-  {
-  intrusive_ptr<const Texture<SpectrumCoef_d> > p_diffuse_reflectance, p_glossy_reflectance;
-  intrusive_ptr<const Texture<double> > p_roughness;
-
-  i_ar >> p_diffuse_reflectance;
-  i_ar >> p_glossy_reflectance;
-  i_ar >> p_roughness;
-
-  ::new(ip_material)PlasticMaterial(p_diffuse_reflectance, p_glossy_reflectance, p_roughness);
-  }
-
-/**
-* Serializes PlasticMaterial to/from the specified Archive. This method is used by the boost serialization framework.
-*/
-template<class Archive>
-void serialize(Archive &i_ar, PlasticMaterial &i_material, const unsigned int i_version)
-  {
-  i_ar & boost::serialization::base_object<Material>(i_material);
+  i_ar & boost::serialization::base_object<Material>(*this);
+  i_ar & mp_diffuse_reflectance;
+  i_ar & mp_glossy_reflectance;
+  i_ar & mp_roughness;
   }
 
 // Register the derived class in the boost serialization framework.

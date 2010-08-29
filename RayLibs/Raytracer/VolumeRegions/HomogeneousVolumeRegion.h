@@ -25,14 +25,6 @@ class HomogeneousVolumeRegion: public VolumeRegion
     */
     BBox3D_d GetBounds() const;
 
-    Spectrum_d GetEmission() const;
-
-    SpectrumCoef_d GetAbsorption() const;
-
-    SpectrumCoef_d GetScattering() const;
-
-    intrusive_ptr<const PhaseFunction> GetPhaseFunction() const;
-
     /**
     * Returns true if the ray intersects volume region and computes ray parametric coordinates of the intersection region.
     * @param i_ray Input ray. Direction component should be normalized.
@@ -85,6 +77,18 @@ class HomogeneousVolumeRegion: public VolumeRegion
     SpectrumCoef_d OpticalThickness(const Ray &i_ray, double i_step, double i_offset_sample) const;
 
   private:
+    HomogeneousVolumeRegion() {}; // Empty default constructor for the boost serialization framework.
+
+    // Needed for the boost serialization framework.  
+    friend class boost::serialization::access;
+
+    /**
+    * Serializes to/from the specified Archive. This method is used by the boost serialization framework.
+    */
+    template<class Archive>
+    void serialize(Archive &i_ar, const unsigned int i_version);
+
+  private:
     BBox3D_d m_bounds;
 
     Spectrum_d m_emission;
@@ -96,52 +100,16 @@ class HomogeneousVolumeRegion: public VolumeRegion
 /////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-/**
-* Saves the data which is needed to construct HomogeneousVolumeRegion to the specified Archive. This method is used by the boost serialization framework.
-*/
 template<class Archive>
-void save_construct_data(Archive &i_ar, const HomogeneousVolumeRegion *ip_volume, const unsigned int i_version)
+void HomogeneousVolumeRegion::serialize(Archive &i_ar,  const unsigned int i_version)
   {
-  BBox3D_d bounds = ip_volume->GetBounds();
-  Spectrum_d emission = ip_volume->GetEmission();
-  SpectrumCoef_d absorption = ip_volume->GetAbsorption();
-  SpectrumCoef_d scattering = ip_volume->GetScattering();
-  intrusive_ptr<const PhaseFunction> p_phase_function = ip_volume->GetPhaseFunction();
-
-  i_ar << bounds;
-  i_ar << emission;
-  i_ar << absorption;
-  i_ar << scattering;
-  i_ar << p_phase_function;
-  }
-
-/**
-* Constructs HomogeneousVolumeRegion with the data from the specified Archive. This method is used by the boost serialization framework.
-*/
-template<class Archive>
-void load_construct_data(Archive &i_ar, HomogeneousVolumeRegion *ip_volume, const unsigned int i_version)
-  {
-  BBox3D_d bounds;
-  Spectrum_d emission;
-  SpectrumCoef_d absorption, scattering;
-  intrusive_ptr<const PhaseFunction> p_phase_function;
-
-  i_ar >> bounds;
-  i_ar >> emission;
-  i_ar >> absorption;
-  i_ar >> scattering;
-  i_ar >> p_phase_function;
-
-  ::new(ip_volume)HomogeneousVolumeRegion(bounds, emission, absorption, scattering, p_phase_function);
-  }
-
-/**
-* Serializes HomogeneousVolumeRegion to/from the specified Archive. This method is used by the boost serialization framework.
-*/
-template<class Archive>
-void serialize(Archive &i_ar, HomogeneousVolumeRegion &i_volume, const unsigned int i_version)
-  {
-  i_ar & boost::serialization::base_object<VolumeRegion>(i_volume);
+  i_ar & boost::serialization::base_object<VolumeRegion>(*this);
+  i_ar & m_bounds;
+  i_ar & m_emission;
+  i_ar & m_absorption;
+  i_ar & m_scattering;
+  i_ar & m_attenuation;
+  i_ar & mp_phase_function;
   }
 
 // Register the derived class in the boost serialization framework.

@@ -67,11 +67,13 @@ class OpenEXRRgbaImageSource: public ImageSource<T>
     T _XYZ_To_T(const XYZColor_d &i_color) const;
 
   private:
+    OpenEXRRgbaImageSource() {}; // Empty default constructor for the boost serialization framework.
+
     // Needed for the boost serialization framework.  
     friend class boost::serialization::access;
 
     /**   
-    * Serializes OpenEXRRgbaImageSource to/from the specified Archive. This method is used by the boost serialization framework.
+    * Serializes to/from the specified Archive. This method is used by the boost serialization framework.
     */
     template<class Archive>
     void serialize(Archive &i_ar, const unsigned int i_version);
@@ -191,17 +193,6 @@ template<>
 inline SpectrumCoef_d OpenEXRRgbaImageSource<SpectrumCoef_d>::_XYZ_To_T(const XYZColor_d &i_color) const
   {
   return SpectrumRoutines::XYZToSpectrumCoef(i_color);
-  }
-
-/**
-* Constructs OpenEXRRgbaImageSource with the data from the specified Archive. This method is used by the boost serialization framework.
-*/
-template<typename T, class Archive>
-void load_construct_data(Archive &i_ar, OpenEXRRgbaImageSource<T> *ip_image_source, const unsigned int i_version)
-  {
-  // Construct with some dummy data, it will be serialized later in serialize() method.
-  std::vector<Imf::Rgba> image(1);
-  ::new(ip_image_source)OpenEXRRgbaImageSource<T>(image, 1, 1, global_sRGB_E_ColorSystem, 1.0);
   }
 
 /**

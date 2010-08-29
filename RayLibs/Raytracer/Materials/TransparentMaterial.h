@@ -21,12 +21,6 @@ class TransparentMaterial: public Material
     */
     TransparentMaterial(intrusive_ptr<const Texture<SpectrumCoef_d> > ip_reflectance, intrusive_ptr<const Texture<SpectrumCoef_d> > ip_transmittance, double i_refractive_index);
 
-    intrusive_ptr<const Texture<SpectrumCoef_d> > GetReflectanceTexture() const;
-
-    intrusive_ptr<const Texture<SpectrumCoef_d> > GetTransmittanceTexture() const;
-
-    double GetRefractiveIndex() const;
-
     /**
     * Returns a pointer to BSDF describing local scattering properties at the specified surface point.
     * The BSDF object and all its BxDFs is allocated using the provided MemoryPool.
@@ -38,6 +32,18 @@ class TransparentMaterial: public Material
     virtual const BSDF *GetBSDF(const DifferentialGeometry &i_dg, size_t i_triangle_index, MemoryPool &i_pool) const;
 
   private:
+    TransparentMaterial() {}; // Empty default constructor for the boost serialization framework.
+
+    // Needed for the boost serialization framework.  
+    friend class boost::serialization::access;
+
+    /**
+    * Serializes to/from the specified Archive. This method is used by the boost serialization framework.
+    */
+    template<class Archive>
+    void serialize(Archive &i_ar, const unsigned int i_version);
+
+  private:
     intrusive_ptr<const Texture<SpectrumCoef_d> > mp_reflectance, mp_transmittance;
 
     double m_refractive_index;
@@ -46,44 +52,13 @@ class TransparentMaterial: public Material
 /////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-/**
-* Saves the data which is needed to construct TransparentMaterial to the specified Archive. This method is used by the boost serialization framework.
-*/
 template<class Archive>
-void save_construct_data(Archive &i_ar, const TransparentMaterial *ip_material, const unsigned int i_version)
+void TransparentMaterial::serialize(Archive &i_ar, const unsigned int i_version)
   {
-  intrusive_ptr<const Texture<SpectrumCoef_d> > p_reflectance = ip_material->GetReflectanceTexture();
-  intrusive_ptr<const Texture<SpectrumCoef_d> > p_transmittance = ip_material->GetTransmittanceTexture();
-  double refractive_index = ip_material->GetRefractiveIndex();
-
-  i_ar << p_reflectance;
-  i_ar << p_transmittance;
-  i_ar << refractive_index;
-  }
-
-/**
-* Constructs TransparentMaterial with the data from the specified Archive. This method is used by the boost serialization framework.
-*/
-template<class Archive>
-void load_construct_data(Archive &i_ar, TransparentMaterial *ip_material, const unsigned int i_version)
-  {
-  intrusive_ptr<const Texture<SpectrumCoef_d> > p_reflectance, p_transmittance;
-  double refractive_index;
-
-  i_ar >> p_reflectance;
-  i_ar >> p_transmittance;
-  i_ar >> refractive_index;
-
-  ::new(ip_material)TransparentMaterial(p_reflectance, p_transmittance, refractive_index);
-  }
-
-/**
-* Serializes TransparentMaterial to/from the specified Archive. This method is used by the boost serialization framework.
-*/
-template<class Archive>
-void serialize(Archive &i_ar, TransparentMaterial &i_material, const unsigned int i_version)
-  {
-  i_ar & boost::serialization::base_object<Material>(i_material);
+  i_ar & boost::serialization::base_object<Material>(*this);
+  i_ar & mp_reflectance;
+  i_ar & mp_transmittance;
+  i_ar & m_refractive_index;
   }
 
 // Register the derived class in the boost serialization framework.

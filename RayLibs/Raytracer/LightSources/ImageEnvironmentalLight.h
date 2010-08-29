@@ -37,16 +37,6 @@ class ImageEnvironmentalLight: public InfiniteLightSource
     ImageEnvironmentalLight(const BBox3D_d &i_world_bounds, const Transform &i_light_to_world, intrusive_ptr<const ImageSource<Spectrum_f> > ip_image_source);
 
     /**
-    * Returns world bounding box.
-    */
-    BBox3D_d GetWorldBounds() const;
-
-    /**
-    * Returns Transform object that defines transformation from the light space to the world space.
-    */
-    Transform GetLightToWorld() const;
-
-    /**
     * Returns the light source radiance for the specified ray.
     * The ray differentials are used to determine proper filter width.
     * @param i_ray The ray pointing to the light source.
@@ -174,6 +164,8 @@ class ImageEnvironmentalLight: public InfiniteLightSource
     double _LightingPDF(const Vector3D_d &i_lighting_direction, const float *ip_nodes_pdf) const;
 
   private:
+    ImageEnvironmentalLight() {} // Empty default constructor for the boost serialization framework.
+
     // Needed for the boost serialization framework.  
     friend class boost::serialization::access;
 
@@ -235,39 +227,12 @@ class ImageEnvironmentalLight: public InfiniteLightSource
 /////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-/**
-* Saves the data which is needed to construct ImageEnvironmentalLight to the specified Archive. This method is used by the boost serialization framework.
-*/
-template<class Archive>
-void save_construct_data(Archive &i_ar, const ImageEnvironmentalLight *ip_light, const unsigned int i_version)
-  {
-  BBox3D_d world_bounds = ip_light->GetWorldBounds();
-  Transform light_to_world = ip_light->GetLightToWorld();
-
-  i_ar << world_bounds;
-  i_ar << light_to_world;
-  }
-
-/**
-* Constructs ImageEnvironmentalLight with the data from the specified Archive. This method is used by the boost serialization framework.
-*/
-template<class Archive>
-void load_construct_data(Archive &i_ar, ImageEnvironmentalLight *ip_light, const unsigned int i_version)
-  {
-  BBox3D_d world_bounds;
-  Transform light_to_world;
-
-  i_ar >> world_bounds;
-  i_ar >> light_to_world;
-
-  // Create ImageEnvironmentalLight with dummy image, it will be serialized later in save()/load() methods.
-  std::vector<std::vector<Spectrum_f> > image(1, std::vector<Spectrum_f>(1));
-  ::new(ip_light)ImageEnvironmentalLight(world_bounds, light_to_world, image);
-  }
-
 template<class Archive>
 void ImageEnvironmentalLight::save(Archive &i_ar, const unsigned int i_version) const
   {
+  i_ar & m_world_bounds;
+  i_ar & m_light_to_world;
+  i_ar & m_world_to_light;
   i_ar & mp_image_map;
   i_ar & m_height;
   i_ar & m_width;
@@ -276,6 +241,9 @@ void ImageEnvironmentalLight::save(Archive &i_ar, const unsigned int i_version) 
 template<class Archive>
 void ImageEnvironmentalLight::load(Archive &i_ar, const unsigned int i_version)
   {
+  i_ar & m_world_bounds;
+  i_ar & m_light_to_world;
+  i_ar & m_world_to_light;
   i_ar & mp_image_map;
   i_ar & m_height;
   i_ar & m_width;

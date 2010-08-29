@@ -40,19 +40,19 @@ class ImageTexture: public Texture<ReturnType>
     */
     ImageTexture(intrusive_ptr<const ImageSource<MemoryType> > ip_image_source, intrusive_ptr<const Mapping2D> ip_mapping, bool i_repeat = true, double i_max_anisotropy = 8.0);
 
-    intrusive_ptr<const Mapping2D> GetMapping() const;
-
     /**
     * Returns the value corresponding to the specified DifferentialGeometry and triangle index.
     */
     ReturnType Evaluate(const DifferentialGeometry &i_dg, size_t i_triangle_index) const;
 
   private:
+    ImageTexture() {}; // Empty default constructor for the boost serialization framework.
+
     // Needed for the boost serialization framework.  
     friend class boost::serialization::access;
 
     /**
-    * Serializes ImageTexture to/from the specified Archive. This method is used by the boost serialization framework.
+    * Serializes to/from the specified Archive. This method is used by the boost serialization framework.
     */
     template<class Archive>
     void serialize(Archive &i_ar, const unsigned int i_version);
@@ -83,12 +83,6 @@ ImageTexture<MemoryType,ReturnType,Converter>::ImageTexture(intrusive_ptr<const 
   ASSERT(ip_mapping);
 
   mp_mip_map.reset(new MIPMap<MemoryType>(ip_image_source, i_repeat, i_max_anisotropy) );
-  }
-
-template<typename MemoryType, typename ReturnType, typename Converter>
-intrusive_ptr<const Mapping2D> ImageTexture<MemoryType,ReturnType,Converter>::GetMapping() const
-  {
-  return mp_mapping;
   }
 
 template<typename MemoryType, typename ReturnType, typename Converter>
@@ -138,32 +132,6 @@ class DefaultConverter<SpectrumCoef<InputSpectrumType>, SpectrumCoef<OutputSpect
 
 /////////////////////////////////////////// Serialization ////////////////////////////////////////////////
 
-/**
-* Saves the data which is needed to construct ImageTexture to the specified Archive. This method is used by the boost serialization framework.
-*/
-template<typename MemoryType, typename ReturnType, typename Converter, class Archive>
-void save_construct_data(Archive &i_ar, const ImageTexture<MemoryType,ReturnType,Converter> *ip_texture, const unsigned int i_version)
-  {
-  intrusive_ptr<const Mapping2D> p_mapping = ip_texture->GetMapping();
-
-  i_ar << p_mapping;
-  }
-
-/**
-* Constructs ImageTexture with the data from the specified Archive. This method is used by the boost serialization framework.
-*/
-template<typename MemoryType, typename ReturnType, typename Converter, class Archive>
-void load_construct_data(Archive &i_ar, ImageTexture<MemoryType,ReturnType,Converter> *ip_texture, const unsigned int i_version)
-  {
-  intrusive_ptr<const Mapping2D> p_mapping;
-
-  i_ar >> p_mapping;
-
-  // Create ImageTexture with dummy image, it will be serialized in serialize() method.
-  std::vector<std::vector<MemoryType> > image (1,std::vector<MemoryType>(1));
-  ::new(ip_texture)ImageTexture<MemoryType,ReturnType,Converter>(image,p_mapping);
-  }
-
 template<typename MemoryType, typename ReturnType, typename Converter>
 template<class Archive>
 void ImageTexture<MemoryType,ReturnType,Converter>::serialize(Archive &i_ar, const unsigned int i_version)
@@ -171,6 +139,7 @@ void ImageTexture<MemoryType,ReturnType,Converter>::serialize(Archive &i_ar, con
   i_ar & boost::serialization::base_object<Texture<ReturnType> >(*this);
 
   i_ar & mp_mip_map;
+  i_ar & mp_mapping;
   }
 
 // The following code exports different specializations of the ImageTexture template in the boost serialization framework.

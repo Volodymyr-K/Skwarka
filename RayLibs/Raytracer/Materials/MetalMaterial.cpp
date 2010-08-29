@@ -41,36 +41,6 @@ Material(), mp_reflectance(ip_reflectance), mp_u_roughness(ip_u_roughness), mp_v
   ASSERT(ip_v_roughness);
   }
 
-intrusive_ptr<const Texture<SpectrumCoef_d> > MetalMaterial::GetRefractiveIndexTexture() const
-  {
-  return mp_refractive_index;
-  }
-
-intrusive_ptr<const Texture<SpectrumCoef_d> > MetalMaterial::GetAbsoprtionTexture() const
-  {
-  return mp_absorption;
-  }
-
-intrusive_ptr<const Texture<SpectrumCoef_d> > MetalMaterial::GetReflectanceTexture() const
-  {
-  return mp_reflectance;
-  }
-
-intrusive_ptr<const Texture<double> > MetalMaterial::GetRoughnessTexture() const
-  {
-  return mp_roughness;
-  }
-
-intrusive_ptr<const Texture<double> > MetalMaterial::GetURoughnessTexture() const
-  {
-  return mp_u_roughness;
-  }
-
-intrusive_ptr<const Texture<double> > MetalMaterial::GetVRoughnessTexture() const
-  {
-  return mp_v_roughness;
-  }
-
 const BSDF *MetalMaterial::GetBSDF(const DifferentialGeometry &i_dg, size_t i_triangle_index, MemoryPool &i_pool) const
   {
   BSDF *p_bsdf = new ( i_pool.Alloc(sizeof(BSDF)) ) BSDF(i_dg);

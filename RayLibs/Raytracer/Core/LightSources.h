@@ -219,6 +219,8 @@ class AreaLightSource: public ReferenceCounted
     */
     AreaLightSource(intrusive_ptr<const TriangleMesh> ip_mesh);
 
+    AreaLightSource(); // Empty default constructor for the boost serialization framework.
+
   private:
     // Not implemented, not a value type.
     AreaLightSource(const AreaLightSource&);

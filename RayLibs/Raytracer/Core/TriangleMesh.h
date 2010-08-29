@@ -143,7 +143,6 @@ class TriangleMesh: public ReferenceCounted
 
   private:
     // Not implemented, TriangleMesh should only be passed by a reference to avoid large data copying.
-    TriangleMesh();
     TriangleMesh(const TriangleMesh&);
     TriangleMesh &operator=(const TriangleMesh&);
 
@@ -157,6 +156,8 @@ class TriangleMesh: public ReferenceCounted
     TopologyInfo _ComputeTopologyInfo(const ConnectivityData &i_connectivity) const;
 
   private:
+    TriangleMesh() {}; // Empty default constructor for the boost serialization framework.
+
     // Needed for the boost serialization framework.  
     friend class boost::serialization::access;
 
@@ -228,25 +229,6 @@ inline BBox3D_f TriangleMesh::GetBounds() const
 inline float TriangleMesh::GetArea() const
   {
   return m_area;
-  }
-
-/**
-* Saves the data which is needed to construct TriangleMesh to the specified Archive. This method is used by the boost serialization framework.
-*/
-template<class Archive>
-void save_construct_data(Archive &i_ar, const TriangleMesh *ip_mesh, const unsigned int i_version)
-  {
-  // Nothing to save here really. Everything will be serialized by the serialize() method.
-  }
-
-/**
-* Constructs TriangleMesh with the data from the specified Archive. This method is used by the boost serialization framework.
-*/
-template<class Archive>
-void load_construct_data(Archive &i_ar, TriangleMesh *ip_mesh, const unsigned int i_version)
-  {
-  // Just create an empty mesh.
-  ::new(ip_mesh)TriangleMesh(std::vector<Point3D_f>(), std::vector<MeshTriangle>(), std::vector<Vector3D_f>(), std::vector<Vector3D_f>());
   }
 
 /**

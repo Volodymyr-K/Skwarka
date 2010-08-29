@@ -55,11 +55,13 @@ class RGB24ImageSource: public ImageSource<T>
     T _XYZ_To_T(const XYZColor_d &i_color) const;
 
   private:
+    RGB24ImageSource() {}; // Empty default constructor for the boost serialization framework.
+
     // Needed for the boost serialization framework.  
     friend class boost::serialization::access;
 
     /**
-    * Serializes RGB24ImageSource to/from the specified Archive. This method is used by the boost serialization framework.
+    * Serializes to/from the specified Archive. This method is used by the boost serialization framework.
     */
     template<class Archive>
     void serialize(Archive &i_ar, const unsigned int i_version);
@@ -158,20 +160,6 @@ void serialize(Archive &i_ar, RGB24 &i_rgb24, const unsigned int i_version)
 // Don't store class info for RGB24.
 BOOST_CLASS_IMPLEMENTATION(RGB24, boost::serialization::object_serializable)
 
-/**
-* Constructs RGB24ImageSource with the data from the specified Archive. This method is used by the boost serialization framework.
-*/
-template<typename T, class Archive>
-void load_construct_data(Archive &i_ar, RGB24ImageSource<T> *ip_image_source, const unsigned int i_version)
-  {
-  // Construct with some dummy data, it will be serialized later in serialize() method.
-  std::vector<std::vector<RGB24> > image(1, std::vector<RGB24>(1));
-  ::new(ip_image_source)RGB24ImageSource<T>(image, global_sRGB_E_ColorSystem, 1.0);
-  }
-
-/**
-* Serializes RGB24ImageSource to/from the specified Archive. This method is used by the boost serialization framework.
-*/
 template<typename T>
 template<class Archive>
 void RGB24ImageSource<T>::serialize(Archive &i_ar, const unsigned int i_version)

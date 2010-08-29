@@ -25,31 +25,6 @@ Material(), mp_specular_reflectance(ip_specular_reflectance), mp_diffuse_reflect
   ASSERT(ip_v_roughness);
   }
 
-intrusive_ptr<const Texture<SpectrumCoef_d> > SubstrateMaterial::GetDiffuseReflectanceTexture() const
-  {
-  return mp_diffuse_reflectance;
-  }
-
-intrusive_ptr<const Texture<SpectrumCoef_d> > SubstrateMaterial::GetSpecularReflectanceTexture() const
-  {
-  return mp_specular_reflectance;
-  }
-
-intrusive_ptr<const Texture<double> > SubstrateMaterial::GetRoughnessTexture() const
-  {
-  return mp_roughness;
-  }
-
-intrusive_ptr<const Texture<double> > SubstrateMaterial::GetURoughnessTexture() const
-  {
-  return mp_u_roughness;
-  }
-
-intrusive_ptr<const Texture<double> > SubstrateMaterial::GetVRoughnessTexture() const
-  {
-  return mp_v_roughness;
-  }
-
 const BSDF *SubstrateMaterial::GetBSDF(const DifferentialGeometry &i_dg, size_t i_triangle_index, MemoryPool &i_pool) const
   {
   BSDF *p_bsdf = new ( i_pool.Alloc(sizeof(BSDF)) ) BSDF(i_dg);

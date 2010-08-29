@@ -16,26 +16,6 @@ BBox3D_d HomogeneousVolumeRegion::GetBounds() const
   return m_bounds;
   }
 
-Spectrum_d HomogeneousVolumeRegion::GetEmission() const
-  {
-  return m_emission;
-  }
-
-SpectrumCoef_d HomogeneousVolumeRegion::GetAbsorption() const
-  {
-  return m_absorption;
-  }
-
-SpectrumCoef_d HomogeneousVolumeRegion::GetScattering() const
-  {
-  return m_scattering;
-  }
-
-intrusive_ptr<const PhaseFunction> HomogeneousVolumeRegion::GetPhaseFunction() const
-  {
-  return mp_phase_function;
-  }
-
 bool HomogeneousVolumeRegion::Intersect(Ray i_ray, double *op_t_begin, double *op_t_end) const
   {
   return m_bounds.Intersect(i_ray, op_t_begin, op_t_end);

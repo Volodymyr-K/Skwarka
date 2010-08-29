@@ -2,7 +2,7 @@
 #include <Math/MathRoutines.h>
 
 InteractiveFilm::InteractiveFilm(size_t i_x_resolution, size_t i_y_resolution, intrusive_ptr<const FilmFilter> ip_filter):
-Film(i_x_resolution, i_y_resolution), m_x_resolution(i_x_resolution), m_y_resolution(i_y_resolution), mp_filter(ip_filter)
+Film(i_x_resolution, i_y_resolution), m_x_resolution(i_x_resolution), m_y_resolution(i_y_resolution)
   {
   ASSERT(i_x_resolution>0 && i_y_resolution>0);
   ASSERT(ip_filter != NULL);
@@ -23,11 +23,6 @@ Film(i_x_resolution, i_y_resolution), m_x_resolution(i_x_resolution), m_y_resolu
     layer_y_resolution = (layer_y_resolution+FRACTION_FACTOR-1)/FRACTION_FACTOR;
     }
 
-  }
-
-intrusive_ptr<const FilmFilter> InteractiveFilm::GetFilmFilter() const
-  {
-  return mp_filter;
   }
 
 void InteractiveFilm::AddSample(const Point2D_d &i_image_point, const Spectrum_d &i_spectrum)

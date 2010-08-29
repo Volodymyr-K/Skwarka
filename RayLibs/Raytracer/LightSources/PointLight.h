@@ -16,10 +16,6 @@ class PointLight: public DeltaLightSource
     */
     PointLight(const Point3D_d &i_position, const Spectrum_d &i_intensity);
 
-    Point3D_d GetPosition() const;
-
-    Spectrum_d GetIntensity() const;
-
     /**
     * Returns the total power of the light source, i.e. the light flux.
     */
@@ -43,6 +39,18 @@ class PointLight: public DeltaLightSource
     virtual Spectrum_d SamplePhoton(const Point2D_d &i_sample, Ray &o_photon_ray, double &o_pdf) const;
 
   private:
+    PointLight() {}; // Empty default constructor for the boost serialization framework.
+
+    // Needed for the boost serialization framework.  
+    friend class boost::serialization::access;
+
+    /**
+    * Serializes to/from the specified Archive. This method is used by the boost serialization framework.
+    */
+    template<class Archive>
+    void serialize(Archive &i_ar, const unsigned int i_version);
+
+  private:
     Point3D_d m_position;
 
     Spectrum_d m_intensity;
@@ -51,41 +59,12 @@ class PointLight: public DeltaLightSource
 /////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-/**
-* Saves the data which is needed to construct PointLight to the specified Archive. This method is used by the boost serialization framework.
-*/
 template<class Archive>
-void save_construct_data(Archive &i_ar, const PointLight *ip_light, const unsigned int i_version)
+void PointLight::serialize(Archive &i_ar, const unsigned int i_version)
   {
-  Point3D_d position = ip_light->GetPosition();
-  Spectrum_d intensity = ip_light->GetIntensity();
-
-  i_ar << position;
-  i_ar << intensity;
-  }
-
-/**
-* Constructs PointLight with the data from the specified Archive. This method is used by the boost serialization framework.
-*/
-template<class Archive>
-void load_construct_data(Archive &i_ar, PointLight *ip_light, const unsigned int i_version)
-  {
-  Point3D_d position;
-  Spectrum_d intensity;
-
-  i_ar >> position;
-  i_ar >> intensity;
-
-  ::new(ip_light)PointLight(position, intensity);
-  }
-
-/**
-* Serializes PointLight to/from the specified Archive. This method is used by the boost serialization framework.
-*/
-template<class Archive>
-void serialize(Archive &i_ar, PointLight &i_light, const unsigned int i_version)
-  {
-  i_ar & boost::serialization::base_object<DeltaLightSource>(i_light);
+  i_ar & boost::serialization::base_object<DeltaLightSource>(*this);
+  i_ar & m_position;
+  i_ar & m_intensity;
   }
 
 // Register the derived class in the boost serialization framework.

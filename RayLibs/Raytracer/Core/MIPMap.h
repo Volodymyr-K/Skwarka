@@ -101,6 +101,8 @@ class MIPMap: public ReferenceCounted
     std::vector<ResampleWeight> _ComputeResampleWeights(size_t i_old_size, size_t i_new_size) const;
 
   private:
+    MIPMap() {}; // Empty default constructor for the boost serialization framework.
+
     // Needed for the boost serialization framework.  
     friend class boost::serialization::access;
 
@@ -565,28 +567,6 @@ T MIPMap<T>::_EWA(size_t i_level, Point2D_d i_point, Vector2D_d i_dxy_1, Vector2
   return static_cast<T>( num / den );
   }
 
-/**
-* Saves the data which is needed to construct MIPMap to the specified Archive. This method is used by the boost serialization framework.
-*/
-template<typename T, class Archive>
-void save_construct_data(Archive &i_ar, const MIPMap<T> *ip_map, const unsigned int i_version)
-  {
-  // Nothing to save here. Everything will be serialized by the serialize() method.
-  }
-
-/**
-* Constructs MIPMap with the data from the specified Archive. This method is used by the boost serialization framework.
-*/
-template<typename T, class Archive>
-void load_construct_data(Archive &i_ar, MIPMap<T> *ip_map, const unsigned int i_version)
-  {
-  // Nothing to load here. Everything will be serialized by the serialize() method.
-
-  // Create MIPMap with some dummy parameters.
-  std::vector<std::vector<T> > values (1,std::vector<T>(1));
-  ::new(ip_map)MIPMap<T>(values, true, 1.0);
-  }
-
 template<typename T>
 template<class Archive>
 void MIPMap<T>::save(Archive &i_ar, const unsigned int i_version) const
@@ -645,7 +625,7 @@ void MIPMap<T>::load(Archive &i_ar, const unsigned int i_version)
     mp_image_source = NULL;
     }
 
-  // No need to serialize EWA weights because they do not change and have already been initialized in the constructor.
+  _InitializeEWA();
   }
 
 template<typename T>

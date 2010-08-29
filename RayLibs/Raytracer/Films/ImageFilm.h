@@ -25,11 +25,6 @@ class ImageFilm: public Film
     ImageFilm(size_t i_x_resolution, size_t i_y_resolution, intrusive_ptr<const FilmFilter> ip_filter);
 
     /**
-    * Returns film filter.
-    */
-    intrusive_ptr<const FilmFilter> GetFilmFilter() const;
-
-    /**
     * Adds sample value to the film.
     */
     virtual void AddSample(const Point2D_d &i_image_point, const Spectrum_d &i_spectrum);
@@ -77,11 +72,13 @@ class ImageFilm: public Film
     struct ImageFilmPixel;
 
   private:
+    ImageFilm(); // Empty default constructor for the boost serialization framework.
+
     // Needed for the boost serialization framework.  
     friend class boost::serialization::access;
 
     /**
-    * Serializes ImageFilm to/from the specified Archive. This method is used by the boost serialization framework.
+    * Serializes to/from the specified Archive. This method is used by the boost serialization framework.
     */
     template<class Archive>
     void serialize(Archive &i_ar, const unsigned int i_version);
@@ -124,47 +121,18 @@ struct ImageFilm::ImageFilmPixel
 // Don't store class info for ImageFilm::ImageFilmPixel.
 BOOST_CLASS_IMPLEMENTATION(ImageFilm::ImageFilmPixel, boost::serialization::object_serializable)
 
-/**
-* Saves the data which is needed to construct ImageFilm to the specified Archive. This method is used by the boost serialization framework.
-*/
-template<class Archive>
-void save_construct_data(Archive &i_ar, const ImageFilm *ip_film, const unsigned int i_version)
-  {
-  size_t x_resolution = ip_film->GetXResolution();
-  size_t y_resolution = ip_film->GetYResolution();
-  intrusive_ptr<const FilmFilter> p_filter = ip_film->GetFilmFilter();
-
-  i_ar << x_resolution;
-  i_ar << y_resolution;
-  i_ar << p_filter;
-  }
-
-/**
-* Constructs ImageFilm with the data from the specified Archive. This method is used by the boost serialization framework.
-*/
-template<class Archive>
-void load_construct_data(Archive &i_ar, ImageFilm *ip_film, const unsigned int i_version)
-  {
-  size_t x_resolution, y_resolution;
-  intrusive_ptr<const FilmFilter> p_filter;
-
-  i_ar >> x_resolution;
-  i_ar >> y_resolution;
-  i_ar >> p_filter;
-  ::new(ip_film)ImageFilm(x_resolution, y_resolution, p_filter);
-  }
-
-/**
-* Serializes ImageFilm to/from the specified Archive. This method is used by the boost serialization framework.
-*/
 template<class Archive>
 void ImageFilm::serialize(Archive &i_ar, const unsigned int i_version)
   {
   i_ar & boost::serialization::base_object<Film>(*this);
-
+  i_ar & m_x_resolution;
+  i_ar & m_y_resolution;
+  i_ar & m_filter_x_width;
+  i_ar & m_filter_y_width;
+  i_ar & mp_filter;
+  i_ar & m_pixels;
   i_ar & m_crop_window_begin;
   i_ar & m_crop_window_end;
-  i_ar & m_pixels;
   }
 
 // Register the derived class in the boost serialization framework.

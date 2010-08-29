@@ -22,26 +22,6 @@ BBox3D_d DensityVolumeRegion::GetBounds() const
   return m_bounds;
   }
 
-Spectrum_d DensityVolumeRegion::GetBaseEmission() const
-  {
-  return m_base_emission;
-  }
-
-SpectrumCoef_d DensityVolumeRegion::GetBaseAbsorption() const
-  {
-  return m_base_absorption;
-  }
-
-SpectrumCoef_d DensityVolumeRegion::GetBaseScattering() const
-  {
-  return m_base_scattering;
-  }
-
-intrusive_ptr<const PhaseFunction> DensityVolumeRegion::GetPhaseFunction() const
-  {
-  return mp_phase_function;
-  }
-
 Spectrum_d DensityVolumeRegion::Emission(const Point3D_d &i_point) const
   {
   return _Density(i_point) * m_base_emission;

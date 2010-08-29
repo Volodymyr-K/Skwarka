@@ -27,31 +27,6 @@ m_position(i_position), m_direction(i_direction), m_intensity(i_intensity), m_in
   m_power = (inner_cone_power + power_in_fallof) * m_intensity;
   }
 
-Point3D_d SpotPointLight::GetPosition() const
-  {
-  return m_position;
-  }
-
-Vector3D_d SpotPointLight::GetDirection() const
-  {
-  return m_direction;
-  }
-
-Spectrum_d SpotPointLight::GetIntensity() const
-  {
-  return m_intensity;
-  }
-
-double SpotPointLight::GetInternalConeAngle() const
-  {
-  return m_internal_cone_angle;
-  }
-
-double SpotPointLight::GetOuterConeAngle() const
-  {
-  return m_outer_cone_angle;
-  }
-
 Spectrum_d SpotPointLight::Power() const
   {
   return m_power;

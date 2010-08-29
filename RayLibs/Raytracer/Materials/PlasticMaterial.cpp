@@ -16,21 +16,6 @@ Material(), mp_glossy_reflectance(ip_glossy_reflectance), mp_diffuse_reflectance
   ASSERT(ip_roughness);
   }
 
-intrusive_ptr<const Texture<SpectrumCoef_d> > PlasticMaterial::GetDiffuseReflectanceTexture() const
-  {
-  return mp_diffuse_reflectance;
-  }
-
-intrusive_ptr<const Texture<SpectrumCoef_d> > PlasticMaterial::GetGlossyReflectanceTexture() const
-  {
-  return mp_glossy_reflectance;
-  }
-
-intrusive_ptr<const Texture<double> > PlasticMaterial::GetRoughnessTexture() const
-  {
-  return mp_roughness;
-  }
-
 const BSDF *PlasticMaterial::GetBSDF(const DifferentialGeometry &i_dg, size_t i_triangle_index, MemoryPool &i_pool) const
   {
   BSDF *p_bsdf = new ( i_pool.Alloc(sizeof(BSDF)) ) BSDF(i_dg);

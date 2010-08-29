@@ -37,16 +37,6 @@ m_radiance(i_radiance), mp_mesh(ip_mesh)
     }
   }
 
-Spectrum_d DiffuseAreaLightSource::GetRadiance() const
-  {
-  return m_radiance;
-  }
-
-intrusive_ptr<const TriangleMesh> DiffuseAreaLightSource::GetTriangleMesh() const
-  {
-  return mp_mesh;
-  }
-
 Spectrum_d DiffuseAreaLightSource::Radiance(const DifferentialGeometry &i_dg, size_t i_triangle_index, const Vector3D_d &i_light_direction) const
   {
   ASSERT(i_light_direction.IsNormalized());

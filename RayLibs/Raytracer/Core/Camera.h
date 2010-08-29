@@ -44,14 +44,25 @@ class Camera: public ReferenceCounted
     */
     Camera(const Transform &i_camera2world, intrusive_ptr<Film> ip_film);
 
+    Camera() {} // Empty default constructor for the boost serialization framework.
+
     /**
     * Helper method for derived classes that transform the ray in the camera space to the world space.
     */
     void _TransformRay(const Ray &i_ray, Ray &o_ray) const;
 
   private:
+    // Needed for the boost serialization framework.  
+    friend class boost::serialization::access;
+
+    /**
+    * Serializes to/from the specified Archive. This method is used by the boost serialization framework.
+    */
+    template<class Archive>
+    void serialize(Archive &i_ar, const unsigned int i_version);
+
+  private:
     // Not implemented, not a value type.
-    Camera();
     Camera(const Camera&);
     Camera &operator=(const Camera&);
 
@@ -63,22 +74,12 @@ class Camera: public ReferenceCounted
 /////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-/**
-* Serializes Camera to/from the specified Archive. This method is used by the boost serialization framework.
-*/
 template<class Archive>
-void serialize(Archive &i_ar, Camera &i_camera, const unsigned int i_version)
+void Camera::serialize(Archive &i_ar,  const unsigned int i_version)
   {
-  /*
-  Nothing to do here, everything must be serialized by the derived classes.
-
-  We can't serialize the member fields here because there's no default constructor for the class
-  and save_construct_data/load_construct_data functions can't be used either
-  because it is impossible to create an instance of the abstract class.
-  */
-
-  // Just call the serialization for the base ReferenceCounted class.
-  i_ar & boost::serialization::base_object<ReferenceCounted>(i_camera);
+  i_ar & boost::serialization::base_object<ReferenceCounted>(*this);
+  i_ar & m_camera2world;
+  i_ar & mp_film;
   }
 
 #endif // CAMERA_H

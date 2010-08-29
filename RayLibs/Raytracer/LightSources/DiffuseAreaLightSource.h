@@ -18,10 +18,6 @@ class DiffuseAreaLightSource: public AreaLightSource
     */
     DiffuseAreaLightSource(const Spectrum_d &i_radiance, intrusive_ptr<const TriangleMesh> ip_mesh);
 
-    Spectrum_d GetRadiance() const;
-
-    intrusive_ptr<const TriangleMesh> GetTriangleMesh() const;
-
     /**
     * Returns the light source radiance for the specified point on a mesh and specified outgoing direction.
     * @param i_dg DifferentialGeometry object defining the surface point.
@@ -78,6 +74,18 @@ class DiffuseAreaLightSource: public AreaLightSource
     void _SampleArea(double i_triangle_sample, const Point2D_d &i_sample, Point3D_d &o_sampled_point, Vector3D_d &o_geometric_normal) const;
 
   private:
+    DiffuseAreaLightSource() {}; // Empty default constructor for the boost serialization framework.
+
+    // Needed for the boost serialization framework.  
+    friend class boost::serialization::access;
+
+    /**
+    * Serializes to/from the specified Archive. This method is used by the boost serialization framework.
+    */
+    template<class Archive>
+    void serialize(Archive &i_ar, const unsigned int i_version);
+
+  private:
     Spectrum_d m_radiance;
 
     intrusive_ptr<const TriangleMesh> mp_mesh;
@@ -96,41 +104,14 @@ class DiffuseAreaLightSource: public AreaLightSource
 /////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-/**
-* Saves the data which is needed to construct DiffuseAreaLightSource to the specified Archive. This method is used by the boost serialization framework.
-*/
 template<class Archive>
-void save_construct_data(Archive &i_ar, const DiffuseAreaLightSource *ip_light, const unsigned int i_version)
+void DiffuseAreaLightSource::serialize(Archive &i_ar, const unsigned int i_version)
   {
-  Spectrum_d radiance = ip_light->GetRadiance();
-  intrusive_ptr<const TriangleMesh> p_mesh = ip_light->GetTriangleMesh();
-
-  i_ar << radiance;
-  i_ar << p_mesh;
-  }
-
-/**
-* Constructs DiffuseAreaLightSource with the data from the specified Archive. This method is used by the boost serialization framework.
-*/
-template<class Archive>
-void load_construct_data(Archive &i_ar, DiffuseAreaLightSource *ip_light, const unsigned int i_version)
-  {
-  Spectrum_d radiance;
-  intrusive_ptr<const TriangleMesh> p_mesh;
-
-  i_ar >> radiance;
-  i_ar >> p_mesh;
-
-  ::new(ip_light)DiffuseAreaLightSource(radiance, p_mesh);
-  }
-
-/**
-* Serializes DiffuseAreaLightSource to/from the specified Archive. This method is used by the boost serialization framework.
-*/
-template<class Archive>
-void serialize(Archive &i_ar, DiffuseAreaLightSource &i_light, const unsigned int i_version)
-  {
-  i_ar & boost::serialization::base_object<AreaLightSource>(i_light);
+  i_ar & boost::serialization::base_object<AreaLightSource>(*this);
+  i_ar & m_radiance;
+  i_ar & mp_mesh;
+  i_ar & m_area;
+  i_ar & m_area_CDF;
   }
 
 // Register the derived class in the boost serialization framework.

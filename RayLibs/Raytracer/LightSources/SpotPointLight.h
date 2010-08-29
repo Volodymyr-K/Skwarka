@@ -24,16 +24,6 @@ class SpotPointLight: public DeltaLightSource
     */
     SpotPointLight(const Point3D_d &i_position, Vector3D_d i_direction, const Spectrum_d &i_intensity, double i_internal_cone_angle, double i_outer_cone_angle);
 
-    Point3D_d GetPosition() const;
-
-    Vector3D_d GetDirection() const;
-
-    Spectrum_d GetIntensity() const;
-
-    double GetInternalConeAngle() const;
-
-    double GetOuterConeAngle() const;
-
     /**
     * Returns the total power of the light source, i.e. the light flux.
     */
@@ -60,6 +50,18 @@ class SpotPointLight: public DeltaLightSource
     double _Falloff(double i_cos) const;
 
   private:
+    SpotPointLight() {}; // Empty default constructor for the boost serialization framework.
+
+    // Needed for the boost serialization framework.  
+    friend class boost::serialization::access;
+
+    /**
+    * Serializes to/from the specified Archive. This method is used by the boost serialization framework.
+    */
+    template<class Archive>
+    void serialize(Archive &i_ar, const unsigned int i_version);
+
+  private:
     Point3D_d m_position;
     Vector3D_d m_direction, m_e2, m_e3;
 
@@ -73,52 +75,21 @@ class SpotPointLight: public DeltaLightSource
 /////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-/**
-* Saves the data which is needed to construct SpotPointLight to the specified Archive. This method is used by the boost serialization framework.
-*/
 template<class Archive>
-void save_construct_data(Archive &i_ar, const SpotPointLight *ip_light, const unsigned int i_version)
+void SpotPointLight::serialize(Archive &i_ar, const unsigned int i_version)
   {
-  Point3D_d position = ip_light->GetPosition();
-  Vector3D_d direction = ip_light->GetDirection();
-  Spectrum_d intensity = ip_light->GetIntensity();
-  double internal_cone_angle = ip_light->GetInternalConeAngle();
-  double outer_cone_angle = ip_light->GetOuterConeAngle();
-
-  i_ar << position;
-  i_ar << direction;
-  i_ar << intensity;
-  i_ar << internal_cone_angle;
-  i_ar << outer_cone_angle;
-  }
-
-/**
-* Constructs SpotPointLight with the data from the specified Archive. This method is used by the boost serialization framework.
-*/
-template<class Archive>
-void load_construct_data(Archive &i_ar, SpotPointLight *ip_light, const unsigned int i_version)
-  {
-  Point3D_d position;
-  Spectrum_d intensity;
-  Vector3D_d direction;
-  double internal_cone_angle, outer_cone_angle;
-
-  i_ar >> position;
-  i_ar >> direction;
-  i_ar >> intensity;
-  i_ar >> internal_cone_angle;
-  i_ar >> outer_cone_angle;
-
-  ::new(ip_light)SpotPointLight(position, direction, intensity, internal_cone_angle, outer_cone_angle);
-  }
-
-/**
-* Serializes SpotPointLight to/from the specified Archive. This method is used by the boost serialization framework.
-*/
-template<class Archive>
-void serialize(Archive &i_ar, SpotPointLight &i_light, const unsigned int i_version)
-  {
-  i_ar & boost::serialization::base_object<DeltaLightSource>(i_light);
+  i_ar & boost::serialization::base_object<DeltaLightSource>(*this);
+  i_ar & m_position;
+  i_ar & m_direction;
+  i_ar & m_e2;
+  i_ar & m_e3;
+  i_ar & m_intensity;
+  i_ar & m_power;
+  i_ar & m_internal_cone_angle;
+  i_ar & m_outer_cone_angle;
+  i_ar & m_inner_angle_cos;
+  i_ar & m_outer_angle_cos;
+  i_ar & m_inv_cos_difference;
   }
 
 // Register the derived class in the boost serialization framework.

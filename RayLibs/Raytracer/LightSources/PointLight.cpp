@@ -8,16 +8,6 @@ m_position(i_position), m_intensity(i_intensity)
   ASSERT(InRange(i_intensity,0.0,DBL_INF));
   }
 
-Point3D_d PointLight::GetPosition() const
-  {
-  return m_position;
-  }
-
-Spectrum_d PointLight::GetIntensity() const
-  {
-  return m_intensity;
-  }
-
 Spectrum_d PointLight::Power() const
   {
   return 4.0*M_PI*m_intensity;

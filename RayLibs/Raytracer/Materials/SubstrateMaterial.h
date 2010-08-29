@@ -37,28 +37,6 @@ class SubstrateMaterial: public Material
     SubstrateMaterial(intrusive_ptr<const Texture<SpectrumCoef_d> > ip_diffuse_reflectance, intrusive_ptr<const Texture<SpectrumCoef_d> > ip_specular_reflectance, 
       intrusive_ptr<const Texture<double> > ip_u_roughness, intrusive_ptr<const Texture<double> > ip_v_roughness);
 
-    intrusive_ptr<const Texture<SpectrumCoef_d> > GetDiffuseReflectanceTexture() const;
-
-    intrusive_ptr<const Texture<SpectrumCoef_d> > GetSpecularReflectanceTexture() const;
-
-    /**
-    * Returns texture defining the roughness of the specular surface.
-    * If the material is anisotropic the returned texture is NULL.
-    */
-    intrusive_ptr<const Texture<double> > GetRoughnessTexture() const;
-
-    /**
-    * Returns texture defining the roughness of the specular surface in U direction.
-    * If the material is isotropic the returned texture is NULL.
-    */
-    intrusive_ptr<const Texture<double> > GetURoughnessTexture() const;
-
-    /**
-    * Returns texture defining the roughness of the specular surface in V direction.
-    * If the material is isotropic the returned texture is NULL.
-    */
-    intrusive_ptr<const Texture<double> > GetVRoughnessTexture() const;
-
     /**
     * Returns a pointer to BSDF describing local scattering properties at the specified surface point.
     * The BSDF object and all its BxDFs is allocated using the provided MemoryPool.
@@ -70,6 +48,18 @@ class SubstrateMaterial: public Material
     virtual const BSDF *GetBSDF(const DifferentialGeometry &i_dg, size_t i_triangle_index, MemoryPool &i_pool) const;
 
   private:
+    SubstrateMaterial() {}; // Empty default constructor for the boost serialization framework.
+
+    // Needed for the boost serialization framework.  
+    friend class boost::serialization::access;
+
+    /**
+    * Serializes to/from the specified Archive. This method is used by the boost serialization framework.
+    */
+    template<class Archive>
+    void serialize(Archive &i_ar, const unsigned int i_version);
+
+  private:
     intrusive_ptr<const Texture<SpectrumCoef_d> > mp_diffuse_reflectance, mp_specular_reflectance;
 
     intrusive_ptr<const Texture<double> > mp_roughness, mp_u_roughness, mp_v_roughness;
@@ -78,53 +68,15 @@ class SubstrateMaterial: public Material
 /////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-/**
-* Saves the data which is needed to construct SubstrateMaterial to the specified Archive. This method is used by the boost serialization framework.
-*/
 template<class Archive>
-void save_construct_data(Archive &i_ar, const SubstrateMaterial *ip_material, const unsigned int i_version)
+void SubstrateMaterial::serialize(Archive &i_ar, const unsigned int i_version)
   {
-  intrusive_ptr<const Texture<SpectrumCoef_d> > p_diffuse_reflectance = ip_material->GetDiffuseReflectanceTexture();
-  intrusive_ptr<const Texture<SpectrumCoef_d> > p_specular_reflectance = ip_material->GetSpecularReflectanceTexture();
-  intrusive_ptr<const Texture<double> > p_roughness = ip_material->GetRoughnessTexture();
-  intrusive_ptr<const Texture<double> > p_u_roughness = ip_material->GetURoughnessTexture();
-  intrusive_ptr<const Texture<double> > p_v_roughness = ip_material->GetVRoughnessTexture();
-
-  i_ar << p_diffuse_reflectance;
-  i_ar << p_specular_reflectance;
-  i_ar << p_roughness;
-  i_ar << p_u_roughness;
-  i_ar << p_v_roughness;
-  }
-
-/**
-* Constructs SubstrateMaterial with the data from the specified Archive. This method is used by the boost serialization framework.
-*/
-template<class Archive>
-void load_construct_data(Archive &i_ar, SubstrateMaterial *ip_material, const unsigned int i_version)
-  {
-  intrusive_ptr<const Texture<SpectrumCoef_d> > p_diffuse_reflectance, p_specular_reflectance;
-  intrusive_ptr<const Texture<double> > p_roughness, p_u_roughness, p_v_roughness;
-
-  i_ar >> p_diffuse_reflectance;
-  i_ar >> p_specular_reflectance;
-  i_ar >> p_roughness;
-  i_ar >> p_u_roughness;
-  i_ar >> p_v_roughness;
-
-  if (p_roughness)
-    ::new(ip_material)SubstrateMaterial(p_diffuse_reflectance, p_specular_reflectance, p_roughness);
-  else
-    ::new(ip_material)SubstrateMaterial(p_diffuse_reflectance, p_specular_reflectance, p_u_roughness, p_v_roughness);
-  }
-
-/**
-* Serializes SubstrateMaterial to/from the specified Archive. This method is used by the boost serialization framework.
-*/
-template<class Archive>
-void serialize(Archive &i_ar, SubstrateMaterial &i_material, const unsigned int i_version)
-  {
-  i_ar & boost::serialization::base_object<Material>(i_material);
+  i_ar & boost::serialization::base_object<Material>(*this);
+  i_ar & mp_diffuse_reflectance;
+  i_ar & mp_specular_reflectance;
+  i_ar & mp_roughness;
+  i_ar & mp_u_roughness;
+  i_ar & mp_v_roughness;
   }
 
 // Register the derived class in the boost serialization framework.

@@ -17,21 +17,6 @@ Material(), mp_reflectance(ip_reflectance), mp_transmittance(ip_transmittance), 
     m_refractive_index=0.0;
   }
 
-intrusive_ptr<const Texture<SpectrumCoef_d> > TransparentMaterial::GetReflectanceTexture() const
-  {
-  return mp_reflectance;
-  }
-
-intrusive_ptr<const Texture<SpectrumCoef_d> > TransparentMaterial::GetTransmittanceTexture() const
-  {
-  return mp_transmittance;
-  }
-
-double TransparentMaterial::GetRefractiveIndex() const
-  {
-  return m_refractive_index;
-  }
-
 const BSDF *TransparentMaterial::GetBSDF(const DifferentialGeometry &i_dg, size_t i_triangle_index, MemoryPool &i_pool) const
   {
   BSDF *p_bsdf = new ( i_pool.Alloc(sizeof(BSDF)) ) BSDF(i_dg, m_refractive_index);

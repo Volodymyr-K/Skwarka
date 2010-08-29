@@ -52,16 +52,6 @@ void ImageEnvironmentalLight::_Initialize()
   _PrecomputeData();
   }
 
-BBox3D_d ImageEnvironmentalLight::GetWorldBounds() const
-  {
-  return m_world_bounds;
-  }
-
-Transform ImageEnvironmentalLight::GetLightToWorld() const
-  {
-  return m_light_to_world;
-  }
-
 // Recursively builds tree by initializing the specified node and calling itself for the children.
 void ImageEnvironmentalLight::_Build(size_t i_node_index, size_t i_depth, const Point2D_i &i_begin, const Point2D_i &i_end, size_t &io_next_free_node_index)
   {

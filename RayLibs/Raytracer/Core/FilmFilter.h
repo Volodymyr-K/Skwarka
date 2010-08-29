@@ -32,9 +32,20 @@ class FilmFilter: public ReferenceCounted
   protected:
     FilmFilter(double i_x_width, double i_y_width);
 
+    FilmFilter() {} // Empty default constructor for the boost serialization framework.
+
+  private:
+    // Needed for the boost serialization framework.  
+    friend class boost::serialization::access;
+
+    /**
+    * Serializes to/from the specified Archive. This method is used by the boost serialization framework.
+    */
+    template<class Archive>
+    void serialize(Archive &i_ar, const unsigned int i_version);
+
   private:
     // Not implemented, not a value type.
-    FilmFilter();
     FilmFilter(const FilmFilter&);
     FilmFilter &operator=(const FilmFilter&);
 
@@ -45,22 +56,12 @@ class FilmFilter: public ReferenceCounted
 /////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-/**
-* Serializes FilmFilter to/from the specified Archive. This method is used by the boost serialization framework.
-*/
 template<class Archive>
-void serialize(Archive &i_ar, FilmFilter &i_filter, const unsigned int i_version)
+void FilmFilter::serialize(Archive &i_ar, const unsigned int i_version)
   {
-  /*
-  Nothing to do here, everything must be serialized by the derived classes.
-
-  We can't serialize the member fields here because there's no default constructor for the class
-  and save_construct_data/load_construct_data functions can't be used either
-  because it is impossible to create an instance of the abstract class.
-  */
-
-  // Just call the serialization for the base ReferenceCounted class.
-  i_ar & boost::serialization::base_object<ReferenceCounted>(i_filter);
+  i_ar & boost::serialization::base_object<ReferenceCounted>(*this);
+  i_ar & m_x_width;
+  i_ar & m_y_width;
   }
 
 #endif // FILM_FILTER_H

@@ -89,24 +89,9 @@ class DensityVolumeRegion: public VolumeRegion
   {
   public:
     /**
-    * Creates DensityVolumeRegion instance with specified base emission, absorption and scattering. The real properties are evaluated by multiplying the base values by the density.
-    * The constructor also takes ans instance of the phase function.
-    */
-    DensityVolumeRegion(const BBox3D_d &i_bounds, Spectrum_d &i_base_emission, SpectrumCoef_d &i_base_absorption,
-      SpectrumCoef_d &i_base_scattering, intrusive_ptr<const PhaseFunction> ip_phase_function);
-
-    /**
     * Returns bounding box of the volume region.
     */
     BBox3D_d GetBounds() const;
-
-    Spectrum_d GetBaseEmission() const;
-
-    SpectrumCoef_d GetBaseAbsorption() const;
-
-    SpectrumCoef_d GetBaseScattering() const;
-
-    intrusive_ptr<const PhaseFunction> GetPhaseFunction() const;
 
     /**
     * Returns emission density of the volume region at the specified point.
@@ -153,11 +138,32 @@ class DensityVolumeRegion: public VolumeRegion
     */
     virtual SpectrumCoef_d OpticalThickness(const Ray &i_ray, double i_step, double i_offset_sample) const;
 
+
+  protected:
+    /**
+    * Creates DensityVolumeRegion instance with specified base emission, absorption and scattering. The real properties are evaluated by multiplying the base values by the density.
+    * The constructor also takes ans instance of the phase function.
+    */
+    DensityVolumeRegion(const BBox3D_d &i_bounds, Spectrum_d &i_base_emission, SpectrumCoef_d &i_base_absorption,
+      SpectrumCoef_d &i_base_scattering, intrusive_ptr<const PhaseFunction> ip_phase_function);
+
+    DensityVolumeRegion() {}; // Empty default constructor for the boost serialization framework.
+
   private:
     /**
     * Private virtual function for the sub-classes to implement that returns density of the media particles at the specified point.
     */
     virtual double _Density(const Point3D_d &i_point) const = 0;
+
+  private:
+    // Needed for the boost serialization framework.  
+    friend class boost::serialization::access;
+
+    /**
+    * Serializes to/from the specified Archive. This method is used by the boost serialization framework.
+    */
+    template<class Archive>
+    void serialize(Archive &i_ar, const unsigned int i_version);
 
   private:
     BBox3D_d m_bounds;
@@ -182,16 +188,16 @@ void serialize(Archive &i_ar, VolumeRegion &i_volume, const unsigned int i_versi
   i_ar & boost::serialization::base_object<ReferenceCounted>(i_volume);
   }
 
-/**
-* Serializes DensityVolumeRegion to/from the specified Archive. This method is used by the boost serialization framework.
-*/
 template<class Archive>
-void serialize(Archive &i_ar, DensityVolumeRegion &i_volume, const unsigned int i_version)
+void DensityVolumeRegion::serialize(Archive &i_ar, const unsigned int i_version)
   {
-  // Nothing to do here, everything must be serialized by the derived classes.
-
-  // Just call the serialization for the base VolumeRegion class.
-  i_ar & boost::serialization::base_object<VolumeRegion>(i_volume);
+  i_ar & boost::serialization::base_object<VolumeRegion>(*this);
+  i_ar & m_bounds;
+  i_ar & m_base_emission;
+  i_ar & m_base_absorption;
+  i_ar & m_base_scattering;
+  i_ar & m_base_attenuation;
+  i_ar & mp_phase_function;
   }
 
 #endif // VOLUME_REGION_H

@@ -62,9 +62,20 @@ class Film: public ReferenceCounted
     */
     Film(size_t i_x_resolution, size_t i_y_resolution);
 
+    Film() {} // Empty default constructor for the boost serialization framework.
+
+  private:
+    // Needed for the boost serialization framework.  
+    friend class boost::serialization::access;
+
+    /**
+    * Serializes to/from the specified Archive. This method is used by the boost serialization framework.
+    */
+    template<class Archive>
+    void serialize(Archive &i_ar, const unsigned int i_version);
+
   private:
     // Not implemented, not a value type.
-    Film();
     Film(const Film&);
     Film &operator=(const Film&);
 
@@ -75,11 +86,10 @@ class Film: public ReferenceCounted
 /////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-inline Film::Film(size_t i_x_resolution, size_t i_y_resolution):
-  m_x_resolution(i_x_resolution), m_y_resolution(i_y_resolution)
-    {
-    ASSERT(i_x_resolution>0 && i_y_resolution>0);
-    }
+inline Film::Film(size_t i_x_resolution, size_t i_y_resolution): m_x_resolution(i_x_resolution), m_y_resolution(i_y_resolution)
+  {
+  ASSERT(i_x_resolution>0 && i_y_resolution>0);
+  }
 
 inline size_t Film::GetXResolution() const
   {
@@ -91,22 +101,12 @@ inline size_t Film::GetYResolution() const
   return m_y_resolution;
   }
 
-/**
-* Serializes Film to/from the specified Archive. This method is used by the boost serialization framework.
-*/
 template<class Archive>
-void serialize(Archive &i_ar, Film &i_film, const unsigned int i_version)
+void Film::serialize(Archive &i_ar, const unsigned int i_version)
   {
-  /*
-  Nothing to do here, everything must be serialized by the derived classes.
-
-  We can't serialize the member fields here because there's no default constructor for the class
-  and save_construct_data/load_construct_data functions can't be used either
-  because it is impossible to create an instance of the abstract class.
-  */
-
-  // Just call the serialization for the base ReferenceCounted class.
-  i_ar & boost::serialization::base_object<ReferenceCounted>(i_film);
+  i_ar & boost::serialization::base_object<ReferenceCounted>(*this);
+  i_ar & m_x_resolution;
+  i_ar & m_y_resolution;
   }
 
 #endif // FILM_H

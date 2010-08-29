@@ -36,6 +36,18 @@ class MitchellFilter: public FilmFilter
     void GetParameters(double &o_b, double &o_c) const;
 
   private:
+    MitchellFilter() {}; // Empty default constructor for the boost serialization framework.
+
+    // Needed for the boost serialization framework.  
+    friend class boost::serialization::access;
+
+    /**
+    * Serializes to/from the specified Archive. This method is used by the boost serialization framework.
+    */
+    template<class Archive>
+    void serialize(Archive &i_ar, const unsigned int i_version);
+
+  private:
     /**
     * Private helper method that computes filter value for 1D.
     */
@@ -61,47 +73,14 @@ inline double MitchellFilter::_Mitchell1D(double i_x) const
     (6 - 2*m_b)) * (1.0/6.0);
   }
 
-/**
-* Saves the data which is needed to construct MitchellFilter to the specified Archive. This method is used by the boost serialization framework.
-*/
 template<class Archive>
-void save_construct_data(Archive &i_ar, const MitchellFilter *ip_filter, const unsigned int i_version)
+void MitchellFilter::serialize(Archive &i_ar, const unsigned int i_version)
   {
-  double x_width = ip_filter->GetXWidth();
-  double y_width = ip_filter->GetYWidth();
-  double b,c;
-  ip_filter->GetParameters(b, c);
-
-  i_ar << x_width;
-  i_ar << y_width;
-  i_ar << b;
-  i_ar << c;
-  }
-
-/**
-* Constructs MitchellFilter with the data from the specified Archive. This method is used by the boost serialization framework.
-*/
-template<class Archive>
-void load_construct_data(Archive &i_ar, MitchellFilter *ip_filter, const unsigned int i_version)
-  {
-  double x_width, y_width;
-  double b,c;
-
-  i_ar >> x_width;
-  i_ar >> y_width;
-  i_ar >> b;
-  i_ar >> c;
-
-  ::new(ip_filter)MitchellFilter(x_width, y_width, b, c);
-  }
-
-/**
-* Serializes MitchellFilter to/from the specified Archive. This method is used by the boost serialization framework.
-*/
-template<class Archive>
-void serialize(Archive &i_ar, MitchellFilter &i_filter, const unsigned int i_version)
-  {
-  i_ar & boost::serialization::base_object<FilmFilter>(i_filter);
+  i_ar & boost::serialization::base_object<FilmFilter>(*this);
+  i_ar & m_b;
+  i_ar & m_c;
+  i_ar & m_inv_x_width;
+  i_ar & m_inv_y_width;
   }
 
 // Register the derived class in the boost serialization framework.

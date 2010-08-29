@@ -14,11 +14,6 @@ BBox3D_d AggregateVolumeRegion::GetBounds() const
   return m_bounds;
   }
 
-std::vector<intrusive_ptr<const VolumeRegion> > AggregateVolumeRegion::GetVolumeRegions() const
-  {
-  return m_volume_regions;
-  }
-
 bool AggregateVolumeRegion::Intersect(Ray i_ray, double *op_t_begin, double *op_t_end) const
   {
   double t_begin = DBL_INF;

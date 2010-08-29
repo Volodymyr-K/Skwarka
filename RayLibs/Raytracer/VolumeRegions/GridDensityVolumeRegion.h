@@ -40,11 +40,13 @@ class GridDensityVolumeRegion: public DensityVolumeRegion
     double _Density(const Point3D_d &i_point) const;
 
   private:
+    GridDensityVolumeRegion() {}; // Empty default constructor for the boost serialization framework.
+
     // Needed for the boost serialization framework.  
     friend class boost::serialization::access;
 
     /**
-    * Serializes GridDensityVolumeRegion to/from the specified Archive. This method is used by the boost serialization framework.
+    * Serializes to/from the specified Archive. This method is used by the boost serialization framework.
     */
     template<class Archive>
     void serialize(Archive &i_ar, const unsigned int i_version);
@@ -61,51 +63,14 @@ class GridDensityVolumeRegion: public DensityVolumeRegion
 /////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-/**
-* Saves the data which is needed to construct GridDensityVolumeRegion to the specified Archive. This method is used by the boost serialization framework.
-*/
-template<class Archive>
-void save_construct_data(Archive &i_ar, const GridDensityVolumeRegion *ip_volume, const unsigned int i_version)
-  {
-  BBox3D_d bounds = ip_volume->GetBounds();
-  Spectrum_d base_emission = ip_volume->GetBaseEmission();
-  SpectrumCoef_d base_absorption = ip_volume->GetBaseAbsorption();
-  SpectrumCoef_d base_scattering = ip_volume->GetBaseScattering();
-  intrusive_ptr<const PhaseFunction> p_phase_function = ip_volume->GetPhaseFunction();
-
-  i_ar << bounds;
-  i_ar << base_emission;
-  i_ar << base_absorption;
-  i_ar << base_scattering;
-  i_ar << p_phase_function;
-  }
-
-/**
-* Constructs GridDensityVolumeRegion with the data from the specified Archive. This method is used by the boost serialization framework.
-*/
-template<class Archive>
-void load_construct_data(Archive &i_ar, GridDensityVolumeRegion *ip_volume, const unsigned int i_version)
-  {
-  BBox3D_d bounds;
-  Spectrum_d base_emission;
-  SpectrumCoef_d base_absorption, base_scattering;
-  intrusive_ptr<const PhaseFunction> p_phase_function;
-
-  i_ar >> bounds;
-  i_ar >> base_emission;
-  i_ar >> base_absorption;
-  i_ar >> base_scattering;
-  i_ar >> p_phase_function;
-
-  // Initialize GridDensityVolumeRegion with some dummy densities, they will be serialized later in serialize() method.
-  std::vector<std::vector<std::vector<double> > > densities(1, std::vector<std::vector<double> >(1, std::vector<double>(1)));
-  ::new(ip_volume)GridDensityVolumeRegion(bounds, base_emission, base_absorption, base_scattering, p_phase_function, densities);
-  }
-
 template<class Archive>
 void GridDensityVolumeRegion::serialize(Archive &i_ar, const unsigned int i_version)
   {
   i_ar & boost::serialization::base_object<DensityVolumeRegion>(*this);
+  i_ar & m_bounds;
+  i_ar & m_inv_extent_x;
+  i_ar & m_inv_extent_y;
+  i_ar & m_inv_extent_z;
   i_ar & m_size_x;
   i_ar & m_size_y;
   i_ar & m_size_z;
