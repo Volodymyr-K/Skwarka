@@ -36,7 +36,7 @@ class FresnelBlend: public BxDF
     * The MicrofacetDistribution is used to sample the exitant direction for the glossy layer.
     * @param i_incident Incident direction. Should be normalized.
     * @param[out] o_exitant Exitant direction. The returned value should be normalized.
-    * @param i_sample 2D sample. Should be in [0;1]^2 range.
+    * @param i_sample 2D sample. Should be in [0;1]x[0;1] range.
     * @param[out] o_pdf PDF value for the sampled exitant direction. The returned value should be greater or equal than zero.
     * @return Sampled BxDF value.
     */

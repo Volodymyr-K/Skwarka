@@ -2,8 +2,8 @@
 //
 
 #include "stdafx.h"
-#include "raytracer_app.h"
 #include "TestTracer.h"
+#include "raytracer_app.h"
 #include "Console.h"
 #include <Raytracer/Core/Renderer.h>
 #include <Raytracer/Core/Film.h>

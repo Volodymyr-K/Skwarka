@@ -33,7 +33,7 @@ class PerspectiveCamera: public Camera
     /**
     * Generates ray based on the image point and lens UV coordinates.
     * @param i_image_point An image point.
-    * @param i_lens_uv Lens UV coordinates in [0;1]^2.
+    * @param i_lens_uv Lens UV coordinates in [0;1]x[0;1].
     * @param[out] o_ray Resulting ray in the world space. The direction component of the ray is normalized.
     * @return The weight of the ray. It corresponds to the value the ray brings to the resulting image.
     */

@@ -33,7 +33,7 @@ class AnisotropicDistribution
     * Samples the exitant direction with the anisotropic distribution.
     * @param i_incident Incident direction. Should be normalized.
     * @param[out] o_exitant Exitant direction. May be in any hemisphere, regardless of the incident direction. The returned value should be normalized.
-    * @param i_sample 2D sample. Should be in [0;1]^2 range.
+    * @param i_sample 2D sample. Should be in [0;1]x[0;1] range.
     * @param[out] o_pdf PDF value for the sampled exitant direction. Greater or equal than zero.
     */
     void Sample(const Vector3D_d &i_incident, Vector3D_d &o_exitant, const Point2D_d &i_sample, double &o_pdf) const;

@@ -3,6 +3,7 @@
 
 #include <Common/Common.h>
 #include <Math/MathRoutines.h>
+#include <Math/HalfFloat.h>
 #include "SpectrumCoef.h"
 #include <istream>
 
@@ -111,6 +112,7 @@ bool IsInf(const Spectrum<T> &i_spectrum);
 
 typedef Spectrum<float> Spectrum_f;
 typedef Spectrum<double> Spectrum_d;
+typedef Spectrum<HalfFloat> Spectrum_h;
 
 /////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -386,5 +388,6 @@ void serialize(Archive &i_ar, Spectrum<T> &i_spectrum, const unsigned int i_vers
 // Don't store class info for Spectrum.
 BOOST_CLASS_IMPLEMENTATION(Spectrum_f, boost::serialization::object_serializable)
 BOOST_CLASS_IMPLEMENTATION(Spectrum_d, boost::serialization::object_serializable)
+BOOST_CLASS_IMPLEMENTATION(Spectrum_h, boost::serialization::object_serializable)
 
 #endif // SPECTRUM_H

@@ -36,5 +36,13 @@
 #include <vector>
 #include <cmath>
 #include <cfloat>
+/*
+#include <boost/archive/binary_iarchive.hpp>
+#include <boost/archive/binary_oarchive.hpp>
+#include <sstream>
+*/
+#include <fstream>
+#include <WinBase.h>
+//#include <cstdio>
 
 typedef unsigned char Byte;

@@ -175,10 +175,10 @@ template<typename T>
 Point3D<T> Transform::operator()(const Point3D<T> &i_point) const
   {
   T x = i_point[0], y = i_point[1], z = i_point[2];
-  T xp = m_matrix.m_values[0][0]*x + m_matrix.m_values[0][1]*y + m_matrix.m_values[0][2]*z + m_matrix.m_values[0][3];
-  T yp = m_matrix.m_values[1][0]*x + m_matrix.m_values[1][1]*y + m_matrix.m_values[1][2]*z + m_matrix.m_values[1][3];
-  T zp = m_matrix.m_values[2][0]*x + m_matrix.m_values[2][1]*y + m_matrix.m_values[2][2]*z + m_matrix.m_values[2][3];
-  T wp = m_matrix.m_values[3][0]*x + m_matrix.m_values[3][1]*y + m_matrix.m_values[3][2]*z + m_matrix.m_values[3][3];
+  T xp = (T) (m_matrix.m_values[0][0]*x + m_matrix.m_values[0][1]*y + m_matrix.m_values[0][2]*z + m_matrix.m_values[0][3]);
+  T yp = (T) (m_matrix.m_values[1][0]*x + m_matrix.m_values[1][1]*y + m_matrix.m_values[1][2]*z + m_matrix.m_values[1][3]);
+  T zp = (T) (m_matrix.m_values[2][0]*x + m_matrix.m_values[2][1]*y + m_matrix.m_values[2][2]*z + m_matrix.m_values[2][3]);
+  T wp = (T) (m_matrix.m_values[3][0]*x + m_matrix.m_values[3][1]*y + m_matrix.m_values[3][2]*z + m_matrix.m_values[3][3]);
 
   ASSERT(wp != (T)0.0);
   if (wp == (T)1.0)
@@ -191,10 +191,10 @@ template<typename T>
 void Transform::operator()(const Point3D<T> &i_point, Point3D<T> &o_transformed_point) const
   {
   T x = i_point[0], y = i_point[1], z = i_point[2];
-  o_transformed_point[0] = m_matrix.m_values[0][0]*x + m_matrix.m_values[0][1]*y + m_matrix.m_values[0][2]*z + m_matrix.m_values[0][3];
-  o_transformed_point[1] = m_matrix.m_values[1][0]*x + m_matrix.m_values[1][1]*y + m_matrix.m_values[1][2]*z + m_matrix.m_values[1][3];
-  o_transformed_point[2] = m_matrix.m_values[2][0]*x + m_matrix.m_values[2][1]*y + m_matrix.m_values[2][2]*z + m_matrix.m_values[2][3];
-  T w = m_matrix.m_values[3][0]*x + m_matrix.m_values[3][1]*y + m_matrix.m_values[3][2]*z + m_matrix.m_values[3][3];
+  o_transformed_point[0] = (T) (m_matrix.m_values[0][0]*x + m_matrix.m_values[0][1]*y + m_matrix.m_values[0][2]*z + m_matrix.m_values[0][3]);
+  o_transformed_point[1] = (T) (m_matrix.m_values[1][0]*x + m_matrix.m_values[1][1]*y + m_matrix.m_values[1][2]*z + m_matrix.m_values[1][3]);
+  o_transformed_point[2] = (T) (m_matrix.m_values[2][0]*x + m_matrix.m_values[2][1]*y + m_matrix.m_values[2][2]*z + m_matrix.m_values[2][3]);
+  T w = (T) (m_matrix.m_values[3][0]*x + m_matrix.m_values[3][1]*y + m_matrix.m_values[3][2]*z + m_matrix.m_values[3][3]);
 
   ASSERT(w != (T)0.0);
   if (w != (T)1.0)
@@ -206,18 +206,18 @@ Vector3D<T> Transform::operator()(const Vector3D<T> &i_vector) const
   {
   T x = i_vector[0], y = i_vector[1], z = i_vector[2];
   return Vector3D<T>(
-    m_matrix.m_values[0][0]*x + m_matrix.m_values[0][1]*y + m_matrix.m_values[0][2]*z,
-    m_matrix.m_values[1][0]*x + m_matrix.m_values[1][1]*y + m_matrix.m_values[1][2]*z,
-    m_matrix.m_values[2][0]*x + m_matrix.m_values[2][1]*y + m_matrix.m_values[2][2]*z);
+    (T) (m_matrix.m_values[0][0]*x + m_matrix.m_values[0][1]*y + m_matrix.m_values[0][2]*z),
+    (T) (m_matrix.m_values[1][0]*x + m_matrix.m_values[1][1]*y + m_matrix.m_values[1][2]*z),
+    (T) (m_matrix.m_values[2][0]*x + m_matrix.m_values[2][1]*y + m_matrix.m_values[2][2]*z));
   }
 
 template<typename T>
 void Transform::operator()(const Vector3D<T> &i_vector, Vector3D<T> &o_transformed_vector) const
   {
   T x = i_vector[0], y = i_vector[1], z = i_vector[2];
-  o_transformed_vector[0] = m_matrix.m_values[0][0]*x + m_matrix.m_values[0][1]*y + m_matrix.m_values[0][2]*z;
-  o_transformed_vector[1] = m_matrix.m_values[1][0]*x + m_matrix.m_values[1][1]*y + m_matrix.m_values[1][2]*z;
-  o_transformed_vector[2] = m_matrix.m_values[2][0]*x + m_matrix.m_values[2][1]*y + m_matrix.m_values[2][2]*z;
+  o_transformed_vector[0] = (T) (m_matrix.m_values[0][0]*x + m_matrix.m_values[0][1]*y + m_matrix.m_values[0][2]*z);
+  o_transformed_vector[1] = (T) (m_matrix.m_values[1][0]*x + m_matrix.m_values[1][1]*y + m_matrix.m_values[1][2]*z);
+  o_transformed_vector[2] = (T) (m_matrix.m_values[2][0]*x + m_matrix.m_values[2][1]*y + m_matrix.m_values[2][2]*z);
   }
 
 inline Ray Transform::operator()(const Ray &i_ray) const

@@ -247,7 +247,7 @@ class SamplingRoutinesTestSuite : public CxxTest::TestSuite
       TS_ASSERT(not_clumped);
       }
 
-    // Test that StratifiedSampling2D() generates samples in the whole [0;1]^2 range.
+    // Test that StratifiedSampling2D() generates samples in the whole [0;1]x[0;1] range.
     void test_Stratified2D_Range()
       {
       const int x_samples = 60, y_samples=70;
@@ -282,7 +282,7 @@ class SamplingRoutinesTestSuite : public CxxTest::TestSuite
       TS_ASSERT(not_clumped);
       }
 
-    // Test that LatinHypercubeSampling2D() generates samples in the whole [0;1]^2 range.
+    // Test that LatinHypercubeSampling2D() generates samples in the whole [0;1]x[0;1] range.
     void test_LatinHypercube2D_Range()
       {
       const size_t num_samples = 5000;

@@ -32,7 +32,7 @@ class SpecularReflection: public BxDF
     * The sampled exitant direction will be in the same hemisphere that the incident direction is in.
     * @param i_incident Incident direction. Should be normalized.
     * @param[out] o_exitant Exitant direction. The returned value should be normalized.
-    * @param i_sample 2D sample. Should be in [0;1]^2 range.
+    * @param i_sample 2D sample. Should be in [0;1]x[0;1] range.
     * @param[out] o_pdf PDF value for the sampled exitant direction. Always equal to 1.0.
     * @return Sampled BxDF value.
     */

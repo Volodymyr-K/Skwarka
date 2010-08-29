@@ -421,6 +421,10 @@
 						>
 					</File>
 					<File
+						RelativePath=".\MainTests\Raytracer\BxDFs\MERLMeasured.test.h"
+						>
+					</File>
+					<File
 						RelativePath=".\MainTests\Raytracer\BxDFs\Microfacet.test.h"
 						>
 					</File>
@@ -454,6 +458,10 @@
 					>
 					<File
 						RelativePath=".\MainTests\Raytracer\Materials\MatteMaterial.test.h"
+						>
+					</File>
+					<File
+						RelativePath=".\MainTests\Raytracer\Materials\MERLMeasuredMaterial.test.h"
 						>
 					</File>
 					<File
@@ -840,6 +848,22 @@
 			</File>
 			<File
 				RelativePath=".\MemoryPool.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\MERLMeasured.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\MERLMeasuredData.Serialization.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\MERLMeasuredMaterial.Serialization.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\MERLMeasuredMaterial.test.cpp"
 				>
 			</File>
 			<File
@@ -1591,6 +1615,10 @@
 						>
 					</File>
 					<File
+						RelativePath=".\SerializationTests\Raytracer\Materials\MERLMeasuredMaterial.Serialization.test.h"
+						>
+					</File>
+					<File
 						RelativePath=".\SerializationTests\Raytracer\Materials\MetalMaterial.Serialization.test.h"
 						>
 					</File>
@@ -1656,6 +1684,14 @@
 					</File>
 					<File
 						RelativePath=".\SerializationTests\Raytracer\ImageSources\RGB24ImageSource.Serialization.test.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="BxDFs"
+					>
+					<File
+						RelativePath=".\SerializationTests\Raytracer\BxDFs\MERLMeasuredData.Serialization.test.h"
 						>
 					</File>
 				</Filter>

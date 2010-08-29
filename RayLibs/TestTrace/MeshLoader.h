@@ -78,7 +78,7 @@ intrusive_ptr<TriangleMesh> LoadMeshFromStl(std::string i_filename, bool i_smoot
   return intrusive_ptr<TriangleMesh>( new TriangleMesh(vertices, triangles, i_smooth) );
   }
 
-intrusive_ptr<TriangleMesh> LoadMeshFromPLY(std::string i_filename, bool i_smooth)
+intrusive_ptr<TriangleMesh> LoadMeshFromPLY(std::string i_filename, Transform i_trans, bool i_smooth)
   {
   std::vector<Point3D_f> vertices;
   std::vector<MeshTriangle> triangles;
@@ -127,7 +127,7 @@ intrusive_ptr<TriangleMesh> LoadMeshFromPLY(std::string i_filename, bool i_smoot
       float x,y,z;
       sstream >> x >> y >> z;
       //vertices.push_back(Point3D_f(x,y,z));
-      vertices.push_back(Point3D_f(-x,-z,y));
+      vertices.push_back(i_trans(Point3D_f(-x,-z,y)));
       }
     else
       {

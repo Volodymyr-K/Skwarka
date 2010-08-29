@@ -409,7 +409,7 @@ RGBColor<T> ColorSystem::XYZ_To_RGB(const XYZColor<T> &i_xyz_color, bool i_const
   rgb[1] = (T) (luminance*(1.0-t) + rgb[1]*t);
   rgb[2] = (T) (luminance*(1.0-t) + rgb[2]*t);
 
-  ASSERT (rgb[0]>-DBL_EPS && rgb[1]>-DBL_EPS && rgb[2]>-DBL_EPS);
+  ASSERT (rgb[0] > -(1e-10) && rgb[1] > -(1e-10) && rgb[2] >- (1e-10));
   return RGBColor<T>((T)rgb[0], (T)rgb[1], (T)rgb[2]);
   }
 

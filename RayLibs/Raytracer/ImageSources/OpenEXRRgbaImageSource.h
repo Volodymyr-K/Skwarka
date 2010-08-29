@@ -6,6 +6,7 @@
 #include <Raytracer/Core/Spectrum.h>
 #include <Raytracer/Core/SpectrumRoutines.h>
 #include <Raytracer/Core/Color.h>
+#include <Math/HalfFloat.h>
 #include <ImfRgbaFile.h>
 #include <ImfRgba.h>
 #include <ImfArray.h>
@@ -250,31 +251,7 @@ namespace Imf
     }
   }
 
-template<class Archive>
-void save(Archive &i_ar, const half &i_half, const unsigned int i_version)
-  {
-  unsigned short bits = i_half.bits();
-  i_ar << bits;
-  }
-
-template<class Archive>
-void load(Archive &i_ar, half &i_half, const unsigned int i_version)
-  {
-  unsigned short bits;
-  i_ar >> bits;
-  i_half.setBits(bits);
-  }
-
-template<class Archive>
-void serialize(Archive &i_ar, half &i_half, const unsigned int i_version)
-  {
-  boost::serialization::split_free(i_ar, i_half, i_version);
-  }
-
 // Don't store class info for Imf::Rgba.
 BOOST_CLASS_IMPLEMENTATION(Imf::Rgba, boost::serialization::object_serializable)
-
-// Don't store class info for half.
-BOOST_CLASS_IMPLEMENTATION(half, boost::serialization::object_serializable)
 
 #endif // OPENEXR_RGBA_SPECTRUM_IMAGE_SOURCE_H

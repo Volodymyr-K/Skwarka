@@ -418,7 +418,7 @@ T MIPMap<T>::Evaluate(const Point2D_d &i_point, double i_width) const
     if (m_repeat)
       return _GetTexel(m_num_levels-1, 0, 0);
     else
-      // We just return the highest layer's value if the point is inside the [0;1]^2 range.
+      // We just return the highest layer's value if the point is inside the [0;1]x[0;1] range.
       // This way we don't filter the values though.
       if (i_point[0]>=0.0 && i_point[0]<=1.0 && i_point[1]>=0.0 && i_point[1]<=1.0)
         return _GetTexel(m_num_levels-1, 0, 0);
@@ -466,7 +466,7 @@ T MIPMap<T>::Evaluate(const Point2D_d &i_point, Vector2D_d i_dxy_1, Vector2D_d i
     if (m_repeat)
       return _GetTexel(m_num_levels-1, 0, 0);
     else
-      // We just return the highest layer's value if the point is inside the [0;1]^2 range.
+      // We just return the highest layer's value if the point is inside the [0;1]x[0;1] range.
       // This way we don't filter the values though.
       if (i_point[0]>=0.0 && i_point[0]<=1.0 && i_point[1]>=0.0 && i_point[1]<=1.0)
         return _GetTexel(m_num_levels-1, 0, 0);

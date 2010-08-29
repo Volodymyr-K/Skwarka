@@ -42,7 +42,7 @@
 				AdditionalOptions="/MP"
 				Optimization="0"
 				AdditionalIncludeDirectories="..\;..\..\..\ThirdParty\;..\..\..\ThirdParty\boost\1.43\;..\..\..\ThirdParty\TBB\3.0\include;..\..\..\ThirdParty\OpenEXR\Deploy\include"
-				PreprocessorDefinitions="TBB_USE_DEBUG;_DEBUG;NOMINMAX;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS"
+				PreprocessorDefinitions="TBB_USE_DEBUG;_DEBUG;NOMINMAX;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;OPENEXR_DLL"
 				MinimalRebuild="false"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -110,7 +110,7 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				AdditionalIncludeDirectories="..\;..\..\..\ThirdParty\;..\..\..\ThirdParty\boost\1.43\;..\..\..\ThirdParty\TBB\3.0\include;..\..\..\ThirdParty\OpenEXR\Deploy\include"
-				PreprocessorDefinitions="NDEBUG;NOMINMAX;_SECURE_SCL=0;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS"
+				PreprocessorDefinitions="NDEBUG;NOMINMAX;_SECURE_SCL=0;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;OPENEXR_DLL"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				EnableEnhancedInstructionSet="2"
@@ -450,6 +450,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\BxDFs\MERLMeasured.h"
+					>
+				</File>
+				<File
 					RelativePath=".\BxDFs\Microfacet.h"
 					>
 				</File>
@@ -478,6 +482,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\BxDFs\MERLMeasured.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\BxDFs\OrenNayar.cpp"
 					>
 				</File>
@@ -495,6 +503,10 @@
 				>
 				<File
 					RelativePath=".\Materials\MatteMaterial.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Materials\MERLMeasuredMaterial.h"
 					>
 				</File>
 				<File
@@ -519,6 +531,10 @@
 				>
 				<File
 					RelativePath=".\Materials\MatteMaterial.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Materials\MERLMeasuredMaterial.cpp"
 					>
 				</File>
 				<File
