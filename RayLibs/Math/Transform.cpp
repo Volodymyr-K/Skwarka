@@ -10,12 +10,21 @@ Transform MakeTranslation(const Vector3D_d &i_translation)
     0, 0, 0, 1));
   }
 
-Transform MakeScale(const double &i_x_scale, const double &i_y_scale, const double &i_z_scale)
+Transform MakeScale(double i_x_scale, double i_y_scale, double i_z_scale)
   {
   return Transform(Matrix4x4_d(
     i_x_scale, 0, 0, 0,
     0, i_y_scale, 0, 0,
     0, 0, i_z_scale, 0,
+    0, 0, 0, 1));
+  }
+
+Transform MakeScale(const double &i_scale)
+  {
+  return Transform(Matrix4x4_d(
+    i_scale, 0, 0, 0,
+    0, i_scale, 0, 0,
+    0, 0, i_scale, 0,
     0, 0, 0, 1));
   }
 

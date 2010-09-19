@@ -3,50 +3,41 @@
 
 #include "Shape.h"
 #include <Math/Geometry.h>
+#include <Math/Transform.h>
 
 /**
 * %Sphere implementation of the Shape interface.
 * The triangulation method starts from a tetrahedron and then iteratively subdivides each face into four new triangles.
+* The class has no methods to set sphere radius or sphere center, instead it provides a method to set an arbitrary transformation.
 * The number of subdivision iterations is configurable.
-* 
-* The parameters for the sphere are the following:
-*   - %Sphere center.
-*     - Parameter name: "center"
-*     - Parameter type: Point3D_f
-*     - Parameter restrictions: none
-*     - Required.
-*   - %Sphere radius.
-*     - Parameter name: "radius"
-*     - Parameter type: float
-*     - Parameter restrictions: should be greater than zero
-*     - Required.
-*   - Number of subdivisions.
-*     - Parameter name: "subdivisions"
-*     - Parameter type: int
-*     - Parameter restrictions: should be greater or equal than zero
-*     - Optional, default value is 3.
 */
-class Sphere: public BaseShape
+class Sphere: public Shape
   {
   public:
     Sphere();
 
-    intrusive_ptr<TriangleMesh> BuildMesh();
+    /**
+    * Sets number of sphere subdivisions.
+    * The final number of triangles in the mesh is equal to 4^(i_subdivisions+1);
+    * If the method is not called, the default number of subdivisions is 4.
+    */
+    void SetSubdivisions(size_t i_subdivisions);
 
-    ~Sphere();
+    /**
+    * Sets transformation to be applied to the sphere.
+    * If the method is not called, the default transformation is the identity one which results in a sphere centered at the origin with a unit radius.
+    */
+    void SetTransformation(const Transform &i_transform);
+
+    /**
+    * Builds sphere triangle mesh.
+    * @return Smart pointer to the built mesh. Never NULL.
+    */
+    virtual intrusive_ptr<TriangleMesh> BuildMesh();
 
   private:
-    /**
-    * An inner struct for all the parameters Sphere has.
-    */
-    struct Parameters;
-
-  private:
-    /**
-    * Helper method to read all the parameters.
-    * @return true if all the parameters have been read successfully.
-    */
-    bool _GetParameters(Sphere::Parameters &o_params);
+    size_t m_subdivisions;
+    Transform m_transform;
   };
 
 

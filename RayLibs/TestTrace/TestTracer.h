@@ -213,22 +213,23 @@ inline void TestTracer::LoadMesh()
   //intrusive_ptr<Texture<double> > sig(new ConstantTexture<double> (0));
   //intrusive_ptr<Material> p_material( new MatteMaterial(p_refr_index,sig) );
 
+  LightSources lights;
     {
     Sphere s;
-    s.SetParameter("Center","1 0 3.01");
-    s.SetParameter("Radius","3.0");
-    s.SetParameter("Subdivisions","7");
+    s.SetSubdivisions(3);
+    s.SetTransformation(MakeTranslation(Vector3D_d(1,0,3.01))*MakeScale(3)*MakeScale(-1,1,0.2));
+
     intrusive_ptr<TriangleMesh> p_mesh( s.BuildMesh() );
-    Transform trans = MakeTranslation(Vector3D_d(0,0.7,-5.0))*MakeTranslation(Vector3D_d(1,0,3))*MakeScale(-1,1,1)*MakeRotationZ(-M_PI_2)*MakeScale(40,40,40);
+    //Transform trans = MakeTranslation(Vector3D_d(0,0.7,-5.0))*MakeTranslation(Vector3D_d(1,0,3))*MakeScale(-1,1,1)*MakeRotationZ(-M_PI_2)*MakeScale(40,40,40);
     //intrusive_ptr<TriangleMesh> p_mesh( LoadMeshFromPLY("dragon/dragon.ply", trans, true) );
     //p_mesh->SetInvertNormals(true);
+
     intrusive_ptr<Primitive> p_sphere_primitive(new Primitive(p_mesh, p_material, NULL));
 
     primitives.push_back(p_sphere_primitive);
     bbox.Unite(Convert<double>(p_mesh->GetBounds()));
     }
 
-  LightSources lights;
     {
     intrusive_ptr<ImageSource<Spectrum_f> > p_env_light_image_source( new OpenEXRRgbaImageSource<Spectrum_f>("env_lights/DH041LL.exr", 2.0) );
 
@@ -242,9 +243,9 @@ inline void TestTracer::LoadMesh()
 
     {
     Sphere s;
-    s.SetParameter("Center","1 0 14");
-    s.SetParameter("Radius","0.5");
-    s.SetParameter("Subdivisions","5");
+    s.SetSubdivisions(5);
+    s.SetTransformation(MakeTranslation(Vector3D_d(1,0,14))*MakeScale(0.5));
+
     intrusive_ptr<TriangleMesh> p_sphere( s.BuildMesh() );
     intrusive_ptr<AreaLightSource> p_light( new DiffuseAreaLightSource(RGBToSpectrum(400000/M_PI,400000/M_PI,400000/M_PI), p_sphere) );
     intrusive_ptr<Primitive> p_sphere_primitive(new Primitive(p_sphere, p_material, p_light));
@@ -270,19 +271,19 @@ inline void TestTracer::RenderImage()
 
 
   // sponza
-  Point3D_d camera_pos(6.5,-2.4,8);
-  Point3D_d look_at(0,0,1.5);
+  Point3D_d camera_pos(5.5,-2.4,7);
+  Point3D_d look_at(0,0,3.5);
   Vector3D_d direction = Vector3D_d(look_at-camera_pos).Normalized();
   intrusive_ptr<Camera> p_camera( new PerspectiveCamera( MakeLookAt(camera_pos,direction,Vector3D_d(0,0,1)), p_film, 0.001*12.000, 6, 1.22) );
 
   intrusive_ptr<ImagePixelsOrder> pixel_order(new ConsecutiveImagePixelsOrder);
   //intrusive_ptr<ImagePixelsOrder> pixel_order(new RandomBlockedImagePixelsOrder);
 
-  intrusive_ptr<Sampler> p_sampler( new LDSampler(window_begin, window_end, 4*8, pixel_order) );
+  intrusive_ptr<Sampler> p_sampler( new LDSampler(window_begin, window_end, 8, pixel_order) );
 
 
   DirectLightingLTEIntegratorParams params;
-  params.m_direct_light_samples_num=16;
+  params.m_direct_light_samples_num=8;
   params.m_max_specular_depth=6;
   params.m_media_step_size=0.01;
   intrusive_ptr<DirectLightingLTEIntegrator> p_lte_int( new DirectLightingLTEIntegrator(mp_scene, params) );

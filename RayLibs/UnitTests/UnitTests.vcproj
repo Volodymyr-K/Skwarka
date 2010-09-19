@@ -602,10 +602,6 @@
 				Name="Shapes"
 				>
 				<File
-					RelativePath=".\MainTests\Shapes\Shape.test.h"
-					>
-				</File>
-				<File
 					RelativePath=".\MainTests\Shapes\Sphere.test.h"
 					>
 				</File>
@@ -1028,10 +1024,6 @@
 			</File>
 			<File
 				RelativePath=".\Scene.test.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Shape.test.cpp"
 				>
 			</File>
 			<File

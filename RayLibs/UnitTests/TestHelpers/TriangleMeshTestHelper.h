@@ -9,8 +9,6 @@ These functions are called from different test suites so change them carefully.
 #include <Common/Common.h>
 #include <Raytracer/Core/TriangleMesh.h>
 #include <Shapes/Sphere.h>
-#include <sstream>
-#include <string>
 
 namespace TriangleMeshHelper
   {
@@ -52,41 +50,10 @@ namespace TriangleMeshHelper
 
   inline intrusive_ptr<TriangleMesh> ConstructSphere(const Point3D_d &i_center, double i_radius, size_t i_subdivisions)
     {
-    std::string center_str, radius_str, subdivisions_str;
-
-      {
-      std::stringstream sstream;
-      sstream << i_center;
-
-      char buf[256];
-      sstream.getline(buf, 256);
-      center_str = std::string(buf);
-      }
-
-      {
-      std::stringstream sstream;
-      sstream << i_radius;
-
-      char buf[256];
-      sstream.getline(buf, 256);
-      radius_str = std::string(buf);
-      }
-
-      {
-      std::stringstream sstream;
-      sstream << i_subdivisions;
-
-      char buf[256];
-      sstream.getline(buf, 256);
-      subdivisions_str = std::string(buf);
-      }
-
-      Sphere s;
-      s.SetParameter("Center",center_str);
-      s.SetParameter("Radius",radius_str);
-      s.SetParameter("Subdivisions",subdivisions_str);
-
-      return s.BuildMesh();
+    Sphere s;
+    s.SetTransformation(MakeTranslation(Vector3D_d(i_center))*MakeScale(i_radius));
+    s.SetSubdivisions(i_subdivisions);
+    return s.BuildMesh();
     }
 
   }

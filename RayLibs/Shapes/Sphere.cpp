@@ -1,49 +1,28 @@
 #include "Sphere.h"
 #include <cmath>
+#include <vector>
 #include <map>
-#include <utility>
-#include "Math\Constants.h"
-
-struct Sphere::Parameters
-  {
-  Parameters()
-    {
-    // Set the default parameter values.
-    m_subdivisions=3;
-    }
-
-  Point3D_f m_center;
-  float m_radius;
-  int m_subdivisions;
-  };
+#include <Math/Constants.h>
 
 Sphere::Sphere()
   {
+  m_subdivisions = 3;
   }
 
-bool Sphere::_GetParameters(Sphere::Parameters &o_params)
+void Sphere::SetSubdivisions(size_t i_subdivisions)
   {
-  _ClearErrors();
+  m_subdivisions = i_subdivisions;
+  }
 
-  _GetParameter("center", o_params.m_center, true);
-
-  if (_GetParameter("radius", o_params.m_radius, true) && o_params.m_radius<=0.f)
-    _AddError("Radius should be greater than zero.");
-
-  if (_GetParameter("subdivisions", o_params.m_subdivisions, false) && o_params.m_subdivisions<0)
-    _AddError("Number of subdivisions should be greater or equal than zero.");
-
-  return _ErrorsExist()==false;
+void Sphere::SetTransformation(const Transform &i_transform)
+  {
+  m_transform = i_transform;
   }
 
 intrusive_ptr<TriangleMesh> Sphere::BuildMesh()
   {
-  Parameters params;
-  if (_GetParameters(params)==false)
-    return intrusive_ptr<TriangleMesh>((TriangleMesh*)NULL);
-
   // Vector holding all the mesh vertices.
-  std::vector<Point3D_f> vertices(4);
+  std::vector<Point3D_d> vertices(4);
 
   // Vector holding all the mesh triangles.
   std::vector<MeshTriangle> triangles(4);
@@ -54,10 +33,10 @@ intrusive_ptr<TriangleMesh> Sphere::BuildMesh()
 
   // Constructs the initial tetrahedron manually.
   double base_radius = sqrt(8.0)/3.0;
-  vertices[0]=Point3D_f(0.f, 0.f, 1.f);
-  vertices[1]=Point3D_f((float) base_radius,  0.f, -1.f/3.f);
-  vertices[2]=Point3D_f((float) (base_radius*cos(2.0*M_PI_3)), (float) ( base_radius*sin(2.0*M_PI_3)), -1.f/3.f);
-  vertices[3]=Point3D_f((float) (base_radius*cos(2.0*M_PI_3)), (float) (-base_radius*sin(2.0*M_PI_3)), -1.f/3.f);
+  vertices[0]=Point3D_d(0.0, 0.0, 1.0);
+  vertices[1]=Point3D_d(base_radius,  0.0, -1.0/3.0);
+  vertices[2]=Point3D_d(base_radius*cos(2.0*M_PI_3), base_radius*sin(2.0*M_PI_3), -1.0/3.0);
+  vertices[3]=Point3D_d(base_radius*cos(2.0*M_PI_3), -base_radius*sin(2.0*M_PI_3), -1.0/3.0);
 
   triangles[0]=MeshTriangle(1,3,2);
   triangles[1]=MeshTriangle(1,0,3);
@@ -69,7 +48,7 @@ intrusive_ptr<TriangleMesh> Sphere::BuildMesh()
   std::map<std::pair<size_t,size_t>,size_t> edges_to_vertices;
 
   // Iteratively subdivide the mesh.
-  for (int i=0;i<params.m_subdivisions;++i)
+  for (size_t i=0;i<m_subdivisions;++i)
     {
     size_t original_size = triangles.size();
     for (size_t j=0;j<original_size;++j)
@@ -82,13 +61,13 @@ intrusive_ptr<TriangleMesh> Sphere::BuildMesh()
 
         // The original triangle is marked as deleted.
         deleted[j]=true;
-        Point3D_f v01 = (vertices[indices[0]]+vertices[indices[1]])*0.5f;
-        Point3D_f v12 = (vertices[indices[1]]+vertices[indices[2]])*0.5f;
-        Point3D_f v20 = (vertices[indices[2]]+vertices[indices[0]])*0.5f;
+        Point3D_d v01 = (vertices[indices[0]]+vertices[indices[1]])*0.5;
+        Point3D_d v12 = (vertices[indices[1]]+vertices[indices[2]])*0.5;
+        Point3D_d v20 = (vertices[indices[2]]+vertices[indices[0]])*0.5;
 
-        v01 /= Vector3D_f(v01).Length();
-        v12 /= Vector3D_f(v12).Length();
-        v20 /= Vector3D_f(v20).Length();
+        v01 /= Vector3D_d(v01).Length();
+        v12 /= Vector3D_d(v12).Length();
+        v20 /= Vector3D_d(v20).Length();
 
         // Split the edges by inserting new vertices.
         // If an edge has already been split (while processing an adjacent triangle) the existing splitting vertex is reused.
@@ -136,55 +115,65 @@ intrusive_ptr<TriangleMesh> Sphere::BuildMesh()
         }
     }
 
+  for (size_t i=0;i<triangles.size();++i)
+    if (deleted[i]==false)
+      {
+      Point2D_f uvs[3];
+      bool to_delete = true;
+      for (unsigned char j=0;j<3;++j)
+        {
+        Point3D_d vertex = vertices[triangles[i].m_vertices[j]];
+
+        double phi = atan2( vertex[1],vertex[0]);
+        if (phi < 0.0) phi+=2.0*M_PI;
+        double theta = acos(vertex[2]);
+
+        uvs[j]=Point2D_f((float) (phi*INV_2PI), (float) (theta*INV_PI));
+        }
+
+      // For those triangles whose edges intersect the phi==0.0 line we need to adjust the UV coordinates.
+      Vector3D_d normal =
+        Vector3D_d(vertices[triangles[i].m_vertices[1]]-vertices[triangles[i].m_vertices[0]])^
+        Vector3D_d(vertices[triangles[i].m_vertices[2]]-vertices[triangles[i].m_vertices[0]]);
+
+      if (normal[0]>0.0 && ((uvs[0][0]>0.5 || uvs[1][0]>0.5 || uvs[2][0]>0.5) && (uvs[0][0]<0.5 || uvs[1][0]<0.5 || uvs[2][0]<0.5)))
+        {
+        if (uvs[0][0]<0.5) uvs[0][0] += 1.f;
+        if (uvs[1][0]<0.5) uvs[1][0] += 1.f;
+        if (uvs[2][0]<0.5) uvs[2][0] += 1.f;
+        }
+
+      triangles[i].m_uvs[0]=uvs[0];
+      triangles[i].m_uvs[1]=uvs[1];
+      triangles[i].m_uvs[2]=uvs[2];
+      }
+
   // Prepare the list of non-deleted triangles.
   std::vector<MeshTriangle> triangles_cleaned;
   for (size_t i=0;i<triangles.size();++i)
     if (deleted[i]==false)
-      {
       triangles_cleaned.push_back(triangles[i]);
-      }
 
-  for (size_t i=0;i<triangles_cleaned.size();++i)
+  // If transformation inverts geometric normals we need to invert shading normals to be consistent.
+  const double normal_invert = m_transform.InvertsOrientation() ? -1.0 : 1.0;
+
+  std::vector<Point3D_f> vertices_f(vertices.size());
+  std::vector<Vector3D_f> normals(vertices.size()), tangents(vertices.size());
+  for (size_t i=0;i<vertices.size();++i)
     {
-    Point2D_f uvs[3];
-    for (unsigned char j=0;j<3;++j)
-      {
-      Point3D_f vertex = vertices[triangles_cleaned[i].m_vertices[j]];
+    vertices_f[i] = Convert<float>( m_transform(vertices[i]) );
+    normals[i] = Convert<float>( normal_invert*m_transform.TransformNormal(Vector3D_d(vertices[i])) );
 
-      float phi = atan2( vertex[1],vertex[0]);
-      if (phi < 0.0) phi+=(float)(2.0*M_PI);
-      float theta = acos(vertex[2]);
-
-      uvs[j]=Point2D_f((float) (phi*INV_2PI), (float) (theta*INV_PI));
-      }
-
-    // For those triangles whose edges intersect the phi==0.0 line we need to adjust the UV coordinates.
-    Vector3D_f normal =
-      Vector3D_f(vertices[triangles_cleaned[i].m_vertices[1]]-vertices[triangles_cleaned[i].m_vertices[0]])^
-      Vector3D_f(vertices[triangles_cleaned[i].m_vertices[2]]-vertices[triangles_cleaned[i].m_vertices[0]]);
-    if (normal[0]>0.0 && ((uvs[0][0]>0.5 || uvs[1][0]>0.5 || uvs[2][0]>0.5) && (uvs[0][0]<0.5 || uvs[1][0]<0.5 || uvs[2][0]<0.5)))
-      {
-      if (uvs[0][0]<0.5) uvs[0][0] += 1.0;
-      if (uvs[1][0]<0.5) uvs[1][0] += 1.0;
-      if (uvs[2][0]<0.5) uvs[2][0] += 1.0;
-      }
-
-    triangles_cleaned[i].m_uvs[0]=uvs[0];
-    triangles_cleaned[i].m_uvs[1]=uvs[1];
-    triangles_cleaned[i].m_uvs[2]=uvs[2];
+    Vector3D_d tangent = Vector3D_d(0,0,1)^Vector3D_d(vertices[i]);
+    if (tangent.Normalize()==false) tangent = Vector3D_d(1,0,0);
+    tangents[i] = Convert<float>( m_transform(tangent).Normalized() );
     }
 
-  for (size_t i=0;i<vertices.size();++i)
-    vertices[i]=vertices[i]*params.m_radius+params.m_center;
-
-  TriangleMesh *p_mesh = new TriangleMesh(vertices, triangles_cleaned);
+  TriangleMesh *p_mesh = new TriangleMesh(vertices_f, triangles_cleaned, normals, tangents);
 
   // The sphere is supposed to be smooth by definition so we use interpolated normals.
   p_mesh->SetUseShadingNormals(true);
+  p_mesh->SetInvertNormals(m_transform.InvertsOrientation());
 
   return intrusive_ptr<TriangleMesh>(p_mesh);
-  }
-
-Sphere::~Sphere()
-  {
   }

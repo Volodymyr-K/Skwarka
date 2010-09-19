@@ -99,6 +99,19 @@ class TransformTestSuite : public CxxTest::TestSuite
       CustomAssertDelta(v2,Vector3D_d(1.0,4.0,9.0),(1e-10));
       }
 
+    void test_Transform_Normal()
+      {
+      Transform t = MakeScale(1,1,0.1)*MakeRotationZ(1.23);
+      Vector3D_d n=Vector3D_d(3.0,2.0,1.0).Normalized();
+      Vector3D_d v=Vector3D_d(1.0,2.0,-7.0);
+
+      Vector3D_d n2=t.TransformNormal(n);
+      Vector3D_d v2=t(v);
+
+      // Normal and the tangent vectors should still be orthogonal after the transformation.
+      TS_ASSERT_DELTA(n2*v2, 0.0, 1e-9);
+      }
+
     void test_Transform_Ray()
       {
       Transform t(m_matrix1);
@@ -134,6 +147,17 @@ class TransformTestSuite : public CxxTest::TestSuite
       Ray ray2=t(m_test_ray);
       CustomAssertDelta(ray2.m_origin,Point3D_d(-m_origin[0]*0.1,m_origin[1],m_origin[2]*0.3),(1e-10));
       CustomAssertDelta(ray2.m_direction,Vector3D_d(-m_direction[0]*0.1,m_direction[1],m_direction[2]*0.3),(1e-10));
+      }
+
+    void test_Transform_ScaleUniform()
+      {
+      Transform t=MakeScale(2.0);
+      Transform t2=MakeScale(2.0,2.0,2.0);
+
+      Ray ray2=t(m_test_ray);
+      Ray ray3=t2(m_test_ray);
+      TS_ASSERT_EQUALS(ray2.m_origin,ray3.m_origin);
+      TS_ASSERT_EQUALS(ray2.m_direction,ray3.m_direction);
       }
 
     void test_Transform_RotationX()

@@ -112,6 +112,9 @@ class TriangleMesh: public ReferenceCounted
 
     MeshTriangle GetTriangle(size_t i_triangle_index) const;
 
+    /**
+    * Returns geometric normal of the triangle.
+    */
     Vector3D_f GetTriangleNormal(size_t i_triangle_index) const;
 
     /**

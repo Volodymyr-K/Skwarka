@@ -11,6 +11,8 @@
 #include <string>
 #include <cstdio>
 #include <vector>
+#include <sstream>
+#include <map>
 
 intrusive_ptr<TriangleMesh> LoadMeshFromStl(std::string i_filename, bool i_smooth)
   {

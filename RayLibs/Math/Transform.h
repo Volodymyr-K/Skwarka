@@ -31,6 +31,11 @@ class Transform
     Transform Inverted() const;
 
     /**
+    * Returns whether the transformation inverts orientation (i.e. swaps handedness).
+    */
+    bool InvertsOrientation() const;
+
+    /**
     * Applies transformation to the given point.
     */
     template<typename T>
@@ -63,6 +68,15 @@ class Transform
     * Applies transformation to the given ray and saves the result in the output parameter.
     */
     void operator()(const Ray &i_ray, Ray &o_transformed_ray) const;
+
+    /**
+    * Applies transformation to the given normal.
+    * This is NOT the same transformation that is applied to direction vectors because normals are transformed in a different way.
+    * @param i_normal Normal vector. Should be normalized.
+    * @return Transformed normal vector. Should be normalized.
+    */
+    template<typename T>
+    Vector3D<T> TransformNormal(const Vector3D<T> &i_normal) const;
 
     /**
     * Composes the transformation with the input transformation.
@@ -99,7 +113,12 @@ Transform MakeTranslation(const Vector3D_d &i_translation);
 /**
 * Creates Transform object that describes scaling by the specified values.
 */
-Transform MakeScale(const double &i_x_scale, const double &i_y_scale, const double &i_z_scale);
+Transform MakeScale(double i_x_scale, double i_y_scale, double i_z_scale);
+
+/**
+* Creates Transform object that describes uniform scaling by the specified value.
+*/
+Transform MakeScale(const double &i_scale);
 
 /**
 * Creates Transform object that describes rotation around axis X by the specified angle.
@@ -171,6 +190,21 @@ inline Transform Transform::Inverted() const
   return Transform(m_inverted_matrix, m_matrix);
   }
 
+inline bool Transform::InvertsOrientation() const
+  {
+  double det = ((m_matrix.m_values[0][0] *
+    (m_matrix.m_values[1][1] * m_matrix.m_values[2][2] -
+    m_matrix.m_values[1][2] * m_matrix.m_values[2][1])) -
+    (m_matrix.m_values[0][1] *
+    (m_matrix.m_values[1][0] * m_matrix.m_values[2][2] -
+    m_matrix.m_values[1][2] * m_matrix.m_values[2][0])) +
+    (m_matrix.m_values[0][2] *
+    (m_matrix.m_values[1][0] * m_matrix.m_values[2][1] -
+    m_matrix.m_values[1][1] * m_matrix.m_values[2][0])));
+
+  return det<0.0;
+  }
+
 template<typename T>
 Point3D<T> Transform::operator()(const Point3D<T> &i_point) const
   {
@@ -236,6 +270,21 @@ inline void Transform::operator()(const Ray &i_ray, Ray &o_transformed_ray) cons
   (*this)(i_ray.m_direction, o_transformed_ray.m_direction);
   o_transformed_ray.m_min_t = i_ray.m_min_t;
   o_transformed_ray.m_max_t = i_ray.m_max_t;
+  }
+
+template<typename T>
+Vector3D<T> Transform::TransformNormal(const Vector3D<T> &i_normal) const
+  {
+  ASSERT(i_normal.IsNormalized());
+  T x = i_normal[0], y = i_normal[1], z = i_normal[2];
+
+  Vector3D<T> ret(
+    (T) (m_inverted_matrix.m_values[0][0]*x + m_inverted_matrix.m_values[1][0]*y + m_inverted_matrix.m_values[2][0]*z),
+    (T) (m_inverted_matrix.m_values[0][1]*x + m_inverted_matrix.m_values[1][1]*y + m_inverted_matrix.m_values[2][1]*z),
+    (T) (m_inverted_matrix.m_values[0][2]*x + m_inverted_matrix.m_values[1][2]*y + m_inverted_matrix.m_values[2][2]*z));
+
+  ASSERT(ret.IsNormalized());
+  return ret;
   }
 
 inline Transform Transform::operator*(const Transform &i_transform) const
