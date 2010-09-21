@@ -283,8 +283,7 @@ Vector3D<T> Transform::TransformNormal(const Vector3D<T> &i_normal) const
     (T) (m_inverted_matrix.m_values[0][1]*x + m_inverted_matrix.m_values[1][1]*y + m_inverted_matrix.m_values[2][1]*z),
     (T) (m_inverted_matrix.m_values[0][2]*x + m_inverted_matrix.m_values[1][2]*y + m_inverted_matrix.m_values[2][2]*z));
 
-  ASSERT(ret.IsNormalized());
-  return ret;
+  return ret.Normalized();
   }
 
 inline Transform Transform::operator*(const Transform &i_transform) const

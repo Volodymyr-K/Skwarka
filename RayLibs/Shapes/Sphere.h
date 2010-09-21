@@ -9,6 +9,7 @@
 * %Sphere implementation of the Shape interface.
 * The triangulation method starts from a tetrahedron and then iteratively subdivides each face into four new triangles.
 * The class has no methods to set sphere radius or sphere center, instead it provides a method to set an arbitrary transformation.
+* If no transformation is set, it will create a sphere centered at the origin with a unit radius.
 * The number of subdivision iterations is configurable.
 */
 class Sphere: public Shape

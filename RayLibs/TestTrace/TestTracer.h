@@ -16,6 +16,7 @@
 #include <Math/Geometry.h>
 #include <Raytracer/Core/TriangleMesh.h>
 #include <Shapes/Sphere.h>
+#include <Shapes/Cylinder.h>
 #include <Raytracer/Core/Spectrum.h>
 #include <Math/MathRoutines.h>
 #include <Raytracer/Core/Camera.h>
@@ -216,8 +217,8 @@ inline void TestTracer::LoadMesh()
   LightSources lights;
     {
     Sphere s;
-    s.SetSubdivisions(3);
-    s.SetTransformation(MakeTranslation(Vector3D_d(1,0,3.01))*MakeScale(3)*MakeScale(-1,1,0.2));
+    s.SetSubdivisions(5);
+    s.SetTransformation(MakeTranslation(Vector3D_d(1,0,1.54))*MakeScale(2,2,2)*MakeScale(0.7));
 
     intrusive_ptr<TriangleMesh> p_mesh( s.BuildMesh() );
     //Transform trans = MakeTranslation(Vector3D_d(0,0.7,-5.0))*MakeTranslation(Vector3D_d(1,0,3))*MakeScale(-1,1,1)*MakeRotationZ(-M_PI_2)*MakeScale(40,40,40);
@@ -231,7 +232,25 @@ inline void TestTracer::LoadMesh()
     }
 
     {
-    intrusive_ptr<ImageSource<Spectrum_f> > p_env_light_image_source( new OpenEXRRgbaImageSource<Spectrum_f>("env_lights/DH041LL.exr", 2.0) );
+    Cylinder c;
+    c.SetSubdivisions(360);
+    c.SetTransformation(MakeTranslation(Vector3D_d(1,-3.2,0.0))*MakeScale(1.5,1.5,2));
+    c.SetPhiRange(M_PI*1.7,0.7*M_PI);
+
+    intrusive_ptr<Texture<SpectrumCoef_d> > p_refr_index(new ConstantTexture<SpectrumCoef_d> (SpectrumCoef_d(0.151063,0.124375,0.125500)));
+    intrusive_ptr<Texture<SpectrumCoef_d> > p_abs(new ConstantTexture<SpectrumCoef_d> (SpectrumCoef_d(2.478750,3.348125,3.766250)));
+    intrusive_ptr<Texture<double> > p_roughness2(new ConstantTexture<double> (0.005));
+    intrusive_ptr<Material> p_metal_material( new MetalMaterial(p_refr_index,p_abs,p_roughness2) );
+
+    intrusive_ptr<TriangleMesh> p_mesh( c.BuildMesh() );
+    intrusive_ptr<Primitive> p_cylinder_primitive(new Primitive(p_mesh, p_material, NULL));
+
+    primitives.push_back(p_cylinder_primitive);
+    bbox.Unite(Convert<double>(p_mesh->GetBounds()));
+    }
+
+    {
+    intrusive_ptr<ImageSource<Spectrum_f> > p_env_light_image_source( new OpenEXRRgbaImageSource<Spectrum_f>("env_lights/DH041LL.exr", 1.0) );
 
     tbb::tick_count t0 = tbb::tick_count::now();
     intrusive_ptr<InfiniteLightSource> p_inf_light( new ImageEnvironmentalLight(bbox, Transform(), p_env_light_image_source) );
@@ -242,17 +261,9 @@ inline void TestTracer::LoadMesh()
     }
 
     {
-    Sphere s;
-    s.SetSubdivisions(5);
-    s.SetTransformation(MakeTranslation(Vector3D_d(1,0,14))*MakeScale(0.5));
+    intrusive_ptr<DeltaLightSource> p_light( new PointLight(Point3D_d(1-0.2,-3.2-0.2,7.0), RGBToSpectrum(100000/M_PI,100000/M_PI,100000/M_PI)));
 
-    intrusive_ptr<TriangleMesh> p_sphere( s.BuildMesh() );
-    intrusive_ptr<AreaLightSource> p_light( new DiffuseAreaLightSource(RGBToSpectrum(400000/M_PI,400000/M_PI,400000/M_PI), p_sphere) );
-    intrusive_ptr<Primitive> p_sphere_primitive(new Primitive(p_sphere, p_material, p_light));
-
-    //primitives.push_back(p_sphere_primitive);
-    //lights.m_area_light_sources.push_back(p_light);
-    //bbox.Unite(Convert<double>(p_sphere->GetBounds()));
+    lights.m_delta_light_sources.push_back(p_light);
     }
 
   mp_scene.reset(new Scene(primitives, NULL, lights));
@@ -264,15 +275,13 @@ inline void TestTracer::RenderImage()
   FilmFilter *filter = new MitchellFilter(2.0,2.0);
   //intrusive_ptr<InteractiveFilm> p_film(new InteractiveFilm(GetImageWidth(), GetImageHeight(), intrusive_ptr<FilmFilter>(filter)));
   intrusive_ptr<ImageFilm> p_film(new ImageFilm(GetImageWidth(), GetImageHeight(), intrusive_ptr<FilmFilter>(filter)));
-  //p_film->SetCropWindow(Point2D_i(330-3,400-28),Point2D_i(492-3,527-28));
+  //p_film->SetCropWindow(Point2D_i(288-8,421-28),Point2D_i(394-8,514-28));
 
   Point2D_i window_begin,window_end;
   p_film->GetSamplingExtent(window_begin, window_end);
 
-
-  // sponza
-  Point3D_d camera_pos(5.5,-2.4,7);
-  Point3D_d look_at(0,0,3.5);
+  Point3D_d camera_pos(7.5,-2.4,7);
+  Point3D_d look_at(0,-1.5,2.0);
   Vector3D_d direction = Vector3D_d(look_at-camera_pos).Normalized();
   intrusive_ptr<Camera> p_camera( new PerspectiveCamera( MakeLookAt(camera_pos,direction,Vector3D_d(0,0,1)), p_film, 0.001*12.000, 6, 1.22) );
 
@@ -281,15 +290,15 @@ inline void TestTracer::RenderImage()
 
   intrusive_ptr<Sampler> p_sampler( new LDSampler(window_begin, window_end, 8, pixel_order) );
 
-
+/*
   DirectLightingLTEIntegratorParams params;
   params.m_direct_light_samples_num=8;
   params.m_max_specular_depth=6;
   params.m_media_step_size=0.01;
   intrusive_ptr<DirectLightingLTEIntegrator> p_lte_int( new DirectLightingLTEIntegrator(mp_scene, params) );
+*/
 
-
-  /*
+  
   PhotonLTEIntegratorParams params;
   params.m_direct_light_samples_num=16;
   params.m_gather_samples_num=16;
@@ -298,10 +307,10 @@ inline void TestTracer::RenderImage()
   params.m_max_specular_depth=8;
   params.m_media_step_size=0.01;
   intrusive_ptr<PhotonLTEIntegrator> p_lte_int( new PhotonLTEIntegrator(mp_scene, params) );
-*/  
+  
 
   t0 = tbb::tick_count::now();
-  //p_lte_int->ShootPhotons(0, 1000000, 2000000);
+  p_lte_int->ShootPhotons(0, 4000000, 4000000);
   t1 = tbb::tick_count::now();
   printf("Shooting: %lf\n", (t1-t0).seconds());
 

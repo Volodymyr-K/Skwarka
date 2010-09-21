@@ -602,6 +602,10 @@
 				Name="Shapes"
 				>
 				<File
+					RelativePath=".\MainTests\Shapes\Cylinder.test.h"
+					>
+				</File>
+				<File
 					RelativePath=".\MainTests\Shapes\Sphere.test.h"
 					>
 				</File>
@@ -708,6 +712,10 @@
 			</File>
 			<File
 				RelativePath=".\CoreUtils.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Cylinder.test.cpp"
 				>
 			</File>
 			<File
