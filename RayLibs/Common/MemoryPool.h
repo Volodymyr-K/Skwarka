@@ -8,8 +8,10 @@
 * Memory pool implementation that is used for fast memory allocation for small objects of unfixed size.
 * The main difference between this implementation and the pool implementations provided by the boost library is that this implementation
 * does not support freeing individual chunks but does support allocating chunks of different size.
-* As usually, pool allocates memory blocks to serve allocating requests. When a block has no free memory left to serve a request
-* a new memory block is allocated. When all chunks are freed all allocated memory blocks are stored for the future reuse.
+*
+* As usually, pool allocates memory blocks of a fixed size to serve the allocation requests. When a block has no free memory left to serve the request
+* a new memory block is allocated. When requested size is larger than the block size a new "large block" is allocated of exactly the requested size.
+* When all chunks are freed all allocated memory blocks are stored for the future reuse.
 * The class provides an option to release unused memory blocks.
 */
 class MemoryPool
@@ -18,7 +20,7 @@ class MemoryPool
     /**
     * Creates MemoryPool instance with the specified block size (in bytes).
     */
-    MemoryPool(size_t i_block_size = 32768);
+    MemoryPool(size_t i_block_size = 65536);
 
     /**
     * Releases all allocated memory blocks.
@@ -31,15 +33,16 @@ class MemoryPool
     void *Alloc(size_t i_size);
 
     /**
-    * Frees all allocated memory chunks. The allocated memory blocks are not released.
+    * Frees all allocated memory chunks. The allocated memory blocks are not released but the "large blocks" are released though.
     */
     void FreeAll();
 
     /**
-    * Frees every memory block that doesn't have any allocated chunks. Returns true if at least one memory block was freed.
+    * Frees every memory block that doesn't have any allocated chunks.
+    * "Large blocks" are not freed. Returns true if at least one memory block was freed.
     * Note, that exactly one memory block still won't be released. This is the block allocated to serve the next Alloc() request.
     */
-    bool ReleaseMemory();
+    bool ReleaseUnusedMemory();
 
   private:
     // Not implemented, not a value type.
@@ -50,7 +53,7 @@ class MemoryPool
     size_t m_current_block_pos, m_block_size;
     char *m_current_block;
 
-    std::vector<char *> m_used_blocks, m_available_blocks;
+    std::vector<char *> m_used_blocks, m_available_blocks, m_large_blocks;
   };
 
 /**
@@ -128,14 +131,23 @@ inline void *MemoryPool::Alloc(size_t i_size)
   if (m_current_block_pos + i_size > m_block_size)
     {
     // Get new block of memory for MemoryPool.
-    m_used_blocks.push_back(m_current_block);
-    if (m_available_blocks.empty()==false && i_size <= m_block_size)
+    if (i_size <= m_block_size)
       {
-      m_current_block = m_available_blocks.back();
-      m_available_blocks.pop_back();
+      m_used_blocks.push_back(m_current_block);
+      if (m_available_blocks.empty()==false)
+        {
+        m_current_block = m_available_blocks.back();
+        m_available_blocks.pop_back();
+        }
+      else
+        m_current_block = (char *)new char[m_block_size];
       }
     else
-      m_current_block = (char *)new char[std::max(i_size, m_block_size)];
+      {
+      char *large_block = (char *)new char[i_size];
+      m_large_blocks.push_back(large_block);
+      return (void *)large_block;
+      }
 
     m_current_block_pos = 0;
     }
@@ -150,11 +162,16 @@ inline void MemoryPool::FreeAll()
   m_current_block_pos = 0;
   m_available_blocks.insert(m_available_blocks.end(), m_used_blocks.begin(), m_used_blocks.end());
   m_used_blocks.clear();
+
+  for (size_t i = 0; i < m_large_blocks.size(); ++i)
+    delete[] m_large_blocks[i];
+
+  m_large_blocks.clear();
   }
 
-inline bool MemoryPool::ReleaseMemory()
+inline bool MemoryPool::ReleaseUnusedMemory()
   {
-  size_t available_blocks_size=m_available_blocks.size();
+  size_t available_blocks_size = m_available_blocks.size();
   for (size_t i = 0; i < available_blocks_size; ++i)
     delete[] m_available_blocks[i];
 

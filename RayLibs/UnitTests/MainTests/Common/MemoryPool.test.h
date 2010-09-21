@@ -95,8 +95,8 @@ class MemoryPoolTestSuite : public CxxTest::TestSuite
       TS_ASSERT(correct);
       }
 
-    // Tests Release() method by allocating a number of chunks, freeing them and then releasing the memory.
-    void test_MemoryPool_Release()
+    // Tests ReleaseUnusedMemory() method by allocating a number of chunks, freeing them and then releasing the memory.
+    void test_MemoryPool_ReleaseUnusedMemory()
       {
       MemoryPool pool;
       for(size_t i=0;i<50;++i)
@@ -106,11 +106,11 @@ class MemoryPoolTestSuite : public CxxTest::TestSuite
           ptr[j]=0;
         }
 
-      TS_ASSERT( pool.ReleaseMemory()==false );
+      TS_ASSERT( pool.ReleaseUnusedMemory()==false );
 
       pool.FreeAll();
 
-      TS_ASSERT( pool.ReleaseMemory() );
+      TS_ASSERT( pool.ReleaseUnusedMemory() );
       }
 
     void test_MemoryPoolAllocator()
