@@ -6,7 +6,6 @@
 Cylinder::Cylinder()
   {
   m_subdivisions = 360;
-  m_min_phi = 0.0;
   m_max_phi = 2.0*M_PI;
   }
 
@@ -21,9 +20,8 @@ void Cylinder::SetTransformation(const Transform &i_transform)
   m_transform = i_transform;
   }
 
-void Cylinder::SetPhiRange(double i_min_phi, double i_max_phi)
+void Cylinder::SetMaxPhi(double i_max_phi)
   {
-  m_min_phi = std::max(0.0,std::min(2.0*M_PI,i_min_phi));
   m_max_phi = std::max(0.0,std::min(2.0*M_PI,i_max_phi));
   }
 
@@ -40,10 +38,8 @@ intrusive_ptr<TriangleMesh> Cylinder::BuildMesh()
   // If transformation inverts geometric normals we need to invert shading normals to be consistent.
   const double normal_invert = m_transform.InvertsOrientation() ? -1.0 : 1.0;
 
-  const double phi_range = m_min_phi < m_max_phi ? m_max_phi-m_min_phi : 2.0*M_PI - m_min_phi + m_max_phi;
-  const double d_phi = phi_range / m_subdivisions;
-
-  double phi = m_min_phi;
+  double phi = 0.0;
+  const double d_phi = m_max_phi / m_subdivisions;
   for(size_t i=0;i<m_subdivisions+1;++i)
     {
     double cos_phi = cos(phi);
@@ -78,11 +74,7 @@ intrusive_ptr<TriangleMesh> Cylinder::BuildMesh()
     triangles.push_back(t2);
     }
 
-  TriangleMesh *p_mesh = new TriangleMesh(vertices, triangles, normals, tangents);
-
   // The cylinder is supposed to be smooth by definition so we use interpolated normals.
-  p_mesh->SetUseShadingNormals(true);
-  p_mesh->SetInvertNormals(m_transform.InvertsOrientation());
-
+  TriangleMesh *p_mesh = new TriangleMesh(vertices, triangles, normals, tangents, true, m_transform.InvertsOrientation());
   return intrusive_ptr<TriangleMesh>(p_mesh);
   }

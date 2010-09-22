@@ -169,11 +169,7 @@ intrusive_ptr<TriangleMesh> Sphere::BuildMesh()
     tangents[i] = Convert<float>( m_transform(tangent).Normalized() );
     }
 
-  TriangleMesh *p_mesh = new TriangleMesh(vertices_f, triangles_cleaned, normals, tangents);
-
   // The sphere is supposed to be smooth by definition so we use interpolated normals.
-  p_mesh->SetUseShadingNormals(true);
-  p_mesh->SetInvertNormals(m_transform.InvertsOrientation());
-
+  TriangleMesh *p_mesh = new TriangleMesh(vertices_f, triangles_cleaned, normals, tangents, true, m_transform.InvertsOrientation());
   return intrusive_ptr<TriangleMesh>(p_mesh);
   }

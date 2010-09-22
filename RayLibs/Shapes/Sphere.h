@@ -19,7 +19,7 @@ class Sphere: public Shape
 
     /**
     * Sets number of sphere subdivisions.
-    * The final number of triangles in the mesh is equal to 4^(i_subdivisions+1);
+    * The final number of triangles in the mesh is equal to 4^(i_subdivisions+1).
     * If the method is not called, the default number of subdivisions is 4.
     */
     void SetSubdivisions(size_t i_subdivisions);

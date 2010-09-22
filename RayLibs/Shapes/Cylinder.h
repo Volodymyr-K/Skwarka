@@ -18,16 +18,17 @@ class Cylinder: public Shape
 
     /**
     * Sets number of cylinder subdivisions.
-    * The final number of triangles in the mesh is equal to 2*i_subdivisions;
+    * The final number of triangles in the mesh is equal to 2*i_subdivisions.
     * If the method is not called, the default number of subdivisions is 360.
     */
     void SetSubdivisions(size_t i_subdivisions);
 
     /**
-    * Sets range of the phi angles of the cylinder.
-    * If the method is not called, the default range is the entire [0;2*M_PI]
+    * Sets maximum value of the phi angle of the cylinder.
+    * The triangles will be created only for the range of the phi angles equal to [0;i_max_phi].
+    * If the method is not called, the default value is 2*M_PI.
     */
-    void SetPhiRange(double i_min_phi, double i_max_phi);
+    void SetMaxPhi(double i_max_phi);
 
     /**
     * Sets transformation to be applied to the cylinder.
@@ -46,7 +47,7 @@ class Cylinder: public Shape
     size_t m_subdivisions;
     Transform m_transform;
 
-    double m_min_phi, m_max_phi;
+    double m_max_phi;
   };
 
 

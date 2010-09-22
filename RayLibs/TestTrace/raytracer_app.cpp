@@ -45,16 +45,18 @@ class MyDisplayUpdateCallback: public DisplayUpdateCallback
           Spectrum_d sp;
           p_film->GetPixel(Point2D_i(x,y),sp);
           RGBColor_d color = global_sRGB_D65_ColorSystem.XYZ_To_RGB(SpectrumRoutines::SpectrumToXYZ(sp),true);
-          color.Clamp(0.0,255.0);
-          color[0]/=255.0;color[1]/=255.0;color[2]/=255.0;
+          color.Clamp(0.0,256.0);
+          color[0]/=256.0;color[1]/=256.0;color[2]/=256.0;
           color = global_sRGB_D65_ColorSystem.GammaEncode(color);
-          color[0]*=255.0;color[1]*=255.0;color[2]*=255.0;
+          int r = std::min(255,(int)(color[0]*256.0));
+          int g = std::min(255,(int)(color[1]*256.0));
+          int b = std::min(255,(int)(color[2]*256.0));
 
           unsigned int pixel_index = (unsigned int) ((y*width+x)*4);
           Byte* pixel = m_image;
-          pixel[pixel_index+2] = Byte(color[0]);
-          pixel[pixel_index+1] = Byte(color[1]);
-          pixel[pixel_index+0] = Byte(color[2]);
+          pixel[pixel_index+2] = Byte(r);
+          pixel[pixel_index+1] = Byte(g);
+          pixel[pixel_index+0] = Byte(b);
           }
 
       BitBlt(GetDC(g_hWnd), 0, 0, tracer->GetImageWidth(), tracer->GetImageHeight(), g_memDC, 0, 0, SRCCOPY);

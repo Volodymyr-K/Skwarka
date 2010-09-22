@@ -43,7 +43,7 @@ class CylinderTestSuite : public CxxTest::TestSuite
     void test_Cylinder_Area2()
       {
       Cylinder cylinder;
-      cylinder.SetPhiRange(M_PI*1.5,M_PI*0.5);
+      cylinder.SetMaxPhi(M_PI);
 
       intrusive_ptr<TriangleMesh> p_mesh=cylinder.BuildMesh();
       TS_ASSERT_DELTA(p_mesh->GetArea(), 1.0*M_PI, 1e-3);

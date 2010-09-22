@@ -606,6 +606,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\Disk.test.h"
+					>
+				</File>
+				<File
 					RelativePath=".\MainTests\Shapes\Sphere.test.h"
 					>
 				</File>
@@ -728,6 +732,10 @@
 			</File>
 			<File
 				RelativePath=".\DirectLightingIntegrator.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Disk.test.cpp"
 				>
 			</File>
 			<File
