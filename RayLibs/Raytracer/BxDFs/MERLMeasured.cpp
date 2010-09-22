@@ -262,13 +262,20 @@ SpectrumCoef_d MERLMeasuredData::GetBRDF(const Vector3D_d &i_incident, const Vec
   size_t diff_vector_phi_index = size_t(diff_vector_phi * INV_PI * BRDF_SAMPLING_RES_PHI_D) % BRDF_SAMPLING_RES_PHI_D;
   size_t diff_vector_theta_index = std::min(size_t(diff_vector_theta * 2.0 * INV_PI * BRDF_SAMPLING_RES_THETA_D), BRDF_SAMPLING_RES_THETA_D - 1);
 
-  double half_vector_theta_deg = sqrt(half_vector_theta * 2.0 * INV_PI);
-  size_t half_vector_theta_index = std::min(size_t(half_vector_theta_deg*BRDF_SAMPLING_RES_THETA_H), BRDF_SAMPLING_RES_THETA_H - 1);
+  double half_vector_theta_deg_scaled = sqrt(half_vector_theta * 2.0 * INV_PI) * BRDF_SAMPLING_RES_THETA_H;
+  size_t half_vector_theta_index = std::min(size_t(half_vector_theta_deg_scaled), BRDF_SAMPLING_RES_THETA_H - 1);
 
   size_t index = diff_vector_phi_index + (diff_vector_theta_index + half_vector_theta_index * BRDF_SAMPLING_RES_THETA_D) * BRDF_SAMPLING_RES_PHI_D;
-
   ASSERT(index>=0 && index<BRDF_SAMPLING_RES_THETA_H*BRDF_SAMPLING_RES_THETA_D*BRDF_SAMPLING_RES_PHI_D);
-  return Convert<double>(m_brdf_data[index]);
+   
+  if (index < (BRDF_SAMPLING_RES_THETA_H-1)*BRDF_SAMPLING_RES_THETA_D*BRDF_SAMPLING_RES_PHI_D)
+    {
+    // Interpolate by the theta angle of half vector.
+    double t = half_vector_theta_deg_scaled-(size_t)half_vector_theta_deg_scaled;
+    return Convert<double>(m_brdf_data[index])*(1.0-t) + Convert<double>(m_brdf_data[index+BRDF_SAMPLING_RES_THETA_D*BRDF_SAMPLING_RES_PHI_D])*t;
+    }
+  else
+    return Convert<double>( m_brdf_data[index] );
   }
 
 SpectrumCoef_d MERLMeasuredData::Sample(const Vector3D_d &i_incident, Vector3D_d &o_exitant, const Point2D_d &i_sample, double &o_pdf) const

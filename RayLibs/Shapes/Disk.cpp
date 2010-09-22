@@ -8,6 +8,7 @@ Disk::Disk()
   {
   m_subdivisions = 360;
   m_max_phi = 2.0*M_PI;
+  m_inner_radius = 0.0;
   }
 
 void Disk::SetSubdivisions(size_t i_subdivisions)

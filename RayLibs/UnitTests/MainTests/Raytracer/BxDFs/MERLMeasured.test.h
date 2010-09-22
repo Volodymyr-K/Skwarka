@@ -124,7 +124,7 @@ class MERLMeasuredTestSuite : public CxxTest::TestSuite
       SamplingRoutines::StratifiedSampling2D(samples.begin(),num_samples_sqrt,num_samples_sqrt,true);
 
       SpectrumCoef_d total=mp_tungsten_carbide->TotalScattering(Vector3D_d(0.5,0.5,0.5).Normalized(), SamplesSequence2D(&samples[0], (&samples[0]) + samples.size()));
-      CustomAssertDelta(total, SpectrumCoef_d(0.1024,0.0823,0.0955), 0.001); // This is an empirical value.
+      CustomAssertDelta(total, SpectrumCoef_d(0.0765,0.0634,0.0747), 0.001); // This is an empirical value.
       }
 
     void test_MERLMeasured_TotalScattering2()
@@ -139,7 +139,7 @@ class MERLMeasuredTestSuite : public CxxTest::TestSuite
       SamplesSequence2D sequence2(&samples2[0], (&samples2[0]) + samples2.size());
 
       SpectrumCoef_d total=mp_tungsten_carbide->TotalScattering(true, sequence1, sequence2);
-      CustomAssertDelta(total, SpectrumCoef_d(0.0964, 0.0821, 0.0940), 0.001); // This is an empirical value.
+      CustomAssertDelta(total, SpectrumCoef_d(0.0721, 0.0627, 0.0732), 0.001); // This is an empirical value.
       }
 
   private:

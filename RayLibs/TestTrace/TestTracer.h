@@ -200,21 +200,6 @@ inline void TestTracer::LoadMesh()
   //intrusive_ptr<Texture<SpectrumCoef_d> > p_white_reflection(new ConstantTexture<SpectrumCoef_d> (RGBToSpectrumCoef(0.4,0.4,0.4)));
   //intrusive_ptr<Material> p_material(new SubstrateMaterial(p_yellow_reflection, p_white_reflection, p_roughness));
 
-  std::ifstream myFile ("D:\\raytracerDB\\MERL\\brdfs\\tungsten-carbide.binary", std::ios::in | std::ios::binary);
-
-  tbb::tick_count t0 = tbb::tick_count::now();
-  intrusive_ptr<MERLMeasuredData> p_merl_measured_data( new MERLMeasuredData(myFile) );
-  intrusive_ptr<Material> p_material( new MERLMeasuredMaterial(p_merl_measured_data) );
-  tbb::tick_count t1 = tbb::tick_count::now();
-  printf("Creating MERL: %lf\n", (t1-t0).seconds());
-
-  intrusive_ptr<Texture<SpectrumCoef_d> > p_refr_index(new ConstantTexture<SpectrumCoef_d> (SpectrumCoef_d(0.598000,0.963000,1.220000)));
-  intrusive_ptr<Texture<SpectrumCoef_d> > p_abs(new ConstantTexture<SpectrumCoef_d> (SpectrumCoef_d(5.380000,6.700000,7.310000)));
-  intrusive_ptr<Texture<double> > p_roughness2(new ConstantTexture<double> (0.005));
-  //intrusive_ptr<Material> p_material( new MetalMaterial(p_refr_index,p_abs,p_roughness2) );
-  //intrusive_ptr<Texture<double> > sig(new ConstantTexture<double> (0));
-  //intrusive_ptr<Material> p_material( new MatteMaterial(p_refr_index,sig) );
-
   LightSources lights;
     {
     Sphere s;
@@ -226,7 +211,15 @@ inline void TestTracer::LoadMesh()
     //intrusive_ptr<TriangleMesh> p_mesh( LoadMeshFromPLY("dragon/dragon.ply", trans, true) );
     //p_mesh->SetInvertNormals(true);
 
-    intrusive_ptr<Primitive> p_sphere_primitive(new Primitive(p_mesh, p_material, NULL));
+    std::ifstream myFile ("D:\\raytracerDB\\MERL\\brdfs\\tungsten-carbide.binary", std::ios::in | std::ios::binary);
+
+    tbb::tick_count t0 = tbb::tick_count::now();
+    intrusive_ptr<MERLMeasuredData> p_merl_measured_data( new MERLMeasuredData(myFile) );
+    intrusive_ptr<Material> p_measured_material( new MERLMeasuredMaterial(p_merl_measured_data) );
+    tbb::tick_count t1 = tbb::tick_count::now();
+    printf("Creating MERL: %lf\n", (t1-t0).seconds());
+
+    intrusive_ptr<Primitive> p_sphere_primitive(new Primitive(p_mesh, p_measured_material, NULL));
 
     primitives.push_back(p_sphere_primitive);
     bbox.Unite(Convert<double>(p_mesh->GetBounds()));
@@ -237,14 +230,23 @@ inline void TestTracer::LoadMesh()
     c.SetSubdivisions(360);
     c.SetTransformation(MakeTranslation(Vector3D_d(1,-3.2,0.0))*MakeScale(1.5,1.5,2)*MakeRotationZ(M_PI*1.7));
     c.SetMaxPhi(M_PI);
-
+/*
     intrusive_ptr<Texture<SpectrumCoef_d> > p_refr_index(new ConstantTexture<SpectrumCoef_d> (SpectrumCoef_d(0.151063,0.124375,0.125500)));
     intrusive_ptr<Texture<SpectrumCoef_d> > p_abs(new ConstantTexture<SpectrumCoef_d> (SpectrumCoef_d(2.478750,3.348125,3.766250)));
     intrusive_ptr<Texture<double> > p_roughness2(new ConstantTexture<double> (0.002));
-    intrusive_ptr<Material> p_metal_material( new MetalMaterial(p_refr_index,p_abs,p_roughness2) );
+    intrusive_ptr<Material> p_silver_material( new MetalMaterial(p_refr_index,p_abs,p_roughness2) );
+*/
+
+    std::ifstream myFile ("D:\\raytracerDB\\MERL\\brdfs\\silver-metallic-paint.binary", std::ios::in | std::ios::binary);
+
+    tbb::tick_count t0 = tbb::tick_count::now();
+    intrusive_ptr<MERLMeasuredData> p_merl_measured_data( new MERLMeasuredData(myFile) );
+    intrusive_ptr<Material> p_measured_material( new MERLMeasuredMaterial(p_merl_measured_data) );
+    tbb::tick_count t1 = tbb::tick_count::now();
+    printf("Creating MERL: %lf\n", (t1-t0).seconds());
 
     intrusive_ptr<TriangleMesh> p_mesh( c.BuildMesh() );
-    intrusive_ptr<Primitive> p_cylinder_primitive(new Primitive(p_mesh, p_material, NULL));
+    intrusive_ptr<Primitive> p_cylinder_primitive(new Primitive(p_mesh, p_measured_material, NULL));
 
     primitives.push_back(p_cylinder_primitive);
     bbox.Unite(Convert<double>(p_mesh->GetBounds()));
@@ -256,14 +258,23 @@ inline void TestTracer::LoadMesh()
     d.SetInnerRadius(0.25);
     d.SetTransformation(MakeTranslation(Vector3D_d(3,-1.0,0.3))*MakeScale(1.2));
     d.SetMaxPhi(M_PI*1.7);
-
+/*
     intrusive_ptr<Texture<SpectrumCoef_d> > p_refr_index(new ConstantTexture<SpectrumCoef_d> (SpectrumCoef_d(0.151063,0.124375,0.125500)));
     intrusive_ptr<Texture<SpectrumCoef_d> > p_abs(new ConstantTexture<SpectrumCoef_d> (SpectrumCoef_d(2.478750,3.348125,3.766250)));
-    intrusive_ptr<Texture<double> > p_roughness2(new ConstantTexture<double> (0.005));
-    intrusive_ptr<Material> p_metal_material( new MetalMaterial(p_refr_index,p_abs,p_roughness2) );
+    intrusive_ptr<Texture<double> > p_roughness2(new ConstantTexture<double> (0.002));
+    intrusive_ptr<Material> p_silver_material( new MetalMaterial(p_refr_index,p_abs,p_roughness2) );
+*/
+
+    std::ifstream myFile ("D:\\raytracerDB\\MERL\\brdfs\\silver-metallic-paint.binary", std::ios::in | std::ios::binary);
+
+    tbb::tick_count t0 = tbb::tick_count::now();
+    intrusive_ptr<MERLMeasuredData> p_merl_measured_data( new MERLMeasuredData(myFile) );
+    intrusive_ptr<Material> p_measured_material( new MERLMeasuredMaterial(p_merl_measured_data) );
+    tbb::tick_count t1 = tbb::tick_count::now();
+    printf("Creating MERL: %lf\n", (t1-t0).seconds());
 
     intrusive_ptr<TriangleMesh> p_mesh( d.BuildMesh() );
-    intrusive_ptr<Primitive> p_cylinder_primitive(new Primitive(p_mesh, p_material, NULL));
+    intrusive_ptr<Primitive> p_cylinder_primitive(new Primitive(p_mesh, p_measured_material, NULL));
 
     primitives.push_back(p_cylinder_primitive);
     bbox.Unite(Convert<double>(p_mesh->GetBounds()));
@@ -311,15 +322,14 @@ inline void TestTracer::RenderImage()
 
   intrusive_ptr<Sampler> p_sampler( new LDSampler(window_begin, window_end, 8, pixel_order) );
 
-
+/*
   DirectLightingLTEIntegratorParams params;
   params.m_direct_light_samples_num=8;
   params.m_max_specular_depth=6;
   params.m_media_step_size=0.01;
   intrusive_ptr<DirectLightingLTEIntegrator> p_lte_int( new DirectLightingLTEIntegrator(mp_scene, params) );
+*/
 
-
-/*
   PhotonLTEIntegratorParams params;
   params.m_direct_light_samples_num=16;
   params.m_gather_samples_num=16;
@@ -328,10 +338,10 @@ inline void TestTracer::RenderImage()
   params.m_max_specular_depth=8;
   params.m_media_step_size=0.01;
   intrusive_ptr<PhotonLTEIntegrator> p_lte_int( new PhotonLTEIntegrator(mp_scene, params) );
-  */
+  
 
   t0 = tbb::tick_count::now();
-  //p_lte_int->ShootPhotons(0, 2000000, 2000000);
+  p_lte_int->ShootPhotons(0, 2000000, 2000000);
   t1 = tbb::tick_count::now();
   printf("Shooting: %lf\n", (t1-t0).seconds());
 
