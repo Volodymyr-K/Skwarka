@@ -40,6 +40,7 @@ class OpenEXRRgbaImageSource: public ImageSource<T>
     * Creates OpenEXRRgbaImageSource from the specified OpenEXR file and with the specified scale factor.
     * The RGB color space is read from the file's attributes. If it is not set in the attributes the default one is used (as per the OpenEXR's documentation it matches Rec. ITU-R BT.709-3)
     * The image values will be multiplied by the scale factor during conversion to the target type.
+    * When serialized the real image data won't be serialized, only the filename and the scale factor.
     */
     OpenEXRRgbaImageSource(std::string i_filename, double i_scale = 1.0);
 
@@ -66,6 +67,8 @@ class OpenEXRRgbaImageSource: public ImageSource<T>
     */
     T _XYZ_To_T(const XYZColor_d &i_color) const;
 
+    void _LoadFromFile(const std::string &i_filename);
+
   private:
     OpenEXRRgbaImageSource() {}; // Empty default constructor for the boost serialization framework.
 
@@ -78,9 +81,18 @@ class OpenEXRRgbaImageSource: public ImageSource<T>
     template<class Archive>
     void serialize(Archive &i_ar, const unsigned int i_version);
 
+    template<class Archive>
+    void save(Archive &i_ar, const unsigned int i_version) const;
+
+    template<class Archive>
+    void load(Archive &i_ar, const unsigned int i_version);
+
   private:
     std::vector<Imf::Rgba> m_values;
     size_t m_width, m_height;
+
+    std::string m_filename;
+    bool m_from_file;
 
     ColorSystem m_color_system;
 
@@ -92,7 +104,7 @@ class OpenEXRRgbaImageSource: public ImageSource<T>
 
 template <typename T>
 OpenEXRRgbaImageSource<T>::OpenEXRRgbaImageSource(const std::vector<Imf::Rgba> &i_values, size_t i_width, size_t i_height, const ColorSystem &i_color_system, double i_scale):
-m_values(i_values), m_width(i_width), m_height(i_height), m_color_system(i_color_system), m_scale(i_scale)
+m_values(i_values), m_width(i_width), m_height(i_height), m_color_system(i_color_system), m_scale(i_scale), m_from_file(false)
   {
   ASSERT(m_values.size()==m_width*m_height);
 
@@ -101,7 +113,18 @@ m_values(i_values), m_width(i_width), m_height(i_height), m_color_system(i_color
   }
 
 template <typename T>
-OpenEXRRgbaImageSource<T>::OpenEXRRgbaImageSource(std::string i_filename, double i_scale): m_scale(i_scale)
+OpenEXRRgbaImageSource<T>::OpenEXRRgbaImageSource(std::string i_filename, double i_scale): m_filename(i_filename), m_scale(i_scale), m_from_file(true)
+  {
+  // Reset previous data.
+  m_width=m_height=0;
+  m_values.clear();
+
+  // Load new data from file.
+  _LoadFromFile(i_filename);
+  }
+
+template <typename T>
+void OpenEXRRgbaImageSource<T>::_LoadFromFile(const std::string &i_filename)
   {
   try
     {
@@ -202,12 +225,53 @@ template <typename T>
 template<class Archive>
 void OpenEXRRgbaImageSource<T>::serialize(Archive &i_ar, const unsigned int i_version)
   {
+  boost::serialization::split_member(i_ar, *this, i_version);
+  }
+
+template <typename T>
+template<class Archive>
+void OpenEXRRgbaImageSource<T>::save(Archive &i_ar, const unsigned int i_version) const
+  {
   i_ar & boost::serialization::base_object<ImageSource<T> >(*this);
-  i_ar & m_values;
-  i_ar & m_width;
-  i_ar & m_height;
-  i_ar & m_color_system;
-  i_ar & m_scale;
+  i_ar & m_from_file;
+
+  if (m_from_file)
+    {
+    i_ar & m_filename;
+    i_ar & m_scale;
+    }
+  else
+    {
+    i_ar & m_values;
+    i_ar & m_width;
+    i_ar & m_height;
+    i_ar & m_color_system;
+    i_ar & m_scale;
+    }
+  }
+
+template <typename T>
+template<class Archive>
+void OpenEXRRgbaImageSource<T>::load(Archive &i_ar, const unsigned int i_version)
+  {
+  i_ar & boost::serialization::base_object<ImageSource<T> >(*this);
+  i_ar & m_from_file;
+
+  if (m_from_file)
+    {
+    i_ar & m_filename;
+    i_ar & m_scale;
+
+    _LoadFromFile(m_filename);
+    }
+  else
+    {
+    i_ar & m_values;
+    i_ar & m_width;
+    i_ar & m_height;
+    i_ar & m_color_system;
+    i_ar & m_scale;
+    }
   }
 
 // The following code exports different specializations of the OpenEXRRgbaImageSource template in the boost serialization framework.
@@ -217,7 +281,6 @@ typedef OpenEXRRgbaImageSource<Spectrum_d> OpenEXRRgbaImageSource_Spectrum_doubl
 
 typedef OpenEXRRgbaImageSource<SpectrumCoef_f> OpenEXRRgbaImageSource_SpectrumCoef_float;
 typedef OpenEXRRgbaImageSource<SpectrumCoef_d> OpenEXRRgbaImageSource_SpectrumCoef_double;
-
 
 #include <boost/serialization/export.hpp>
 BOOST_CLASS_EXPORT(OpenEXRRgbaImageSource_Spectrum_float)

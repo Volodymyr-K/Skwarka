@@ -21,6 +21,12 @@ class SphericalMapping2D: public Mapping2D
     SphericalMapping2D(const Point3D_d &i_sphere_center, Vector3D_d i_sphere_z_axis, Vector3D_d i_sphere_x_axis);
 
     /**
+    * Creates SphericalMapping2D instance with the specified world-to-sphere transformation.
+    * @param i_world_to_sphere World-to-sphere transformation.
+    */
+    SphericalMapping2D(const Transform &i_world_to_sphere);
+
+    /**
     * Maps 3D point defined by the specified DifferentialGeometry object by projecting it onto the sphere and returning (theta,phi) coordinates.
     * The method does not account for the singularity near the poles and so the differentials may be inaccurate if they are near the sphere poles.
     * @param i_dg DifferentialGeometry object describing the surface point.
@@ -71,6 +77,10 @@ inline SphericalMapping2D::SphericalMapping2D(const Point3D_d &i_sphere_center, 
   Transform x_rotation = MakeMatchDirections(i_sphere_x_axis, Vector3D_d(1,0,0));
 
   m_world_to_sphere = x_rotation * z_rotation * translation;
+  }
+
+inline SphericalMapping2D::SphericalMapping2D(const Transform &i_world_to_sphere): m_world_to_sphere(i_world_to_sphere)
+  {
   }
 
 inline void SphericalMapping2D::Map(const DifferentialGeometry &i_dg, size_t i_triangle_index, Point2D_d &o_point, Vector2D_d &o_dp_dx, Vector2D_d &o_dp_dy) const
