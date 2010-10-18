@@ -56,6 +56,7 @@
 #include <Math/CompressedDirection.h>
 #include <Raytracer/Materials/SubstrateMaterial.h>
 #include <Raytracer/Materials/PlasticMaterial.h>
+#include <Raytracer/Materials/MixMaterial.h>
 #include <Raytracer/Materials/MERLMeasuredMaterial.h>
 #include <Raytracer/BxDFs/FresnelBlend.h>
 #include <Raytracer/MicrofacetDistributions/AnisotropicDistribution.h>
@@ -152,7 +153,7 @@ inline void TestTracer::LoadMesh()
   std::vector<intrusive_ptr<const Primitive> > primitives;
 
   BMP Input;
-  Input.ReadFromFile("mendeleev.bmp");
+  Input.ReadFromFile("image.bmp");
 
   std::vector<std::vector<RGB24> > values(Input.TellHeight(),std::vector<RGB24>(Input.TellWidth()));
   for( int j=0 ; j < Input.TellHeight() ; j++)
@@ -166,7 +167,7 @@ inline void TestTracer::LoadMesh()
       values[j][i]=rgb;
       }
     }
-  intrusive_ptr<ImageSource<SpectrumCoef_f> > p_image_source( new RGB24ImageSource<SpectrumCoef_f>(values, global_sRGB_E_ColorSystem, 0.3) );
+  intrusive_ptr<ImageSource<SpectrumCoef_f> > p_image_source( new RGB24ImageSource<SpectrumCoef_f>(values, global_sRGB_E_ColorSystem, 1.0) );
 
   intrusive_ptr<Mapping2D> p_mapping( new UVMapping2D(1,1) );
   intrusive_ptr< ImageTexture<SpectrumCoef_f,SpectrumCoef_d> > p_text(new ImageTexture<SpectrumCoef_f,SpectrumCoef_d>(p_image_source, p_mapping) );
@@ -175,8 +176,8 @@ inline void TestTracer::LoadMesh()
     {
     std::vector<Point3D_f> vertices;
     std::vector<MeshTriangle> triangles;
-    vertices.push_back(Point3D_f(-15,-15,0));vertices.push_back(Point3D_f(10,-15,0));
-    vertices.push_back(Point3D_f(10,15,0));vertices.push_back(Point3D_f(-15,15,0));
+    vertices.push_back(Point3D_f(-20,-15,0));vertices.push_back(Point3D_f(10,-15,0));
+    vertices.push_back(Point3D_f(10,15,0));vertices.push_back(Point3D_f(-20,15,0));
 
     MeshTriangle t1(0,1,2);t1.m_uvs[0]=Point2D_f(1,1);t1.m_uvs[1]=Point2D_f(0,1);t1.m_uvs[2]=Point2D_f(0,0);
     MeshTriangle t2(2,3,0);t2.m_uvs[0]=Point2D_f(0,0);t2.m_uvs[1]=Point2D_f(1,0);t2.m_uvs[2]=Point2D_f(1,1);
@@ -184,33 +185,41 @@ inline void TestTracer::LoadMesh()
     triangles.push_back(t1);triangles.push_back(t2);
     intrusive_ptr<TriangleMesh> p_ground_mesh = intrusive_ptr<TriangleMesh>( new TriangleMesh(vertices, triangles, true) );
 
-    intrusive_ptr<Texture<double> > p_sigma(new ConstantTexture<double> (0.35));
-    intrusive_ptr<Material> p_material(new MatteMaterial(p_text, p_sigma));
+    std::ifstream myFile1 ("D:\\raytracerDB\\MERL\\brdfs\\ss440.binary", std::ios::in | std::ios::binary);
+    intrusive_ptr<MERLMeasuredData> p_merl_measured_data1( new MERLMeasuredData(myFile1) );
+    intrusive_ptr<Material> p_measured_material1( new MERLMeasuredMaterial(p_merl_measured_data1) );
+
+    std::ifstream myFile2 ("D:\\raytracerDB\\MERL\\brdfs\\polyethylene.binary", std::ios::in | std::ios::binary);
+    intrusive_ptr<MERLMeasuredData> p_merl_measured_data2( new MERLMeasuredData(myFile2) );
+    intrusive_ptr<Material> p_measured_material2( new MERLMeasuredMaterial(p_merl_measured_data2) );
+
+    intrusive_ptr<Material> p_material(new MixMaterial(p_measured_material1, p_measured_material2, p_text));
 
     intrusive_ptr<Primitive> p_primitive(new Primitive(p_ground_mesh, p_material));
     primitives.push_back(p_primitive);
     bbox.Unite(Convert<double>(p_ground_mesh->GetBounds()));
     }
 
-  intrusive_ptr<Texture<SpectrumCoef_d> > p_reflection(new ConstantTexture<SpectrumCoef_d> (RGBToSpectrumCoef(0.75,0.75,0.75)));
-  intrusive_ptr<Texture<double> > p_roughness(new ConstantTexture<double> (0.025));
-  //intrusive_ptr<Material> p_material(new MetalMaterial(p_reflection, p_roughness));
+    {
+    Transform trans = MakeTranslation(Vector3D_d(5.5,-0.5,-1.0))*MakeScale(-1,1,1)*MakeRotationZ(-M_PI_2)*MakeScale(20,20,20);
+    intrusive_ptr<TriangleMesh> p_mesh( LoadMeshFromPLY("dragon/dragon.ply", trans, true) );
+    p_mesh->SetInvertNormals(true);
 
-  //intrusive_ptr<Texture<SpectrumCoef_d> > p_yellow_reflection(new ConstantTexture<SpectrumCoef_d> (RGBToSpectrumCoef(0.4,0.4,0.25)));
-  //intrusive_ptr<Texture<SpectrumCoef_d> > p_white_reflection(new ConstantTexture<SpectrumCoef_d> (RGBToSpectrumCoef(0.4,0.4,0.4)));
-  //intrusive_ptr<Material> p_material(new SubstrateMaterial(p_yellow_reflection, p_white_reflection, p_roughness));
+    intrusive_ptr<Texture<SpectrumCoef_d> > p_white_texture(new ConstantTexture<SpectrumCoef_d> (SpectrumCoef_d(1.0)));
+    intrusive_ptr<Material> p_glass_material( new TransparentMaterial(p_white_texture,p_white_texture, 1.4) );
 
-  LightSources lights;
+    intrusive_ptr<Primitive> p_dragon_primitive(new Primitive(p_mesh, p_glass_material, NULL));
+
+    primitives.push_back(p_dragon_primitive);
+    bbox.Unite(Convert<double>(p_mesh->GetBounds()));
+    }
+
     {
     Sphere s;
     s.SetSubdivisions(5);
     s.SetTransformation(MakeTranslation(Vector3D_d(1,0,1.54))*MakeScale(2,2,2)*MakeScale(0.7));
 
     intrusive_ptr<TriangleMesh> p_mesh( s.BuildMesh() );
-    //Transform trans = MakeTranslation(Vector3D_d(0,0.7,-5.0))*MakeTranslation(Vector3D_d(1,0,3))*MakeScale(-1,1,1)*MakeRotationZ(-M_PI_2)*MakeScale(40,40,40);
-    //intrusive_ptr<TriangleMesh> p_mesh( LoadMeshFromPLY("dragon/dragon.ply", trans, true) );
-    //p_mesh->SetInvertNormals(true);
-
     std::ifstream myFile ("D:\\raytracerDB\\MERL\\brdfs\\tungsten-carbide.binary", std::ios::in | std::ios::binary);
 
     tbb::tick_count t0 = tbb::tick_count::now();
@@ -230,12 +239,6 @@ inline void TestTracer::LoadMesh()
     c.SetSubdivisions(360);
     c.SetTransformation(MakeTranslation(Vector3D_d(1,-3.2,0.0))*MakeScale(1.5,1.5,2)*MakeRotationZ(M_PI*1.7));
     c.SetMaxPhi(M_PI);
-/*
-    intrusive_ptr<Texture<SpectrumCoef_d> > p_refr_index(new ConstantTexture<SpectrumCoef_d> (SpectrumCoef_d(0.151063,0.124375,0.125500)));
-    intrusive_ptr<Texture<SpectrumCoef_d> > p_abs(new ConstantTexture<SpectrumCoef_d> (SpectrumCoef_d(2.478750,3.348125,3.766250)));
-    intrusive_ptr<Texture<double> > p_roughness2(new ConstantTexture<double> (0.002));
-    intrusive_ptr<Material> p_silver_material( new MetalMaterial(p_refr_index,p_abs,p_roughness2) );
-*/
 
     std::ifstream myFile ("D:\\raytracerDB\\MERL\\brdfs\\silver-metallic-paint.binary", std::ios::in | std::ios::binary);
 
@@ -258,12 +261,6 @@ inline void TestTracer::LoadMesh()
     d.SetInnerRadius(0.25);
     d.SetTransformation(MakeTranslation(Vector3D_d(3,-1.0,0.3))*MakeScale(1.2));
     d.SetMaxPhi(M_PI*1.7);
-/*
-    intrusive_ptr<Texture<SpectrumCoef_d> > p_refr_index(new ConstantTexture<SpectrumCoef_d> (SpectrumCoef_d(0.151063,0.124375,0.125500)));
-    intrusive_ptr<Texture<SpectrumCoef_d> > p_abs(new ConstantTexture<SpectrumCoef_d> (SpectrumCoef_d(2.478750,3.348125,3.766250)));
-    intrusive_ptr<Texture<double> > p_roughness2(new ConstantTexture<double> (0.002));
-    intrusive_ptr<Material> p_silver_material( new MetalMaterial(p_refr_index,p_abs,p_roughness2) );
-*/
 
     std::ifstream myFile ("D:\\raytracerDB\\MERL\\brdfs\\silver-metallic-paint.binary", std::ios::in | std::ios::binary);
 
@@ -280,8 +277,10 @@ inline void TestTracer::LoadMesh()
     bbox.Unite(Convert<double>(p_mesh->GetBounds()));
     }
 
+
+  LightSources lights;
     {
-    intrusive_ptr<ImageSource<Spectrum_f> > p_env_light_image_source( new OpenEXRRgbaImageSource<Spectrum_f>("env_lights/DH041LL.exr", 2.0) );
+    intrusive_ptr<ImageSource<Spectrum_f> > p_env_light_image_source( new OpenEXRRgbaImageSource<Spectrum_f>("env_lights/DH041LL.exr", 1.2) );
 
     tbb::tick_count t0 = tbb::tick_count::now();
     intrusive_ptr<InfiniteLightSource> p_inf_light( new ImageEnvironmentalLight(bbox, Transform(), p_env_light_image_source) );
@@ -292,9 +291,23 @@ inline void TestTracer::LoadMesh()
     }
 
     {
-    intrusive_ptr<DeltaLightSource> p_light( new PointLight(Point3D_d(1-0.2,-3.2-0.2,7.0), RGBToSpectrum(200000/M_PI,200000/M_PI,200000/M_PI)));
+    Sphere s;
+    s.SetSubdivisions(3);
+    s.SetTransformation(MakeTranslation(Vector3D_d(1-0.2,-3.2-0.2,7.0))*MakeScale(0.3));
 
-    lights.m_delta_light_sources.push_back(p_light);
+    intrusive_ptr<TriangleMesh> p_mesh( s.BuildMesh() );
+    intrusive_ptr<AreaLightSource> p_light( new DiffuseAreaLightSource(RGBToSpectrum(160000/M_PI,160000/M_PI,160000/M_PI), p_mesh));
+
+    intrusive_ptr<Texture<SpectrumCoef_d> > p_refl( new ConstantTexture<SpectrumCoef_d>(SpectrumCoef_d(1.0)) );
+    intrusive_ptr<Texture<double> > p_sigma( new ConstantTexture<double>(0.0) );
+    intrusive_ptr<Material> p_material( new MatteMaterial(p_refl, p_sigma) );
+
+    intrusive_ptr<Primitive> p_sphere_primitive(new Primitive(p_mesh, p_material, p_light));
+
+    primitives.push_back(p_sphere_primitive);
+    bbox.Unite(Convert<double>(p_mesh->GetBounds()));
+
+    lights.m_area_light_sources.push_back(p_light);
     }
 
   mp_scene.reset(new Scene(primitives, NULL, lights));
@@ -312,8 +325,8 @@ inline void TestTracer::RenderImage()
   Point2D_i window_begin,window_end;
   p_film->GetSamplingExtent(window_begin, window_end);
 
-  Point3D_d camera_pos(7.5,-2.4,7);
-  Point3D_d look_at(0,-1.5,0.0);
+  Point3D_d camera_pos(9.5,-2.4,7);
+  Point3D_d look_at(2.5,-1.5,0.0);
   Vector3D_d direction = Vector3D_d(look_at-camera_pos).Normalized();
   intrusive_ptr<Camera> p_camera( new PerspectiveCamera( MakeLookAt(camera_pos,direction,Vector3D_d(0,0,1)), p_film, 0.001*12.000, 6, 1.22) );
 
@@ -322,31 +335,31 @@ inline void TestTracer::RenderImage()
 
   intrusive_ptr<Sampler> p_sampler( new LDSampler(window_begin, window_end, 8, pixel_order) );
 
-/*
+
   DirectLightingLTEIntegratorParams params;
   params.m_direct_light_samples_num=8;
   params.m_max_specular_depth=6;
   params.m_media_step_size=0.01;
   intrusive_ptr<DirectLightingLTEIntegrator> p_lte_int( new DirectLightingLTEIntegrator(mp_scene, params) );
-*/
 
+/*
   PhotonLTEIntegratorParams params;
   params.m_direct_light_samples_num=16;
   params.m_gather_samples_num=16;
   params.m_caustic_lookup_photons_num=100;
-  params.m_max_caustic_lookup_dist=30;
-  params.m_max_specular_depth=8;
+  params.m_max_caustic_lookup_dist=0.05;
+  params.m_max_specular_depth=10;
   params.m_media_step_size=0.01;
   intrusive_ptr<PhotonLTEIntegrator> p_lte_int( new PhotonLTEIntegrator(mp_scene, params) );
-  
+  */
 
   t0 = tbb::tick_count::now();
-  p_lte_int->ShootPhotons(0, 2000000, 2000000);
+  //p_lte_int->ShootPhotons(10000000, 10000000, 10000000, true);
   t1 = tbb::tick_count::now();
   printf("Shooting: %lf\n", (t1-t0).seconds());
 
   intrusive_ptr<SamplerBasedRenderer> p_renderer( new SamplerBasedRenderer(p_lte_int, p_sampler) );
-  p_renderer->SetDisplayUpdateCallback(mp_callback, 10.0);
+  p_renderer->SetDisplayUpdateCallback(mp_callback, 60.0);
  
   tbb::task_scheduler_init init;
   t0 = tbb::tick_count::now();

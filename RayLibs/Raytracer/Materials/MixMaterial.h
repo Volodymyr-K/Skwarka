@@ -1,5 +1,5 @@
-#ifndef MATTE_MATERIAL_H
-#define MATTE_MATERIAL_H
+#ifndef MIX_MATERIAL_H
+#define MIX_MATERIAL_H
 
 #include <Common/Common.h>
 #include <Common/MemoryPool.h>
@@ -9,18 +9,23 @@
 #include <Raytracer/Core/BSDF.h>
 
 /**
-* The diffuse-reflecting material implementation.
-* The scattering properties at a surface point is controlled by the overall reflectivity and roughness parameter.
+* Material implementation that combines two other pluggable Material implementations with user-specified weights.
+* Used to "mix" two different materials based on some texture of weights.
+* Can also be used with a single reference material (in this case it simply scales it).
 */
-class MatteMaterial: public Material
+class MixMaterial: public Material
   {
   public:
     /**
-    * Creates MatteMaterial instance with the specified textures defining the reflectivity and roughness of the material.
-    * @param ip_reflectance The texture defining the total hemisphere reflectance. Each spectrum component should be in [0;1] range.
-    * @param ip_sigma The texture defining the roughness of the surface. Values should be in [0;1] range.
+    * Creates MixMaterial instance with the two specified reference materials and the texture defining the scaling weight.
+    * @param ip_material1 First reference material. Should not be NULL.
+    * @param ip_material2 Second reference material. Can be NULL.
+    * @param ip_scale Scales texture. Each spectrum component should be in [0;1] range.
+    * The first reference material will be scaled with these weights.
+    * The second reference material will be scaled with weights equal to 1 minus these weights.
     */
-    MatteMaterial(intrusive_ptr<const Texture<SpectrumCoef_d> > ip_reflectance, intrusive_ptr<const Texture<double> > ip_sigma);
+    MixMaterial(intrusive_ptr<const Material> ip_material1, intrusive_ptr<const Material> ip_material2,
+      intrusive_ptr<const Texture<SpectrumCoef_d> > ip_scale);
 
     /**
     * Returns a pointer to BSDF describing local scattering properties at the specified surface point.
@@ -33,7 +38,7 @@ class MatteMaterial: public Material
     virtual const BSDF *GetBSDF(const DifferentialGeometry &i_dg, size_t i_triangle_index, MemoryPool &i_pool) const;
 
   private:
-    MatteMaterial() {}; // Empty default constructor for the boost serialization framework.
+    MixMaterial() {}; // Empty default constructor for the boost serialization framework.
 
     // Needed for the boost serialization framework.  
     friend class boost::serialization::access;
@@ -45,24 +50,25 @@ class MatteMaterial: public Material
     void serialize(Archive &i_ar, const unsigned int i_version);
 
   private:
-    intrusive_ptr<const Texture<SpectrumCoef_d> > mp_reflectance;
+    intrusive_ptr<const Material> mp_material1, mp_material2;
 
-    intrusive_ptr<const Texture<double> > mp_sigma;
+    intrusive_ptr<const Texture<SpectrumCoef_d> > mp_scale;
   };
 
 /////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 template<class Archive>
-void MatteMaterial::serialize(Archive &i_ar, const unsigned int i_version)
+void MixMaterial::serialize(Archive &i_ar, const unsigned int i_version)
   {
   i_ar & boost::serialization::base_object<Material>(*this);
-  i_ar & mp_reflectance;
-  i_ar & mp_sigma;
+  i_ar & mp_material1;
+  i_ar & mp_material2;
+  i_ar & mp_scale;
   }
 
 // Register the derived class in the boost serialization framework.
 #include <boost/serialization/export.hpp>
-BOOST_CLASS_EXPORT(MatteMaterial)
+BOOST_CLASS_EXPORT(MixMaterial)
 
-#endif // MATTE_MATERIAL_H
+#endif // MIX_MATERIAL_H

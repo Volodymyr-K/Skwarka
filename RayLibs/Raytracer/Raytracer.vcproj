@@ -462,6 +462,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\BxDFs\ScaledBxDF.h"
+					>
+				</File>
+				<File
 					RelativePath=".\BxDFs\SpecularReflection.h"
 					>
 				</File>
@@ -490,6 +494,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\BxDFs\ScaledBxDF.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\BxDFs\SpecularTransmission.cpp"
 					>
 				</File>
@@ -511,6 +519,10 @@
 				</File>
 				<File
 					RelativePath=".\Materials\MetalMaterial.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Materials\MixMaterial.h"
 					>
 				</File>
 				<File
@@ -539,6 +551,10 @@
 				</File>
 				<File
 					RelativePath=".\Materials\MetalMaterial.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Materials\MixMaterial.cpp"
 					>
 				</File>
 				<File

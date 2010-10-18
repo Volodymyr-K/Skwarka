@@ -101,9 +101,9 @@ class BSDFTestSuite : public CxxTest::TestSuite
     // The Sample() method is called multiple times and the resulted BSDF and PDF values are tested.
     void test_BSDF_Sample()
       {
-      BxDFMock bxdf1(BxDFType(BSDF_REFLECTION | BSDF_DIFFUSE),0.3);
-      BxDFMock bxdf2(BxDFType(BSDF_REFLECTION | BSDF_GLOSSY), 0.4);
-      BxDFMock bxdf3(BxDFType(BSDF_REFLECTION | BSDF_SPECULAR), 0.1);
+      BxDFMock bxdf1(BxDFType(BSDF_REFLECTION | BSDF_DIFFUSE), SpectrumCoef_d(0.3));
+      BxDFMock bxdf2(BxDFType(BSDF_REFLECTION | BSDF_GLOSSY), SpectrumCoef_d(0.4));
+      BxDFMock bxdf3(BxDFType(BSDF_REFLECTION | BSDF_SPECULAR), SpectrumCoef_d(0.1));
 
       mp_bsdf->AddBxDF(&bxdf1);
       mp_bsdf->AddBxDF(&bxdf2);
@@ -139,8 +139,8 @@ class BSDFTestSuite : public CxxTest::TestSuite
     // Tests the case when no components matches the flags.
     void test_BSDF_SampleNoMatching()
       {
-      BxDFMock bxdf1(BxDFType(BSDF_REFLECTION | BSDF_DIFFUSE), 0.3);
-      BxDFMock bxdf2(BxDFType(BSDF_REFLECTION | BSDF_SPECULAR), 0.4);
+      BxDFMock bxdf1(BxDFType(BSDF_REFLECTION | BSDF_DIFFUSE), SpectrumCoef_d(0.3));
+      BxDFMock bxdf2(BxDFType(BSDF_REFLECTION | BSDF_SPECULAR), SpectrumCoef_d(0.4));
 
       mp_bsdf->AddBxDF(&bxdf1);
       mp_bsdf->AddBxDF(&bxdf2);
@@ -158,9 +158,9 @@ class BSDFTestSuite : public CxxTest::TestSuite
 
     void test_BSDF_PDF()
       {
-      BxDFMock bxdf1(BxDFType(BSDF_REFLECTION | BSDF_DIFFUSE),0.3);
-      BxDFMock bxdf2(BxDFType(BSDF_REFLECTION | BSDF_GLOSSY), 0.4);
-      BxDFMock bxdf3(BxDFType(BSDF_REFLECTION | BSDF_SPECULAR), 0.1);
+      BxDFMock bxdf1(BxDFType(BSDF_REFLECTION | BSDF_DIFFUSE), SpectrumCoef_d(0.3));
+      BxDFMock bxdf2(BxDFType(BSDF_REFLECTION | BSDF_GLOSSY), SpectrumCoef_d(0.4));
+      BxDFMock bxdf3(BxDFType(BSDF_REFLECTION | BSDF_SPECULAR), SpectrumCoef_d(0.1));
 
       mp_bsdf->AddBxDF(&bxdf1);
       mp_bsdf->AddBxDF(&bxdf2);
@@ -185,9 +185,9 @@ class BSDFTestSuite : public CxxTest::TestSuite
 
     void test_BSDF_TotalScattering1()
       {
-      BxDFMock bxdf1(BxDFType(BSDF_REFLECTION | BSDF_DIFFUSE),0.3);
-      BxDFMock bxdf2(BxDFType(BSDF_REFLECTION | BSDF_GLOSSY), 0.4);
-      BxDFMock bxdf3(BxDFType(BSDF_REFLECTION | BSDF_SPECULAR), 0.1);
+      BxDFMock bxdf1(BxDFType(BSDF_REFLECTION | BSDF_DIFFUSE), SpectrumCoef_d(0.3));
+      BxDFMock bxdf2(BxDFType(BSDF_REFLECTION | BSDF_GLOSSY), SpectrumCoef_d(0.4));
+      BxDFMock bxdf3(BxDFType(BSDF_REFLECTION | BSDF_SPECULAR), SpectrumCoef_d(0.1));
 
       mp_bsdf->AddBxDF(&bxdf1);
       mp_bsdf->AddBxDF(&bxdf2);
@@ -208,9 +208,9 @@ class BSDFTestSuite : public CxxTest::TestSuite
 
     void test_BSDF_TotalScattering2()
       {
-      BxDFMock bxdf1(BxDFType(BSDF_REFLECTION | BSDF_DIFFUSE),0.3);
-      BxDFMock bxdf2(BxDFType(BSDF_REFLECTION | BSDF_GLOSSY), 0.4);
-      BxDFMock bxdf3(BxDFType(BSDF_REFLECTION | BSDF_SPECULAR), 0.1);
+      BxDFMock bxdf1(BxDFType(BSDF_REFLECTION | BSDF_DIFFUSE), SpectrumCoef_d(0.3));
+      BxDFMock bxdf2(BxDFType(BSDF_REFLECTION | BSDF_GLOSSY), SpectrumCoef_d(0.4));
+      BxDFMock bxdf3(BxDFType(BSDF_REFLECTION | BSDF_SPECULAR), SpectrumCoef_d(0.1));
 
       mp_bsdf->AddBxDF(&bxdf1);
       mp_bsdf->AddBxDF(&bxdf2);

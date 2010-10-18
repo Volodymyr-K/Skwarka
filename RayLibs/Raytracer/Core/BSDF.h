@@ -46,7 +46,7 @@ class BSDF
     * Adds new BxDF component to the BSDF.
     * No more than MAX_BXDFS_NUM components can be added.
     */
-    void AddBxDF(BxDF *p_bxdf);
+    void AddBxDF(const BxDF *p_bxdf);
 
     /**
     * Returns total number of BxDF components added so far.
@@ -57,6 +57,11 @@ class BSDF
     * Returns total number of BxDF components matching the specified flags.
     */
     size_t GetComponentsNum(BxDFType i_flags) const;
+
+    /**
+    * Returns pointer to the BxDF component with the specified index.
+    */
+    const BxDF *GetComponent(size_t i_index) const;
 
     /**
     * Returns BxDF value for the specified incident and exitant directions.
@@ -142,8 +147,8 @@ class BSDF
       const Point2D_d &i_sample, double i_component_sample, double &o_pdf, BxDFType &o_sampled_type, BxDFType i_flags) const;
 
   private:
-    static const size_t MAX_BXDFS_NUM = 8;
-    BxDF *m_BxDFs[MAX_BXDFS_NUM];
+    static const size_t MAX_BXDFS_NUM = 7;
+    const BxDF *m_BxDFs[MAX_BXDFS_NUM];
     size_t m_BxDFs_num;
 
     // Three base vectors defining the local orthonormal coordinate system.
@@ -177,7 +182,7 @@ inline double BSDF::GetRefractiveIndex() const
   return m_refractive_index;
   }
 
-inline void BSDF::AddBxDF(BxDF *p_bxdf)
+inline void BSDF::AddBxDF(const BxDF *p_bxdf)
   {
   ASSERT(m_BxDFs_num<MAX_BXDFS_NUM);
   m_BxDFs[m_BxDFs_num++]=p_bxdf;
@@ -196,6 +201,12 @@ inline size_t BSDF::GetComponentsNum(BxDFType i_flags) const
       ++ret;
 
   return ret;
+  }
+
+inline const BxDF *BSDF::GetComponent(size_t i_index) const
+  {
+  ASSERT(i_index<m_BxDFs_num);
+  return m_BxDFs[i_index];
   }
 
 inline Vector3D_d BSDF::WorldToLocal(const Vector3D_d &i_vector) const

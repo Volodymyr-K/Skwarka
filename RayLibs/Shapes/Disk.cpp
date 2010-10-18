@@ -19,7 +19,7 @@ void Disk::SetSubdivisions(size_t i_subdivisions)
 
 void Disk::SetInnerRadius(double i_inner_radius)
   {
-  ASSERT(i_inner_radius>=0.0 && i_inner_radius<=1.0);
+  ASSERT(i_inner_radius>=0.0 && i_inner_radius<1.0);
   m_inner_radius = std::max(0.0,std::min(1.0,i_inner_radius));
   }
 

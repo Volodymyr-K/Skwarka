@@ -433,6 +433,10 @@
 						>
 					</File>
 					<File
+						RelativePath=".\MainTests\Raytracer\BxDFs\ScaledBxDF.test.h"
+						>
+					</File>
+					<File
 						RelativePath=".\MainTests\Raytracer\BxDFs\SpecularReflection.test.h"
 						>
 					</File>
@@ -466,6 +470,10 @@
 					</File>
 					<File
 						RelativePath=".\MainTests\Raytracer\Materials\MetalMaterial.test.h"
+						>
+					</File>
+					<File
+						RelativePath=".\MainTests\Raytracer\Materials\MixMaterial.test.h"
 						>
 					</File>
 					<File
@@ -907,6 +915,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\MixMaterial.Serialization.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\MixMaterial.test.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Numerics.test.cpp"
 				>
 			</File>
@@ -1032,6 +1048,10 @@
 			</File>
 			<File
 				RelativePath=".\SamplingRoutines.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ScaledBxDF.test.cpp"
 				>
 			</File>
 			<File
@@ -1628,6 +1648,10 @@
 					</File>
 					<File
 						RelativePath=".\SerializationTests\Raytracer\Materials\MetalMaterial.Serialization.test.h"
+						>
+					</File>
+					<File
+						RelativePath=".\SerializationTests\Raytracer\Materials\MixMaterial.Serialization.test.h"
 						>
 					</File>
 					<File

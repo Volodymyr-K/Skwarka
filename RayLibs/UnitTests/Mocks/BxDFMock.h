@@ -14,7 +14,7 @@ For other types, it evaluates to a constant value everywhere in the correct hemi
 class BxDFMock: public BxDF
   {
   public:
-    BxDFMock(BxDFType i_type, double i_R=1.0): BxDF(i_type), m_R(i_R)
+    BxDFMock(BxDFType i_type, SpectrumCoef_d i_R=SpectrumCoef_d(1.0)): BxDF(i_type), m_R(i_R)
       {
       }
 
@@ -23,7 +23,7 @@ class BxDFMock: public BxDF
       if (IsSpecular(GetType()))
         return SpectrumCoef_d(0.0);
       else
-        return m_R*SpectrumCoef_d(INV_PI);
+        return m_R*INV_PI;
       }
 
     SpectrumCoef_d Sample(const Vector3D_d &i_incident, Vector3D_d &o_exitant, const Point2D_d &i_sample, double &o_pdf) const
@@ -37,7 +37,7 @@ class BxDFMock: public BxDF
           o_exitant[2]=-o_exitant[2];
 
         o_pdf=1.0;
-        return SpectrumCoef_d(m_R)/fabs(i_incident[2]);
+        return m_R/fabs(i_incident[2]);
         }
       else
         return BxDF::Sample(i_incident,o_exitant,i_sample,o_pdf);
@@ -52,7 +52,7 @@ class BxDFMock: public BxDF
       }
 
   private:
-    double m_R;
+    SpectrumCoef_d m_R;
   };
 
 #endif // BXDF_MOCK_H

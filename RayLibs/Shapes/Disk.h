@@ -28,7 +28,7 @@ class Disk: public Shape
     /**
     * Sets inner radius of the disk.
     * If the method is not called, the default value is 0.
-    * @param i_inner_radius Inner radius. Must be equal or greater than zero.
+    * @param i_inner_radius Inner radius. Must be in [0;1) range.
     */
     void SetInnerRadius(double i_inner_radius);
 
