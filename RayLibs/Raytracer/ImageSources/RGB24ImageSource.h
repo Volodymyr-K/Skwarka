@@ -19,7 +19,7 @@ struct RGB24
 /**
 * ImageSource implementation that converts RGB image (with unsigned char defining each color component) to 2D array of the specified type (see template parameter of the class).
 * The class is also responsible for de-gamma correction of the input RGB values and converting the RGB values from the specified RGB color space.
-* The template parameter is the target type of the conversion. The following target types are supported: Spectrum_f, Spectrum_d, SpectrumCoef_f, SpectrumCoef_d.
+* The template parameter is the target type of the conversion. The following target types are supported: float, double, Spectrum_f, Spectrum_d, SpectrumCoef_f, SpectrumCoef_d.
 */
 template<typename T>
 class RGB24ImageSource: public ImageSource<T>
@@ -49,7 +49,7 @@ class RGB24ImageSource: public ImageSource<T>
   private:
     /**
     * Helper private method that converts XYZColor to the target type.
-    * Specializations for Spectrum_f, Spectrum_d, SpectrumCoef_f and SpectrumCoef_d are provided.
+    * Specializations for float, double, Spectrum_f, Spectrum_d, SpectrumCoef_f and SpectrumCoef_d are provided.
     * The generic template implementation is not provided and thus the class won't compile with other target types.
     */
     T _XYZ_To_T(const XYZColor_d &i_color) const;
@@ -107,7 +107,7 @@ void RGB24ImageSource<T>::GetImage(std::vector<std::vector<T> > &o_image) const
         source_row[j].m_rgb[2]/255.0));
 
       T ret = _XYZ_To_T(m_color_system.RGB_To_XYZ(rgb_decoded));
-      dest_row[j] = ret * m_scale;
+      dest_row[j] = (T) (ret * m_scale);
       }
     }
   }
@@ -122,6 +122,18 @@ template<typename T>
 size_t RGB24ImageSource<T>::GetWidth() const
   {
   return m_values.empty() ? 0 : m_values[0].size();
+  }
+
+template<>
+inline float RGB24ImageSource<float>::_XYZ_To_T(const XYZColor_d &i_color) const
+  {
+  return (float)i_color[1];
+  }
+
+template<>
+inline double RGB24ImageSource<double>::_XYZ_To_T(const XYZColor_d &i_color) const
+  {
+  return i_color[1];
   }
 
 template<>
@@ -172,6 +184,9 @@ void RGB24ImageSource<T>::serialize(Archive &i_ar, const unsigned int i_version)
 
 // The following code exports different specializations of the RGB24ImageSource template in the boost serialization framework.
 // If you need to serialize a new specialization you have to add it here.
+typedef RGB24ImageSource<float> RGB24ImageSource_float;
+typedef RGB24ImageSource<double> RGB24ImageSource_double;
+
 typedef RGB24ImageSource<Spectrum_f> RGB24ImageSource_Spectrum_float;
 typedef RGB24ImageSource<Spectrum_d> RGB24ImageSource_Spectrum_double;
 
@@ -179,6 +194,8 @@ typedef RGB24ImageSource<SpectrumCoef_f> RGB24ImageSource_SpectrumCoef_float;
 typedef RGB24ImageSource<SpectrumCoef_d> RGB24ImageSource_SpectrumCoef_double;
 
 #include <boost/serialization/export.hpp>
+BOOST_CLASS_EXPORT(RGB24ImageSource_float)
+BOOST_CLASS_EXPORT(RGB24ImageSource_double)
 BOOST_CLASS_EXPORT(RGB24ImageSource_Spectrum_float)
 BOOST_CLASS_EXPORT(RGB24ImageSource_Spectrum_double)
 BOOST_CLASS_EXPORT(RGB24ImageSource_SpectrumCoef_float)

@@ -19,7 +19,7 @@
 * The class is also responsible for converting the RGB values from the specified RGB color space.
 * Note that OpenEXR does not use gamma correction so there's no need to de-gamma the RGB values.
 * In Rgba color from the Open EXR library each color component is defined by the "half" type which is two bytes long.
-* The template parameter is the target type of the conversion. The following target types are supported: Spectrum_f, Spectrum_d, SpectrumCoef_f, SpectrumCoef_d.
+* The template parameter is the target type of the conversion. The following target types are supported: float, double, Spectrum_f, Spectrum_d, SpectrumCoef_f, SpectrumCoef_d.
 */
 template <typename T>
 class OpenEXRRgbaImageSource: public ImageSource<T>
@@ -39,10 +39,14 @@ class OpenEXRRgbaImageSource: public ImageSource<T>
     /**
     * Creates OpenEXRRgbaImageSource from the specified OpenEXR file and with the specified scale factor.
     * The RGB color space is read from the file's attributes. If it is not set in the attributes the default one is used (as per the OpenEXR's documentation it matches Rec. ITU-R BT.709-3)
+	* If i_E_whitepoint parameter is true the E whitepoint will be used regardless of what is specified in the file. Useful for reading reflectivity data.
     * The image values will be multiplied by the scale factor during conversion to the target type.
     * When serialized the real image data won't be serialized, only the filename and the scale factor.
+	* @param i_filename Name of the exr file. Should not be empty and should correspond to an existing file in the filesytem.
+	* @param i_E_whitepoint Whether to use E whitepoint regardless of what is specified in the file.
+	* @param i_scale Scale factor for the resulting image values.
     */
-    OpenEXRRgbaImageSource(std::string i_filename, double i_scale = 1.0);
+    OpenEXRRgbaImageSource(std::string i_filename, bool i_E_whitepoint = false, double i_scale = 1.0);
 
     /**
     * Gets 2D array of values (image) of the target type.
@@ -62,7 +66,7 @@ class OpenEXRRgbaImageSource: public ImageSource<T>
   private:
     /**
     * Helper private method that converts XYZColor to the target type.
-    * Specializations for Spectrum_f, Spectrum_d, SpectrumCoef_f and SpectrumCoef_d are provided.
+    * Specializations for float, double, Spectrum_f, Spectrum_d, SpectrumCoef_f and SpectrumCoef_d are provided.
     * The generic template implementation is not provided and thus the class won't compile with other target types.
     */
     T _XYZ_To_T(const XYZColor_d &i_color) const;
@@ -92,7 +96,7 @@ class OpenEXRRgbaImageSource: public ImageSource<T>
     size_t m_width, m_height;
 
     std::string m_filename;
-    bool m_from_file;
+    bool m_from_file, m_E_whitepoint;
 
     ColorSystem m_color_system;
 
@@ -104,7 +108,7 @@ class OpenEXRRgbaImageSource: public ImageSource<T>
 
 template <typename T>
 OpenEXRRgbaImageSource<T>::OpenEXRRgbaImageSource(const std::vector<Imf::Rgba> &i_values, size_t i_width, size_t i_height, const ColorSystem &i_color_system, double i_scale):
-m_values(i_values), m_width(i_width), m_height(i_height), m_color_system(i_color_system), m_scale(i_scale), m_from_file(false)
+m_values(i_values), m_width(i_width), m_height(i_height), m_color_system(i_color_system), m_scale(i_scale), m_from_file(false), m_E_whitepoint(false)
   {
   ASSERT(m_values.size()==m_width*m_height);
 
@@ -113,7 +117,8 @@ m_values(i_values), m_width(i_width), m_height(i_height), m_color_system(i_color
   }
 
 template <typename T>
-OpenEXRRgbaImageSource<T>::OpenEXRRgbaImageSource(std::string i_filename, double i_scale): m_filename(i_filename), m_scale(i_scale), m_from_file(true)
+OpenEXRRgbaImageSource<T>::OpenEXRRgbaImageSource(std::string i_filename, bool i_E_whitepoint, double i_scale):
+m_filename(i_filename), m_scale(i_scale), m_from_file(true), m_E_whitepoint(i_E_whitepoint)
   {
   // Reset previous data.
   m_width=m_height=0;
@@ -145,13 +150,17 @@ void OpenEXRRgbaImageSource<T>::_LoadFromFile(const std::string &i_filename)
       Point2D_d green(chromaticities.green.x, chromaticities.green.y);
       Point2D_d blue(chromaticities.blue.x, chromaticities.blue.y);
       Point2D_d white(chromaticities.white.x, chromaticities.white.y);
+      if (m_E_whitepoint) white = Point2D_d(1.0, 1.0)/3.0;
 
       m_color_system = ColorSystem(red, green, blue, white, 1.0);
       }
     else
       {
       // Set the default color system (as per the OpenEXR's documentation it matches Rec. ITU-R BT.709-3).
-      m_color_system = ColorSystem(Point2D_d(0.64,0.33), Point2D_d(0.30,0.60), Point2D_d(0.15,0.06), Point2D_d(0.3127,0.3290), 1.0);
+      if (m_E_whitepoint)
+        m_color_system = ColorSystem(Point2D_d(0.64,0.33), Point2D_d(0.30,0.60), Point2D_d(0.15,0.06), Point2D_d(1.0, 1.0)/3.0, 1.0);
+      else
+        m_color_system = ColorSystem(Point2D_d(0.64,0.33), Point2D_d(0.30,0.60), Point2D_d(0.15,0.06), Point2D_d(0.3127,0.3290), 1.0);
       }
     }
   catch (const std::exception &)
@@ -177,7 +186,7 @@ void OpenEXRRgbaImageSource<T>::GetImage(std::vector<std::vector<T> > &o_image) 
       RGBColor_d rgb(static_cast<float>(m_values[offset+j].r), static_cast<float>(m_values[offset+j].g), static_cast<float>(m_values[offset+j].b));
 
       T ret = _XYZ_To_T(m_color_system.RGB_To_XYZ(rgb));
-      dest_row[j] = ret * m_scale;
+      dest_row[j] = (T) (ret * m_scale);
       }
     }
   }
@@ -192,6 +201,18 @@ template <typename T>
 size_t OpenEXRRgbaImageSource<T>::GetWidth() const
   {
   return m_width;
+  }
+
+template<>
+inline float OpenEXRRgbaImageSource<float>::_XYZ_To_T(const XYZColor_d &i_color) const
+  {
+  return (float)i_color[1];
+  }
+
+template<>
+inline double OpenEXRRgbaImageSource<double>::_XYZ_To_T(const XYZColor_d &i_color) const
+  {
+  return i_color[1];
   }
 
 template<>
@@ -239,6 +260,7 @@ void OpenEXRRgbaImageSource<T>::save(Archive &i_ar, const unsigned int i_version
     {
     i_ar & m_filename;
     i_ar & m_scale;
+    i_ar & m_E_whitepoint;
     }
   else
     {
@@ -247,6 +269,7 @@ void OpenEXRRgbaImageSource<T>::save(Archive &i_ar, const unsigned int i_version
     i_ar & m_height;
     i_ar & m_color_system;
     i_ar & m_scale;
+    i_ar & m_E_whitepoint;
     }
   }
 
@@ -261,6 +284,7 @@ void OpenEXRRgbaImageSource<T>::load(Archive &i_ar, const unsigned int i_version
     {
     i_ar & m_filename;
     i_ar & m_scale;
+    i_ar & m_E_whitepoint;
 
     _LoadFromFile(m_filename);
     }
@@ -271,11 +295,15 @@ void OpenEXRRgbaImageSource<T>::load(Archive &i_ar, const unsigned int i_version
     i_ar & m_height;
     i_ar & m_color_system;
     i_ar & m_scale;
+    i_ar & m_E_whitepoint;
     }
   }
 
 // The following code exports different specializations of the OpenEXRRgbaImageSource template in the boost serialization framework.
 // If you need to serialize a new specialization you have to add it here.
+typedef OpenEXRRgbaImageSource<float> OpenEXRRgbaImageSource_float;
+typedef OpenEXRRgbaImageSource<double> OpenEXRRgbaImageSource_double;
+
 typedef OpenEXRRgbaImageSource<Spectrum_f> OpenEXRRgbaImageSource_Spectrum_float;
 typedef OpenEXRRgbaImageSource<Spectrum_d> OpenEXRRgbaImageSource_Spectrum_double;
 
@@ -283,6 +311,8 @@ typedef OpenEXRRgbaImageSource<SpectrumCoef_f> OpenEXRRgbaImageSource_SpectrumCo
 typedef OpenEXRRgbaImageSource<SpectrumCoef_d> OpenEXRRgbaImageSource_SpectrumCoef_double;
 
 #include <boost/serialization/export.hpp>
+BOOST_CLASS_EXPORT(OpenEXRRgbaImageSource_float)
+BOOST_CLASS_EXPORT(OpenEXRRgbaImageSource_double)
 BOOST_CLASS_EXPORT(OpenEXRRgbaImageSource_Spectrum_float)
 BOOST_CLASS_EXPORT(OpenEXRRgbaImageSource_Spectrum_double)
 BOOST_CLASS_EXPORT(OpenEXRRgbaImageSource_SpectrumCoef_float)

@@ -63,7 +63,7 @@ class OpenEXRRgbaImageSourceSerializationTestSuite : public CxxTest::TestSuite
     void test_OpenEXRRgbaImageSource_Serialization_FromFile()
       {
       double scale = 2.0;
-      intrusive_ptr<ImageSource<Spectrum_f> > p_image_source1( new OpenEXRRgbaImageSource<Spectrum_f>("TestData/EXR/grace_latlong.exr", scale) );
+      intrusive_ptr<ImageSource<Spectrum_f> > p_image_source1( new OpenEXRRgbaImageSource<Spectrum_f>("TestData/EXR/grace_latlong.exr", false, scale) );
         {
         boost::iostreams::stream_buffer<SinkDevice> buffer(m_data, m_buffer_size);
         boost::archive::binary_oarchive output_archive(buffer);
