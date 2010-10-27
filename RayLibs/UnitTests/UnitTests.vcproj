@@ -613,6 +613,14 @@
 						>
 					</File>
 				</Filter>
+				<Filter
+					Name="PhaseFunctions"
+					>
+					<File
+						RelativePath=".\MainTests\Raytracer\PhaseFunctions\HGPhaseFunction.test.h"
+						>
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="Shapes"
@@ -776,6 +784,14 @@
 			</File>
 			<File
 				RelativePath=".\GridDensityVolumeRegion.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\HGPhaseFunction.Serialization.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\HGPhaseFunction.test.cpp"
 				>
 			</File>
 			<File
@@ -1756,6 +1772,14 @@
 					>
 					<File
 						RelativePath=".\SerializationTests\Raytracer\BxDFs\MERLMeasuredData.Serialization.test.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="PhaseFunctions"
+					>
+					<File
+						RelativePath=".\SerializationTests\Raytracer\PhaseFunctions\HGPhaseFunction.Serialization.test.h"
 						>
 					</File>
 				</Filter>

@@ -890,6 +890,10 @@
 				Name="Header Files"
 				>
 				<File
+					RelativePath=".\PhaseFunctions\HGPhaseFunction.h"
+					>
+				</File>
+				<File
 					RelativePath=".\PhaseFunctions\IsotropicPhaseFunction.h"
 					>
 				</File>
