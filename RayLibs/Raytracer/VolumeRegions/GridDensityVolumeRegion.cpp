@@ -1,7 +1,7 @@
 #include "GridDensityVolumeRegion.h"
 
 GridDensityVolumeRegion::GridDensityVolumeRegion(const BBox3D_d &i_bounds, Spectrum_d &i_base_emission, SpectrumCoef_d &i_base_absorption, SpectrumCoef_d &i_base_scattering,
-                                                 intrusive_ptr<const PhaseFunction> ip_phase_function, const std::vector<std::vector<std::vector<double> > > &i_densities):
+                                                 intrusive_ptr<const PhaseFunction> ip_phase_function, const std::vector<std::vector<std::vector<float> > > &i_densities):
 DensityVolumeRegion(i_bounds, i_base_emission, i_base_absorption, i_base_scattering, ip_phase_function), m_bounds(i_bounds), m_densities(i_densities)
   {
   ASSERT(i_densities.empty()==false && i_densities[0].empty()==false && i_densities[0][0].empty() == false);
@@ -56,10 +56,10 @@ double GridDensityVolumeRegion::_Density(const Point3D_d &i_point) const
   double dx = x - int_x, dy = y - int_y, dz = z - int_z;
 
   // Trilinearly interpolate density values to compute local density.
-  double d00 = MathRoutines::LinearInterpolate(dx, m_densities[int_x][int_y][int_z], m_densities[int_x1][int_y][int_z]);
-  double d10 = MathRoutines::LinearInterpolate(dx, m_densities[int_x][int_y1][int_z], m_densities[int_x1][int_y1][int_z]);
-  double d01 = MathRoutines::LinearInterpolate(dx, m_densities[int_x][int_y][int_z1], m_densities[int_x1][int_y][int_z1]);
-  double d11 = MathRoutines::LinearInterpolate(dx, m_densities[int_x][int_y1][int_z1], m_densities[int_x1][int_y1][int_z1]);
+  double d00 = MathRoutines::LinearInterpolate(dx, (double)m_densities[int_x][int_y][int_z], (double)m_densities[int_x1][int_y][int_z]);
+  double d10 = MathRoutines::LinearInterpolate(dx, (double)m_densities[int_x][int_y1][int_z], (double)m_densities[int_x1][int_y1][int_z]);
+  double d01 = MathRoutines::LinearInterpolate(dx, (double)m_densities[int_x][int_y][int_z1], (double)m_densities[int_x1][int_y][int_z1]);
+  double d11 = MathRoutines::LinearInterpolate(dx, (double)m_densities[int_x][int_y1][int_z1], (double)m_densities[int_x1][int_y1][int_z1]);
 
   double d0 = MathRoutines::LinearInterpolate(dy, d00, d10);
   double d1 = MathRoutines::LinearInterpolate(dy, d01, d11);

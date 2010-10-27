@@ -25,11 +25,11 @@ class GridDensityVolumeRegionTestSuite : public CxxTest::TestSuite
       m_size_x=100;
       m_size_y=110;
       m_size_z=120;
-      m_densities.assign(m_size_x, std::vector<std::vector<double> >(m_size_y, std::vector<double>(m_size_z, 0.0)));
+      m_densities.assign(m_size_x, std::vector<std::vector<float> >(m_size_y, std::vector<float>(m_size_z, 0.0)));
       for(size_t i=0;i<m_size_x;++i)
         for(size_t j=0;j<m_size_y;++j)
           for(size_t k=0;k<m_size_z;++k)
-            m_densities[i][j][k]=i+j+k;
+            m_densities[i][j][k]=(float)(i+j+k);
 
       mp_volume.reset(new GridDensityVolumeRegion(m_bounds, m_emission, m_absorption, m_scattering, p_phase_function, m_densities));
       }
@@ -183,7 +183,7 @@ class GridDensityVolumeRegionTestSuite : public CxxTest::TestSuite
     SpectrumCoef_d m_absorption, m_scattering;
 
     size_t m_size_x, m_size_y, m_size_z;
-    std::vector<std::vector<std::vector<double> > > m_densities;
+    std::vector<std::vector<std::vector<float> > > m_densities;
     intrusive_ptr<VolumeRegion> mp_volume;
   };
 
