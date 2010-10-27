@@ -32,7 +32,7 @@ class ImageEnvironmentalLightSerializationTestSuite : public CxxTest::TestSuite
 
       BBox3D_d bbox = BBox3D_d(Point3D_d(0,0,0), Point3D_d(10,20,30));
       Transform light_to_world = MakeRotation(1.2, Vector3D_d(-1,2,-3).Normalized()); 
-      intrusive_ptr<InfiniteLightSource> p_light1 (new ImageEnvironmentalLight(bbox, light_to_world, image));
+      intrusive_ptr<InfiniteLightSource> p_light1 (new ImageEnvironmentalLight(bbox, light_to_world, image, SpectrumCoef_d(1.5,2.0,2.5)));
 
         {
         boost::iostreams::stream_buffer<SinkDevice> buffer(m_data, m_buffer_size);

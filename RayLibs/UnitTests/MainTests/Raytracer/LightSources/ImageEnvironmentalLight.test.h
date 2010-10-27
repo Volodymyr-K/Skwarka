@@ -25,6 +25,7 @@ class ImageEnvironmentalLightTestSuite : public CxxTest::TestSuite
 
       m_bbox = BBox3D_d(Point3D_d(0,0,0), Point3D_d(10,20,30));
       m_light_to_world = MakeRotation(1.2, Vector3D_d(-1,2,-3).Normalized());      
+      m_scale = SpectrumCoef_d(2.0,3.0,4.0);
       mp_light = NULL;
       }
 
@@ -32,7 +33,7 @@ class ImageEnvironmentalLightTestSuite : public CxxTest::TestSuite
       {
       // We initialize the light in setUp() instead of the constructor because it uses CompressedDirection class which has a statical initializer which needs to be called first.
       if (mp_light == NULL)
-        mp_light.reset(new ImageEnvironmentalLight(m_bbox, m_light_to_world, m_image));
+        mp_light.reset(new ImageEnvironmentalLight(m_bbox, m_light_to_world, m_image, m_scale));
       }
 
     void tearDown()
@@ -54,10 +55,10 @@ class ImageEnvironmentalLightTestSuite : public CxxTest::TestSuite
         // Avoid testing cases near the edges where the image wraps.
         if (x>2 && y>2 && x<m_width-2 && y<m_height-2)
           {
-          Spectrum_d average = _GetAverage(x, y);
-          if ((fabs(average[0]-radiance[0])>std::max(2.0,radiance[0]*0.05)) ||
-            (fabs(average[1]-radiance[1])>std::max(2.0,radiance[1]*0.05)) ||
-            (fabs(average[2]-radiance[2])>std::max(2.0,radiance[2]*0.05)))
+          Spectrum_d average = m_scale * _GetAverage(x, y);
+          if ((fabs(average[0]-radiance[0])>std::max(2.0,radiance[0]*0.07)) ||
+            (fabs(average[1]-radiance[1])>std::max(2.0,radiance[1]*0.07)) ||
+            (fabs(average[2]-radiance[2])>std::max(2.0,radiance[2]*0.07)))
             {
             TS_FAIL("Wrong radiance returned.");
             break;
@@ -84,7 +85,7 @@ class ImageEnvironmentalLightTestSuite : public CxxTest::TestSuite
           double pixel_solid_angle = d_phi*d_cos_theta;
           Vector3D_d dir = MathRoutines::SphericalDirection<double>((x+0.5)*2*M_PI/m_width, (y+0.5)*M_PI/m_height);
           m_light_to_world(dir,dir);
-          power += (dx*dy*fabs(dir[2])+dx*dz*fabs(dir[1])+dy*dz*fabs(dir[0]))*pixel_solid_angle*Convert<double>(m_image[y][x]);
+          power += m_scale * (dx*dy*fabs(dir[2])+dx*dz*fabs(dir[1])+dy*dz*fabs(dir[0]))*pixel_solid_angle*Convert<double>(m_image[y][x]);
           }
         }
 
@@ -102,7 +103,7 @@ class ImageEnvironmentalLightTestSuite : public CxxTest::TestSuite
         {
         double d_cos_theta = cos(y*M_PI/m_height) - cos((y+1)*M_PI/m_height);
         for(size_t x=0;x<m_width;++x)
-          radiance += (d_phi*d_cos_theta)*Convert<double>(m_image[y][x]);
+          radiance += m_scale * (d_phi*d_cos_theta)*Convert<double>(m_image[y][x]);
         }
 
       size_t num_x = 256, num_y = 256;
@@ -158,7 +159,7 @@ class ImageEnvironmentalLightTestSuite : public CxxTest::TestSuite
       for(size_t t=0;t<N;++t)
         {
         Vector3D_d normal = Vector3D_d(RandomDouble(2.0)-1.0,RandomDouble(2.0)-1.0,RandomDouble(2.0)-1.0).Normalized();
-        Spectrum_d irradiance = _ComputeIrradiance(normal);
+        Spectrum_d irradiance = m_scale * _ComputeIrradiance(normal);
 
         size_t num_x = 256, num_y = 256;
         std::vector<Point2D_d> samples(num_x*num_y);
@@ -281,7 +282,7 @@ class ImageEnvironmentalLightTestSuite : public CxxTest::TestSuite
         {
         Vector3D_d normal = Vector3D_d(RandomDouble(2.0)-1.0,RandomDouble(2.0)-1.0,RandomDouble(2.0)-1.0).Normalized();
 
-        Spectrum_d irradiance = _ComputeIrradiance(normal);
+        Spectrum_d irradiance = m_scale * _ComputeIrradiance(normal);
 
         Spectrum_d irradiance2 = mp_light->Irradiance(normal);
         TS_ASSERT_DELTA(irradiance[0],irradiance2[0],irradiance[0]*0.15); // Such large error is due to the inaccuracy in irradiance computation in the environment light.
@@ -302,7 +303,7 @@ class ImageEnvironmentalLightTestSuite : public CxxTest::TestSuite
           double pixel_solid_angle = d_phi*d_cos_theta;
           Vector3D_d dir = MathRoutines::SphericalDirection<double>(x*2*M_PI/m_width, y*M_PI/m_height);
           m_light_to_world(dir,dir);
-          irradiance += pixel_solid_angle*Convert<double>(m_image[y][x]);
+          irradiance += m_scale * pixel_solid_angle*Convert<double>(m_image[y][x]);
           }
         }
 
@@ -381,6 +382,7 @@ class ImageEnvironmentalLightTestSuite : public CxxTest::TestSuite
     std::vector<std::vector<Spectrum_f> > m_image;
 
     BBox3D_d m_bbox;
+    SpectrumCoef_d m_scale;
     intrusive_ptr<InfiniteLightSource> mp_light;
     Transform m_light_to_world;
 

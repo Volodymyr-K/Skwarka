@@ -5,8 +5,9 @@
 
 /////////////////////////////////////// ImageEnvironmentalLight ///////////////////////////////////////////
 
-ImageEnvironmentalLight::ImageEnvironmentalLight(const BBox3D_d &i_world_bounds, const Transform &i_light_to_world, const std::vector<std::vector<Spectrum_f> > &i_image):
-m_world_bounds(i_world_bounds), m_light_to_world(i_light_to_world), m_world_to_light(i_light_to_world.Inverted())
+ImageEnvironmentalLight::ImageEnvironmentalLight(const BBox3D_d &i_world_bounds, const Transform &i_light_to_world,
+                                                 const std::vector<std::vector<Spectrum_f> > &i_image, SpectrumCoef_d i_scale):
+m_world_bounds(i_world_bounds), m_light_to_world(i_light_to_world), m_world_to_light(i_light_to_world.Inverted()), m_scale(i_scale)
   {
   ASSERT(i_image.size()>0 && i_image[0].size()>0);
 
@@ -24,8 +25,9 @@ m_world_bounds(i_world_bounds), m_light_to_world(i_light_to_world), m_world_to_l
   _Initialize();
   }
 
-ImageEnvironmentalLight::ImageEnvironmentalLight(const BBox3D_d &i_world_bounds, const Transform &i_light_to_world, intrusive_ptr<const ImageSource<Spectrum_f> > ip_image_source):
-m_world_bounds(i_world_bounds), m_light_to_world(i_light_to_world), m_world_to_light(i_light_to_world.Inverted())
+ImageEnvironmentalLight::ImageEnvironmentalLight(const BBox3D_d &i_world_bounds, const Transform &i_light_to_world,
+                                                 intrusive_ptr<const ImageSource<Spectrum_f> > ip_image_source, SpectrumCoef_d i_scale):
+m_world_bounds(i_world_bounds), m_light_to_world(i_light_to_world), m_world_to_light(i_light_to_world.Inverted()), m_scale(i_scale)
   {
   ASSERT(ip_image_source);
   ASSERT(ip_image_source->GetHeight()>0 && ip_image_source->GetWidth()>0);
@@ -248,7 +250,7 @@ Spectrum_d ImageEnvironmentalLight::Radiance(const RayDifferential &i_ray) const
   Point2D_d w(phi, theta);
 
   if (i_ray.m_has_differentials==false)
-    return Convert<double>(mp_image_map->Evaluate(w, 0.0));
+    return m_scale * Convert<double>(mp_image_map->Evaluate(w, 0.0));
 
   Vector3D_d direction_dx = m_world_to_light(i_ray.m_direction_dx);
   Vector3D_d direction_dy = m_world_to_light(i_ray.m_direction_dy);
@@ -271,7 +273,7 @@ Spectrum_d ImageEnvironmentalLight::Radiance(const RayDifferential &i_ray) const
   if (w[1]<0.01 || w[1]>0.99)
     dw_dx=dw_dy=Vector2D_d(0.0,0.0);
 
-  return Convert<double>(mp_image_map->Evaluate(w, dw_dx, dw_dy));
+  return m_scale * Convert<double>(mp_image_map->Evaluate(w, dw_dx, dw_dy));
   }
 
 Spectrum_d ImageEnvironmentalLight::Power() const
@@ -284,14 +286,14 @@ Spectrum_d ImageEnvironmentalLight::Power() const
   Spectrum_d irradiance_xz = m_irradiances[CompressedDirection(m_world_to_light(Vector3D_d(0,1,0))).GetID()] + m_irradiances[CompressedDirection(m_world_to_light(Vector3D_d(0,-1,0))).GetID()];
   Spectrum_d irradiance_yz = m_irradiances[CompressedDirection(m_world_to_light(Vector3D_d(1,0,0))).GetID()] + m_irradiances[CompressedDirection(m_world_to_light(Vector3D_d(-1,0,0))).GetID()];
 
-  return irradiance_xy*fabs(dx*dy) + irradiance_xz*fabs(dx*dz) + irradiance_yz*fabs(dy*dz);
+  return m_scale * (irradiance_xy*fabs(dx*dy) + irradiance_xz*fabs(dx*dz) + irradiance_yz*fabs(dy*dz));
   }
 
 Spectrum_d ImageEnvironmentalLight::SampleLighting(const Point2D_d &i_sample, Vector3D_d &o_lighting_direction, double &o_pdf) const
   {
   Spectrum_d radiance = _LightingSample(i_sample, &m_nodes_spherical_PDF[0], o_lighting_direction, o_pdf);
   m_light_to_world(o_lighting_direction, o_lighting_direction);
-  return radiance;
+  return m_scale * radiance;
   }
 
 double ImageEnvironmentalLight::LightingPDF(const Vector3D_d &i_lighting_direction) const
@@ -306,7 +308,7 @@ Spectrum_d ImageEnvironmentalLight::SampleLighting(const Vector3D_d &i_normal, c
 
   Spectrum_d radiance = _LightingSample(i_sample, &m_nodes_hemispherical_PDF[m_nodes_num*direction_index], o_lighting_direction, o_pdf);
   m_light_to_world(o_lighting_direction, o_lighting_direction);
-  return radiance;
+  return m_scale * radiance;
   }
 
 double ImageEnvironmentalLight::LightingPDF(const Vector3D_d &i_normal, const Vector3D_d &i_lighting_direction) const
@@ -471,17 +473,17 @@ Spectrum_d ImageEnvironmentalLight::SamplePhoton(const Point2D_d &i_position_sam
 
   o_pdf = direction_pdf/(M_PI * radius * radius);
 
-  return irradiance;
+  return m_scale * irradiance;
   }
 
 Spectrum_d ImageEnvironmentalLight::Irradiance(const Vector3D_d &i_normal) const
   {
   ASSERT(m_nodes_num>0);
-  return m_irradiances[CompressedDirection(m_world_to_light(i_normal)).GetID()];
+  return m_scale * m_irradiances[CompressedDirection(m_world_to_light(i_normal)).GetID()];
   }
 
 Spectrum_d ImageEnvironmentalLight::Fluence() const
   {
   ASSERT(m_nodes_num>0);
-  return m_nodes[0].m_total_radiance;
+  return m_scale * m_nodes[0].m_total_radiance;
   }

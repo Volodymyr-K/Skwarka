@@ -25,16 +25,20 @@ class ImageEnvironmentalLight: public InfiniteLightSource
     * @param i_world_bounds World bounds.
     * @param i_light_to_world Transform object that defines transformation from the light space to the world space.
     * @param i_image 2D array of the image values. All inner vectors should have the same size. Should have at least one row and at least one column.
+    * @param i_scale Scale factor for the image values.
     */
-    ImageEnvironmentalLight(const BBox3D_d &i_world_bounds, const Transform &i_light_to_world, const std::vector<std::vector<Spectrum_f> > &i_image);
+    ImageEnvironmentalLight(const BBox3D_d &i_world_bounds, const Transform &i_light_to_world,
+      const std::vector<std::vector<Spectrum_f> > &i_image, SpectrumCoef_d i_scale = SpectrumCoef_d(1.0));
 
     /**
     * Constructs ImageEnvironmentalLight from the specified image source.
     * @param i_world_bounds World bounds.
     * @param i_light_to_world Transform object that defines transformation from the light space to the world space.
     * @param ip_image_source ImageSource implementation that defines image for the ImageEnvironmentalLight. The image defined by the ImageSource should not be empty.
+    * @param i_scale Scale factor for the image values.
     */
-    ImageEnvironmentalLight(const BBox3D_d &i_world_bounds, const Transform &i_light_to_world, intrusive_ptr<const ImageSource<Spectrum_f> > ip_image_source);
+    ImageEnvironmentalLight(const BBox3D_d &i_world_bounds, const Transform &i_light_to_world,
+      intrusive_ptr<const ImageSource<Spectrum_f> > ip_image_source, SpectrumCoef_d i_scale = SpectrumCoef_d(1.0));
 
     /**
     * Returns the light source radiance for the specified ray.
@@ -192,6 +196,8 @@ class ImageEnvironmentalLight: public InfiniteLightSource
 
     Transform m_light_to_world, m_world_to_light;
 
+    SpectrumCoef_d m_scale;
+
     // MIP map used to filter radiance values.
     intrusive_ptr<const MIPMap<Spectrum_f> > mp_image_map;
     size_t m_width, m_height;
@@ -236,6 +242,7 @@ void ImageEnvironmentalLight::save(Archive &i_ar, const unsigned int i_version) 
   i_ar & mp_image_map;
   i_ar & m_height;
   i_ar & m_width;
+  i_ar & m_scale;
   }
 
 template<class Archive>
@@ -247,6 +254,7 @@ void ImageEnvironmentalLight::load(Archive &i_ar, const unsigned int i_version)
   i_ar & mp_image_map;
   i_ar & m_height;
   i_ar & m_width;
+  i_ar & m_scale;
 
   // Clear vectors with old data.
   m_nodes_directions.clear();
