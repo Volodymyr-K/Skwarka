@@ -148,5 +148,5 @@ Transform MakeLookAt(const Point3D_d &i_origin, Vector3D_d i_direction, const Ve
   m[2][2] = i_direction[2];
   m[3][2] = 0.0;
 
-  return Transform(Matrix4x4_d(m));
+  return Transform(Matrix4x4_d(m)).Inverted();
   }

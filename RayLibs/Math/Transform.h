@@ -154,7 +154,7 @@ Transform MakeRotation(const double &i_angle, Vector3D_d i_axis);
 Transform MakeMatchDirections(const Vector3D_d &i_source, const Vector3D_d &i_target);
 
 /**
-* Creates Transform object that describes transformation from "look-at" space to the world space.
+* Creates Transform object that describes transformation from the world space to the "look-at" space.
 * The "look-at" space is a coordinate system defined by the position of a camera, a viewing direction
 * and an "up" vector that orients the camera along the viewing direction implied by the first two parameters.
 * @param i_origin Position of the camera in the world space.

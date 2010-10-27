@@ -365,6 +365,12 @@ class MathRoutinesTestSuite : public CxxTest::TestSuite
           }
       }
 
+    void test_DegreesToRadians()
+      {
+      double radians = MathRoutines::DegreesToRadians(90);
+      TS_ASSERT_DELTA(radians, M_PI_2, (1e-9));
+      }
+
   private:
     double _EstimateSubtendedSolidAngle(const Point3D_d &i_point, BBox3D_d i_bbox) const
       {

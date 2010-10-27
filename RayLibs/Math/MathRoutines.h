@@ -126,6 +126,11 @@ namespace MathRoutines
   */
   template<typename T>
   Vector3D<T> SphericalDirection(double i_phi, double i_theta);
+
+  /**
+  * Converts degrees to radians.
+  */
+  double DegreesToRadians(double i_degrees);
   };
 
 /////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
@@ -409,6 +414,11 @@ namespace MathRoutines
     {
     double sint = sin(i_theta), cost = cos(i_theta);
     return Vector3D<T>((T)(sint*cos(i_phi)), (T)(sint*sin(i_phi)), (T)(cost));
+    }
+
+  inline double DegreesToRadians(double i_degrees)
+    {
+    return i_degrees*M_PI/180.0;
     }
 
   }

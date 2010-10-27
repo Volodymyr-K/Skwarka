@@ -15,7 +15,7 @@ class PerspectiveCameraTestSuite : public CxxTest::TestSuite
       {
       m_origin = Point3D_d(1.0,0.0,0.0);
       m_direction = Vector3D_d(0.0,1.0,0.0);
-      m_transformation = MakeLookAt(m_origin, m_direction, Vector3D_d(0.0,0.0,1.0));
+      m_transformation = MakeLookAt(m_origin, m_direction, Vector3D_d(0.0,0.0,1.0)).Inverted();
       mp_film=intrusive_ptr<Film>(new FilmMock(100,50));
 
       m_x_view_angle = 2.0*M_PI_3;

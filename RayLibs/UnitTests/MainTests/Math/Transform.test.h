@@ -237,7 +237,7 @@ class TransformTestSuite : public CxxTest::TestSuite
       Vector3D_d up(0.0,0.0,1.0);
 
       // The function must normalize the direction, so we don't pass the normalized direction to test that.
-      Transform t=MakeLookAt(origin,dir,up);
+      Transform t=MakeLookAt(origin,dir,up).Inverted();
 
       Ray ray2=t(m_test_ray);
 
