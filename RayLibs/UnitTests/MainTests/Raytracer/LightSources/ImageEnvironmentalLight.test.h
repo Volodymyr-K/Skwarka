@@ -25,7 +25,7 @@ class ImageEnvironmentalLightTestSuite : public CxxTest::TestSuite
 
       m_bbox = BBox3D_d(Point3D_d(0,0,0), Point3D_d(10,20,30));
       m_light_to_world = MakeRotation(1.2, Vector3D_d(-1,2,-3).Normalized());      
-      m_scale = SpectrumCoef_d(2.0,3.0,4.0);
+      m_scale = SpectrumCoef_d(1.1,1.2,1.3);
       mp_light = NULL;
       }
 
@@ -56,9 +56,9 @@ class ImageEnvironmentalLightTestSuite : public CxxTest::TestSuite
         if (x>2 && y>2 && x<m_width-2 && y<m_height-2)
           {
           Spectrum_d average = m_scale * _GetAverage(x, y);
-          if ((fabs(average[0]-radiance[0])>std::max(2.0,radiance[0]*0.07)) ||
-            (fabs(average[1]-radiance[1])>std::max(2.0,radiance[1]*0.07)) ||
-            (fabs(average[2]-radiance[2])>std::max(2.0,radiance[2]*0.07)))
+          if ((fabs(average[0]-radiance[0])>std::max(2.5,radiance[0]*0.07)) ||
+            (fabs(average[1]-radiance[1])>std::max(2.5,radiance[1]*0.07)) ||
+            (fabs(average[2]-radiance[2])>std::max(2.5,radiance[2]*0.07)))
             {
             TS_FAIL("Wrong radiance returned.");
             break;

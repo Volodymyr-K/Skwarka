@@ -44,6 +44,7 @@ inline Spectrum_d LTEIntegratorMock::_SurfaceRadiance(const RayDifferential &i_r
 
   Spectrum_d radiance;
   const BSDF *p_bsdf = i_intersection.mp_primitive->GetBSDF(i_intersection.m_dg, i_intersection.m_triangle_index, *p_pool);
+  Vector3D_d shading_normal = p_bsdf->GetShadingNormal();
 
   const AreaLightSource *p_light_source = i_intersection.mp_primitive->GetAreaLightSource_RawPtr();
   if (p_light_source)
@@ -65,7 +66,7 @@ inline Spectrum_d LTEIntegratorMock::_SurfaceRadiance(const RayDifferential &i_r
     if (!f.IsBlack() && mp_scene->IntersectTest(lighting_ray)==false)
       {
       SpectrumCoef_d transmittance = _MediaTransmittance(lighting_ray, ip_sample, i_ts);
-      radiance += (f * Li * transmittance) * fabs(lighting_ray.m_direction.Normalized()* i_intersection.m_dg.m_shading_normal);
+      radiance += (f * Li * transmittance) * fabs(lighting_ray.m_direction.Normalized() * shading_normal);
       }
     }
   
@@ -81,7 +82,7 @@ inline Spectrum_d LTEIntegratorMock::_SurfaceRadiance(const RayDifferential &i_r
 
     if (pdf>0.0)
       {
-      double cs = fabs(exitant * i_intersection.m_dg.m_shading_normal);
+      double cs = fabs(exitant * shading_normal);
       for(size_t j = 0; j<lights.m_infinite_light_sources.size();++j)
         {
         if (mp_scene->IntersectTest(Ray(i_intersection.m_dg.m_point, exitant, 1e-5, DBL_INF))==false)
@@ -114,7 +115,7 @@ inline Spectrum_d LTEIntegratorMock::_SurfaceRadiance(const RayDifferential &i_r
 
     if (pdf>0.0)
       {
-      double cs = fabs(exitant * i_intersection.m_dg.m_shading_normal);
+      double cs = fabs(exitant * shading_normal);
       Intersection isect2;
       if (mp_scene->Intersect(RayDifferential(Ray(i_intersection.m_dg.m_point, exitant, 1e-5, DBL_INF)), isect2) && isect2.mp_primitive->GetAreaLightSource())
         {

@@ -45,6 +45,7 @@ Spectrum_d DirectLightingIntegrator::ComputeDirectLighting(const Intersection &i
   ASSERT(i_ts.mp_pool && i_ts.mp_random_generator);
   MemoryPool *p_pool = i_ts.mp_pool;
   RandomGenerator<double> *p_rng = i_ts.mp_random_generator;
+  Vector3D_d shading_normal = ip_bsdf->GetShadingNormal();
 
   if (m_samples_requested==false && ip_sample!=NULL)
     {
@@ -76,7 +77,7 @@ Spectrum_d DirectLightingIntegrator::ComputeDirectLighting(const Intersection &i
       if (reflectance.IsBlack()==false && mp_scene->IntersectTest(lighting_ray) == false)
         {
         SpectrumCoef_d transmittance = _MediaTransmittance(lighting_ray, i_ts);
-        radiance.AddWeighted(reflectance*light*transmittance, fabs(lighting_ray.m_direction*i_intersection.m_dg.m_shading_normal));
+        radiance.AddWeighted(reflectance*light*transmittance, fabs(lighting_ray.m_direction*shading_normal));
         }
       }
     }
@@ -86,13 +87,13 @@ Spectrum_d DirectLightingIntegrator::ComputeDirectLighting(const Intersection &i
   if (reflection_components_num==0)
     {
     // The BSDF has only transmission components, so need to sample only lights in the opposite hemisphere.
-    Vector3D_d normal = (i_view_direction*i_intersection.m_dg.m_shading_normal <= 0.0) ? i_intersection.m_dg.m_shading_normal : i_intersection.m_dg.m_shading_normal*(-1.0);
+    Vector3D_d normal = (i_view_direction*shading_normal <= 0.0) ? shading_normal : shading_normal*(-1.0);
     mp_lights_sampling_strategy->GetLightsCDF(i_intersection.m_dg.m_point, normal, lights_CDF);
     }
   else if (transmission_components_num==0)
     {
     // The BSDF has only reflection components, so need to sample only lights in the same hemisphere.
-    Vector3D_d normal = (i_view_direction*i_intersection.m_dg.m_shading_normal >= 0.0) ? i_intersection.m_dg.m_shading_normal : i_intersection.m_dg.m_shading_normal*(-1.0);
+    Vector3D_d normal = (i_view_direction*shading_normal >= 0.0) ? shading_normal : shading_normal*(-1.0);
     mp_lights_sampling_strategy->GetLightsCDF(i_intersection.m_dg.m_point, normal, lights_CDF);
     }
   else
@@ -152,6 +153,7 @@ Spectrum_d DirectLightingIntegrator::_SampleLights(const Intersection &i_interse
   if (m_lights_samples_num==0 || light_sources_num==0)
     return Spectrum_d();
 
+  Vector3D_d shading_normal = ip_bsdf->GetShadingNormal();
   double inv_infinity_lights_probability = infinity_light_sources_num>0 ? 1.0/ip_lights_CDF[infinity_light_sources_num-1] : 0.0;
 
   // Determine the (hemi)sphere to be sampled.
@@ -159,10 +161,10 @@ Spectrum_d DirectLightingIntegrator::_SampleLights(const Intersection &i_interse
   bool sample_entire_sphere = false;
   if (ip_bsdf->GetComponentsNum( BxDFType(BSDF_DIFFUSE | BSDF_GLOSSY | BSDF_REFLECTION) )==0)
     // The BSDF has only transmission components, so need to sample only lights in the opposite hemisphere.
-    normal = (i_view_direction*i_intersection.m_dg.m_shading_normal <= 0.0) ? i_intersection.m_dg.m_shading_normal : i_intersection.m_dg.m_shading_normal*(-1.0);
+    normal = (i_view_direction*shading_normal <= 0.0) ? shading_normal : shading_normal*(-1.0);
   else if (ip_bsdf->GetComponentsNum( BxDFType(BSDF_DIFFUSE | BSDF_GLOSSY | BSDF_TRANSMISSION) )==0)
     // The BSDF has only reflection components, so need to sample only lights in the same hemisphere.
-    normal = (i_view_direction*i_intersection.m_dg.m_shading_normal >= 0.0) ? i_intersection.m_dg.m_shading_normal : i_intersection.m_dg.m_shading_normal*(-1.0);
+    normal = (i_view_direction*shading_normal >= 0.0) ? shading_normal : shading_normal*(-1.0);
   else
     // The BSDF has reflection and transmission components, so need to sample lights in both hemispheres.
     sample_entire_sphere = true;
@@ -197,7 +199,7 @@ Spectrum_d DirectLightingIntegrator::_SampleLights(const Intersection &i_interse
 
         // Compute weighting coefficient for the multiple importance sampling.
         double weight = SamplingRoutines::PowerHeuristic(m_lights_samples_num, light_pdf*light_component_pdf, m_bsdf_samples_num, bsdf_pdf*light_component_pdf*inv_infinity_lights_probability);
-        weight *= fabs(lighting_ray.m_direction*i_intersection.m_dg.m_shading_normal) / (light_pdf*light_component_pdf);
+        weight *= fabs(lighting_ray.m_direction*shading_normal) / (light_pdf*light_component_pdf);
 
         lighting_ray.m_min_t = CoreUtils::GetNextMinT(i_intersection, lighting_ray.m_direction);
         if (weight>0.0 && light.IsBlack()==false && mp_scene->IntersectTest(lighting_ray)==false)
@@ -226,7 +228,7 @@ Spectrum_d DirectLightingIntegrator::_SampleLights(const Intersection &i_interse
         If the light source (or triangle) currently being sampled is not the nearest one it will contribute zero radiance to the direct lighting along this direction.
         */
         double weight = SamplingRoutines::PowerHeuristic(m_lights_samples_num, light_pdf*light_component_pdf, m_bsdf_samples_num, bsdf_pdf);
-        weight *= fabs(lighting_ray.m_direction*i_intersection.m_dg.m_shading_normal) / (light_pdf*light_component_pdf);
+        weight *= fabs(lighting_ray.m_direction*shading_normal) / (light_pdf*light_component_pdf);
 
         lighting_ray.m_min_t = CoreUtils::GetNextMinT(i_intersection, lighting_ray.m_direction);
         if (weight>0.0 && light.IsBlack()==false && mp_scene->IntersectTest(lighting_ray)==false)
@@ -256,6 +258,7 @@ Spectrum_d DirectLightingIntegrator::_SampleBSDF(const Intersection &i_intersect
   if (m_bsdf_samples_num==0 || light_sources_num==0)
     return Spectrum_d();
 
+  Vector3D_d shading_normal = ip_bsdf->GetShadingNormal();
   double infinity_lights_probability = infinity_light_sources_num>0 ? ip_lights_CDF[infinity_light_sources_num-1] : 0.0;
   double inv_infinity_lights_probability = infinity_light_sources_num>0 ? 1.0/ip_lights_CDF[infinity_light_sources_num-1] : 0.0;
 
@@ -264,10 +267,10 @@ Spectrum_d DirectLightingIntegrator::_SampleBSDF(const Intersection &i_intersect
   bool sample_entire_sphere = false;
   if (ip_bsdf->GetComponentsNum( BxDFType(BSDF_DIFFUSE | BSDF_GLOSSY | BSDF_REFLECTION) )==0)
     // The BSDF has only transmission components, so need to sample only lights in the opposite hemisphere.
-    normal = (i_view_direction*i_intersection.m_dg.m_shading_normal <= 0.0) ? i_intersection.m_dg.m_shading_normal : i_intersection.m_dg.m_shading_normal*(-1.0);
+    normal = (i_view_direction*shading_normal <= 0.0) ? shading_normal : shading_normal*(-1.0);
   else if (ip_bsdf->GetComponentsNum( BxDFType(BSDF_DIFFUSE | BSDF_GLOSSY | BSDF_TRANSMISSION) )==0)
     // The BSDF has only reflection components, so need to sample only lights in the same hemisphere.
-    normal = (i_view_direction*i_intersection.m_dg.m_shading_normal >= 0.0) ? i_intersection.m_dg.m_shading_normal : i_intersection.m_dg.m_shading_normal*(-1.0);
+    normal = (i_view_direction*shading_normal >= 0.0) ? shading_normal : shading_normal*(-1.0);
   else
     // The BSDF has reflection and transmission components, so need to sample lights in both hemispheres.
     sample_entire_sphere = true;
@@ -306,7 +309,7 @@ Spectrum_d DirectLightingIntegrator::_SampleBSDF(const Intersection &i_intersect
 
             // Compute weighting coefficient for the multiple importance sampling.
             double weight = SamplingRoutines::PowerHeuristic(m_bsdf_samples_num, bsdf_pdf, m_lights_samples_num, light_pdf*light_component_pdf);
-            weight *= fabs(lighting_ray.m_direction*i_intersection.m_dg.m_shading_normal) / bsdf_pdf;
+            weight *= fabs(lighting_ray.m_direction*shading_normal) / bsdf_pdf;
             radiance.AddWeighted(reflectance*light*_MediaTransmittance(lighting_ray, i_ts), weight);
             }
           }
@@ -330,7 +333,7 @@ Spectrum_d DirectLightingIntegrator::_SampleBSDF(const Intersection &i_intersect
 
             // Compute weighting coefficient for the multiple importance sampling.
             double weight = SamplingRoutines::PowerHeuristic(m_bsdf_samples_num, bsdf_pdf, m_lights_samples_num, light_component_pdf*light_pdf);
-            weight *= fabs(lighting_ray.m_direction*i_intersection.m_dg.m_shading_normal) / bsdf_pdf;
+            weight *= fabs(lighting_ray.m_direction*shading_normal) / bsdf_pdf;
             radiance.AddWeighted(reflectance*light*_MediaTransmittance(lighting_ray, i_ts), weight);
             }
           }

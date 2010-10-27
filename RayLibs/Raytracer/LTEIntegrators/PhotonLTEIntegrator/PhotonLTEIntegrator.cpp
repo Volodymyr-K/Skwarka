@@ -330,6 +330,7 @@ Spectrum_d PhotonLTEIntegrator::_SurfaceRadiance(const RayDifferential &i_ray, c
   Spectrum_d radiance;
   const BSDF *p_bsdf = i_intersection.mp_primitive->GetBSDF(i_intersection.m_dg, i_intersection.m_triangle_index, *p_pool);
   Vector3D_d incident = i_ray.m_base_ray.m_direction*(-1.0);
+  Vector3D_d shading_normal = p_bsdf->GetShadingNormal();
 
   // Add emitting lighting from the surface (if the surface has light source properties).
   const AreaLightSource *p_light_source = i_intersection.mp_primitive->GetAreaLightSource_RawPtr();
@@ -354,12 +355,12 @@ Spectrum_d PhotonLTEIntegrator::_SurfaceRadiance(const RayDifferential &i_ray, c
     SamplesSequence2D bsdf_scattering_sequence(bsdf_scattering_samples, bsdf_scattering_samples + samples_num_sqrt*samples_num_sqrt);
     SamplingRoutines::StratifiedSampling2D(bsdf_scattering_sequence.m_begin, samples_num_sqrt, samples_num_sqrt, true, p_rng);
 
-    IrradiancePhotonFilter filter(i_intersection.m_dg.m_point, i_intersection.m_dg.m_shading_normal, MAX_NORMAL_DEVIATION_COS);
+    IrradiancePhotonFilter filter(i_intersection.m_dg.m_point, shading_normal, MAX_NORMAL_DEVIATION_COS);
     const IrradiancePhoton *p_irradiance_photon = mp_irradiance_map->GetNearestPoint(i_intersection.m_dg.m_point, filter, 0.005);
     if (p_irradiance_photon)
       {
       Spectrum_d tmp;
-      if (incident*i_intersection.m_dg.m_shading_normal > 0.0)
+      if (incident*shading_normal > 0.0)
         {
         tmp += p_bsdf->TotalScattering(incident, bsdf_scattering_sequence, BxDFType(BSDF_ALL_REFLECTION))  *Convert<double>(p_irradiance_photon->m_external_irradiance);
         tmp += p_bsdf->TotalScattering(incident, bsdf_scattering_sequence, BxDFType(BSDF_ALL_TRANSMISSION))*Convert<double>(p_irradiance_photon->m_internal_irradiance);
@@ -393,6 +394,7 @@ Spectrum_d PhotonLTEIntegrator::_FinalGather(const Intersection &i_intersection,
   ASSERT(i_incident.IsNormalized());
   MemoryPool *p_pool = i_ts.mp_pool;
   RandomGenerator<double> *p_rng = i_ts.mp_random_generator;
+  Vector3D_d shading_normal = ip_bsdf->GetShadingNormal();
 
   const double cos_gather_angle = 0.9848; // 10 degrees
   const double cone_pdf = SamplingRoutines::UniformConePDF(cos_gather_angle);
@@ -453,7 +455,7 @@ Spectrum_d PhotonLTEIntegrator::_FinalGather(const Intersection &i_intersection,
     {
     double indirect_photon_area = 2.0*m_scene_total_area / mp_indirect_map->GetNumberOfPoints();
     double max_lookup_dist = sqrt(indirect_photon_area*32*INV_PI);
-    PhotonFilter filter(i_intersection.m_dg.m_point, i_intersection.m_dg.m_shading_normal, MAX_NORMAL_DEVIATION_COS);
+    PhotonFilter filter(i_intersection.m_dg.m_point, shading_normal, MAX_NORMAL_DEVIATION_COS);
     photons_found = mp_indirect_map->GetNearestPoints(i_intersection.m_dg.m_point, 32, p_nearest_photons, filter, max_lookup_dist);
     }
   double inv_photons_found = (photons_found>0) ? 1.0/photons_found : 0.0;
@@ -492,7 +494,7 @@ Spectrum_d PhotonLTEIntegrator::_FinalGather(const Intersection &i_intersection,
       double weight = SamplingRoutines::PowerHeuristic(gather_samples, bsdf_pdf, gather_samples, photon_pdf);
 
       p_gather_directions[gather_rays] = exitant;
-      p_gather_weights[gather_rays] = reflectance * (weight * fabs(exitant*i_intersection.m_dg.m_shading_normal) / bsdf_pdf);
+      p_gather_weights[gather_rays] = reflectance * (weight * fabs(exitant*shading_normal) / bsdf_pdf);
       ++gather_rays;
       }
 
@@ -529,7 +531,7 @@ Spectrum_d PhotonLTEIntegrator::_FinalGather(const Intersection &i_intersection,
       double weight = SamplingRoutines::PowerHeuristic(gather_samples, photon_pdf, gather_samples, bsdf_pdf);
 
       p_gather_directions[gather_rays] = exitant;
-      p_gather_weights[gather_rays] = reflectance * (weight * fabs(exitant*i_intersection.m_dg.m_shading_normal) / photon_pdf);
+      p_gather_weights[gather_rays] = reflectance * (weight * fabs(exitant*shading_normal) / photon_pdf);
       ++gather_rays;
       }
 
@@ -550,14 +552,15 @@ Spectrum_d PhotonLTEIntegrator::_FinalGather(const Intersection &i_intersection,
       // Compute exitant radiance at the final gather intersection.
       Vector3D_d gather_direction = bounce_ray.m_direction*(-1.0);
       const BSDF *p_gather_BSDF = gather_isect.mp_primitive->GetBSDF(gather_isect.m_dg, gather_isect.m_triangle_index, *p_pool);
+      Vector3D_d gather_shading_normal = p_gather_BSDF->GetShadingNormal();
 
-      IrradiancePhotonFilter filter(gather_isect.m_dg.m_point, gather_isect.m_dg.m_shading_normal, MAX_NORMAL_DEVIATION_COS);
+      IrradiancePhotonFilter filter(gather_isect.m_dg.m_point, gather_shading_normal, MAX_NORMAL_DEVIATION_COS);
       const IrradiancePhoton *p_irradiance_photon = mp_irradiance_map->GetNearestPoint(gather_isect.m_dg.m_point, filter, m_max_irradiance_lookup_dist);
       if (p_irradiance_photon == NULL)
         continue;
 
       Spectrum_d tmp;
-      if (gather_direction*gather_isect.m_dg.m_shading_normal > 0.0)
+      if (gather_direction*gather_shading_normal > 0.0)
         {
         tmp += p_gather_BSDF->TotalScattering(gather_direction, bsdf_scattering_sequence, BxDFType(BSDF_ALL_REFLECTION))  *Convert<double>(p_irradiance_photon->m_external_irradiance);
         tmp += p_gather_BSDF->TotalScattering(gather_direction, bsdf_scattering_sequence, BxDFType(BSDF_ALL_TRANSMISSION))*Convert<double>(p_irradiance_photon->m_internal_irradiance);

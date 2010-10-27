@@ -150,10 +150,11 @@ void* PhotonLTEIntegrator::PhotonsShootingFilter::operator()(void* ip_chunk)
 
       Vector3D_d incident = photon_ray.m_direction*(-1.0);
       const BSDF *p_photon_BSDF = photon_isect.mp_primitive->GetBSDF(photon_isect.m_dg, photon_isect.m_triangle_index, *p_pool);
+      Vector3D_d photon_shading_normal = p_photon_BSDF->GetShadingNormal();
       bool has_non_specular = p_photon_BSDF->GetComponentsNum(non_specular_types) > 0;
 
       // Deposit photon at surface.
-      Photon photon(Convert<float>(photon_isect.m_dg.m_point), Convert<float>(weight), CompressedDirection(incident), CompressedDirection(photon_isect.m_dg.m_shading_normal));
+      Photon photon(Convert<float>(photon_isect.m_dg.m_point), Convert<float>(weight), CompressedDirection(incident), CompressedDirection(photon_shading_normal));
       if (intersections_num == 1)
         {
         if (has_non_specular && p_chunk->m_direct_done==false)
@@ -206,7 +207,7 @@ void* PhotonLTEIntegrator::PhotonsShootingFilter::operator()(void* ip_chunk)
 
       // We do not multiply the bsdf by the cosine factor for specular scattering; this is already accounted for in the corresponding BxDFs.
       if (IsSpecular(sampled_type) == false)
-        weight_new *= fabs(exitant * photon_isect.m_dg.m_shading_normal);
+        weight_new *= fabs(exitant * photon_shading_normal);
 
       // Possibly terminate photon path with Russian roulette.
       // We use the termination probability equal to the luminance change due to the scattering.
