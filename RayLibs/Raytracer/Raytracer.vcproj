@@ -537,6 +537,10 @@
 					RelativePath=".\Materials\TransparentMaterial.h"
 					>
 				</File>
+				<File
+					RelativePath=".\Materials\UberMaterial.h"
+					>
+				</File>
 			</Filter>
 			<Filter
 				Name="Source Files"
@@ -569,6 +573,10 @@
 					RelativePath=".\Materials\TransparentMaterial.cpp"
 					>
 				</File>
+				<File
+					RelativePath=".\Materials\UberMaterial.cpp"
+					>
+				</File>
 			</Filter>
 		</Filter>
 		<Filter
@@ -583,6 +591,10 @@
 				</File>
 				<File
 					RelativePath=".\Textures\ImageTexture.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Textures\ScaleTexture.h"
 					>
 				</File>
 			</Filter>

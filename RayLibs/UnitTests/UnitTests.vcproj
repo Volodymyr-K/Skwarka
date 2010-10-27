@@ -456,6 +456,10 @@
 						RelativePath=".\MainTests\Raytracer\Textures\ImageTexture.test.h"
 						>
 					</File>
+					<File
+						RelativePath=".\MainTests\Raytracer\Textures\ScaleTexture.test.h"
+						>
+					</File>
 				</Filter>
 				<Filter
 					Name="Materials"
@@ -1059,6 +1063,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ScaleTexture.Serialization.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ScaleTexture.test.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Scene.Serialization.test.cpp"
 				>
 			</File>
@@ -1644,6 +1656,10 @@
 					</File>
 					<File
 						RelativePath=".\SerializationTests\Raytracer\Textures\ImageTexture.Serialization.test.h"
+						>
+					</File>
+					<File
+						RelativePath=".\SerializationTests\Raytracer\Textures\ScaleTexture.Serialization.test.h"
 						>
 					</File>
 				</Filter>
