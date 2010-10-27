@@ -31,6 +31,11 @@ class Sphere: public Shape
     void SetTransformation(const Transform &i_transform);
 
     /**
+    * Sets whether to invert the normals of the resulting mesh. Default is false.
+    */
+    void SetInvertOrientation(bool i_invert_orientation);
+
+    /**
     * Builds sphere triangle mesh.
     * @return Smart pointer to the built mesh. Never NULL.
     */
@@ -39,6 +44,7 @@ class Sphere: public Shape
   private:
     size_t m_subdivisions;
     Transform m_transform;
+    bool m_invert_orientation;
   };
 
 

@@ -77,6 +77,23 @@ class DiskTestSuite : public CxxTest::TestSuite
       TS_ASSERT_EQUALS(p_mesh->GetNumberOfTriangles(), 200);
       }
 
+    void test_Disk_InvertOrientation()
+      {
+      Disk disk;
+
+      intrusive_ptr<TriangleMesh> p_mesh=disk.BuildMesh();
+      TS_ASSERT_EQUALS(p_mesh->GetInvertNormals(), false);
+
+      disk.SetInvertOrientation(true);
+      p_mesh=disk.BuildMesh();
+      TS_ASSERT_EQUALS(p_mesh->GetInvertNormals(), true);
+
+      // Set transformation that inverts orientation.
+      disk.SetTransformation(MakeScale(-1,1,1));
+      p_mesh=disk.BuildMesh();
+      TS_ASSERT_EQUALS(p_mesh->GetInvertNormals(), false);
+      }
+
   };
 
 #endif // DISK_TEST_H

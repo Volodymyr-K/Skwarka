@@ -9,6 +9,7 @@ Disk::Disk()
   m_subdivisions = 360;
   m_max_phi = 2.0*M_PI;
   m_inner_radius = 0.0;
+  m_invert_orientation = false;  
   }
 
 void Disk::SetSubdivisions(size_t i_subdivisions)
@@ -31,6 +32,11 @@ void Disk::SetMaxPhi(double i_max_phi)
 void Disk::SetTransformation(const Transform &i_transform)
   {
   m_transform = i_transform;
+  }
+
+void Disk::SetInvertOrientation(bool i_invert_orientation)
+  {
+  m_invert_orientation = i_invert_orientation;
   }
 
 intrusive_ptr<TriangleMesh> Disk::BuildMesh()
@@ -86,7 +92,10 @@ intrusive_ptr<TriangleMesh> Disk::_BuildFullMesh()
     triangles.push_back(t1);
     }
 
-  TriangleMesh *p_mesh = new TriangleMesh(vertices, triangles, normals, tangents, false, m_transform.InvertsOrientation());
+  bool invert_orientation = m_invert_orientation;
+  if (m_transform.InvertsOrientation()) invert_orientation = !invert_orientation;
+
+  TriangleMesh *p_mesh = new TriangleMesh(vertices, triangles, normals, tangents, false, invert_orientation);
   return intrusive_ptr<TriangleMesh>(p_mesh);
   }
 
@@ -140,6 +149,9 @@ intrusive_ptr<TriangleMesh> Disk::_BuildPartialMesh()
     triangles.push_back(t2);
     }
 
-  TriangleMesh *p_mesh = new TriangleMesh(vertices, triangles, normals, tangents, false, m_transform.InvertsOrientation());
+  bool invert_orientation = m_invert_orientation;
+  if (m_transform.InvertsOrientation()) invert_orientation = !invert_orientation;
+
+  TriangleMesh *p_mesh = new TriangleMesh(vertices, triangles, normals, tangents, false, invert_orientation);
   return intrusive_ptr<TriangleMesh>(p_mesh);
   }

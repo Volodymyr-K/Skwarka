@@ -38,6 +38,11 @@ class Cylinder: public Shape
     void SetTransformation(const Transform &i_transform);
 
     /**
+    * Sets whether to invert the normals of the resulting mesh. Default is false.
+    */
+    void SetInvertOrientation(bool i_invert_orientation);
+
+    /**
     * Builds cylinder triangle mesh.
     * @return Smart pointer to the built mesh. Never NULL.
     */
@@ -48,6 +53,7 @@ class Cylinder: public Shape
     Transform m_transform;
 
     double m_max_phi;
+    bool m_invert_orientation;
   };
 
 

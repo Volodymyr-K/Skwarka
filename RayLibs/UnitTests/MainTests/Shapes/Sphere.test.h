@@ -66,6 +66,23 @@ class SphereTestSuite : public CxxTest::TestSuite
       TS_ASSERT_EQUALS(p_mesh->GetNumberOfTriangles(), 4*4*4*4*4);
       }
 
+    void test_Sphere_InvertOrientation()
+      {
+      Sphere sphere;
+
+      intrusive_ptr<TriangleMesh> p_mesh=sphere.BuildMesh();
+      TS_ASSERT_EQUALS(p_mesh->GetInvertNormals(), false);
+
+      sphere.SetInvertOrientation(true);
+      p_mesh=sphere.BuildMesh();
+      TS_ASSERT_EQUALS(p_mesh->GetInvertNormals(), true);
+
+      // Set transformation that inverts orientation.
+      sphere.SetTransformation(MakeScale(-1,1,1));
+      p_mesh=sphere.BuildMesh();
+      TS_ASSERT_EQUALS(p_mesh->GetInvertNormals(), false);
+      }
+
   };
 
 #endif // SPHERE_TEST_H

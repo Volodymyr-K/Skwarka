@@ -47,6 +47,11 @@ class Disk: public Shape
     void SetTransformation(const Transform &i_transform);
 
     /**
+    * Sets whether to invert the normals of the resulting mesh. Default is false.
+    */
+    void SetInvertOrientation(bool i_invert_orientation);
+
+    /**
     * Builds disk triangle mesh.
     * @return Smart pointer to the built mesh. Never NULL.
     */
@@ -68,6 +73,7 @@ class Disk: public Shape
     Transform m_transform;
 
     double m_inner_radius, m_max_phi;
+    bool m_invert_orientation;
   };
 
 

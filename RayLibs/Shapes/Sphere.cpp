@@ -7,6 +7,7 @@
 Sphere::Sphere()
   {
   m_subdivisions = 3;
+  m_invert_orientation = false;
   }
 
 void Sphere::SetSubdivisions(size_t i_subdivisions)
@@ -17,6 +18,11 @@ void Sphere::SetSubdivisions(size_t i_subdivisions)
 void Sphere::SetTransformation(const Transform &i_transform)
   {
   m_transform = i_transform;
+  }
+
+void Sphere::SetInvertOrientation(bool i_invert_orientation)
+  {
+  m_invert_orientation = i_invert_orientation;
   }
 
 intrusive_ptr<TriangleMesh> Sphere::BuildMesh()
@@ -169,7 +175,10 @@ intrusive_ptr<TriangleMesh> Sphere::BuildMesh()
     tangents[i] = Convert<float>( m_transform(tangent).Normalized() );
     }
 
+  bool invert_orientation = m_invert_orientation;
+  if (m_transform.InvertsOrientation()) invert_orientation = !invert_orientation;
+  
   // The sphere is supposed to be smooth by definition so we use interpolated normals.
-  TriangleMesh *p_mesh = new TriangleMesh(vertices_f, triangles_cleaned, normals, tangents, true, m_transform.InvertsOrientation());
+  TriangleMesh *p_mesh = new TriangleMesh(vertices_f, triangles_cleaned, normals, tangents, true, invert_orientation);
   return intrusive_ptr<TriangleMesh>(p_mesh);
   }

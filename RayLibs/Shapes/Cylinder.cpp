@@ -7,6 +7,7 @@ Cylinder::Cylinder()
   {
   m_subdivisions = 360;
   m_max_phi = 2.0*M_PI;
+  m_invert_orientation = false;
   }
 
 void Cylinder::SetSubdivisions(size_t i_subdivisions)
@@ -23,6 +24,11 @@ void Cylinder::SetTransformation(const Transform &i_transform)
 void Cylinder::SetMaxPhi(double i_max_phi)
   {
   m_max_phi = std::max(0.0,std::min(2.0*M_PI,i_max_phi));
+  }
+
+void Cylinder::SetInvertOrientation(bool i_invert_orientation)
+  {
+  m_invert_orientation = i_invert_orientation;
   }
 
 intrusive_ptr<TriangleMesh> Cylinder::BuildMesh()
@@ -74,7 +80,10 @@ intrusive_ptr<TriangleMesh> Cylinder::BuildMesh()
     triangles.push_back(t2);
     }
 
+  bool invert_orientation = m_invert_orientation;
+  if (m_transform.InvertsOrientation()) invert_orientation = !invert_orientation;
+
   // The cylinder is supposed to be smooth by definition so we use interpolated normals.
-  TriangleMesh *p_mesh = new TriangleMesh(vertices, triangles, normals, tangents, true, m_transform.InvertsOrientation());
+  TriangleMesh *p_mesh = new TriangleMesh(vertices, triangles, normals, tangents, true, invert_orientation);
   return intrusive_ptr<TriangleMesh>(p_mesh);
   }

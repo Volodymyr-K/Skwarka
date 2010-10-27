@@ -74,6 +74,22 @@ class CylinderTestSuite : public CxxTest::TestSuite
       TS_ASSERT_EQUALS(p_mesh->GetNumberOfTriangles(), 200);
       }
 
+    void test_Cylinder_InvertOrientation()
+      {
+      Cylinder cylinder;
+
+      intrusive_ptr<TriangleMesh> p_mesh=cylinder.BuildMesh();
+      TS_ASSERT_EQUALS(p_mesh->GetInvertNormals(), false);
+
+      cylinder.SetInvertOrientation(true);
+      p_mesh=cylinder.BuildMesh();
+      TS_ASSERT_EQUALS(p_mesh->GetInvertNormals(), true);
+
+      // Set transformation that inverts orientation.
+      cylinder.SetTransformation(MakeScale(-1,1,1));
+      p_mesh=cylinder.BuildMesh();
+      TS_ASSERT_EQUALS(p_mesh->GetInvertNormals(), false);
+      }
   };
 
 #endif // CYLINDER_TEST_H
