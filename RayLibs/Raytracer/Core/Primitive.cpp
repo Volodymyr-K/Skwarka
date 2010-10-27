@@ -23,6 +23,7 @@ void Primitive::_Bump(const DifferentialGeometry &i_dg, size_t i_triangle_index,
   if (o_bumped_dg.m_shading_normal.Normalize()==false || o_bumped_dg.m_tangent.Normalize()==false)
     {
     o_bumped_dg.m_shading_normal = i_dg.m_shading_normal;
+    o_bumped_dg.m_tangent = i_dg.m_tangent;
     return;
     }
 

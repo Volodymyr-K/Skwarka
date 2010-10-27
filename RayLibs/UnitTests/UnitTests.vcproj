@@ -488,6 +488,10 @@
 						RelativePath=".\MainTests\Raytracer\Materials\TransparentMaterial.test.h"
 						>
 					</File>
+					<File
+						RelativePath=".\MainTests\Raytracer\Materials\UberMaterial.test.h"
+						>
+					</File>
 				</Filter>
 				<Filter
 					Name="MicrofacetDistributions"
@@ -1171,6 +1175,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\UberMaterial.Serialization.test.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\UberMaterial.test.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\UniformImagePixelsOrder.test.cpp"
 				>
 			</File>
@@ -1664,6 +1676,10 @@
 					</File>
 					<File
 						RelativePath=".\SerializationTests\Raytracer\Materials\TransparentMaterial.Serialization.test.h"
+						>
+					</File>
+					<File
+						RelativePath=".\SerializationTests\Raytracer\Materials\UberMaterial.Serialization.test.h"
 						>
 					</File>
 				</Filter>

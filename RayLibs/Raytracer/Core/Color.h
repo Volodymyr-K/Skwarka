@@ -84,7 +84,7 @@ class ColorSystem
     /**
     * Creates color system with the specified CIE coordinates of its three primary colors, coordinates of the white point and gamma value.
     */
-    ColorSystem(Point2D_d i_red, Point2D_d i_green, Point2D_d i_blue, Point2D_d i_whitel, double i_gamma);
+    ColorSystem(Point2D_d i_red, Point2D_d i_green, Point2D_d i_blue, Point2D_d i_white, double i_gamma);
 
     Point2D_d GetRedPrimaryPoint() const;
 
