@@ -40,7 +40,7 @@ mp_root(NULL), m_primitives(i_primitives), m_pool(100000*sizeof(TriangleAccelera
     }
 
   void * ptr = m_pool.Alloc(sizeof(Node));
-  mp_root = new (ptr) Node(*this, bboxes, 0, m_triangles.size(), 0, 0, 0);
+  mp_root = new (ptr) Node(*this, bboxes, 0, m_triangles.size(), 0, 0);
   }
 
 BBox3D_d TriangleAccelerator::GetWorldBounds() const
@@ -293,105 +293,110 @@ void TriangleAccelerator::_SwapTriangles(size_t i_index1, size_t i_index2, std::
   std::swap(i_bboxes[i_index1], i_bboxes[i_index2]);
   }
 
-double TriangleAccelerator::_DetermineBestSplitCoordinate(TriangleAccelerator &i_accelerator,
+std::pair<unsigned char,double> TriangleAccelerator::_DetermineBestSplit(TriangleAccelerator &i_accelerator,
                                                           std::vector<BBox3D_f> &i_bboxes,
                                                           const BBox3D_d &i_node_bbox,
                                                           size_t i_begin, 
                                                           size_t i_end, 
-                                                          unsigned char i_split_axis)
+                                                          unsigned char i_middle_split_mask)
   {
-  ASSERT(i_begin<i_end && i_split_axis<3);
-
-  /*
-  * The method first precomputes the needed information for all tried split positions.
-  * The information for each split is the bounding boxes of the child and number of triangles in each child.
-  */
-  BBox3D_d left_bboxes[MAX_SPLIT_TRIES], middle_bboxes[MAX_SPLIT_TRIES], right_bboxes[MAX_SPLIT_TRIES];
-  size_t left_num[MAX_SPLIT_TRIES], middle_num[MAX_SPLIT_TRIES], right_num[MAX_SPLIT_TRIES];
-
-  memset(left_num, 0, MAX_SPLIT_TRIES*sizeof(size_t));
-  memset(middle_num, 0, MAX_SPLIT_TRIES*sizeof(size_t));
-  memset(right_num, 0, MAX_SPLIT_TRIES*sizeof(size_t));
-
-  size_t num_tries = std::min(MAX_SPLIT_TRIES, 2*(i_end-i_begin));
-  double coef = num_tries/(i_node_bbox.m_max[i_split_axis]-i_node_bbox.m_min[i_split_axis]);
-  for(size_t i=i_begin;i<i_end;++i)
-    {
-    const BBox3D_f &bbox = i_bboxes[i];
-
-    size_t lefts_begin = std::min(num_tries, (size_t)( (bbox.m_max[i_split_axis]-i_node_bbox.m_min[i_split_axis]) * coef + 1.0));
-    size_t rights_end =  std::min(num_tries, (size_t)( (bbox.m_min[i_split_axis]-i_node_bbox.m_min[i_split_axis]) * coef + 1.0));
-    ASSERT(lefts_begin<=num_tries && rights_end<=num_tries && rights_end<=lefts_begin);
-
-    /*
-    * Here's the trickiest part.
-    * Each triangle affects all left_bboxes and left_num values starting from the triangle's max coordinate.
-    * Each triangle affects all right_bboxes and right_num values ending with the triangle's min coordinate.
-    * There's no need to iterate through the entire range of these values, we can only set the starting/ending value and then accumulate the final values after the loop by triangles.
-    * 
-    * This does not work for middle_bboxes and middle_num though, so these values need to be updated in an internal loop.
-    */
-
-    if (rights_end>0)
-      {
-      right_bboxes[rights_end-1].Unite(bbox);
-      ++right_num[rights_end-1];
-      }
-
-    if (lefts_begin<num_tries)
-      {
-      left_bboxes[lefts_begin].Unite(bbox);
-      ++left_num[lefts_begin];
-      }
-
-    for(size_t j=rights_end;j<lefts_begin;++j)
-      {
-      middle_bboxes[j].Unite(bbox);
-      ++middle_num[j];
-      }
-    }
-
-  // Accumulate left_bboxes and left_num values.
-  for(size_t i=1;i<num_tries;++i)
-    {
-    left_bboxes[i].Unite(left_bboxes[i-1]);
-    left_num[i]+=left_num[i-1];
-    }
-
-  // Accumulate right_bboxes and right_num values.
-  for(int i=(int)num_tries-2;i>=0;--i)
-    {
-    right_bboxes[i].Unite(right_bboxes[i+1]);
-    right_num[i]+=right_num[i+1];
-    }
-
+  ASSERT(i_begin<i_end && i_middle_split_mask<(1<<3));
+  std::pair<unsigned char,double> ret;
   double best_cost = DBL_INF;
-  size_t best_split_index;
 
-  double inv_area = 1.0/i_node_bbox.Area();
-  for (size_t i=0;i<num_tries;++i)
-    {
-    // Compute probability that a random ray intersects the children given that it intersects the node.
-    double p1=std::min(1.0, left_bboxes[i].Area()*inv_area);
-    double p2=std::min(1.0, middle_bboxes[i].Area()*inv_area);
-    double p3=std::min(1.0, right_bboxes[i].Area()*inv_area);
-
-    ASSERT(left_num[i]+middle_num[i]+right_num[i] == i_end-i_begin);
-
-    // The cost function assumes that the children are all leaves.
-    double cost = left_num[i]*p1+middle_num[i]*p2+right_num[i]*p3;
-
-    // This is the heuristics that encourages splits resulting in empty left or right children nodes.
-    if (left_num[i]==0 || right_num[i]==0) cost*=0.8;
-
-    if (cost<best_cost)
+  // Try all possible split axes to find the best one.
+  for(unsigned char split_axis=0;split_axis<3;++split_axis)
+    if ((i_middle_split_mask&(1<<split_axis)) == 0)
       {
-      best_cost = cost;
-      best_split_index = i;
-      }
-    }
+      /*
+      * First precompute the needed information for all split positions.
+      * The information for each split is the bounding boxes of the child and number of triangles in each child.
+      */
+      BBox3D_d left_bboxes[MAX_SPLIT_TRIES], middle_bboxes[MAX_SPLIT_TRIES], right_bboxes[MAX_SPLIT_TRIES];
+      size_t left_num[MAX_SPLIT_TRIES], middle_num[MAX_SPLIT_TRIES], right_num[MAX_SPLIT_TRIES];
 
-  return i_node_bbox.m_min[i_split_axis] + best_split_index*(i_node_bbox.m_max[i_split_axis]-i_node_bbox.m_min[i_split_axis])/num_tries;
+      memset(left_num, 0, MAX_SPLIT_TRIES*sizeof(size_t));
+      memset(middle_num, 0, MAX_SPLIT_TRIES*sizeof(size_t));
+      memset(right_num, 0, MAX_SPLIT_TRIES*sizeof(size_t));
+
+      size_t num_tries = std::min(MAX_SPLIT_TRIES, 2*(i_end-i_begin));
+      double coef = num_tries/(i_node_bbox.m_max[split_axis]-i_node_bbox.m_min[split_axis]);
+      for(size_t i=i_begin;i<i_end;++i)
+        {
+        const BBox3D_f &bbox = i_bboxes[i];
+
+        size_t lefts_begin = std::min(num_tries, (size_t)( (bbox.m_max[split_axis]-i_node_bbox.m_min[split_axis]) * coef + 1.0));
+        size_t rights_end =  std::min(num_tries, (size_t)( (bbox.m_min[split_axis]-i_node_bbox.m_min[split_axis]) * coef + 1.0));
+        ASSERT(lefts_begin<=num_tries && rights_end<=num_tries && rights_end<=lefts_begin);
+
+        /*
+        * Here's the trickiest part.
+        * Each triangle affects all left_bboxes and left_num values starting from the triangle's max coordinate.
+        * Each triangle affects all right_bboxes and right_num values ending with the triangle's min coordinate.
+        * There's no need to iterate through the entire range of these values, we can only set the starting/ending value and then accumulate the final values after the loop by triangles.
+        * 
+        * This does not work for middle_bboxes and middle_num though, so these values need to be updated in an internal loop.
+        */
+
+        if (rights_end>0)
+          {
+          right_bboxes[rights_end-1].Unite(bbox);
+          ++right_num[rights_end-1];
+          }
+
+        if (lefts_begin<num_tries)
+          {
+          left_bboxes[lefts_begin].Unite(bbox);
+          ++left_num[lefts_begin];
+          }
+
+        for(size_t j=rights_end;j<lefts_begin;++j)
+          {
+          middle_bboxes[j].Unite(bbox);
+          ++middle_num[j];
+          }
+        }
+
+      // Accumulate left_bboxes and left_num values.
+      for(size_t i=1;i<num_tries;++i)
+        {
+        left_bboxes[i].Unite(left_bboxes[i-1]);
+        left_num[i]+=left_num[i-1];
+        }
+
+      // Accumulate right_bboxes and right_num values.
+      for(int i=(int)num_tries-2;i>=0;--i)
+        {
+        right_bboxes[i].Unite(right_bboxes[i+1]);
+        right_num[i]+=right_num[i+1];
+        }
+
+      double inv_area = 1.0/i_node_bbox.Area();
+      for (size_t i=0;i<num_tries;++i)
+        {
+        // Compute probability that a random ray intersects the children given that it intersects the node.
+        double p1=std::min(1.0, left_bboxes[i].Area()*inv_area);
+        double p2=std::min(1.0, middle_bboxes[i].Area()*inv_area);
+        double p3=std::min(1.0, right_bboxes[i].Area()*inv_area);
+
+        ASSERT(left_num[i]+middle_num[i]+right_num[i] == i_end-i_begin);
+
+        // The cost function assumes that the children are all leaves.
+        double cost = left_num[i]*p1+middle_num[i]*p2+right_num[i]*p3;
+
+        // This is the heuristics that encourages splits resulting in empty left or right children nodes.
+        if (left_num[i]==0 || right_num[i]==0) cost*=0.8;
+
+        if (cost<best_cost)
+          {
+          best_cost = cost;
+          ret.first = split_axis;
+          ret.second = i_node_bbox.m_min[split_axis] + i*(i_node_bbox.m_max[split_axis]-i_node_bbox.m_min[split_axis])/num_tries;
+          }
+        }
+      }
+
+  return ret;
   }
 
 //////////////////////////////////////////////////////////// NODE //////////////////////////////////////////////////////
@@ -401,7 +406,6 @@ TriangleAccelerator::Node::
   std::vector<BBox3D_f> &i_bboxes,
   size_t i_begin, 
   size_t i_end, 
-  unsigned char i_split_axis,
   unsigned char i_middle_split_mask,
   size_t i_depth): 
 m_begin(i_begin), m_end(i_end), m_bbox(i_accelerator._ConstructBBox(i_bboxes, i_begin, i_end))
@@ -415,13 +419,11 @@ m_begin(i_begin), m_end(i_end), m_bbox(i_accelerator._ConstructBBox(i_bboxes, i_
     return;
     }
 
-  // Find next split axis if the input one is not possible.
-  while(i_middle_split_mask&(1<<i_split_axis))
-    i_split_axis=(i_split_axis+1)%3;
+  std::pair<unsigned char,double> split = i_accelerator._DetermineBestSplit(i_accelerator, i_bboxes, m_bbox, i_begin, i_end, i_middle_split_mask);
+  unsigned char split_axis = split.first;
+  double split_coord = split.second;
 
-  SetType(false, i_split_axis);
-
-  double split_coord = i_accelerator._DetermineBestSplitCoordinate(i_accelerator, i_bboxes, m_bbox, i_begin, i_end, i_split_axis);
+  SetType(false, split_axis);
 
   size_t middle_begin=i_begin;
   size_t right_begin=i_end;
@@ -435,7 +437,7 @@ m_begin(i_begin), m_end(i_end), m_bbox(i_accelerator._ConstructBBox(i_bboxes, i_
     {
     const BBox3D_f &bbox = i_bboxes[i];
 
-    if (bbox.m_max[i_split_axis] < split_coord)
+    if (bbox.m_max[split_axis] < split_coord)
       {
       // First sub-region.
       i_accelerator._SwapTriangles(middle_begin,i, i_bboxes);
@@ -443,7 +445,7 @@ m_begin(i_begin), m_end(i_end), m_bbox(i_accelerator._ConstructBBox(i_bboxes, i_
       ++i;
       }
     else
-      if (bbox.m_min[i_split_axis] > split_coord)
+      if (bbox.m_min[split_axis] > split_coord)
         {
         // Third sub-region.
         --right_begin;
@@ -458,7 +460,7 @@ m_begin(i_begin), m_end(i_end), m_bbox(i_accelerator._ConstructBBox(i_bboxes, i_
   if (i_begin<middle_begin)
     {
     void * ptr = i_accelerator.m_pool.Alloc(sizeof(Node));
-    m_children[0] = new (ptr) Node (i_accelerator, i_bboxes, i_begin, middle_begin, (i_split_axis+1)%3, i_middle_split_mask, i_depth+1);
+    m_children[0] = new (ptr) Node (i_accelerator, i_bboxes, i_begin, middle_begin, i_middle_split_mask, i_depth+1);
     }
   else
     m_children[0] = NULL;
@@ -467,7 +469,7 @@ m_begin(i_begin), m_end(i_end), m_bbox(i_accelerator._ConstructBBox(i_bboxes, i_
   if (middle_begin<right_begin)
     {
     void * ptr = i_accelerator.m_pool.Alloc(sizeof(Node));
-    m_children[1] = new (ptr) Node(i_accelerator, i_bboxes, middle_begin, right_begin, (i_split_axis+1)%3, i_middle_split_mask | (1<<i_split_axis), i_depth+1);
+    m_children[1] = new (ptr) Node(i_accelerator, i_bboxes, middle_begin, right_begin, i_middle_split_mask | (1<<split_axis), i_depth+1);
     }
   else
     m_children[1] = NULL;
@@ -476,7 +478,7 @@ m_begin(i_begin), m_end(i_end), m_bbox(i_accelerator._ConstructBBox(i_bboxes, i_
   if (right_begin<i_end)
     {
     void * ptr = i_accelerator.m_pool.Alloc(sizeof(Node));
-    m_children[2] = new (ptr) Node(i_accelerator ,i_bboxes, right_begin, i_end, (i_split_axis+1)%3, i_middle_split_mask, i_depth+1);
+    m_children[2] = new (ptr) Node(i_accelerator ,i_bboxes, right_begin, i_end, i_middle_split_mask, i_depth+1);
     }
   else
     m_children[2] = NULL;

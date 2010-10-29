@@ -61,12 +61,12 @@ class TriangleAccelerator
     void _SwapTriangles(size_t i_index1, size_t i_index2, std::vector<BBox3D_f> &i_bboxes);
 
     /**
-    * Computes best split position for the specified internal node.
-    * The best split position is the one that has the minimum cost function. The cost function is the cost of node traversal assuming its children are all leaves.
+    * Computes best split axis and split position for the specified internal node.
+    * The best split axis and split position are the ones that have the minimum cost function. The cost function is the cost of node traversal assuming its children are all leaves.
     * The method tries many splits positions that are distributed uniformly over the node's extent.
     */
-    double _DetermineBestSplitCoordinate(TriangleAccelerator &i_accelerator, std::vector<BBox3D_f> &i_bboxes, const BBox3D_d &i_node_bbox,
-      size_t i_begin, size_t i_end, unsigned char i_split_axis);
+    std::pair<unsigned char,double> _DetermineBestSplit(TriangleAccelerator &i_accelerator, std::vector<BBox3D_f> &i_bboxes, const BBox3D_d &i_node_bbox,
+      size_t i_begin, size_t i_end, unsigned char i_middle_split_mask);
 
   private:
     // All the triangles of the primitives.
@@ -140,11 +140,10 @@ struct TriangleAccelerator::Node
   * @param i_bboxes Vector of triangle's bounding boxes.
   * @param i_begin Begin iterator of the corresponding triangles.
   * @param i_end End iterator of the corresponding triangles.
-  * @param i_split_axis Split axis (0 for x, 1 for y and 2 for z).
   * @param i_middle_split_mask The bitset that defines what middle splits have been done in the ancestor nodes.
   * @param i_depth Depth of the node (0 for root).
   */
-  Node(TriangleAccelerator &i_accelerator, std::vector<BBox3D_f> &i_bboxes, size_t i_begin, size_t i_end, unsigned char i_split_axis, unsigned char i_middle_split_mask, size_t i_depth);
+  Node(TriangleAccelerator &i_accelerator, std::vector<BBox3D_f> &i_bboxes, size_t i_begin, size_t i_end, unsigned char i_middle_split_mask, size_t i_depth);
   };
 
 inline void TriangleAccelerator::Node::SetType(bool i_is_leaf, unsigned char i_split_axis)
