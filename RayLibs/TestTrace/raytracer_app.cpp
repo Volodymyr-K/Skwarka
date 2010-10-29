@@ -1,7 +1,7 @@
 // raytracer_app.cpp : Defines the entry point for the application.
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "TestTracer.h"
 #include "raytracer_app.h"
 #include "Console.h"

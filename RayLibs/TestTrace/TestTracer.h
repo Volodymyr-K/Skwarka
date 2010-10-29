@@ -77,6 +77,8 @@
 #include <ImfMatrixAttribute.h>
 #include <ImfArray.h>
 
+#include <CADImport/SceneImporters/PbrtSceneImporter.h>
+
 class TestTracer
   {
   public:
@@ -104,213 +106,26 @@ class TestTracer
 
   DisplayUpdateCallback *mp_callback;
   intrusive_ptr<TriangleMesh> mp_mesh;
-  intrusive_ptr<Scene> mp_scene;
+  intrusive_ptr<const Scene> mp_scene;
   };
 
-SpectrumCoef_d RGBToSpectrumCoef(double i_r, double i_g, double i_b)
-  {
-  double r = pow(i_r,2.2);
-  double g = pow(i_g,2.2);
-  double b = pow(i_b,2.2);
-  XYZColor_d xyz = global_sRGB_E_ColorSystem.RGB_To_XYZ(RGBColor_d(r,g,b));
-  return SpectrumRoutines::XYZToSpectrumCoef(xyz);
-  }
-
-Spectrum_d RGBToSpectrum(double i_r, double i_g, double i_b)
-  {
-  XYZColor_d xyz = global_sRGB_D65_ColorSystem.RGB_To_XYZ(RGBColor_d(i_r,i_g,i_b));
-  return SpectrumRoutines::XYZToSpectrum(xyz);
-  }
+intrusive_ptr<const Camera> p_pbrt_camera;
 
 inline void TestTracer::LoadMesh()
   {
-  /*
-    {
-    std::ifstream myFile ("D:\\raytracerDB\\MERL\\brdfs\\tungsten-carbide.binary", std::ios::in | std::ios::binary);
-    intrusive_ptr<MERLMeasuredData> p_merl_measured_data( new MERLMeasuredData(myFile) );
-    MERLMeasured bxdf(p_merl_measured_data.get());
-    
+  intrusive_ptr<Log> p_log( new StreamLog );
+  //PbrtSceneImporter importer("D:\\pbrt\\v2.0\\pbrt-scenes\\pbrt-scenes\\tt.pbrt", p_log);
+  //PbrtSceneImporter importer("D:\\pbrt\\v2.0\\pbrt-scenes\\pbrt-scenes\\yeahright.pbrt", p_log);
+  PbrtSceneImporter importer("D:\\pbrt\\v2.0\\pbrt-scenes\\pbrt-scenes\\sponza-phomap.pbrt", p_log);
+  //PbrtSceneImporter importer("D:\\pbrt\\v2.0\\pbrt-source\\scenes\\prt-teapot.pbrt", p_log);
+  //PbrtSceneImporter importer("D:\\pbrt\\v2.0\\pbrt-scenes\\pbrt-scenes\\geometry\\sanmiguel\\plantas.pbrt", p_log);
+  importer.GetScene();
 
-    double lums[100];
-    Vector3D_d inc = Vector3D_d(1,2,3).Normalized();
-    for(int i=0;i<100;++i)
-      {
-      double theta=M_PI_2*i/100.0;
-      Vector3D_d dir=MathRoutines::SphericalDirection<double>(MathRoutines::SphericalPhi(inc)+M_PI, theta);
-      lums[i] = SpectrumRoutines::Luminance(bxdf.Evaluate(inc,dir));
-      }
-
-    double pdf1, pdf2;
-    Vector3D_d exitant;
-    SpectrumCoef_d sp = bxdf.Sample(Vector3D_d(1,2,3).Normalized(), exitant, Point2D_d(0.4123,0.07), pdf1);
-    pdf2=bxdf.PDF(Vector3D_d(1,2,3).Normalized(), exitant);
-
-    intrusive_ptr<Material> p_material( new MERLMeasuredMaterial(p_merl_measured_data) );
-    }
-*/
-
-  BBox3D_d bbox;
-  std::vector<intrusive_ptr<const Primitive> > primitives;
-
-  BMP Input;
-  Input.ReadFromFile("image.bmp");
-
-  std::vector<std::vector<RGB24> > values(Input.TellHeight(),std::vector<RGB24>(Input.TellWidth()));
-  for( int j=0 ; j < Input.TellHeight() ; j++)
-    {
-    for( int i=0 ; i < Input.TellWidth() ; i++)
-      {
-      RGB24 rgb;
-      rgb.m_rgb[0]=Input(i,j)->Red;
-      rgb.m_rgb[1]=Input(i,j)->Green;
-      rgb.m_rgb[2]=Input(i,j)->Blue;
-      values[j][i]=rgb;
-      }
-    }
-  intrusive_ptr<ImageSource<SpectrumCoef_f> > p_image_source( new RGB24ImageSource<SpectrumCoef_f>(values, global_sRGB_E_ColorSystem, 1.0) );
-
-  intrusive_ptr<Mapping2D> p_mapping( new UVMapping2D(1,1) );
-  intrusive_ptr< ImageTexture<SpectrumCoef_f,SpectrumCoef_d> > p_text(new ImageTexture<SpectrumCoef_f,SpectrumCoef_d>(p_image_source, p_mapping) );
-
-  /////// Add ground primitive ///
-    {
-    std::vector<Point3D_f> vertices;
-    std::vector<MeshTriangle> triangles;
-    vertices.push_back(Point3D_f(-20,-15,0));vertices.push_back(Point3D_f(10,-15,0));
-    vertices.push_back(Point3D_f(10,15,0));vertices.push_back(Point3D_f(-20,15,0));
-
-    MeshTriangle t1(0,1,2);t1.m_uvs[0]=Point2D_f(1,1);t1.m_uvs[1]=Point2D_f(0,1);t1.m_uvs[2]=Point2D_f(0,0);
-    MeshTriangle t2(2,3,0);t2.m_uvs[0]=Point2D_f(0,0);t2.m_uvs[1]=Point2D_f(1,0);t2.m_uvs[2]=Point2D_f(1,1);
-
-    triangles.push_back(t1);triangles.push_back(t2);
-    intrusive_ptr<TriangleMesh> p_ground_mesh = intrusive_ptr<TriangleMesh>( new TriangleMesh(vertices, triangles, true) );
-
-    std::ifstream myFile1 ("D:\\raytracerDB\\MERL\\brdfs\\ss440.binary", std::ios::in | std::ios::binary);
-    intrusive_ptr<MERLMeasuredData> p_merl_measured_data1( new MERLMeasuredData(myFile1) );
-    intrusive_ptr<Material> p_measured_material1( new MERLMeasuredMaterial(p_merl_measured_data1) );
-
-    std::ifstream myFile2 ("D:\\raytracerDB\\MERL\\brdfs\\polyethylene.binary", std::ios::in | std::ios::binary);
-    intrusive_ptr<MERLMeasuredData> p_merl_measured_data2( new MERLMeasuredData(myFile2) );
-    intrusive_ptr<Material> p_measured_material2( new MERLMeasuredMaterial(p_merl_measured_data2) );
-
-    intrusive_ptr<Material> p_material(new MixMaterial(p_measured_material1, p_measured_material2, p_text));
-
-    intrusive_ptr<Primitive> p_primitive(new Primitive(p_ground_mesh, p_material));
-    primitives.push_back(p_primitive);
-    bbox.Unite(Convert<double>(p_ground_mesh->GetBounds()));
-    }
-
-    {
-    Transform trans = MakeTranslation(Vector3D_d(5.5,-0.5,-1.0))*MakeScale(-1,1,1)*MakeRotationZ(-M_PI_2)*MakeScale(20,20,20);
-    intrusive_ptr<TriangleMesh> p_mesh( LoadMeshFromPLY("dragon/dragon.ply", trans, true) );
-    p_mesh->SetInvertNormals(true);
-
-    intrusive_ptr<Texture<SpectrumCoef_d> > p_white_texture(new ConstantTexture<SpectrumCoef_d> (SpectrumCoef_d(1.0)));
-    intrusive_ptr<Material> p_glass_material( new TransparentMaterial(p_white_texture,p_white_texture, 1.4) );
-
-    intrusive_ptr<Primitive> p_dragon_primitive(new Primitive(p_mesh, p_glass_material, NULL));
-
-    primitives.push_back(p_dragon_primitive);
-    bbox.Unite(Convert<double>(p_mesh->GetBounds()));
-    }
-
-    {
-    Sphere s;
-    s.SetSubdivisions(5);
-    s.SetTransformation(MakeTranslation(Vector3D_d(1,0,1.54))*MakeScale(2,2,2)*MakeScale(0.7));
-
-    intrusive_ptr<TriangleMesh> p_mesh( s.BuildMesh() );
-    std::ifstream myFile ("D:\\raytracerDB\\MERL\\brdfs\\tungsten-carbide.binary", std::ios::in | std::ios::binary);
-
-    tbb::tick_count t0 = tbb::tick_count::now();
-    intrusive_ptr<MERLMeasuredData> p_merl_measured_data( new MERLMeasuredData(myFile) );
-    intrusive_ptr<Material> p_measured_material( new MERLMeasuredMaterial(p_merl_measured_data) );
-    tbb::tick_count t1 = tbb::tick_count::now();
-    printf("Creating MERL: %lf\n", (t1-t0).seconds());
-
-    intrusive_ptr<Primitive> p_sphere_primitive(new Primitive(p_mesh, p_measured_material, NULL));
-
-    primitives.push_back(p_sphere_primitive);
-    bbox.Unite(Convert<double>(p_mesh->GetBounds()));
-    }
-
-    {
-    Cylinder c;
-    c.SetSubdivisions(360);
-    c.SetTransformation(MakeTranslation(Vector3D_d(1,-3.2,0.0))*MakeScale(1.5,1.5,2)*MakeRotationZ(M_PI*1.7));
-    c.SetMaxPhi(M_PI);
-
-    std::ifstream myFile ("D:\\raytracerDB\\MERL\\brdfs\\silver-metallic-paint.binary", std::ios::in | std::ios::binary);
-
-    tbb::tick_count t0 = tbb::tick_count::now();
-    intrusive_ptr<MERLMeasuredData> p_merl_measured_data( new MERLMeasuredData(myFile) );
-    intrusive_ptr<Material> p_measured_material( new MERLMeasuredMaterial(p_merl_measured_data) );
-    tbb::tick_count t1 = tbb::tick_count::now();
-    printf("Creating MERL: %lf\n", (t1-t0).seconds());
-
-    intrusive_ptr<TriangleMesh> p_mesh( c.BuildMesh() );
-    intrusive_ptr<Primitive> p_cylinder_primitive(new Primitive(p_mesh, p_measured_material, NULL));
-
-    primitives.push_back(p_cylinder_primitive);
-    bbox.Unite(Convert<double>(p_mesh->GetBounds()));
-    }
-
-    {
-    Disk d;
-    d.SetSubdivisions(360);
-    d.SetInnerRadius(0.25);
-    d.SetTransformation(MakeTranslation(Vector3D_d(3,-1.0,0.3))*MakeScale(1.2));
-    d.SetMaxPhi(M_PI*1.7);
-
-    std::ifstream myFile ("D:\\raytracerDB\\MERL\\brdfs\\silver-metallic-paint.binary", std::ios::in | std::ios::binary);
-
-    tbb::tick_count t0 = tbb::tick_count::now();
-    intrusive_ptr<MERLMeasuredData> p_merl_measured_data( new MERLMeasuredData(myFile) );
-    intrusive_ptr<Material> p_measured_material( new MERLMeasuredMaterial(p_merl_measured_data) );
-    tbb::tick_count t1 = tbb::tick_count::now();
-    printf("Creating MERL: %lf\n", (t1-t0).seconds());
-
-    intrusive_ptr<TriangleMesh> p_mesh( d.BuildMesh() );
-    intrusive_ptr<Primitive> p_cylinder_primitive(new Primitive(p_mesh, p_measured_material, NULL));
-
-    primitives.push_back(p_cylinder_primitive);
-    bbox.Unite(Convert<double>(p_mesh->GetBounds()));
-    }
-
-
-  LightSources lights;
-    {
-    intrusive_ptr<ImageSource<Spectrum_f> > p_env_light_image_source( new OpenEXRRgbaImageSource<Spectrum_f>("env_lights/DH041LL.exr", 1.2) );
-
-    tbb::tick_count t0 = tbb::tick_count::now();
-    intrusive_ptr<InfiniteLightSource> p_inf_light( new ImageEnvironmentalLight(bbox, Transform(), p_env_light_image_source) );
-    tbb::tick_count t1 = tbb::tick_count::now();
-    printf("Creating light: %lf\n", (t1-t0).seconds());
-
-    lights.m_infinite_light_sources.push_back(p_inf_light);
-    }
-
-    {
-    Sphere s;
-    s.SetSubdivisions(3);
-    s.SetTransformation(MakeTranslation(Vector3D_d(1-0.2,-3.2-0.2,7.0))*MakeScale(0.3));
-
-    intrusive_ptr<TriangleMesh> p_mesh( s.BuildMesh() );
-    intrusive_ptr<AreaLightSource> p_light( new DiffuseAreaLightSource(RGBToSpectrum(160000/M_PI,160000/M_PI,160000/M_PI), p_mesh));
-
-    intrusive_ptr<Texture<SpectrumCoef_d> > p_refl( new ConstantTexture<SpectrumCoef_d>(SpectrumCoef_d(1.0)) );
-    intrusive_ptr<Texture<double> > p_sigma( new ConstantTexture<double>(0.0) );
-    intrusive_ptr<Material> p_material( new MatteMaterial(p_refl, p_sigma) );
-
-    intrusive_ptr<Primitive> p_sphere_primitive(new Primitive(p_mesh, p_material, p_light));
-
-    primitives.push_back(p_sphere_primitive);
-    bbox.Unite(Convert<double>(p_mesh->GetBounds()));
-
-    lights.m_area_light_sources.push_back(p_light);
-    }
-
-  mp_scene.reset(new Scene(primitives, NULL, lights));
+  mp_scene = importer.GetScene();
+  p_pbrt_camera = importer.GetCameras()[0];
+  m_imageWidth = (int)p_pbrt_camera->GetFilm()->GetXResolution();
+  m_imageHeight = (int)p_pbrt_camera->GetFilm()->GetYResolution();
+  return;
   }
 
 inline void TestTracer::RenderImage()
@@ -320,7 +135,7 @@ inline void TestTracer::RenderImage()
   //FilmFilter *filter = new BoxFilter(1.0,1.0);
   //intrusive_ptr<InteractiveFilm> p_film(new InteractiveFilm(GetImageWidth(), GetImageHeight(), intrusive_ptr<FilmFilter>(filter)));
   intrusive_ptr<ImageFilm> p_film(new ImageFilm(GetImageWidth(), GetImageHeight(), intrusive_ptr<FilmFilter>(filter)));
-  //p_film->SetCropWindow(Point2D_i(288-8,421-28),Point2D_i(394-8,514-28));
+  //p_film->SetCropWindow(Point2D_i(400,500),Point2D_i(500,600));
 
   Point2D_i window_begin,window_end;
   p_film->GetSamplingExtent(window_begin, window_end);
@@ -328,38 +143,39 @@ inline void TestTracer::RenderImage()
   Point3D_d camera_pos(9.5,-2.4,7);
   Point3D_d look_at(2.5,-1.5,0.0);
   Vector3D_d direction = Vector3D_d(look_at-camera_pos).Normalized();
-  intrusive_ptr<Camera> p_camera( new PerspectiveCamera( MakeLookAt(camera_pos,direction,Vector3D_d(0,0,1)), p_film, 0.001*12.000, 6, 1.22) );
+  intrusive_ptr<const Camera> p_camera( new PerspectiveCamera( MakeLookAt(camera_pos,direction,Vector3D_d(0,0,1)).Inverted(), p_film, 0.001*12.000, 6, 1.22) );
+
+  p_camera = p_pbrt_camera;
 
   intrusive_ptr<ImagePixelsOrder> pixel_order(new ConsecutiveImagePixelsOrder);
   //intrusive_ptr<ImagePixelsOrder> pixel_order(new RandomBlockedImagePixelsOrder);
 
-  intrusive_ptr<Sampler> p_sampler( new LDSampler(window_begin, window_end, 8, pixel_order) );
+  intrusive_ptr<Sampler> p_sampler( new LDSampler(window_begin, window_end, 2, pixel_order) );
 
-
+/*
   DirectLightingLTEIntegratorParams params;
   params.m_direct_light_samples_num=8;
   params.m_max_specular_depth=6;
   params.m_media_step_size=0.01;
   intrusive_ptr<DirectLightingLTEIntegrator> p_lte_int( new DirectLightingLTEIntegrator(mp_scene, params) );
+*/
 
-/*
   PhotonLTEIntegratorParams params;
-  params.m_direct_light_samples_num=16;
-  params.m_gather_samples_num=16;
+  params.m_direct_light_samples_num=8;
+  params.m_gather_samples_num=8;
   params.m_caustic_lookup_photons_num=100;
   params.m_max_caustic_lookup_dist=0.05;
   params.m_max_specular_depth=10;
   params.m_media_step_size=0.01;
   intrusive_ptr<PhotonLTEIntegrator> p_lte_int( new PhotonLTEIntegrator(mp_scene, params) );
-  */
 
   t0 = tbb::tick_count::now();
-  //p_lte_int->ShootPhotons(10000000, 10000000, 10000000, true);
+  p_lte_int->ShootPhotons(0, 500000, 500000, true);
   t1 = tbb::tick_count::now();
   printf("Shooting: %lf\n", (t1-t0).seconds());
 
   intrusive_ptr<SamplerBasedRenderer> p_renderer( new SamplerBasedRenderer(p_lte_int, p_sampler) );
-  p_renderer->SetDisplayUpdateCallback(mp_callback, 60.0);
+  p_renderer->SetDisplayUpdateCallback(mp_callback, 20.0);
  
   tbb::task_scheduler_init init;
   t0 = tbb::tick_count::now();
