@@ -127,7 +127,7 @@ bool TriangleAccelerator::Intersect(const RayDifferential &i_ray, Intersection &
         // Compute first barycentric coordinate.
         Vector3D_d d = Vector3D_d(ray.m_origin - v0);
         double b1 = (d*s1) * inv_divisor;
-        if(b1 < -DBL_EPS || b1 > (1.0+DBL_EPS) || divisor==0.0)
+        if(b1 < -DBL_EPS || b1 > (1.0+DBL_EPS))
           continue;
 
         // Compute second barycentric coordinate.
@@ -250,7 +250,7 @@ bool TriangleAccelerator::IntersectTest(Ray i_ray) const
         // Compute first barycentric coordinate.
         Vector3D_d d = Vector3D_d(i_ray.m_origin - v0);
         double b1 = (d*s1) * inv_divisor;
-        if(b1 < -DBL_EPS || b1 > (1.0+DBL_EPS) || divisor==0.0)
+        if(b1 < -DBL_EPS || b1 > (1.0+DBL_EPS))
           continue;
 
         // Compute second barycentric coordinate.
@@ -293,8 +293,7 @@ void TriangleAccelerator::_SwapTriangles(size_t i_index1, size_t i_index2, std::
   std::swap(i_bboxes[i_index1], i_bboxes[i_index2]);
   }
 
-std::pair<unsigned char,double> TriangleAccelerator::_DetermineBestSplit(TriangleAccelerator &i_accelerator,
-                                                          std::vector<BBox3D_f> &i_bboxes,
+std::pair<unsigned char,double> TriangleAccelerator::_DetermineBestSplit(std::vector<BBox3D_f> &i_bboxes,
                                                           const BBox3D_d &i_node_bbox,
                                                           size_t i_begin, 
                                                           size_t i_end, 
@@ -419,7 +418,7 @@ m_begin(i_begin), m_end(i_end), m_bbox(i_accelerator._ConstructBBox(i_bboxes, i_
     return;
     }
 
-  std::pair<unsigned char,double> split = i_accelerator._DetermineBestSplit(i_accelerator, i_bboxes, m_bbox, i_begin, i_end, i_middle_split_mask);
+  std::pair<unsigned char,double> split = i_accelerator._DetermineBestSplit(i_bboxes, m_bbox, i_begin, i_end, i_middle_split_mask);
   unsigned char split_axis = split.first;
   double split_coord = split.second;
 

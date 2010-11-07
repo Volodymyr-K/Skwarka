@@ -65,8 +65,7 @@ class TriangleAccelerator
     * The best split axis and split position are the ones that have the minimum cost function. The cost function is the cost of node traversal assuming its children are all leaves.
     * The method tries many splits positions that are distributed uniformly over the node's extent.
     */
-    std::pair<unsigned char,double> _DetermineBestSplit(TriangleAccelerator &i_accelerator, std::vector<BBox3D_f> &i_bboxes, const BBox3D_d &i_node_bbox,
-      size_t i_begin, size_t i_end, unsigned char i_middle_split_mask);
+    std::pair<unsigned char,double> _DetermineBestSplit(std::vector<BBox3D_f> &i_bboxes, const BBox3D_d &i_node_bbox, size_t i_begin, size_t i_end, unsigned char i_middle_split_mask);
 
   private:
     // All the triangles of the primitives.

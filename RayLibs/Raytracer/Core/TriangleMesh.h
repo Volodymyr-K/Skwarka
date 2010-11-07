@@ -118,6 +118,11 @@ class TriangleMesh: public ReferenceCounted
     Vector3D_f GetTriangleNormal(size_t i_triangle_index) const;
 
     /**
+    * Returns shading normal associated with the vertex.
+    */
+    Vector3D_f GetShadingNormal(size_t i_vertes_index) const;
+
+    /**
     * Populates the DifferentialGeometry assuming that the specified ray intersects the specified triangle.
     */
     void ComputeDifferentialGeometry(size_t i_triangle_index, const RayDifferential &i_ray, DifferentialGeometry &o_dg) const;
@@ -222,6 +227,12 @@ inline Vector3D_f TriangleMesh::GetTriangleNormal(size_t i_triangle_index) const
     return (Vector3D_f(vertices[2]-vertices[0])^Vector3D_f(vertices[1]-vertices[0])).Normalized();
   else
     return (Vector3D_f(vertices[1]-vertices[0])^Vector3D_f(vertices[2]-vertices[0])).Normalized();
+  }
+
+inline Vector3D_f TriangleMesh::GetShadingNormal(size_t i_vertes_index) const
+  {
+  ASSERT(i_vertes_index < m_shading_normals.size());
+  return m_shading_normals[i_vertes_index];
   }
 
 inline BBox3D_f TriangleMesh::GetBounds() const
