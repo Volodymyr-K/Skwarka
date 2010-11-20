@@ -155,6 +155,8 @@ typedef ImageTexture<SpectrumCoef_d, SpectrumCoef_d, DefaultConverter<SpectrumCo
 typedef ImageTexture<float, float, DefaultConverter<float,float> > ImageTexture_float_float;
 typedef ImageTexture<double, double, DefaultConverter<double,double> > ImageTexture_double_double;
 
+typedef ImageTexture<float, double, DefaultConverter<float,double> > ImageTexture_float_double;
+
 #include <boost/serialization/export.hpp>
 BOOST_CLASS_EXPORT(ImageTexture_Spectrum_f_Spectrum_f)
 BOOST_CLASS_EXPORT(ImageTexture_Spectrum_f_Spectrum_d)
@@ -164,5 +166,6 @@ BOOST_CLASS_EXPORT(ImageTexture_SpectrumCoef_f_SpectrumCoef_d)
 BOOST_CLASS_EXPORT(ImageTexture_SpectrumCoef_d_SpectrumCoef_d)
 BOOST_CLASS_EXPORT(ImageTexture_float_float)
 BOOST_CLASS_EXPORT(ImageTexture_double_double)
+BOOST_CLASS_EXPORT(ImageTexture_float_double)
 
 #endif // IMAGE_TEXTURE_H

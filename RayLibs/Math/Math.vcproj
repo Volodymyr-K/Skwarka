@@ -18,7 +18,7 @@
 		<Configuration
 			Name="Debug|Win32"
 			OutputDirectory="..\..\..\Binaries\$(ConfigurationName)"
-			IntermediateDirectory="..\..\..\Intermediate\$(ConfigurationName)"
+			IntermediateDirectory="..\..\..\Intermediate\$(ConfigurationName)\Math"
 			ConfigurationType="4"
 			CharacterSet="0"
 			>
@@ -83,7 +83,7 @@
 		<Configuration
 			Name="Release|Win32"
 			OutputDirectory="..\..\..\Binaries\$(ConfigurationName)"
-			IntermediateDirectory="..\..\..\Intermediate\$(ConfigurationName)"
+			IntermediateDirectory="..\..\..\Intermediate\$(ConfigurationName)\Math"
 			ConfigurationType="4"
 			CharacterSet="0"
 			WholeProgramOptimization="1"

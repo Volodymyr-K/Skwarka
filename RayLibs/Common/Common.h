@@ -22,5 +22,7 @@ using boost::shared_ptr;
 // If later we need to serialize other types of archive they must be included here as well.
 #include <boost/archive/binary_iarchive.hpp>
 #include <boost/archive/binary_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/text_oarchive.hpp>
 
 #endif // COMMON_H
