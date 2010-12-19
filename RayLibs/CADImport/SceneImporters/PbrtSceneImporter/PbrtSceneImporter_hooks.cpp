@@ -124,7 +124,7 @@ void PbrtSceneImporter::_pbrtCamera(const std::string &name, const PbrtImport::P
 
   mp_renderOptions->CameraName = name;
   mp_renderOptions->CameraParams = params;
-  mp_renderOptions->CameraToWorld = m_current_transform.Inverted()*MakeScale(-1,1,1);
+  mp_renderOptions->CameraToWorld = m_current_transform.Inverted();
   m_namedCoordinateSystems["camera"] = mp_renderOptions->CameraToWorld;
   }
 
