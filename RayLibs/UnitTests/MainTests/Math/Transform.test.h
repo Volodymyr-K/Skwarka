@@ -55,6 +55,20 @@ class TransformTestSuite : public CxxTest::TestSuite
       CustomAssertDelta(p,p2,(1e-10));
       }
 
+    void test_Transform_GetMatrix()
+      {
+      Transform t(m_matrix1);
+      Matrix4x4_d matrix = t.GetMatrix();
+
+      for(unsigned char i=0;i<4;++i)
+        for(unsigned char j=0;j<4;++j)
+          if (matrix.m_values[i][j] != m_matrix1.m_values[i][j])
+          {
+          TS_FAIL("GetMatrix() returned wrong matrix.");
+          return;
+          }
+      }
+
     void test_Transform_ConstrWithMatrixElements()
       {
       Transform t(m_elements);

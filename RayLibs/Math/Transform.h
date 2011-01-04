@@ -36,6 +36,11 @@ class Transform
     bool InvertsOrientation() const;
 
     /**
+    * Returns 4x4 matrix representing the transformation.
+    */
+    Matrix4x4_d GetMatrix() const;
+
+    /**
     * Applies transformation to the given point.
     */
     template<typename T>
@@ -203,6 +208,11 @@ inline bool Transform::InvertsOrientation() const
     m_matrix.m_values[1][1] * m_matrix.m_values[2][0])));
 
   return det<0.0;
+  }
+
+inline Matrix4x4_d Transform::GetMatrix() const
+  {
+  return m_matrix;
   }
 
 template<typename T>

@@ -182,6 +182,13 @@ class Matrix4x4TestSuite : public CxxTest::TestSuite
       TS_ASSERT(not_singular==false);
       }
 
+    void test_Matrix4x4_Conversion()
+      {
+      Matrix4x4_f m_float_matrix = Convert<float>(m_matrix1);
+      TS_ASSERT_EQUALS(m_float_matrix.m_values[0][0], (float)m_matrix1.m_values[0][0]);
+      TS_ASSERT_EQUALS(m_float_matrix.m_values[3][3], (float)m_matrix1.m_values[3][3]);
+      }
+
   private:
     double m_elements[4][4], m_elements2[4][4];
     Matrix4x4_d m_matrix1, m_matrix2;

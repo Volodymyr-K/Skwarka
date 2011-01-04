@@ -69,6 +69,12 @@ Matrix4x4<T> operator*(T i_value, const Matrix4x4<T> &i_matrix);
 template<typename T>
 Matrix4x4<T> operator*(const Matrix4x4<T> &i_left, const Matrix4x4<T> &i_right);
 
+/**
+* Converts Matrix4x4 instance to a Matrix4x4 parameterized by a specified type.
+*/
+template<typename T2, typename T>
+Matrix4x4<T2> Convert(const Matrix4x4<T> &i_matrix);
+
 typedef Matrix4x4<float> Matrix4x4_f;
 typedef Matrix4x4<double> Matrix4x4_d;
 
@@ -315,6 +321,16 @@ Matrix4x4<T> operator*(const Matrix4x4<T> &i_left, const Matrix4x4<T> &i_right)
       i_left.m_values[i][3]*i_right.m_values[3][j];
 
   return Matrix4x4<T>(tmp);
+  }
+
+template<typename T2, typename T>
+Matrix4x4<T2> Convert(const Matrix4x4<T> &i_matrix)
+  {
+  return Matrix4x4<T2>(
+    (T2)i_matrix.m_values[0][0], (T2)i_matrix.m_values[0][1], (T2)i_matrix.m_values[0][2], (T2)i_matrix.m_values[0][3],
+    (T2)i_matrix.m_values[1][0], (T2)i_matrix.m_values[1][1], (T2)i_matrix.m_values[1][2], (T2)i_matrix.m_values[1][3],
+    (T2)i_matrix.m_values[2][0], (T2)i_matrix.m_values[2][1], (T2)i_matrix.m_values[2][2], (T2)i_matrix.m_values[2][3],
+    (T2)i_matrix.m_values[3][0], (T2)i_matrix.m_values[3][1], (T2)i_matrix.m_values[3][2], (T2)i_matrix.m_values[3][3]);
   }
 
 /**
