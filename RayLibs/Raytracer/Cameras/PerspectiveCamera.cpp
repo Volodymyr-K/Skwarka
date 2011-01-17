@@ -49,3 +49,18 @@ double PerspectiveCamera::GenerateRay(const Point2D_d &i_image_point, const Poin
 
   return 1.0;
   }
+
+double PerspectiveCamera::GetLensRadius() const
+  {
+  return m_lens_radius;
+  }
+
+double PerspectiveCamera::GetFocalDistance() const
+  {
+  return m_focal_distance;
+  }
+
+double PerspectiveCamera::GetXViewAngle() const
+  {
+  return m_x_view_angle;
+  }

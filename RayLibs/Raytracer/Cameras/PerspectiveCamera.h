@@ -33,6 +33,12 @@ class PerspectiveCamera: public Camera
     */
     double GenerateRay(const Point2D_d &i_image_point, const Point2D_d &i_lens_uv, Ray &o_ray) const;
 
+    double GetLensRadius() const;
+
+    double GetFocalDistance() const;
+
+    double GetXViewAngle() const;
+
   private:
     PerspectiveCamera() {}; // Empty default constructor for the boost serialization framework.
 
