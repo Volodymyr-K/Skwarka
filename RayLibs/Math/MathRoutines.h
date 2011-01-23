@@ -131,6 +131,12 @@ namespace MathRoutines
   * Converts degrees to radians.
   */
   double DegreesToRadians(double i_degrees);
+
+
+  /**
+  * Converts radians to degrees.
+  */
+  double RadiansToDegrees(double i_radiands);
   };
 
 /////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
@@ -421,6 +427,10 @@ namespace MathRoutines
     return i_degrees*M_PI/180.0;
     }
 
+  inline double RadiansToDegrees(double i_radiands)
+    {
+    return i_radiands*180.0/M_PI;
+    }
   }
 
 #endif // MATH_ROUTINES_H
