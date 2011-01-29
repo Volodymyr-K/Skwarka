@@ -124,8 +124,9 @@ namespace CoreUtils
   inline double GetNextMinT(const Intersection &i_intersection, const Vector3D_d &i_direction)
     {
     ASSERT(i_direction.IsNormalized());
+    Transform world_to_mesh = i_intersection.mp_primitive->GetMeshToWorldTransform().Inverted();
 
-    double divisor = i_direction*i_intersection.m_cross;
+    double divisor = world_to_mesh(i_direction)*i_intersection.m_cross;
     if (divisor == 0.0)
       return 0.0;
     else

@@ -147,11 +147,52 @@ class TriangleAcceleratorTestSuite : public CxxTest::TestSuite
         }
       }
 
+    void test_TriangleAccelerator_ObjectInstancing()
+      {
+      std::vector<intrusive_ptr<const Primitive> > primitives1, primitives2;
+      RandomGenerator<double> rg;
+
+      for(size_t i=0;i<10000;++i)
+        {
+        Transform transform;
+        transform = MakeTranslation(Vector3D_d(rg(100), rg(100), rg(100)));
+        transform = transform*MakeScale(rg(3.0)+0.01, rg(3.0)+0.01, rg(3.0)+0.01);
+        transform = transform*MakeRotationY(rg(6.0))*MakeRotationZ(rg(6.0))*MakeRotationX(rg(6.0));
+
+        primitives1.push_back( _CreatePrimitive(TriangleMeshHelper::ConstructTetrahedron(Point3D_f(0,0,0)), transform) );
+        primitives2.push_back( _CreatePrimitive(TriangleMeshHelper::ConstructTetrahedron(Point3D_f(0,0,0), transform)) );
+        }
+
+      shared_ptr<TriangleAccelerator> p_triangle_accelerator1( new TriangleAccelerator(primitives1) );
+      shared_ptr<TriangleAccelerator> p_triangle_accelerator2( new TriangleAccelerator(primitives2) );
+
+      size_t N = 10000;
+      for(size_t i=0;i<N;++i)
+        {
+        Point3D_d point(rg(0,100), rg(0,100), rg(0,100));
+        Vector3D_d dir(rg(1.0), rg(1.0), rg(1.0));
+        Ray ray(point, dir.Normalized());
+
+        Intersection isect1, isect2;
+        double t1,t2;
+        bool hit1 = p_triangle_accelerator1->Intersect(RayDifferential(ray), isect1, &t1);
+        bool hit2 = p_triangle_accelerator2->Intersect(RayDifferential(ray), isect2, &t2);
+
+        TS_ASSERT_EQUALS(hit1, hit2);
+        if (hit1 && hit2)
+          {
+          TS_ASSERT_DELTA(t1,t2,(1e-3));
+          TS_ASSERT_EQUALS(isect1.m_triangle_index, isect2.m_triangle_index);
+          CustomAssertDelta(isect1.m_dg.m_point, isect2.m_dg.m_point, (1e-3));
+          }
+        }
+      }
+
   private:
-    intrusive_ptr<Primitive> _CreatePrimitive(intrusive_ptr<TriangleMesh> ip_mesh) const
+    intrusive_ptr<Primitive> _CreatePrimitive(intrusive_ptr<TriangleMesh> ip_mesh, const Transform &i_transform = Transform()) const
       {
       intrusive_ptr<Material> p_material(new MaterialMock());
-      intrusive_ptr<Primitive> p_primitive(new Primitive(ip_mesh, p_material, NULL));
+      intrusive_ptr<Primitive> p_primitive(new Primitive(ip_mesh, i_transform, p_material, NULL));
       return p_primitive;
       }
 

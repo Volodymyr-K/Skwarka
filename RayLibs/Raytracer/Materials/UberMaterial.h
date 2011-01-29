@@ -23,7 +23,7 @@ class UberMaterial: public Material
     * @param ip_Kr The texture defining the total specular reflectance. Each spectrum component should be in [0;1] range.
     * @param ip_roughness The texture defining the roughness of the surface (for the glossy component). Values should be in [0;1] range.
     * @param ip_opacity The texture defining the opacity of the surface. Each spectrum component should be in [0;1] range.
-    * @param ip_eta The texture defining the opacity of the surface. Each spectrum component should be in [0;1] range.
+    * @param i_refractive_index The texture defining the opacity of the surface. Each spectrum component should be in [0;1] range.
     */
     UberMaterial(intrusive_ptr<const Texture<SpectrumCoef_d> > ip_Kd,
       intrusive_ptr<const Texture<SpectrumCoef_d> > ip_Ks,

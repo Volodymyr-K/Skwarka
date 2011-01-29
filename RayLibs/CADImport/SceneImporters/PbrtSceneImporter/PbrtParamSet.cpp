@@ -506,12 +506,9 @@ namespace PbrtImport
         return spectrumTextures.find(name)->second;
       else
         {
-        std::stringstream ss;
-        ss << "Couldn't find spectrum texture named \"" << name << "\" for parameter \"" << n << "\"";
-
-        std::string message;
-        ss >> message;
-        if(ip_log) ip_log->LogMessage(Log::ERROR_LEVEL, message);
+        std::string message("Couldn't find spectrum texture named \"");
+        message += name;message += std::string("\" for parameter \""); message += n; message += std::string("\"");
+        PbrtImport::Utils::LogError(ip_log, message);
         }
       }
 
@@ -529,12 +526,9 @@ namespace PbrtImport
         return floatTextures.find(name)->second;
       else
         {
-        std::stringstream ss;
-        ss << "Couldn't find float texture named \"" << name << "\" for parameter \"" << n << "\"";
-
-        std::string message;
-        ss >> message;
-        if(ip_log) ip_log->LogMessage(Log::ERROR_LEVEL, message);
+        std::string message("Couldn't find float texture named \"");
+        message += name;message += std::string("\" for parameter \""); message += n; message += std::string("\"");
+        PbrtImport::Utils::LogError(ip_log, message);
         }
       }
 

@@ -283,7 +283,7 @@ void PbrtSceneImporter::_pbrtShape(const std::string &name, const PbrtImport::Pa
   if (m_graphicsState.m_material_to_bump_map.find(mtl.get())!=m_graphicsState.m_material_to_bump_map.end())
     p_bump_map = m_graphicsState.m_material_to_bump_map.find(mtl.get())->second;
 
-  intrusive_ptr<const Primitive> prim( new Primitive(p_mesh, mtl, p_area, p_bump_map) );
+  intrusive_ptr<const Primitive> prim( new Primitive(p_mesh, Transform(), mtl, p_area, p_bump_map) );
 
   // Add primitive to scene or current instance
   if (mp_renderOptions->currentInstance)
@@ -368,10 +368,9 @@ void PbrtSceneImporter::_pbrtObjectInstance(const std::string &name)
   for(size_t i=0;i<inst.size();++i)
     {
     intrusive_ptr<const Primitive> p_prim = inst[i];
-    intrusive_ptr<const Primitive> p_copy = NULL; // copy p_prim with m_current_transform
-    //mp_renderOptions->primitives.push_back(p_copy);
-
-    PbrtImport::Utils::LogError(mp_log, "Object instancing is not supported yet."); // TODO: support it.
+    intrusive_ptr<const Primitive> p_copy( new Primitive(p_prim->GetTriangleMesh(), m_current_transform,
+      p_prim->GetMaterial(), p_prim->GetAreaLightSource(), p_prim->GetBumpMap()) );
+    mp_renderOptions->primitives.push_back(p_copy);
     }
   }
 

@@ -22,11 +22,22 @@ class PrimitiveTestSuite : public CxxTest::TestSuite
       intrusive_ptr<Material> p_material( new MaterialMock() );
       intrusive_ptr<AreaLightSource> p_area_light( new DiffuseAreaLightSource(Spectrum_d(1.0), p_mesh) );
 
-      intrusive_ptr<Primitive> p_primitive( new Primitive(p_mesh, p_material, p_area_light, NULL) );
+      Transform transform = MakeScale(2,3,4)*MakeRotationZ(0.1);
+      intrusive_ptr<Primitive> p_primitive( new Primitive(p_mesh, transform, p_material, p_area_light, NULL) );
 
       TS_ASSERT(p_primitive->GetMaterial()==p_material);
       TS_ASSERT(p_primitive->GetTriangleMesh()==p_mesh);
       TS_ASSERT(p_primitive->GetAreaLightSource()==p_area_light);
+
+      Matrix4x4_d m1 = transform.GetMatrix();
+      Matrix4x4_d m2 = p_primitive->GetMeshToWorldTransform().GetMatrix();
+      for(unsigned char i=0;i<4;++i)
+        for(unsigned char j=0;j<4;++j)
+          if (m1.m_values[i][j]!=m2.m_values[i][j])
+            {
+            TS_FAIL("Transform is incorrect.");
+            return;
+            }
       }
 
     // Tests BSDF with a constant bump map.
@@ -36,7 +47,7 @@ class PrimitiveTestSuite : public CxxTest::TestSuite
       intrusive_ptr<Material> p_material( new MaterialMock() );
       intrusive_ptr<Texture<double> > p_bump_map( new TextureMock<double>(1.0) );
 
-      intrusive_ptr<Primitive> p_primitive( new Primitive(p_mesh, p_material, NULL, p_bump_map) );
+      intrusive_ptr<Primitive> p_primitive( new Primitive(p_mesh, Transform(), p_material, NULL, p_bump_map) );
 
       MemoryPool pool;
       DifferentialGeometry dg;
@@ -56,7 +67,7 @@ class PrimitiveTestSuite : public CxxTest::TestSuite
       intrusive_ptr<Material> p_material( new MaterialMock() );
       intrusive_ptr<AreaLightSource> p_area_light( new DiffuseAreaLightSource(Spectrum_d(1.0), p_mesh) );
 
-      intrusive_ptr<Primitive> p_primitive( new Primitive(p_mesh, p_material, p_area_light, NULL) );
+      intrusive_ptr<Primitive> p_primitive( new Primitive(p_mesh, Transform(), p_material, p_area_light, NULL) );
 
       DifferentialGeometry dg;
       dg.m_geometric_normal=dg.m_shading_normal=Vector3D_d(0.0,0.0,1.0);

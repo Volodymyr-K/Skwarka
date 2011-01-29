@@ -95,7 +95,7 @@ class SceneTestSuite : public CxxTest::TestSuite
       intrusive_ptr<Material> p_material( new MaterialMock() );
       intrusive_ptr<AreaLightSource> p_area_light( new DiffuseAreaLightSource(Spectrum_d(1.0), p_mesh) );
 
-      return intrusive_ptr<Primitive>( new Primitive(p_mesh, p_material, p_area_light, NULL) );
+      return intrusive_ptr<Primitive>( new Primitive(p_mesh, Transform(), p_material, p_area_light, NULL) );
       }
 
   private:

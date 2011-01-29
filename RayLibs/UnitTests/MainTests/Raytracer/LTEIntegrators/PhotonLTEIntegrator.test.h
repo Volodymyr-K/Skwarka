@@ -155,7 +155,7 @@ class PhotonLTEIntegratorTestSuite : public CxxTest::TestSuite
       intrusive_ptr<Texture<SpectrumCoef_d> > p_reflectance( new ConstantTexture<SpectrumCoef_d>(i_reflectance) );
       intrusive_ptr<Texture<double> > p_sigma( new ConstantTexture<double>(0.0) );
       intrusive_ptr<Material> p_material(new MatteMaterial(p_reflectance, p_sigma));
-      intrusive_ptr<Primitive> p_primitive(new Primitive(ip_mesh, p_material, ip_light));
+      intrusive_ptr<Primitive> p_primitive(new Primitive(ip_mesh, Transform(), p_material, ip_light));
       return p_primitive;
       }
 

@@ -25,7 +25,7 @@ class SamplerBasedRendererTestSuite : public CxxTest::TestSuite
       {
       intrusive_ptr<TriangleMesh> p_sphere( TriangleMeshHelper::ConstructSphere(Point3D_d(0,0,0),1.0, 6) );
       intrusive_ptr<Material> p_material(new MaterialMock());
-      intrusive_ptr<Primitive> p_sphere_primitive(new Primitive(p_sphere, p_material));
+      intrusive_ptr<Primitive> p_sphere_primitive(new Primitive(p_sphere, Transform(), p_material));
 
       m_primitives.push_back(p_sphere_primitive);
       }

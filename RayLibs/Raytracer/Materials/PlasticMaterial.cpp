@@ -22,7 +22,8 @@ const BSDF *PlasticMaterial::GetBSDF(const DifferentialGeometry &i_dg, size_t i_
 
   SpectrumCoef_d diffuse = mp_diffuse_reflectance->Evaluate(i_dg, i_triangle_index);
   SpectrumCoef_d glossy = mp_glossy_reflectance->Evaluate(i_dg, i_triangle_index);
-  ASSERT(InRange(diffuse+glossy, 0.0, 1.0));
+  diffuse.Clamp(0.0, 1.0);
+  glossy.Clamp(0.0, 1.0);
 
   BxDF *p_lambertian_bxdf = new ( i_pool.Alloc(sizeof(Lambertian)) ) Lambertian(diffuse);
 

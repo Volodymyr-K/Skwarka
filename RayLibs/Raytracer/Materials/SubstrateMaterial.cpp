@@ -31,6 +31,8 @@ const BSDF *SubstrateMaterial::GetBSDF(const DifferentialGeometry &i_dg, size_t 
 
   SpectrumCoef_d diffuse = mp_diffuse_reflectance->Evaluate(i_dg, i_triangle_index);
   SpectrumCoef_d specular = mp_specular_reflectance->Evaluate(i_dg, i_triangle_index);
+  diffuse.Clamp(0.0, 1.0);
+  specular.Clamp(0.0, 1.0);
 
   BxDF *p_bxdf;
   if (mp_roughness)

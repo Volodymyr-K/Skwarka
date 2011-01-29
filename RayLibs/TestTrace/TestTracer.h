@@ -114,9 +114,10 @@ intrusive_ptr<const Camera> p_pbrt_camera;
 inline void TestTracer::LoadMesh()
   {
   intrusive_ptr<Log> p_log( new StreamLog );
+  PbrtSceneImporter importer("D:\\pbrt\\v2.0\\pbrt-scenes\\pbrt-scenes\\plants-modified.pbrt", p_log);
   //PbrtSceneImporter importer("D:\\pbrt\\v2.0\\pbrt-scenes\\pbrt-scenes\\tt.pbrt", p_log);
   //PbrtSceneImporter importer("D:\\pbrt\\v2.0\\pbrt-scenes\\pbrt-scenes\\yeahright.pbrt", p_log);
-  PbrtSceneImporter importer("D:\\pbrt\\v2.0\\pbrt-scenes\\pbrt-scenes\\sponza-phomap.pbrt", p_log);
+  //PbrtSceneImporter importer("D:\\pbrt\\v2.0\\pbrt-scenes\\pbrt-scenes\\sponza-phomap.pbrt", p_log);
   //PbrtSceneImporter importer("D:\\pbrt\\v2.0\\pbrt-source\\scenes\\prt-teapot.pbrt", p_log);
   //PbrtSceneImporter importer("D:\\pbrt\\v2.0\\pbrt-scenes\\pbrt-scenes\\geometry\\sanmiguel\\plantas.pbrt", p_log);
   importer.GetScene();
@@ -152,14 +153,14 @@ inline void TestTracer::RenderImage()
 
   intrusive_ptr<Sampler> p_sampler( new LDSampler(window_begin, window_end, 2, pixel_order) );
 
-/*
+
   DirectLightingLTEIntegratorParams params;
   params.m_direct_light_samples_num=8;
   params.m_max_specular_depth=6;
   params.m_media_step_size=0.01;
   intrusive_ptr<DirectLightingLTEIntegrator> p_lte_int( new DirectLightingLTEIntegrator(mp_scene, params) );
-*/
 
+/*
   PhotonLTEIntegratorParams params;
   params.m_direct_light_samples_num=8;
   params.m_gather_samples_num=8;
@@ -168,14 +169,15 @@ inline void TestTracer::RenderImage()
   params.m_max_specular_depth=10;
   params.m_media_step_size=0.01;
   intrusive_ptr<PhotonLTEIntegrator> p_lte_int( new PhotonLTEIntegrator(mp_scene, params) );
+*/
 
   t0 = tbb::tick_count::now();
-  p_lte_int->ShootPhotons(0, 500000, 500000, true);
+  //p_lte_int->ShootPhotons(1000000, 20000000, 20000000, true);
   t1 = tbb::tick_count::now();
   printf("Shooting: %lf\n", (t1-t0).seconds());
 
   intrusive_ptr<SamplerBasedRenderer> p_renderer( new SamplerBasedRenderer(p_lte_int, p_sampler) );
-  p_renderer->SetDisplayUpdateCallback(mp_callback, 20.0);
+  p_renderer->SetDisplayUpdateCallback(mp_callback, 60.0);
  
   tbb::task_scheduler_init init;
   t0 = tbb::tick_count::now();

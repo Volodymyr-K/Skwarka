@@ -93,7 +93,7 @@ namespace PbrtImport
       void Clear();
 
     private:
-        std::string ParamSet::_GetFullPath(const std::string &i_path) const;
+        std::string _GetFullPath(const std::string &i_path) const;
 
     private:
       std::string m_base_path;

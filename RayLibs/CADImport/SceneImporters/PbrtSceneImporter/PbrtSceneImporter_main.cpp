@@ -157,9 +157,14 @@ bool PbrtSceneImporter::_ReadLines(const std::string &i_filename)
     {
     if (c=='\n' || c=='\r')
       {
-      // Remove comments.
-      size_t hash_pos = s.find_first_of('#');
-      if (hash_pos != std::string::npos) s.erase(hash_pos);      
+      // Remove comments following the '#' character but make sure it is not a part of a string value embraced by quotes.
+      int quotes = 0, hash_pos = -1;
+      for(size_t i=0;i<s.size();++i)
+        {
+        if (s[i]=='\"') quotes = 1-quotes;
+        if (s[i]=='#' && quotes==0) {hash_pos=i;break;}
+        }
+      if (hash_pos != -1) s.erase(hash_pos);
 
       // Adds line to the buffer and executes the command if necessary.
       if (_AddLine(s)==false) {fclose(fp);m_pushed_filenames.pop_back();return false;}
@@ -198,7 +203,7 @@ bool PbrtSceneImporter::_AddLine(const std::string &i_line)
 
     // Make sure the path is absolute.
     if (PbrtImport::Utils::IsAbsolutePath(new_filename)==false)
-      new_filename = PbrtImport::StringRoutines::GetDirectoryPath(m_pushed_filenames.back()) + std::string("/") + new_filename;
+      new_filename = PbrtImport::StringRoutines::GetDirectoryPath(m_pushed_filenames[0]) + std::string("/") + new_filename;
 
     if (_ReadLines(new_filename)==false) return false;
     }

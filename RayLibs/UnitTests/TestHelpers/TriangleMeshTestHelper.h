@@ -15,7 +15,7 @@ namespace TriangleMeshHelper
   /*
   This method creates a tetrahedron triangle mesh inscribed in a unit sphere centered at the specified point.
   */
-  intrusive_ptr<TriangleMesh> ConstructTetrahedron(const Point3D_f &i_origin = Point3D_f());
+  intrusive_ptr<TriangleMesh> ConstructTetrahedron(const Point3D_f &i_origin = Point3D_f(), const Transform &i_transform = Transform());
 
   /*
   This method creates a sphere triangle mesh with the specified center and radius.
@@ -29,7 +29,7 @@ namespace TriangleMeshHelper
 namespace TriangleMeshHelper
   {
 
-  inline intrusive_ptr<TriangleMesh> ConstructTetrahedron(const Point3D_f &i_origin)
+  inline intrusive_ptr<TriangleMesh> ConstructTetrahedron(const Point3D_f &i_origin, const Transform &i_transform)
     {
     std::vector<Point3D_f> vertices(4);
     std::vector<MeshTriangle> triangles(4);
@@ -39,6 +39,9 @@ namespace TriangleMeshHelper
     vertices[1]=i_origin+Point3D_f((float) base_radius,  0.f, -1.f/3.f);
     vertices[2]=i_origin+Point3D_f((float) (base_radius*cos(2.0*M_PI_3)), (float) ( base_radius*sin(2.0*M_PI_3)), -1.f/3.f);
     vertices[3]=i_origin+Point3D_f((float) (base_radius*cos(2.0*M_PI_3)), (float) (-base_radius*sin(2.0*M_PI_3)), -1.f/3.f);
+
+    for(size_t i=0;i<4;++i)
+      i_transform(vertices[i], vertices[i]);
 
     triangles[0]=MeshTriangle(1,3,2);
     triangles[1]=MeshTriangle(1,0,3);

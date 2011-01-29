@@ -36,7 +36,8 @@ class PrimitiveSerializationTestSuite : public CxxTest::TestSuite
       intrusive_ptr<AreaLightSource> p_area_light( new DiffuseAreaLightSource(Spectrum_d(1.0), p_mesh) );
       intrusive_ptr<Texture<double> > p_bump_map( new ConstantTexture<double>(1.0) );
 
-      intrusive_ptr<Primitive> p_primitive1( new Primitive(p_mesh, p_material, p_area_light, p_bump_map) );
+      Transform transform = MakeScale(2,3,4)*MakeRotationZ(0.1);
+      intrusive_ptr<Primitive> p_primitive1( new Primitive(p_mesh, transform, p_material, p_area_light, p_bump_map) );
 
         {
         boost::iostreams::stream_buffer<SinkDevice> buffer(m_data, m_buffer_size);
@@ -60,6 +61,16 @@ class PrimitiveSerializationTestSuite : public CxxTest::TestSuite
       TS_ASSERT_EQUALS(p_primitive1->GetAreaLightSource()->Power(), p_primitive2->GetAreaLightSource()->Power());
       TS_ASSERT_EQUALS(p_primitive1->GetMaterial()->GetBSDF(dg,0,pool)->GetComponentsNum(), p_primitive2->GetMaterial()->GetBSDF(dg,0,pool)->GetComponentsNum());
       TS_ASSERT_EQUALS(p_primitive1->GetBumpMap()->Evaluate(dg,0), p_primitive2->GetBumpMap()->Evaluate(dg,0));
+
+      Matrix4x4_d m1 = p_primitive1->GetMeshToWorldTransform().GetMatrix();
+      Matrix4x4_d m2 = p_primitive1->GetMeshToWorldTransform().GetMatrix();
+      for(unsigned char i=0;i<4;++i)
+        for(unsigned char j=0;j<4;++j)
+          if (m1.m_values[i][j]!=m2.m_values[i][j])
+            {
+            TS_FAIL("Transform object was not serialized properly.");
+            return;
+            }
       }
 
   private:

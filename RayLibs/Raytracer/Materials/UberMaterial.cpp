@@ -31,7 +31,7 @@ const BSDF *UberMaterial::GetBSDF(const DifferentialGeometry &i_dg, size_t i_tri
 
   SpectrumCoef_d op = mp_opacity->Evaluate(i_dg, i_triangle_index);
   op.Clamp(0.0, 1.0);
-  if (op != SpectrumCoef_d(1.0))
+  if (InRange(op, 1.0-(1e-2), 1.0+(1e-2))==false)
     {
     BxDF *p_bxdf = new ( i_pool.Alloc(sizeof(SpecularTransmission)) ) SpecularTransmission(SpectrumCoef_d(1.0) - op, m_refractive_index, 1.0);
     p_bsdf->AddBxDF(p_bxdf);

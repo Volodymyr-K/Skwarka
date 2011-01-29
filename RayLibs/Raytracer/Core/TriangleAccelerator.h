@@ -40,7 +40,7 @@ class TriangleAccelerator
     * @param i_ray Input ray. Direction component should be normalized.
     * @return true if an intersection is found and false otherwise.
     */
-    bool IntersectTest(Ray i_ray) const;
+    bool IntersectTest(const Ray &i_ray) const;
 
     /**
     * Returns bounding box of all triangles.
@@ -56,22 +56,34 @@ class TriangleAccelerator
     TriangleAccelerator(TriangleAccelerator &);
     TriangleAccelerator &operator=(TriangleAccelerator &);
 
-    BBox3D_d _ConstructBBox(const std::vector<BBox3D_f> &i_bboxes, size_t i_begin, size_t i_end) const;
+    BBox3D_d _ConstructBBox(size_t i_triangles_begin, size_t i_triangles_end, size_t i_instances_begin, size_t i_instances_end) const;
 
-    void _SwapTriangles(size_t i_index1, size_t i_index2, std::vector<BBox3D_f> &i_bboxes);
+    void _SwapTriangles(size_t i_index1, size_t i_index2);
+    void _SwapInstances(size_t i_index1, size_t i_index2);
 
     /**
     * Computes best split axis and split position for the specified internal node.
     * The best split axis and split position are the ones that have the minimum cost function. The cost function is the cost of node traversal assuming its children are all leaves.
     * The method tries many splits positions that are distributed uniformly over the node's extent.
     */
-    std::pair<unsigned char,double> _DetermineBestSplit(std::vector<BBox3D_f> &i_bboxes, const BBox3D_d &i_node_bbox, size_t i_begin, size_t i_end, unsigned char i_middle_split_mask);
+    std::pair<unsigned char,double> _DetermineBestSplit(const BBox3D_d &i_node_bbox, size_t i_triangles_begin, size_t i_triangles_end,
+      size_t i_instances_begin, size_t i_instances_end, unsigned char i_middle_split_mask);
+    
+    /**
+    * Helper method that search the nearest intersection with the specified subtree. The method recursively processes all the nested instances.
+    */
+    bool _NodeIntersect(const TriangleAccelerator::Node *ip_node, Ray &i_ray, int &o_primitive_index, int &o_triangle_index) const;
+
+    /**
+    * Helper method that looks for any intersection with the specified subtree. The method recursively processes all the nested instances.
+    */
+    bool _NodeIntersectTest(const TriangleAccelerator::Node *ip_node, const Ray &i_ray) const;
 
   private:
     // All the triangles of the primitives.
     std::vector<Triangle3D_f> m_triangles;
 
-    // Indices of the primitives (in m_primitives vector) the corresponding triangles belong to.
+    // Indices of the primitives (in m_primitives field vector) the corresponding triangles belong to.
     std::vector<size_t> m_primitive_indices;
 
     // Indices of the triangles in their meshes the corresponding triangles belong to.
@@ -84,6 +96,19 @@ class TriangleAccelerator
 
     // Memory pool that is used for allocating the nodes.
     MemoryPool m_pool;
+
+    // Bounding boxes of the (unique) triangles and instanced objects.
+    // These vectors are only used during the tree constructions.
+    std::vector<BBox3D_f> m_triangle_bboxes, m_instance_bboxes;
+
+    // Contains pointers to the subtrees associated with the instanced primitives.
+    std::vector<const Node *> m_instance_nodes;
+
+    // Contains the transformations associated with the instanced primitives.
+    std::vector<Transform> m_instance_to_world_transformations;
+
+    // Contains the indices of the primitives (in m_primitives field vector) associated with the instanced primitives.
+    std::vector<size_t> m_instance_primitive_indices;
 
     // Maximum number of triangles in leaves. The actual number of triangles may be greater for middle children if an effective split is not possible.
     static const size_t MAX_TRIANGLES_IN_LEAF = 4;
@@ -101,7 +126,8 @@ class TriangleAccelerator
 /**
 * Internal structure for the tree nodes.
 * It is used for both internal nodes and leaves.
-* Contains bounding box of the triangles associated with the node, pointers to children, begin and end iterators of the associated triangles and the flags bitset.
+* Contains bounding box of the triangles and instanced primitives associated with the node, pointers to children,
+* begin and end iterators of the associated triangles and instanced primitives and the flags bitset.
 */
 struct TriangleAccelerator::Node
   {
@@ -111,8 +137,11 @@ struct TriangleAccelerator::Node
   // Pointers to children (NULL if not present).
   Node *m_children[3];
 
-  // Begin and end iterators of the associated triangles in the tree (see TriangleAccelerator::m_triangles vector).
-  size_t m_begin, m_end;
+  // Begin and end iterators of the associated triangles in the tree (see TriangleAccelerator::m_instance_nodes vector).
+  size_t m_triangles_begin, m_triangles_end;
+
+  // Begin and end iterators of the associated instanced primitives in the tree (see TriangleAccelerator::m_instance_primitive_indices vector).
+  size_t m_instances_begin, m_instances_end;
 
   // Bitset that defines whether the node is internal or a leaf. If it is internal it also defines the splitting axis (x,y or z).
   unsigned char m_flags;
@@ -136,13 +165,15 @@ struct TriangleAccelerator::Node
   * Creates the Node instance.
   * The constructor recursively creates the children if the node is internal.
   * @param i_accelerator TriangleAccelerator instance the node belongs to.
-  * @param i_bboxes Vector of triangle's bounding boxes.
-  * @param i_begin Begin iterator of the corresponding triangles.
-  * @param i_end End iterator of the corresponding triangles.
+  * @param i_triangles_begin Begin iterator of the corresponding triangles.
+  * @param i_triangles_end End iterator of the corresponding triangles.
+  * @param i_instances_begin Begin iterator of the corresponding instances.
+  * @param i_instances_end End iterator of the corresponding instances.
   * @param i_middle_split_mask The bitset that defines what middle splits have been done in the ancestor nodes.
   * @param i_depth Depth of the node (0 for root).
   */
-  Node(TriangleAccelerator &i_accelerator, std::vector<BBox3D_f> &i_bboxes, size_t i_begin, size_t i_end, unsigned char i_middle_split_mask, size_t i_depth);
+  Node(TriangleAccelerator &i_accelerator, size_t i_triangles_begin, size_t i_triangles_end, size_t i_instances_begin, size_t i_instances_end,
+    unsigned char i_middle_split_mask, size_t i_depth);
   };
 
 inline void TriangleAccelerator::Node::SetType(bool i_is_leaf, unsigned char i_split_axis)

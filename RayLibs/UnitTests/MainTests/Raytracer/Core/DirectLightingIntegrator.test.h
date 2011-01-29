@@ -197,7 +197,7 @@ class DirectLightingIntegratorTestSuite : public CxxTest::TestSuite
     intrusive_ptr<Primitive> _CreatePrimitive(intrusive_ptr<TriangleMesh> ip_mesh, intrusive_ptr<AreaLightSource> ip_light = NULL) const
       {
       intrusive_ptr<Material> p_material(new MaterialMock());
-      intrusive_ptr<Primitive> p_primitive(new Primitive(ip_mesh, p_material, ip_light));
+      intrusive_ptr<Primitive> p_primitive(new Primitive(ip_mesh, Transform(), p_material, ip_light));
       return p_primitive;
       }
 
