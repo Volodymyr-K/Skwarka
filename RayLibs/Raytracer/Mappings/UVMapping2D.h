@@ -69,7 +69,6 @@ void UVMapping2D::serialize(Archive &i_ar, const unsigned int i_version)
   }
 
 // Register the derived class in the boost serialization framework.
-#include <boost/serialization/export.hpp>
 BOOST_CLASS_EXPORT(UVMapping2D)
 
 #endif // UV_MAPPING_2D_H

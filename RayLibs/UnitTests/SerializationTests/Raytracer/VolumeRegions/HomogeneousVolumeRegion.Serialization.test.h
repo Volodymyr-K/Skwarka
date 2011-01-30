@@ -2,6 +2,7 @@
 #define HOMOGENEOUS_VOLUME_REGION_SERIALIZATION_TEST_H
 
 #include <cxxtest/TestSuite.h>
+#include <Common/CommonSerialization.h>
 #include <UnitTests/TestHelpers/CustomValueTraits.h>
 #include <Math/Geometry.h>
 #include <Raytracer/Core/Spectrum.h>

@@ -2,6 +2,7 @@
 #define MIP_MAP_SERIALIZATION_TEST_H
 
 #include <cxxtest/TestSuite.h>
+#include <Common/CommonSerialization.h>
 #include <UnitTests/TestHelpers/CustomValueTraits.h>
 #include <Raytracer/Core/MIPMap.h>
 #include <Raytracer/Core/Spectrum.h>

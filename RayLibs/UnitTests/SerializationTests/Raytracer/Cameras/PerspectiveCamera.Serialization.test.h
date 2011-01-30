@@ -2,6 +2,7 @@
 #define PERSPECTIVE_CAMERA_SERIALIZATION_FILM_TEST_H
 
 #include <cxxtest/TestSuite.h>
+#include <Common/CommonSerialization.h>
 #include <UnitTests/TestHelpers/CustomValueTraits.h>
 #include <Math/Transform.h>
 #include <Raytracer/Cameras/PerspectiveCamera.h>

@@ -2,6 +2,7 @@
 #define IMAGE_FILM_SERIALIZATION_FILM_TEST_H
 
 #include <cxxtest/TestSuite.h>
+#include <Common/CommonSerialization.h>
 #include <UnitTests/TestHelpers/CustomValueTraits.h>
 #include <Raytracer/Core/Film.h>
 #include <Raytracer/Core/Spectrum.h>

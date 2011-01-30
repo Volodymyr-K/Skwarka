@@ -193,7 +193,6 @@ typedef RGB24ImageSource<Spectrum_d> RGB24ImageSource_Spectrum_double;
 typedef RGB24ImageSource<SpectrumCoef_f> RGB24ImageSource_SpectrumCoef_float;
 typedef RGB24ImageSource<SpectrumCoef_d> RGB24ImageSource_SpectrumCoef_double;
 
-#include <boost/serialization/export.hpp>
 BOOST_CLASS_EXPORT(RGB24ImageSource_float)
 BOOST_CLASS_EXPORT(RGB24ImageSource_double)
 BOOST_CLASS_EXPORT(RGB24ImageSource_Spectrum_float)

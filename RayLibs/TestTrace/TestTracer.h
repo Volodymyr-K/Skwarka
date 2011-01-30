@@ -72,10 +72,14 @@
 #include <Raytracer/ImageSources/RGB24ImageSource.h>
 #include <Raytracer/ImageSources/OpenEXRRgbaImageSource.h>
 
+// Disable compiler warning raised in the OpenEXR's code.
+#pragma warning( push )
+#pragma warning( disable : 4231 )
 #include <ImfRgbaFile.h>
 #include <ImfStringAttribute.h>
 #include <ImfMatrixAttribute.h>
 #include <ImfArray.h>
+#pragma warning( pop )
 
 #include <CADImport/SceneImporters/PbrtSceneImporter.h>
 

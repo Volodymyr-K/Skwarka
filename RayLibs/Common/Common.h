@@ -13,16 +13,22 @@
 #include <boost/shared_ptr.hpp>
 using boost::shared_ptr;
 
-#include <boost/serialization/access.hpp>
-#include <boost/serialization/vector.hpp>
-#include <boost/serialization/level.hpp>
+// Forward declaration of the "access" class that is needed for the boost serialization framework.
+namespace boost {namespace serialization {class access;}}
 
-// We explicitly include the binary archives here to make sure all serializable classes include them.
-// This is needed to make the serialization export work for the derived classes.
-// If later we need to serialize other types of archive they must be included here as well.
-#include <boost/archive/binary_iarchive.hpp>
-#include <boost/archive/binary_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/text_oarchive.hpp>
+/*
+The BOOST_CLASS_IMPLEMENTATION and BOOST_CLASS_EXPORT macroses are defined in the boost serialization framework.
+We don't include the framework headers by default because they drastically increase the linking time and the size of the resulting binaries.
+To avoid compilation errors and to "disable" the serialization we define void implementation of these macroses.
+The macroses are defined only if they are not yet defined in which case we do nothing.
+If you need to "enable" the serialization you have to include the CommonSerialization.h file.
+*/
+#ifndef BOOST_CLASS_IMPLEMENTATION
+#define BOOST_CLASS_IMPLEMENTATION(a, b) ;
+#endif
+
+#ifndef BOOST_CLASS_EXPORT
+#define BOOST_CLASS_EXPORT(a) ;
+#endif
 
 #endif // COMMON_H

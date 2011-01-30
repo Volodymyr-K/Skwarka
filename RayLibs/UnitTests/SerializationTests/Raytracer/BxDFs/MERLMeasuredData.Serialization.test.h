@@ -2,6 +2,7 @@
 #define MERL_MEASURED_DATA_SERIALIZATION_TEST_H
 
 #include <cxxtest/TestSuite.h>
+#include <Common/CommonSerialization.h>
 #include <UnitTests/TestHelpers/CustomValueTraits.h>
 #include <Common/MemoryPool.h>
 #include <Raytracer/BxDFs/MERLMeasured.h>

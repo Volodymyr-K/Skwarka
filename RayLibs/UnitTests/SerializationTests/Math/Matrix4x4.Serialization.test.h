@@ -2,6 +2,7 @@
 #define MATRIX_4X4_SERIALIZATION_TEST_H
 
 #include <cxxtest/TestSuite.h>
+#include <Common/CommonSerialization.h>
 #include <UnitTests/TestHelpers/CustomValueTraits.h>
 #include <Math/Matrix4x4.h>
 #include <boost/archive/binary_iarchive.hpp>

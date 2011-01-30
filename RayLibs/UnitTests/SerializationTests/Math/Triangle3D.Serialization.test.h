@@ -2,6 +2,7 @@
 #define TRIANGLE3D_SERIALIZATION_TEST_H
 
 #include <cxxtest/TestSuite.h>
+#include <Common/CommonSerialization.h>
 #include <UnitTests/TestHelpers/CustomValueTraits.h>
 #include <Math/Triangle3D.h>
 #include <boost/archive/binary_iarchive.hpp>

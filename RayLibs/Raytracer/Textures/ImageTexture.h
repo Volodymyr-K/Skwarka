@@ -157,7 +157,6 @@ typedef ImageTexture<double, double, DefaultConverter<double,double> > ImageText
 
 typedef ImageTexture<float, double, DefaultConverter<float,double> > ImageTexture_float_double;
 
-#include <boost/serialization/export.hpp>
 BOOST_CLASS_EXPORT(ImageTexture_Spectrum_f_Spectrum_f)
 BOOST_CLASS_EXPORT(ImageTexture_Spectrum_f_Spectrum_d)
 BOOST_CLASS_EXPORT(ImageTexture_Spectrum_d_Spectrum_d)

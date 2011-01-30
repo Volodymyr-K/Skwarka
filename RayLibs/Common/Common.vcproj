@@ -159,6 +159,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CommonSerialization.h"
+				>
+			</File>
+			<File
 				RelativePath=".\IntrusiveSmartPointer.h"
 				>
 			</File>

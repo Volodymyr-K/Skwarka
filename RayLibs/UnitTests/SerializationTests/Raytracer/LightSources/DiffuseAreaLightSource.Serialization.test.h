@@ -2,6 +2,7 @@
 #define DIFFUSE_AREA_LIGHT_SERIALIZATION_TEST_H
 
 #include <cxxtest/TestSuite.h>
+#include <Common/CommonSerialization.h>
 #include <UnitTests/TestHelpers/CustomValueTraits.h>
 #include <Raytracer/LightSources/DiffuseAreaLightSource.h>
 #include <Raytracer/Core/TriangleMesh.h>

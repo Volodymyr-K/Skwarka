@@ -6,6 +6,7 @@
 #include <Raytracer/Core/Spectrum.h>
 #include <Raytracer/Core/Texture.h>
 #include <map>
+#include <vector>
 #include <string>
 
 namespace PbrtImport

@@ -74,7 +74,6 @@ typedef ScaleTexture<SpectrumCoef_d,SpectrumCoef_d> ScaleTexture_SpectrumCoef_d_
 typedef ScaleTexture<float,float> ScaleTexture_float_float;
 typedef ScaleTexture<double,double> ScaleTexture_double_double;
 
-#include <boost/serialization/export.hpp>
 BOOST_CLASS_EXPORT(ScaleTexture_SpectrumCoef_f_Spectrum_f)
 BOOST_CLASS_EXPORT(ScaleTexture_SpectrumCoef_d_Spectrum_d)
 BOOST_CLASS_EXPORT(ScaleTexture_SpectrumCoef_f_SpectrumCoef_f)

@@ -2,6 +2,7 @@
 #define BOX_FILTER_SERIALIZATION_TEST_H
 
 #include <cxxtest/TestSuite.h>
+#include <Common/CommonSerialization.h>
 #include <UnitTests/TestHelpers/CustomValueTraits.h>
 #include <Raytracer/Core/FilmFilter.h>
 #include <Raytracer/FilmFilters/BoxFilter.h>

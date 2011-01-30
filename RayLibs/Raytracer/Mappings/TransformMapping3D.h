@@ -63,7 +63,6 @@ void TransformMapping3D::serialize(Archive &i_ar, const unsigned int i_version)
   }
 
 // Register the derived class in the boost serialization framework.
-#include <boost/serialization/export.hpp>
 BOOST_CLASS_EXPORT(TransformMapping3D)
 
 #endif // TRANSFORM_MAPPING_3D_H

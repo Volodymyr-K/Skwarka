@@ -113,7 +113,6 @@ void HomogeneousVolumeRegion::serialize(Archive &i_ar,  const unsigned int i_ver
   }
 
 // Register the derived class in the boost serialization framework.
-#include <boost/serialization/export.hpp>
 BOOST_CLASS_EXPORT(HomogeneousVolumeRegion)
 
 #endif // HOMOGENEOUS_VOLUME_REGION_H

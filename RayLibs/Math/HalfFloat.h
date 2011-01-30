@@ -1,7 +1,12 @@
 #ifndef HALF_FLOAT_H
 #define HALF_FLOAT_H
 
+// Disable compiler warning raised in the OpenEXR's code.
+#pragma warning( push )
+#pragma warning( disable : 4231 )
 #include <half.h>
+#pragma warning( pop )
+
 typedef half HalfFloat;
 
 template<class Archive>

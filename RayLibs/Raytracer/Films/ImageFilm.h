@@ -136,7 +136,6 @@ void ImageFilm::serialize(Archive &i_ar, const unsigned int i_version)
   }
 
 // Register the derived class in the boost serialization framework.
-#include <boost/serialization/export.hpp>
 BOOST_CLASS_EXPORT(ImageFilm)
 
 #endif // IMAGE_FILM_H

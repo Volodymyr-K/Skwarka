@@ -68,7 +68,6 @@ void PointLight::serialize(Archive &i_ar, const unsigned int i_version)
   }
 
 // Register the derived class in the boost serialization framework.
-#include <boost/serialization/export.hpp>
 BOOST_CLASS_EXPORT(PointLight)
 
 #endif // POINT_LIGHT_H

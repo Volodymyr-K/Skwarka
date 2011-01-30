@@ -58,15 +58,6 @@ class CompressedDirection
     // This is a friend class that initializes static m_vectors array during application startup.
     friend class CompressedDirection_StaticInitializer;
 
-    // Needed for the boost serialization framework.
-    friend class boost::serialization::access;
-
-    /**
-    * Serializes CompressedDirection to/from the specified Archive. This method is used by the boost serialization framework.
-    */
-    template<typename Archive>
-    void serialize(Archive &i_ar, const unsigned int i_version);
-
   private:
     unsigned short m_data;
 
@@ -130,13 +121,27 @@ inline CompressedDirection CompressedDirection::FromID(unsigned short i_id)
   return ret;
   }
 
-template<typename Archive>
-void CompressedDirection::serialize(Archive &i_ar, const unsigned int i_version)
+template<class Archive>
+void save(Archive &i_ar, const CompressedDirection &i_direction, const unsigned int i_version)
   {
-  i_ar & m_data;
+  const unsigned short val(i_direction.GetID());
+  i_ar << val;
   }
 
-// Don't store class info for CompressedDirection.
+template<class Archive>
+void load(Archive &i_ar, CompressedDirection &io_direction, const unsigned int i_version)
+  {
+  unsigned short val;
+  i_ar >> val;
+  io_direction = CompressedDirection::FromID(val);
+  }
+
+template<class Archive>
+void serialize(Archive &i_ar, CompressedDirection &io_direction, const unsigned int i_version)
+  {
+  boost::serialization::split_free(i_ar, io_direction, i_version);
+  }
+  
 BOOST_CLASS_IMPLEMENTATION(CompressedDirection, boost::serialization::object_serializable)
 
 #endif // COMPRESSED_DIRECTION_H
