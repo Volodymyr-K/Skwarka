@@ -13,6 +13,7 @@
 // Disable compiler warning raised in the OpenEXR's code.
 #pragma warning( push )
 #pragma warning( disable : 4231 )
+#pragma warning( disable : 4996 )
 #include <ImfRgbaFile.h>
 #include <ImfRgba.h>
 #include <ImfArray.h>
