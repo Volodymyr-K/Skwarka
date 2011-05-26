@@ -72,7 +72,7 @@ template<typename T1, typename T2>
 Spectrum<T2> operator*(T1 i_value, const Spectrum<T2> &i_spectrum);
 
 template<typename T>
-Spectrum<T> operator*(const SpectrumCoef<T> i_spectrum_coef, const Spectrum<T> &i_spectrum);
+Spectrum<T> operator*(const SpectrumCoef<T> &i_spectrum_coef, const Spectrum<T> &i_spectrum);
 
 /**
 * Reads Spectrum from the input stream.
@@ -319,7 +319,7 @@ Spectrum<T2> operator*(T1 i_value, const Spectrum<T2> &i_spectrum)
   }
 
 template<typename T>
-Spectrum<T> operator*(const SpectrumCoef<T> i_spectrum_coef, const Spectrum<T> &i_spectrum)
+Spectrum<T> operator*(const SpectrumCoef<T> &i_spectrum_coef, const Spectrum<T> &i_spectrum)
   {
   return i_spectrum*i_spectrum_coef;
   }

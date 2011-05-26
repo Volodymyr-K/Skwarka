@@ -411,7 +411,7 @@ void* SamplerBasedRenderer::IntegratorFilter::operator()(void* ip_chunk)
     double weight_dx = mp_camera->GenerateRay(image_point+Point2D_d(x_filter_width, 0.0), lens_uv, r_dx);
     double weight_dy = mp_camera->GenerateRay(image_point+Point2D_d(0.0, y_filter_width), lens_uv, r_dy);
 
-    if (weight_dx != 0.0 && weight_dy != 0.0)
+    if (weight_dx > DBL_EPS && weight_dy > DBL_EPS)
       ray.m_has_differentials = true;
 
     ray.m_origin_dx=r_dx.m_origin;
@@ -419,9 +419,7 @@ void* SamplerBasedRenderer::IntegratorFilter::operator()(void* ip_chunk)
     ray.m_direction_dx=r_dx.m_direction;
     ray.m_direction_dy=r_dy.m_direction;
 
-    Spectrum_d radiance=Spectrum_d(0.0);
-    if (weight != 0.0)
-      radiance = mp_lte_integrator->Radiance(ray, p_sample, ts);
+    Spectrum_d radiance = weight > DBL_EPS ? mp_lte_integrator->Radiance(ray, p_sample, ts) : Spectrum_d(0.0);
 
     // Log unexpected radiance values.
     if (IsNaN(radiance))

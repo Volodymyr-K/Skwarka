@@ -396,7 +396,8 @@ const T &MIPMap<T>::_GetTexel(size_t i_level, int i_x, int i_y) const
       return black;
       }
 
-  return level.Get(i_y,i_x);
+  ASSERT(i_x>=0 && i>y=0);
+  return level.Get((size_t)i_y, (size_t)i_x);
   }
 
 template <typename T>

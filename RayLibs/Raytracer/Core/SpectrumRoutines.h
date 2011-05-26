@@ -200,7 +200,7 @@ namespace SpectrumRoutines
     while(begin<end)
       {
       ASSERT(i_samples[begin].first<=i_samples[end].first && i_wavelength>=i_samples[begin].first && i_wavelength<i_samples[end+1].first);
-      int medium = (begin+end+1)/2;
+      size_t medium = (begin+end+1)/2;
 
       if (i_samples[medium].first <= i_wavelength)
         begin=medium;

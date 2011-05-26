@@ -92,7 +92,8 @@ void PhotonLTEIntegrator::_GetLightsPowerCDF(const LightSources &i_light_sources
 
   // Normalize CDF values.
   double total_power = o_lights_CDF[lights_num-1];
-  if (total_power != 0.0)
+  ASSERT(total_power >= 0.0);
+  if (total_power > DBL_EPS)
     for(size_t i=0;i<lights_num;++i)
       o_lights_CDF[i] /= total_power;
   else

@@ -113,7 +113,7 @@ class KDTree
     * Recursively builds the tree.
     * The method initializes node with the specified i_node_index and recursively splits the input range of points [i_begin;i_end) into two subregions.
     */
-    void _Build(size_t i_node_index, size_t i_begin, size_t i_end, const TPoint3D **ip_points_refs, unsigned int &io_next_free_node_index);
+    void _Build(size_t i_node_index, size_t i_begin, size_t i_end, const TPoint3D **ip_points_refs, size_t &io_next_free_node_index);
 
     /**
     * Private helper method that performs the generic lookup operation.
@@ -385,7 +385,7 @@ KDTree<TPoint3D>::KDTree(const std::vector<TPoint3D> &i_points)
   for (size_t i=0;i<points_num;++i)
     p_points_refs[i] = &i_points[i];
 
-  unsigned int next_free_node_index = 1;
+  size_t next_free_node_index = 1;
   _Build(0, 0, points_num, p_points_refs, next_free_node_index);
   ASSERT(next_free_node_index == points_num);
 
@@ -405,7 +405,7 @@ const std::vector<TPoint3D> &KDTree<TPoint3D>::GetAllPoints() const
   }
 
 template<typename TPoint3D>
-void KDTree<TPoint3D>::_Build(size_t i_node_index, size_t i_begin, size_t i_end, const TPoint3D **ip_points_refs, unsigned int &io_next_free_node_index)
+void KDTree<TPoint3D>::_Build(size_t i_node_index, size_t i_begin, size_t i_end, const TPoint3D **ip_points_refs, size_t &io_next_free_node_index)
   {
   ASSERT(i_begin<i_end);
   ASSERT(ip_points_refs);
@@ -442,7 +442,7 @@ void KDTree<TPoint3D>::_Build(size_t i_node_index, size_t i_begin, size_t i_end,
   if (i_begin < split_index)
     {
     m_nodes[i_node_index].SetHasLeftChild(true);
-    unsigned int child_num = io_next_free_node_index++;
+    size_t child_num = io_next_free_node_index++;
     _Build(child_num, i_begin, split_index, ip_points_refs, io_next_free_node_index);
     }
   else
@@ -451,7 +451,7 @@ void KDTree<TPoint3D>::_Build(size_t i_node_index, size_t i_begin, size_t i_end,
   // Note: the split_index's point is not added to any of the children, it is associated with this node.
   if (split_index+1 < i_end)
     {
-    unsigned int child_num = io_next_free_node_index++;
+    size_t child_num = io_next_free_node_index++;
     m_nodes[i_node_index].SetRightChild(child_num);
     _Build(child_num, split_index+1, i_end, ip_points_refs, io_next_free_node_index);
     }

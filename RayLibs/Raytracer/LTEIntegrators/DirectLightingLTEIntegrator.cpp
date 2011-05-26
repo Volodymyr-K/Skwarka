@@ -55,7 +55,7 @@ Spectrum_d DirectLightingLTEIntegrator::_MediaRadianceAndTranmsittance(const Ray
   const VolumeRegion *p_volume = mp_scene->GetVolumeRegion_RawPtr();
 
   double t0, t1;
-  if (p_volume==NULL || p_volume->Intersect(ray, &t0, &t1)==false || t0==t1)
+  if (p_volume==NULL || p_volume->Intersect(ray, &t0, &t1)==false || fabs(t0-t1)<DBL_EPS)
     {
     o_transmittance = SpectrumCoef_d(1.0);
     return Spectrum_d();

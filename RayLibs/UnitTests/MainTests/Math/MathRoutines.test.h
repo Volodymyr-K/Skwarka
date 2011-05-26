@@ -183,7 +183,7 @@ class MathRoutinesTestSuite : public CxxTest::TestSuite
 
     void test_RoundDownPow2_ZeroCase()
       {
-      TS_ASSERT_EQUALS(MathRoutines::RoundDownPow2(0),-1);
+      TS_ASSERT_EQUALS(MathRoutines::RoundDownPow2(0),0);
       }
 
     void test_RoundDownPow2_PowerOf2Case()

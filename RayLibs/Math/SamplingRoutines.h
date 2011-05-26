@@ -19,7 +19,7 @@ namespace SamplingRoutines
   * @param i_sample Input 2D sample in [0;1]x[0;1].
   * @return Resulting 2D point in the unit radius disk.
   */
-  Point2D_d ConcentricDiskSampling(const Point2D_d i_sample);
+  Point2D_d ConcentricDiskSampling(const Point2D_d &i_sample);
 
   /**
   * Maps 2D sample in [0;1]x[0;1] to a hemisphere point uniformly.
@@ -27,7 +27,7 @@ namespace SamplingRoutines
   * @param i_sample Input 2D sample in [0;1]x[0;1].
   * @return Resulting 3D vector pointing to a point on the hemisphere surface.
   */
-  Vector3D_d UniformHemisphereSampling(const Point2D_d i_sample);
+  Vector3D_d UniformHemisphereSampling(const Point2D_d &i_sample);
 
   /**
   * Returns PDF value for hemisphere uniform sampling.
@@ -41,7 +41,7 @@ namespace SamplingRoutines
   * @param i_sample Input 2D sample in [0;1]x[0;1].
   * @return Resulting 3D vector pointing to a point on the sphere surface.
   */
-  Vector3D_d UniformSphereSampling(const Point2D_d i_sample);
+  Vector3D_d UniformSphereSampling(const Point2D_d &i_sample);
 
   /**
   * Returns PDF value for sphere uniform sampling.
@@ -55,7 +55,7 @@ namespace SamplingRoutines
   * @param i_sample Input 2D sample in [0;1]x[0;1].
   * @return Resulting 3D vector pointing to a point on the hemisphere surface.
   */
-  Vector3D_d CosineHemisphereSampling(const Point2D_d i_sample);
+  Vector3D_d CosineHemisphereSampling(const Point2D_d &i_sample);
 
   /**
   * Returns PDF value for hemisphere cosine sampling for the specified theta angle cosine.
@@ -71,7 +71,7 @@ namespace SamplingRoutines
   * @param i_cos_theta_max Cosine of the cone spread angle. Should be in [0;1) range.
   * @return Resulting 3D vector inside the cone. Should be normalized.
   */
-  Vector3D_d UniformConeSampling(const Point2D_d i_sample, double i_cos_theta_max);
+  Vector3D_d UniformConeSampling(const Point2D_d &i_sample, double i_cos_theta_max);
 
   /**
   * Returns PDF value for uniform cone sampling for the specified specified spread angle.
@@ -87,7 +87,7 @@ namespace SamplingRoutines
   * @param[out] o_b1 First barycentric coordinates.
   * @param[out] o_b2 Second barycentric coordinates.
   */
-  void UniformTriangleSampling(const Point2D_d i_sample, double &o_b1, double &o_b2);
+  void UniformTriangleSampling(const Point2D_d &i_sample, double &o_b1, double &o_b2);
 
   /**
   * Fills the specified range with stratified 1D values in [0;1] range. ValueIterator is a random-access iterator type.
@@ -180,7 +180,7 @@ namespace SamplingRoutines
 
 namespace SamplingRoutines
   {
-  inline Point2D_d ConcentricDiskSampling(const Point2D_d i_sample)
+  inline Point2D_d ConcentricDiskSampling(const Point2D_d &i_sample)
     {
     ASSERT(i_sample[0]>=0.0 && i_sample[0]<1.0 && i_sample[1]>=0.0 && i_sample[1]<1.0);
     double r, theta;
@@ -231,7 +231,7 @@ namespace SamplingRoutines
     return Point2D_d(r*cos(theta), r*sin(theta));
     }
 
-  inline Vector3D_d UniformHemisphereSampling(const Point2D_d i_sample)
+  inline Vector3D_d UniformHemisphereSampling(const Point2D_d &i_sample)
     {
     ASSERT(i_sample[0]>=0.0 && i_sample[0]<1.0 && i_sample[1]>=0.0 && i_sample[1]<1.0);
 
@@ -248,7 +248,7 @@ namespace SamplingRoutines
     return INV_2PI;
     }
 
-  inline Vector3D_d UniformSphereSampling(const Point2D_d i_sample)
+  inline Vector3D_d UniformSphereSampling(const Point2D_d &i_sample)
     {
     ASSERT(i_sample[0]>=0.0 && i_sample[0]<1.0 && i_sample[1]>=0.0 && i_sample[1]<1.0);
 
@@ -265,7 +265,7 @@ namespace SamplingRoutines
     return 1.0 / (4.0*M_PI);
     }
 
-  inline Vector3D_d CosineHemisphereSampling(const Point2D_d i_sample)
+  inline Vector3D_d CosineHemisphereSampling(const Point2D_d &i_sample)
     {
     ASSERT(i_sample[0]>=0.0 && i_sample[0]<1.0 && i_sample[1]>=0.0 && i_sample[1]<1.0);
 
@@ -283,7 +283,7 @@ namespace SamplingRoutines
     return i_cos_theta * INV_PI;
     }
 
-  inline Vector3D_d UniformConeSampling(const Point2D_d i_sample, double i_cos_theta_max)
+  inline Vector3D_d UniformConeSampling(const Point2D_d &i_sample, double i_cos_theta_max)
     {
     ASSERT(i_cos_theta_max >= 0.0 && i_cos_theta_max < 1.0);
 
@@ -300,7 +300,7 @@ namespace SamplingRoutines
     return 1.0 / (2.0 * M_PI * (1.0 - i_cos_theta_max));
     }
 
-  inline void UniformTriangleSampling(const Point2D_d i_sample, double &o_b1, double &o_b2)
+  inline void UniformTriangleSampling(const Point2D_d &i_sample, double &o_b1, double &o_b2)
     {
     ASSERT(i_sample[0]>=0.0 && i_sample[0]<1.0 && i_sample[1]>=0.0 && i_sample[1]<1.0);
     double tmp = sqrt(i_sample[0]);
@@ -398,7 +398,7 @@ namespace SamplingRoutines
       // Permute LHS samples in both dimensions.
       for (size_t j = 0; j < i_samples_num; ++j)
         {
-        size_t other = RandomInt((int)i_samples_num);
+        size_t other = (size_t) RandomInt((int)i_samples_num);
         std::swap( (*(i_begin+j)) [0], (*(i_begin+other)) [0] );
 
         other = RandomInt((int)i_samples_num);

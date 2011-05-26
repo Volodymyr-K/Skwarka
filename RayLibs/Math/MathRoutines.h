@@ -57,15 +57,15 @@ namespace MathRoutines
 
   /**
   * Returns the largest power of 2 less or equal than the specified integer.
-  * -1 is returned if i_value is 0.
+  * 0 is returned if i_value is 0.
   */
-  size_t RoundDownPow2(unsigned int i_value);
+  unsigned int RoundDownPow2(unsigned int i_value);
 
   /**
   * Returns the smallest power of 2 greater or equal than the specified integer.
   * 1 is returned if i_value is 0.
   */
-  size_t RoundUpPow2(unsigned int i_value);
+  unsigned int RoundUpPow2(unsigned int i_value);
 
   /**
   * Returns the remainder of i_a / i_b integer division.
@@ -236,7 +236,7 @@ namespace MathRoutines
     return ((i_value == 0) ? (-1) : pos);
     }
 
-  inline size_t RoundUpPow2(unsigned int i_value)
+  inline unsigned int RoundUpPow2(unsigned int i_value)
     {
     if (i_value==0) return 1;
 
@@ -249,9 +249,9 @@ namespace MathRoutines
     return i_value+1;
     }
 
-  inline size_t RoundDownPow2(unsigned int i_value)
+  inline unsigned int RoundDownPow2(unsigned int i_value)
     {
-    if (i_value==0) return -1;
+    if (i_value==0) return 0;
     else
       if ((i_value & (i_value - 1)) == 0)
         return i_value;

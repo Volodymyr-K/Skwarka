@@ -25,7 +25,7 @@ class Ray
     * @param i_min_t Lower bound of the parametric region.
     * @param i_max_t Upper bound of the parametric region.
     */
-    Ray(const Point3D_d i_origin, const Vector3D_d &i_direction, double i_min_t=0.0, double i_max_t=DBL_INF);
+    Ray(const Point3D_d &i_origin, const Vector3D_d &i_direction, double i_min_t=0.0, double i_max_t=DBL_INF);
 
     /**
     * Constructs Ray object from the specified RayDifferential object.
@@ -104,7 +104,7 @@ m_min_t(0.), m_max_t(DBL_INF)
   {
   }
 
-inline Ray::Ray(const Point3D_d i_origin, const Vector3D_d &i_direction, double i_min_t, double i_max_t):
+inline Ray::Ray(const Point3D_d &i_origin, const Vector3D_d &i_direction, double i_min_t, double i_max_t):
 m_origin(i_origin), m_direction(i_direction), m_min_t(i_min_t), m_max_t(i_max_t)
   {
   }

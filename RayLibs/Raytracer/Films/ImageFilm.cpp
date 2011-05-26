@@ -31,11 +31,12 @@ void ImageFilm::AddSample(const Point2D_d &i_image_point, const Spectrum_d &i_sp
   x1 = std::min(x1, m_crop_window_end[0]-1);
   y0 = std::max(y0, m_crop_window_begin[1]);
   y1 = std::min(y1, m_crop_window_end[1]-1);
-
+  ASSERT(x0>=0 && y0>=0);
+   
   // Loop over filter support and add sample to pixel arrays.
   for (int y = y0; y <= y1; ++y)
     for (int x = x0; x <= x1; ++x)
-      {
+      { 
       ImageFilmPixel &pixel = m_pixels.Get(x,y);
 
       double filter_weight = mp_filter->Evaluate(x-image_x, y-image_y);

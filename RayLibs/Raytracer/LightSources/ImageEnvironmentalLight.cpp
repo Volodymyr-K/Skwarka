@@ -401,8 +401,8 @@ double ImageEnvironmentalLight::_LightingPDF(const Vector3D_d &i_lighting_direct
   double theta = MathRoutines::SphericalTheta(i_lighting_direction);
   Point2D_i texel((int) (phi*m_width*INV_2PI), (int) (theta*m_height*INV_PI));
 
-  if (texel[0] == m_width) texel[0]=m_width-1;
-  if (texel[1] == m_height) texel[1]=m_height-1;
+  if (texel[0] == m_width) texel[0] = m_width-1;
+  if (texel[1] == m_height) texel[1] = m_height-1;
 
   size_t index=0;
   double leaf_pdf = 1.0;
