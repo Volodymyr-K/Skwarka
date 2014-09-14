@@ -46,6 +46,7 @@
 #include <assert.h>
 #include <vector>
 #include <math.h>
+#include <algorithm>
 
 using namespace Imf;
 using namespace Imath;

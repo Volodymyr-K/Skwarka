@@ -52,6 +52,7 @@
 #include "ImathFun.h"
 #include <math.h>
 #include <iostream>
+#include <algorithm>
 
 using namespace Imf;
 using namespace Imath;

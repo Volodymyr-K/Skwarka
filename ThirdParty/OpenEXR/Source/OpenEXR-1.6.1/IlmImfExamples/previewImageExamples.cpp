@@ -49,6 +49,7 @@
 #include <drawImage.h>
 
 #include <iostream>
+#include <algorithm>
 
 using namespace std;
 using namespace Imf;

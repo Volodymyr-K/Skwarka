@@ -104,8 +104,7 @@ main (int argc, char *argv[])
     TEST (testYca);
     TEST (testTiledYa);
     TEST (testNativeFormat);
-    TEST (testIsComplete);
-    
+    TEST (testIsComplete);    
     
     #ifdef HAVE_LINUX_PROCFS
 

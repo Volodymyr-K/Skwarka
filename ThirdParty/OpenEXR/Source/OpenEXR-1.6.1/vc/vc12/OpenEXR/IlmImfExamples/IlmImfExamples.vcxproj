@@ -1,0 +1,133 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{50755A60-BCC4-4C6F-B77F-0420493F343B}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>12.0.21005.1</_ProjectFileVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>..\Debug\</OutDir>
+    <IntDir>Debug\</IntDir>
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>..\Release\</OutDir>
+    <IntDir>Release\</IntDir>
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>..\..\..\..\IlmImfExamples;..\..\..\..\config.windows;..\..\..\..\..\..\Deploy\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>OPENEXR_DLL;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+      <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <PrecompiledHeader />
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>..\..\..\..\..\..\Deploy\lib\$(IntDir)IlmThread.lib;..\..\..\..\..\..\Deploy\lib\$(IntDir)Imath.lib;..\..\..\..\..\..\Deploy\lib\$(IntDir)Iex.lib;..\..\..\..\..\..\Deploy\lib\$(IntDir)Half.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>$(OutDir)IlmImfExamples.exe</OutputFile>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <ProgramDatabaseFile>$(OutDir)IlmImfExamples.pdb</ProgramDatabaseFile>
+      <SubSystem>Console</SubSystem>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention />
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>..\..\..\..\IlmImfExamples;..\..\..\..\config.windows;..\..\..\..\..\..\Deploy\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>OPENEXR_DLL;WIN32;NDEBUG;_CONSOLE;_SECURE_SCL=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+      <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <PrecompiledHeader />
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>..\..\..\..\..\..\Deploy\lib\$(IntDir)IlmThread.lib;..\..\..\..\..\..\Deploy\lib\$(IntDir)Imath.lib;..\..\..\..\..\..\Deploy\lib\$(IntDir)Iex.lib;..\..\..\..\..\..\Deploy\lib\$(IntDir)Half.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>$(OutDir)IlmImfExamples.exe</OutputFile>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention />
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\..\IlmImfExamples\drawImage.cpp" />
+    <ClCompile Include="..\..\..\..\IlmImfExamples\generalInterfaceExamples.cpp" />
+    <ClCompile Include="..\..\..\..\IlmImfExamples\generalInterfaceTiledExamples.cpp" />
+    <ClCompile Include="..\..\..\..\IlmImfExamples\lowLevelIoExamples.cpp" />
+    <ClCompile Include="..\..\..\..\IlmImfExamples\main.cpp" />
+    <ClCompile Include="..\..\..\..\IlmImfExamples\previewImageExamples.cpp" />
+    <ClCompile Include="..\..\..\..\IlmImfExamples\rgbaInterfaceExamples.cpp" />
+    <ClCompile Include="..\..\..\..\IlmImfExamples\rgbaInterfaceTiledExamples.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\..\IlmImfExamples\drawImage.h" />
+    <ClInclude Include="..\..\..\..\IlmImfExamples\generalInterfaceExamples.h" />
+    <ClInclude Include="..\..\..\..\IlmImfExamples\generalInterfaceTiledExamples.h" />
+    <ClInclude Include="..\..\..\..\IlmImfExamples\lowLevelIoExamples.h" />
+    <ClInclude Include="..\..\..\..\IlmImfExamples\previewImageExamples.h" />
+    <ClInclude Include="..\..\..\..\IlmImfExamples\rgbaInterfaceExamples.h" />
+    <ClInclude Include="..\..\..\..\IlmImfExamples\rgbaInterfaceTiledExamples.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IlmImf\IlmImf.vcxproj">
+      <Project>{7df42126-d237-41d3-9abe-a3acc8bac56e}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
