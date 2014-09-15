@@ -21,7 +21,7 @@ class MitchellFilter: public FilmFilter
     * Creates MitchellFilter with the specified width and B parameter.
     * Parameter C of the Mitchell filter is automatically selected to give best results.
     * Smaller value of B lead to blurring while higher values lead to ringing.
-     * Values of 1/3 is suitable for most of the cases.
+    * Values of 1/3 is suitable for most of the cases.
     */
     MitchellFilter(double i_x_width, double i_y_width, double i_b = 1.0/3.0);
 
@@ -84,6 +84,6 @@ void MitchellFilter::serialize(Archive &i_ar, const unsigned int i_version)
   }
 
 // Register the derived class in the boost serialization framework.
-BOOST_CLASS_EXPORT(MitchellFilter)
+BOOST_CLASS_EXPORT_KEY(MitchellFilter)
 
 #endif // MITCHELL_FILTER_H

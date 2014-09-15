@@ -1,0 +1,459 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{8035CBAD-5A7C-46F2-939A-172018577A27}</ProjectGuid>
+    <RootNamespace>UnitTests</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+    <Import Project="CxxTest.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>12.0.21005.1</_ProjectFileVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>..\..\..\Binaries\$(Configuration)\</OutDir>
+    <IntDir>..\..\..\Intermediate\$(Configuration)\UnitTests\</IntDir>
+    <ExtensionsToDeleteOnClean>*.obj%3b*.ilk%3b*.tlb%3b*.tli%3b*.tlh%3b*.tmp%3b*.rsp%3b*.pgc%3b*.pgd%3b*.meta%3b$(TargetPath)</ExtensionsToDeleteOnClean>
+    <LinkIncremental>true</LinkIncremental>
+    <TargetName>$(ProjectName)d</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>..\..\..\Binaries\$(Configuration)\</OutDir>
+    <IntDir>..\..\..\Intermediate\$(Configuration)\UnitTests\</IntDir>
+    <ExtensionsToDeleteOnClean>*.obj%3b*.ilk%3b*.tlb%3b*.tli%3b*.tlh%3b*.tmp%3b*.rsp%3b*.pgc%3b*.pgd%3b*.meta%3b$(TargetPath)</ExtensionsToDeleteOnClean>
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <CustomBuildStep>
+      <Message />
+      <Command />
+    </CustomBuildStep>
+    <CxxTest>
+      <output>%(Filename).cpp</output>
+    </CxxTest>
+    <ClCompile>
+      <AdditionalOptions>/MP %(AdditionalOptions)</AdditionalOptions>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>..\;..\..\..\ThirdParty\;..\..\..\ThirdParty\boost\1.56\;..\..\..\ThirdParty\TBB\4.2\include;..\..\..\ThirdParty\cxxtest\3.10.1\;..\..\..\ThirdParty\OpenEXR\Deploy\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>TBB_USE_DEBUG;WIN32;_DEBUG;_WINDOWS;NOMINMAX;OPENEXR_DLL;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+      <PrecompiledHeader />
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <FloatingPointModel>Precise</FloatingPointModel>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>tbb_debug.lib;Half.lib;Iex.lib;IlmImf.lib;IlmThread.lib;Imath.lib;zdll.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>$(OutDir)$(ProjectName)d.exe</OutputFile>
+      <AdditionalLibraryDirectories>..\..\..\ThirdParty\TBB\4.2\lib\ia32\vc9;..\..\..\ThirdParty\OpenEXR\Deploy\lib\Debug;..\..\..\ThirdParty\boost\libs\1.56;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
+      <TargetMachine>MachineX86</TargetMachine>
+      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
+      <OptimizeReferences>
+      </OptimizeReferences>
+    </Link>
+    <ProjectReference>
+      <UseLibraryDependencyInputs>true</UseLibraryDependencyInputs>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <CustomBuildStep>
+      <Message />
+      <Command>
+      </Command>
+    </CustomBuildStep>
+    <ClCompile>
+      <AdditionalOptions>/MP %(AdditionalOptions)</AdditionalOptions>
+      <Optimization>MaxSpeed</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <AdditionalIncludeDirectories>..\;..\..\..\ThirdParty\;..\..\..\ThirdParty\boost\1.56\;..\..\..\ThirdParty\TBB\4.2\include;..\..\..\ThirdParty\cxxtest\3.10.1\;..\..\..\ThirdParty\OpenEXR\Deploy\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;NOMINMAX;_SECURE_SCL=0;OPENEXR_DLL;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+      <PrecompiledHeader />
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>tbb.lib;Half.lib;Iex.lib;IlmImf.lib;IlmThread.lib;Imath.lib;zdll.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\..\ThirdParty\TBB\4.2\lib\ia32\vc12;..\..\..\ThirdParty\OpenEXR\Deploy\lib\Release;..\..\..\ThirdParty\boost\libs\1.56;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+    <ProjectReference>
+      <UseLibraryDependencyInputs>true</UseLibraryDependencyInputs>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CxxTest Include="MainTests\Math\BBox3D.test.h" />
+    <CxxTest Include="MainTests\Math\BlockedArray.test.h" />
+    <CxxTest Include="MainTests\Math\CompressedDirection.test.h" />
+    <CxxTest Include="MainTests\Math\MathRoutines.test.h" />
+    <CxxTest Include="MainTests\Math\Matrix3x3.test.h" />
+    <CxxTest Include="MainTests\Math\Matrix4x4.test.h" />
+    <CxxTest Include="MainTests\Math\Point2D.test.h" />
+    <CxxTest Include="MainTests\Math\Point3D.test.h" />
+    <CxxTest Include="MainTests\Math\RandomGenerator.test.h" />
+    <CxxTest Include="MainTests\Math\Ray.test.h" />
+    <CxxTest Include="MainTests\Math\SamplingRoutines.test.h" />
+    <CxxTest Include="MainTests\Math\ThreadSafeRandom.Test.h" />
+    <CxxTest Include="MainTests\Math\Transform.test.h" />
+    <CxxTest Include="MainTests\Math\Triangle3D.test.h" />
+    <CxxTest Include="MainTests\Math\Vector2D.test.h" />
+    <CxxTest Include="MainTests\Math\Vector3D.test.h" />
+    <CxxTest Include="MainTests\Raytracer\Core\BSDF.test.h" />
+    <CxxTest Include="MainTests\Raytracer\Core\BxDF.test.h" />
+    <CxxTest Include="MainTests\Raytracer\Core\Camera.test.h" />
+    <CxxTest Include="MainTests\Raytracer\Core\Color.test.h" />
+    <CxxTest Include="MainTests\Raytracer\Core\CoreUtils.test.h" />
+    <CxxTest Include="MainTests\Raytracer\Core\DirectLightingIntegrator.test.h" />
+    <CxxTest Include="MainTests\Raytracer\Core\Film.test.h" />
+    <CxxTest Include="MainTests\Raytracer\Core\FilmFilter.test.h" />
+    <CxxTest Include="MainTests\Raytracer\Core\Fresnel.test.h" />
+    <CxxTest Include="MainTests\Raytracer\Core\KDTree.test.h" />
+    <CxxTest Include="MainTests\Raytracer\Core\LTEIntegrator.test.h" />
+    <CxxTest Include="MainTests\Raytracer\Core\MIPMap.test.h" />
+    <CxxTest Include="MainTests\Raytracer\Core\Primitive.test.h" />
+    <CxxTest Include="MainTests\Raytracer\Core\Sample.test.h" />
+    <CxxTest Include="MainTests\Raytracer\Core\Sampler.test.h" />
+    <CxxTest Include="MainTests\Raytracer\Core\Scene.test.h" />
+    <CxxTest Include="MainTests\Raytracer\Core\Spectrum.test.h" />
+    <CxxTest Include="MainTests\Raytracer\Core\SpectrumCoef.test.h" />
+    <CxxTest Include="MainTests\Raytracer\Core\SpectrumRoutines.test.h" />
+    <CxxTest Include="MainTests\Raytracer\Core\TriangleAccelerator.test.h" />
+    <CxxTest Include="MainTests\Raytracer\Core\TriangleMesh.test.h" />
+    <CxxTest Include="MainTests\Raytracer\FilmFilters\BoxFilter.test.h" />
+    <CxxTest Include="MainTests\Raytracer\FilmFilters\MitchellFilter.test.h" />
+    <CxxTest Include="MainTests\Raytracer\Samplers\ConsecutiveImagePixelsOrder.test.h" />
+    <CxxTest Include="MainTests\Raytracer\Samplers\LDSampler.test.h" />
+    <CxxTest Include="MainTests\Raytracer\Samplers\RandomBlockedImagePixelsOrder.test.h" />
+    <CxxTest Include="MainTests\Raytracer\Samplers\RandomSampler.test.h" />
+    <CxxTest Include="MainTests\Raytracer\Samplers\StratifiedSampler.test.h" />
+    <CxxTest Include="MainTests\Raytracer\Samplers\UniformImagePixelsOrder.test.h" />
+    <CxxTest Include="MainTests\Raytracer\Films\ImageFilm.test.h" />
+    <CxxTest Include="MainTests\Raytracer\Films\InteractiveFilm.test.h" />
+    <CxxTest Include="MainTests\Raytracer\BxDFs\FresnelBlend.test.h" />
+    <CxxTest Include="MainTests\Raytracer\BxDFs\Lambertian.test.h" />
+    <CxxTest Include="MainTests\Raytracer\BxDFs\MERLMeasured.test.h" />
+    <CxxTest Include="MainTests\Raytracer\BxDFs\Microfacet.test.h" />
+    <CxxTest Include="MainTests\Raytracer\BxDFs\OrenNayar.test.h" />
+    <CxxTest Include="MainTests\Raytracer\BxDFs\ScaledBxDF.test.h" />
+    <CxxTest Include="MainTests\Raytracer\BxDFs\SpecularReflection.test.h" />
+    <CxxTest Include="MainTests\Raytracer\BxDFs\SpecularTransmission.test.h" />
+    <CxxTest Include="MainTests\Raytracer\Textures\ConstantTexture.test.h" />
+    <CxxTest Include="MainTests\Raytracer\Textures\ImageTexture.test.h" />
+    <CxxTest Include="MainTests\Raytracer\Textures\ScaleTexture.test.h" />
+    <CxxTest Include="MainTests\Raytracer\Materials\MatteMaterial.test.h" />
+    <CxxTest Include="MainTests\Raytracer\Materials\MERLMeasuredMaterial.test.h" />
+    <CxxTest Include="MainTests\Raytracer\Materials\MetalMaterial.test.h" />
+    <CxxTest Include="MainTests\Raytracer\Materials\MixMaterial.test.h" />
+    <CxxTest Include="MainTests\Raytracer\Materials\PlasticMaterial.test.h" />
+    <CxxTest Include="MainTests\Raytracer\Materials\SubstrateMaterial.test.h" />
+    <CxxTest Include="MainTests\Raytracer\Materials\TransparentMaterial.test.h" />
+    <CxxTest Include="MainTests\Raytracer\Materials\UberMaterial.test.h" />
+    <CxxTest Include="MainTests\Raytracer\MicrofacetDistributions\AnisotropicDistribution.test.h" />
+    <CxxTest Include="MainTests\Raytracer\MicrofacetDistributions\BlinnDistribution.test.h" />
+    <CxxTest Include="MainTests\Raytracer\LightSources\DiffuseAreaLightSource.test.h" />
+    <CxxTest Include="MainTests\Raytracer\LightSources\ImageEnvironmentalLight.test.h" />
+    <CxxTest Include="MainTests\Raytracer\LightSources\ParallelLight.test.h" />
+    <CxxTest Include="MainTests\Raytracer\LightSources\PointLight.test.h" />
+    <CxxTest Include="MainTests\Raytracer\LightSources\SpotPointLight.test.h" />
+    <CxxTest Include="MainTests\Raytracer\Renderers\SamplerBasedRenderer.test.h" />
+    <CxxTest Include="MainTests\Raytracer\LightsSamplingStrategies\IrradianceLightsSamplingStrategy.test.h" />
+    <CxxTest Include="MainTests\Raytracer\LightsSamplingStrategies\PowerLightsSamplingStrategy.test.h" />
+    <CxxTest Include="MainTests\Raytracer\Mappings\SphericalMapping2D.test.h" />
+    <CxxTest Include="MainTests\Raytracer\Mappings\TransformMapping3D.test.h" />
+    <CxxTest Include="MainTests\Raytracer\Mappings\UVMapping2D.test.h" />
+    <CxxTest Include="MainTests\Raytracer\LTEIntegrators\PhotonLTEIntegrator.test.h" />
+    <CxxTest Include="MainTests\Raytracer\VolumeRegions\AggregateVolumeRegion.test.h" />
+    <CxxTest Include="MainTests\Raytracer\VolumeRegions\GridDensityVolumeRegion.test.h" />
+    <CxxTest Include="MainTests\Raytracer\VolumeRegions\HomogeneousVolumeRegion.test.h" />
+    <CxxTest Include="MainTests\Raytracer\Cameras\PerspectiveCamera.test.h" />
+    <CxxTest Include="MainTests\Raytracer\ImageSources\OpenEXRRgbaImageSource.test.h" />
+    <CxxTest Include="MainTests\Raytracer\ImageSources\RGB24ImageSource.test.h" />
+    <CxxTest Include="MainTests\Raytracer\PhaseFunctions\HGPhaseFunction.test.h" />
+    <CxxTest Include="MainTests\Shapes\Cylinder.test.h" />
+    <CxxTest Include="MainTests\Shapes\Disk.test.h" />
+    <CxxTest Include="MainTests\Shapes\Sphere.test.h" />
+    <CxxTest Include="MainTests\Common\Log.test.h" />
+    <CxxTest Include="MainTests\Common\MemoryPool.test.h" />
+    <CxxTest Include="MainTests\Common\Numerics.test.h" />
+    <CustomBuild Include="Mocks\BxDFMock.h" />
+    <CustomBuild Include="Mocks\CameraMock.h" />
+    <CustomBuild Include="Mocks\FilmFilterMock.h" />
+    <CustomBuild Include="Mocks\FilmMock.h" />
+    <CustomBuild Include="Mocks\InfiniteLightSourceMock.h" />
+    <CustomBuild Include="Mocks\LTEIntegratorMock.h" />
+    <CustomBuild Include="Mocks\MaterialMock.h" />
+    <CustomBuild Include="Mocks\PhaseFunctionMock.h" />
+    <CustomBuild Include="Mocks\SamplerMock.h" />
+    <CustomBuild Include="Mocks\ShapeMock.h" />
+    <CustomBuild Include="Mocks\TextureMock.h" />
+    <CustomBuild Include="Mocks\VolumeRegionMock.h" />
+    <CustomBuild Include="TestHelpers\CustomValueTraits.h" />
+    <CustomBuild Include="TestHelpers\SamplingTestHelper.h" />
+    <CustomBuild Include="TestHelpers\TriangleMeshTestHelper.h" />
+    <CxxTest Include="SerializationTests\Common\IntrusiveSmartPointer.Serialization.test.h" />
+    <CxxTest Include="SerializationTests\Math\BBox3D.Serialization.test.h" />
+    <CxxTest Include="SerializationTests\Math\BlockedArray.Serialization.test.h" />
+    <CxxTest Include="SerializationTests\Math\CompressedDirection.Serialization.test.h" />
+    <CxxTest Include="SerializationTests\Math\Matrix3x3.Serialization.test.h" />
+    <CxxTest Include="SerializationTests\Math\Matrix4x4.Serialization.test.h" />
+    <CxxTest Include="SerializationTests\Math\Point2D.Serialization.test.h" />
+    <CxxTest Include="SerializationTests\Math\Point3D.Serialization.test.h" />
+    <CxxTest Include="SerializationTests\Math\Ray.Serialization.test.h" />
+    <CxxTest Include="SerializationTests\Math\Transform.Serialization.test.h" />
+    <CxxTest Include="SerializationTests\Math\Triangle3D.Serialization.test.h" />
+    <CxxTest Include="SerializationTests\Math\Vector2D.Serialization.test.h" />
+    <CxxTest Include="SerializationTests\Math\Vector3D.Serialization.test.h" />
+    <CxxTest Include="SerializationTests\Raytracer\FilmFilters\BoxFilter.Serialization.test.h" />
+    <CxxTest Include="SerializationTests\Raytracer\FilmFilters\MitchellFilter.Serialization.test.h" />
+    <CxxTest Include="SerializationTests\Raytracer\Films\ImageFilm.Serialization.test.h" />
+    <CxxTest Include="SerializationTests\Raytracer\Films\InteractiveFilm.Serialization.test.h" />
+    <CxxTest Include="SerializationTests\Raytracer\Core\Color.Serialization.test.h" />
+    <CxxTest Include="SerializationTests\Raytracer\Core\MIPMap.Serialization.test.h" />
+    <CxxTest Include="SerializationTests\Raytracer\Core\Primitive.Serialization.test.h" />
+    <CxxTest Include="SerializationTests\Raytracer\Core\Scene.Serialization.test.h" />
+    <CxxTest Include="SerializationTests\Raytracer\Core\Spectrum.Serialization.test.h" />
+    <CxxTest Include="SerializationTests\Raytracer\Core\SpectrumCoef.Serialization.test.h" />
+    <CxxTest Include="SerializationTests\Raytracer\Core\TriangleMesh.Serialization.test.h" />
+    <CxxTest Include="SerializationTests\Raytracer\Cameras\PerspectiveCamera.Serialization.test.h" />
+    <CxxTest Include="SerializationTests\Raytracer\Mappings\SphericalMapping2D.Serialization.test.h" />
+    <CxxTest Include="SerializationTests\Raytracer\Mappings\TransformMapping3D.Serialization.test.h" />
+    <CxxTest Include="SerializationTests\Raytracer\Mappings\UVMapping2D.Serialization.test.h" />
+    <CxxTest Include="SerializationTests\Raytracer\Textures\ConstantTexture.Serialization.test.h" />
+    <CxxTest Include="SerializationTests\Raytracer\Textures\ImageTexture.Serialization.test.h" />
+    <CxxTest Include="SerializationTests\Raytracer\Textures\ScaleTexture.Serialization.test.h" />
+    <CxxTest Include="SerializationTests\Raytracer\Materials\MatteMaterial.Serialization.test.h" />
+    <CxxTest Include="SerializationTests\Raytracer\Materials\MERLMeasuredMaterial.Serialization.test.h" />
+    <CxxTest Include="SerializationTests\Raytracer\Materials\MetalMaterial.Serialization.test.h" />
+    <CxxTest Include="SerializationTests\Raytracer\Materials\MixMaterial.Serialization.test.h" />
+    <CxxTest Include="SerializationTests\Raytracer\Materials\PlasticMaterial.Serialization.test.h" />
+    <CxxTest Include="SerializationTests\Raytracer\Materials\SubstrateMaterial.Serialization.test.h" />
+    <CxxTest Include="SerializationTests\Raytracer\Materials\TransparentMaterial.Serialization.test.h" />
+    <CxxTest Include="SerializationTests\Raytracer\Materials\UberMaterial.Serialization.test.h" />
+    <CxxTest Include="SerializationTests\Raytracer\LightSources\DiffuseAreaLightSource.Serialization.test.h" />
+    <CxxTest Include="SerializationTests\Raytracer\LightSources\ImageEnvironmentalLight.Serialization.test.h" />
+    <CxxTest Include="SerializationTests\Raytracer\LightSources\ParallelLight.Serialization.test.h" />
+    <CxxTest Include="SerializationTests\Raytracer\LightSources\PointLight.Serialization.test.h" />
+    <CxxTest Include="SerializationTests\Raytracer\LightSources\SpotPointLight.Serialization.test.h" />
+    <CxxTest Include="SerializationTests\Raytracer\VolumeRegions\AggregateVolumeRegion.Serialization.test.h" />
+    <CxxTest Include="SerializationTests\Raytracer\VolumeRegions\GridDensityVolumeRegion.Serialization.test.h" />
+    <CxxTest Include="SerializationTests\Raytracer\VolumeRegions\HomogeneousVolumeRegion.Serialization.test.h" />
+    <CxxTest Include="SerializationTests\Raytracer\ImageSources\OpenEXRRgbaImageSource.Serialization.test.h" />
+    <CxxTest Include="SerializationTests\Raytracer\ImageSources\RGB24ImageSource.Serialization.test.h" />
+    <CxxTest Include="SerializationTests\Raytracer\BxDFs\MERLMeasuredData.Serialization.test.h" />
+    <CxxTest Include="SerializationTests\Raytracer\PhaseFunctions\HGPhaseFunction.Serialization.test.h" />
+    <CxxTest Include="Runner.test.h">
+      <runner Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">1</runner>
+      <runner Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">1</runner>
+    </CxxTest>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Math\Math.vcxproj">
+      <Project>{82ac70fc-4cb6-4ff4-9cea-e8fa28d4aa3e}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\Raytracer\Raytracer.vcxproj">
+      <Project>{ed053b6a-e1c9-4781-93ae-633837016d00}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\Shapes\Shapes.vcxproj">
+      <Project>{c22874bd-aba3-4e5e-86d6-31f98520b557}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="AggregateVolumeRegion.Serialization.test.cpp" />
+    <ClCompile Include="AggregateVolumeRegion.test.cpp" />
+    <ClCompile Include="AnisotropicDistribution.test.cpp" />
+    <ClCompile Include="BBox3D.Serialization.test.cpp" />
+    <ClCompile Include="BBox3D.test.cpp" />
+    <ClCompile Include="BlinnDistribution.test.cpp" />
+    <ClCompile Include="BlockedArray.Serialization.test.cpp" />
+    <ClCompile Include="BlockedArray.test.cpp" />
+    <ClCompile Include="BoxFilter.Serialization.test.cpp" />
+    <ClCompile Include="BoxFilter.test.cpp" />
+    <ClCompile Include="BSDF.test.cpp" />
+    <ClCompile Include="BxDF.test.cpp" />
+    <ClCompile Include="Camera.test.cpp" />
+    <ClCompile Include="Color.Serialization.test.cpp" />
+    <ClCompile Include="Color.test.cpp" />
+    <ClCompile Include="CompressedDirection.Serialization.test.cpp" />
+    <ClCompile Include="CompressedDirection.test.cpp" />
+    <ClCompile Include="ConsecutiveImagePixelsOrder.test.cpp" />
+    <ClCompile Include="ConstantTexture.Serialization.test.cpp" />
+    <ClCompile Include="ConstantTexture.test.cpp" />
+    <ClCompile Include="CoreUtils.test.cpp" />
+    <ClCompile Include="Cylinder.test.cpp" />
+    <ClCompile Include="DiffuseAreaLightSource.Serialization.test.cpp" />
+    <ClCompile Include="DiffuseAreaLightSource.test.cpp" />
+    <ClCompile Include="DirectLightingIntegrator.test.cpp" />
+    <ClCompile Include="Disk.test.cpp" />
+    <ClCompile Include="Film.test.cpp" />
+    <ClCompile Include="FilmFilter.test.cpp" />
+    <ClCompile Include="Fresnel.test.cpp" />
+    <ClCompile Include="FresnelBlend.test.cpp" />
+    <ClCompile Include="GridDensityVolumeRegion.Serialization.test.cpp" />
+    <ClCompile Include="GridDensityVolumeRegion.test.cpp" />
+    <ClCompile Include="HGPhaseFunction.Serialization.test.cpp" />
+    <ClCompile Include="HGPhaseFunction.test.cpp" />
+    <ClCompile Include="HomogeneousVolumeRegion.Serialization.test.cpp" />
+    <ClCompile Include="HomogeneousVolumeRegion.test.cpp" />
+    <ClCompile Include="ImageEnvironmentalLight.Serialization.test.cpp" />
+    <ClCompile Include="ImageEnvironmentalLight.test.cpp" />
+    <ClCompile Include="ImageFilm.Serialization.test.cpp" />
+    <ClCompile Include="ImageFilm.test.cpp" />
+    <ClCompile Include="ImageTexture.Serialization.test.cpp" />
+    <ClCompile Include="ImageTexture.test.cpp" />
+    <ClCompile Include="InteractiveFilm.Serialization.test.cpp" />
+    <ClCompile Include="InteractiveFilm.test.cpp" />
+    <ClCompile Include="IntrusiveSmartPointer.Serialization.test.cpp" />
+    <ClCompile Include="IrradianceLightsSamplingStrategy.test.cpp" />
+    <ClCompile Include="KDTree.test.cpp" />
+    <ClCompile Include="Lambertian.test.cpp" />
+    <ClCompile Include="LDSampler.test.cpp" />
+    <ClCompile Include="Log.test.cpp" />
+    <ClCompile Include="LTEIntegrator.test.cpp" />
+    <ClCompile Include="MathRoutines.test.cpp" />
+    <ClCompile Include="Matrix3x3.Serialization.test.cpp" />
+    <ClCompile Include="Matrix3x3.test.cpp" />
+    <ClCompile Include="Matrix4x4.Serialization.test.cpp" />
+    <ClCompile Include="Matrix4x4.test.cpp" />
+    <ClCompile Include="MatteMaterial.Serialization.test.cpp" />
+    <ClCompile Include="MatteMaterial.test.cpp" />
+    <ClCompile Include="MemoryPool.test.cpp" />
+    <ClCompile Include="MERLMeasured.test.cpp" />
+    <ClCompile Include="MERLMeasuredData.Serialization.test.cpp" />
+    <ClCompile Include="MERLMeasuredMaterial.Serialization.test.cpp" />
+    <ClCompile Include="MERLMeasuredMaterial.test.cpp" />
+    <ClCompile Include="MetalMaterial.Serialization.test.cpp" />
+    <ClCompile Include="MetalMaterial.test.cpp" />
+    <ClCompile Include="Microfacet.test.cpp" />
+    <ClCompile Include="MIPMap.Serialization.test.cpp" />
+    <ClCompile Include="MIPMap.test.cpp" />
+    <ClCompile Include="MitchellFilter.Serialization.test.cpp" />
+    <ClCompile Include="MitchellFilter.test.cpp" />
+    <ClCompile Include="MixMaterial.Serialization.test.cpp" />
+    <ClCompile Include="MixMaterial.test.cpp" />
+    <ClCompile Include="Numerics.test.cpp" />
+    <ClCompile Include="OpenEXRRgbaImageSource.Serialization.test.cpp" />
+    <ClCompile Include="OpenEXRRgbaImageSource.test.cpp" />
+    <ClCompile Include="OrenNayar.test.cpp" />
+    <ClCompile Include="ParallelLight.Serialization.test.cpp" />
+    <ClCompile Include="ParallelLight.test.cpp" />
+    <ClCompile Include="PerspectiveCamera.Serialization.test.cpp" />
+    <ClCompile Include="PerspectiveCamera.test.cpp" />
+    <ClCompile Include="PhotonLTEIntegrator.test.cpp" />
+    <ClCompile Include="PlasticMaterial.Serialization.test.cpp" />
+    <ClCompile Include="PlasticMaterial.test.cpp" />
+    <ClCompile Include="Point2D.Serialization.test.cpp" />
+    <ClCompile Include="Point2D.test.cpp" />
+    <ClCompile Include="Point3D.Serialization.test.cpp" />
+    <ClCompile Include="Point3D.test.cpp" />
+    <ClCompile Include="PointLight.Serialization.test.cpp" />
+    <ClCompile Include="PointLight.test.cpp" />
+    <ClCompile Include="PowerLightsSamplingStrategy.test.cpp" />
+    <ClCompile Include="Primitive.Serialization.test.cpp" />
+    <ClCompile Include="Primitive.test.cpp" />
+    <ClCompile Include="RandomBlockedImagePixelsOrder.test.cpp" />
+    <ClCompile Include="RandomGenerator.test.cpp" />
+    <ClCompile Include="RandomSampler.test.cpp" />
+    <ClCompile Include="Ray.Serialization.test.cpp" />
+    <ClCompile Include="Ray.test.cpp" />
+    <ClCompile Include="RGB24ImageSource.Serialization.test.cpp" />
+    <ClCompile Include="RGB24ImageSource.test.cpp" />
+    <ClCompile Include="Runner.test.cpp" />
+    <ClCompile Include="Sample.test.cpp" />
+    <ClCompile Include="Sampler.test.cpp" />
+    <ClCompile Include="SamplerBasedRenderer.test.cpp" />
+    <ClCompile Include="SamplingRoutines.test.cpp" />
+    <ClCompile Include="ScaledBxDF.test.cpp" />
+    <ClCompile Include="ScaleTexture.Serialization.test.cpp" />
+    <ClCompile Include="ScaleTexture.test.cpp" />
+    <ClCompile Include="Scene.Serialization.test.cpp" />
+    <ClCompile Include="Scene.test.cpp" />
+    <ClCompile Include="Spectrum.Serialization.test.cpp" />
+    <ClCompile Include="Spectrum.test.cpp" />
+    <ClCompile Include="SpectrumCoef.Serialization.test.cpp" />
+    <ClCompile Include="SpectrumCoef.test.cpp" />
+    <ClCompile Include="SpectrumRoutines.test.cpp" />
+    <ClCompile Include="SpecularReflection.test.cpp" />
+    <ClCompile Include="SpecularTransmission.test.cpp" />
+    <ClCompile Include="Sphere.test.cpp" />
+    <ClCompile Include="SphericalMapping2D.Serialization.test.cpp" />
+    <ClCompile Include="SphericalMapping2D.test.cpp" />
+    <ClCompile Include="SpotPointLight.Serialization.test.cpp" />
+    <ClCompile Include="SpotPointLight.test.cpp" />
+    <ClCompile Include="StratifiedSampler.test.cpp" />
+    <ClCompile Include="SubstrateMaterial.Serialization.test.cpp" />
+    <ClCompile Include="SubstrateMaterial.test.cpp" />
+    <ClCompile Include="ThreadSafeRandom.Test.cpp" />
+    <ClCompile Include="Transform.Serialization.test.cpp" />
+    <ClCompile Include="Transform.test.cpp" />
+    <ClCompile Include="TransformMapping3D.Serialization.test.cpp" />
+    <ClCompile Include="TransformMapping3D.test.cpp" />
+    <ClCompile Include="TransparentMaterial.Serialization.test.cpp" />
+    <ClCompile Include="TransparentMaterial.test.cpp" />
+    <ClCompile Include="Triangle3D.Serialization.test.cpp" />
+    <ClCompile Include="Triangle3D.test.cpp" />
+    <ClCompile Include="TriangleAccelerator.test.cpp" />
+    <ClCompile Include="TriangleMesh.Serialization.test.cpp" />
+    <ClCompile Include="TriangleMesh.test.cpp" />
+    <ClCompile Include="UberMaterial.Serialization.test.cpp" />
+    <ClCompile Include="UberMaterial.test.cpp" />
+    <ClCompile Include="UniformImagePixelsOrder.test.cpp" />
+    <ClCompile Include="UVMapping2D.Serialization.test.cpp" />
+    <ClCompile Include="UVMapping2D.test.cpp" />
+    <ClCompile Include="Vector2D.Serialization.test.cpp" />
+    <ClCompile Include="Vector2D.test.cpp" />
+    <ClCompile Include="Vector3D.Serialization.test.cpp" />
+    <ClCompile Include="Vector3D.test.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+    <Import Project="CxxTest.targets" />
+  </ImportGroup>
+</Project>

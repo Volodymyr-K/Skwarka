@@ -232,7 +232,7 @@ class SamplingRoutinesTestSuite : public CxxTest::TestSuite
         if (samples[i]>mx) mx=samples[i];
         if (samples[i]<mn) mn=samples[i];
         }
-      TS_ASSERT(mn>=0.0 && mn<=1.0/num_samples && mx<=1.0 && mx>=1.0-1.0/num_samples);
+      TS_ASSERT(mn>=0.0 && mn<=1.0/num_samples && mx<1.0 && mx>=1.0-1.0/num_samples);
       }
 
     // Test that StratifiedSampling1D() does not generate clumping samples.
@@ -265,7 +265,7 @@ class SamplingRoutinesTestSuite : public CxxTest::TestSuite
         }
 
       bool whole_range_covered = mn[0]>=0.0 && mn[0]<=1.0/x_samples && mn[1]>=0.0 && mn[1]<=1.0/y_samples;
-      whole_range_covered = whole_range_covered && mx[0]<=1.0 && mx[0]>=1.0-1.0/x_samples && mx[1]<=1.0 && mx[1]>=1.0-1.0/y_samples;
+      whole_range_covered = whole_range_covered && mx[0]<1.0 && mx[0]>=1.0-1.0/x_samples && mx[1]<1.0 && mx[1]>=1.0-1.0/y_samples;
       TS_ASSERT(whole_range_covered);
       }
 
@@ -300,7 +300,7 @@ class SamplingRoutinesTestSuite : public CxxTest::TestSuite
         }
 
       bool whole_range_covered = mn[0]>=0.0 && mn[0]<=1.0/num_samples && mn[1]>=0.0 && mn[1]<=1.0/num_samples;
-      whole_range_covered = whole_range_covered && mx[0]<=1.0 && mx[0]>=1.0-1.0/num_samples && mx[1]<=1.0 && mx[1]>=1.0-1.0/num_samples;
+      whole_range_covered = whole_range_covered && mx[0]<1.0 && mx[0]>=1.0-1.0/num_samples && mx[1]<1.0 && mx[1]>=1.0-1.0/num_samples;
       TS_ASSERT(whole_range_covered);
       }
 
@@ -335,8 +335,7 @@ class SamplingRoutinesTestSuite : public CxxTest::TestSuite
       double normalized_distance = distance/num_samples/num_samples;
 
       // Mean value for the distance is 1/3 (since the distribution is uniform).
-      // We use empirical value 0.31 which is a good threshold for the given number of samples.
-      TS_ASSERT(normalized_distance>0.31);
+      TS_ASSERT_DELTA(normalized_distance, 1.0/3.0, 0.023); // empirical threshold for the given number of samples.
 
       std::sort(shuffled.begin(), shuffled.end());
       TS_ASSERT(samples==shuffled); // Make sure that shuffle does not change values, only permutes them.
@@ -479,7 +478,7 @@ class SamplingRoutinesTestSuite : public CxxTest::TestSuite
         for(size_t i=0;i<N;++i)
           values.push_back(SamplingRoutines::RadicalInverse(i,base));
 
-        for(size_t i=base;i<N;i*=base)
+        for(size_t i=base;i<=N;i*=base)
           {
           // Test that first i samples are well distributed.
           std::sort(values.begin(), values.begin()+i);
@@ -493,8 +492,8 @@ class SamplingRoutinesTestSuite : public CxxTest::TestSuite
           if (mx > 1.0/i + DBL_EPS)
             {
             TS_FAIL("RadicalInverse sequence stratification test failed.");
-            printf("%d %d\n", base,i);
-            printf("%.6lf %.6lf\n", mx,1.0/i);
+            //printf("%d %d\n", base,i);
+            //printf("%.6lf %.6lf\n", mx,1.0/i);
             return;
             }
           }

@@ -36,6 +36,6 @@ void serialize(Archive &i_ar, IsotropicPhaseFunction &i_phase_function, const un
   }
 
 // Register the derived class in the boost serialization framework.
-BOOST_CLASS_EXPORT(IsotropicPhaseFunction)
+BOOST_CLASS_EXPORT_KEY(IsotropicPhaseFunction)
 
 #endif // ISOTROPIC_PHASE_FUNCTION_H

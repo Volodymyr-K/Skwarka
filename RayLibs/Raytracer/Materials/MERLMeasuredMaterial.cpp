@@ -2,6 +2,9 @@
 
 #include <Raytracer/Core/BxDF.h>
 
+// Register the derived class in the boost serialization framework.
+BOOST_CLASS_EXPORT_IMPLEMENT(MERLMeasuredMaterial);
+
 MERLMeasuredMaterial::MERLMeasuredMaterial(intrusive_ptr<const MERLMeasuredData> ip_merl_measured_data): mp_merl_measured_data(ip_merl_measured_data)
   {
   ASSERT(ip_merl_measured_data);

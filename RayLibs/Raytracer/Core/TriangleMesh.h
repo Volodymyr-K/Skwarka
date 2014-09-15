@@ -48,7 +48,7 @@ struct MeshTriangle
 * Triangle mesh represented by a set of vertices and triangles.
 * The mesh can also have UV parameterization of the surface. UV parameterization is defined by the UV coordinates of the each triangle vertices.
 * The UV values are linearly interpolated inside the triangles.
-* The class provides an option to interpolate the normals inside the triangles to make the imitate a smooth surface.
+* The class provides an option to interpolate the normals inside the triangles to imitate a smooth surface.
 *
 * The mesh is constant in the sense that once created the geometry and connectivity never changes.
 */
@@ -75,8 +75,8 @@ class TriangleMesh: public ReferenceCounted
     * computed from UV coordinates (as tangents to U-isolines).
     * @param i_vertices Vertices coordinates.
     * @param i_triangles Mesh triangles.
-    * @param i_shading_normals Vector of shading normals. Should be either empty or have the same size that i_vertices has. Vectors are not required to be normaized.
-    * @param i_tangents Vector of tangent directions. Should be either empty or have the same size that i_vertices has. Vectors are not required to be normaized.
+    * @param i_shading_normals Vector of shading normals. Should be either empty or have the same size that i_vertices has. Vectors are not required to be normalized.
+    * @param i_tangents Vector of tangent directions. Should be either empty or have the same size that i_vertices has. Vectors are not required to be normalized.
     * @param i_use_shading_normals Defines if shading normals should be used for computing DifferentialGeometry. If false, geometric normals will be used instead.
     * @param i_invert_normals Defines if triangle normals need to be inverted.
     */

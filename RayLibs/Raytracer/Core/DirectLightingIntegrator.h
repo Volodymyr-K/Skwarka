@@ -26,7 +26,7 @@ class DirectLightingIntegrator: public ReferenceCounted
 
   public:
     /**
-    * Creates DirectLightingIntegrator instance with the specified number of lights and BSDF samples and the specified light sampling strategy.
+    * Creates DirectLightingIntegrator instance with the specified number of light samples and BSDF samples and the specified light sampling strategy.
     * The strategy defines the probability for each light to be sampled. If NULL, the default irradiance-based implementation will be used.
     * Depending on the sampler, the actual number of lights and BSDF samples can be greater then the ones requested.
     * @param ip_scene Scene instance. Should not be NULL.

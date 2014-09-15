@@ -111,60 +111,65 @@ class TestTracer
   DisplayUpdateCallback *mp_callback;
   intrusive_ptr<TriangleMesh> mp_mesh;
   intrusive_ptr<const Scene> mp_scene;
+  intrusive_ptr<const Camera> mp_pbrt_camera;
   };
 
-intrusive_ptr<const Camera> p_pbrt_camera;
 
 inline void TestTracer::LoadMesh()
-  {
+{
   intrusive_ptr<Log> p_log( new StreamLog );
-  PbrtSceneImporter importer("D:\\pbrt\\v2.0\\pbrt-scenes\\pbrt-scenes\\plants-modified.pbrt", p_log);
-  //PbrtSceneImporter importer("D:\\pbrt\\v2.0\\pbrt-scenes\\pbrt-scenes\\tt.pbrt", p_log);
-  //PbrtSceneImporter importer("D:\\pbrt\\v2.0\\pbrt-scenes\\pbrt-scenes\\yeahright.pbrt", p_log);
-  //PbrtSceneImporter importer("D:\\pbrt\\v2.0\\pbrt-scenes\\pbrt-scenes\\sponza-phomap.pbrt", p_log);
-  //PbrtSceneImporter importer("D:\\pbrt\\v2.0\\pbrt-source\\scenes\\prt-teapot.pbrt", p_log);
-  //PbrtSceneImporter importer("D:\\pbrt\\v2.0\\pbrt-scenes\\pbrt-scenes\\geometry\\sanmiguel\\plantas.pbrt", p_log);
+  //PbrtSceneImporter importer("E:\\pbrt\\v2.0\\pbrt-scenes\\pbrt-scenes\\plants-modified.pbrt", p_log);
+  //PbrtSceneImporter importer("E:\\pbrt\\v2.0\\pbrt-scenes\\pbrt-scenes\\tt.pbrt", p_log);
+  //PbrtSceneImporter importer("E:\\pbrt\\v2.0\\pbrt-scenes\\pbrt-scenes\\yeahright.pbrt", p_log);
+  //PbrtSceneImporter importer("E:\\pbrt\\v2.0\\pbrt-scenes\\pbrt-scenes\\sponza-phomap.pbrt", p_log);
+  //PbrtSceneImporter importer("E:\\pbrt\\v2.0\\pbrt-source\\scenes\\prt-teapot.pbrt", p_log);
+  //PbrtSceneImporter importer("E:\\pbrt\\v2.0\\pbrt-scenes\\pbrt-scenes\\geometry\\sanmiguel\\plantas.pbrt", p_log);
+
+  PbrtSceneImporter importer("D:\\Development\\scenes\\sponza-phomap.pbrt", p_log);
+  //PbrtSceneImporter importer("D:\\Development\\scenes\\arcsphere.pbrt", p_log);
   importer.GetScene();
 
   mp_scene = importer.GetScene();
-  p_pbrt_camera = importer.GetCameras()[0];
-  m_imageWidth = (int)p_pbrt_camera->GetFilm()->GetXResolution();
-  m_imageHeight = (int)p_pbrt_camera->GetFilm()->GetYResolution();
+  mp_pbrt_camera = importer.GetCameras()[0];
+  m_imageWidth = (int)mp_pbrt_camera->GetFilm()->GetXResolution();
+  m_imageHeight = (int)mp_pbrt_camera->GetFilm()->GetYResolution();
   return;
   }
 
 inline void TestTracer::RenderImage()
   {
   tbb::tick_count t0, t1;
+  /*
   FilmFilter *filter = new MitchellFilter(2.0,2.0);
-  //FilmFilter *filter = new BoxFilter(1.0,1.0);
+  //FilmFilter *filter = new BoxFilter(0.5,0.5);
   //intrusive_ptr<InteractiveFilm> p_film(new InteractiveFilm(GetImageWidth(), GetImageHeight(), intrusive_ptr<FilmFilter>(filter)));
   intrusive_ptr<ImageFilm> p_film(new ImageFilm(GetImageWidth(), GetImageHeight(), intrusive_ptr<FilmFilter>(filter)));
   //p_film->SetCropWindow(Point2D_i(400,500),Point2D_i(500,600));
 
-  Point2D_i window_begin,window_end;
-  p_film->GetSamplingExtent(window_begin, window_end);
-
-  Point3D_d camera_pos(9.5,-2.4,7);
-  Point3D_d look_at(2.5,-1.5,0.0);
+  Point3D_d camera_pos(12,-1,7);
+  Point3D_d look_at(-4,0.2,1.5);
   Vector3D_d direction = Vector3D_d(look_at-camera_pos).Normalized();
-  intrusive_ptr<const Camera> p_camera( new PerspectiveCamera( MakeLookAt(camera_pos,direction,Vector3D_d(0,0,1)).Inverted(), p_film, 0.001*12.000, 6, 1.22) );
+  intrusive_ptr<const Camera> p_camera(new PerspectiveCamera(MakeLookAt(camera_pos, direction, Vector3D_d(0, 0, 1)).Inverted(), p_film, 0.001*12.000, 6, 1.22));
+  */
 
-  p_camera = p_pbrt_camera;
+  intrusive_ptr<const Camera> p_camera = mp_pbrt_camera;
 
   intrusive_ptr<ImagePixelsOrder> pixel_order(new ConsecutiveImagePixelsOrder);
   //intrusive_ptr<ImagePixelsOrder> pixel_order(new RandomBlockedImagePixelsOrder);
+  //intrusive_ptr<ImagePixelsOrder> pixel_order(new UniformImagePixelsOrder);
 
-  intrusive_ptr<Sampler> p_sampler( new LDSampler(window_begin, window_end, 2, pixel_order) );
+  Point2D_i window_begin, window_end;
+  p_camera->GetFilm()->GetSamplingExtent(window_begin, window_end);
+  intrusive_ptr<Sampler> p_sampler( new LDSampler(window_begin, window_end, 8, pixel_order) );
 
-
+  /*
   DirectLightingLTEIntegratorParams params;
   params.m_direct_light_samples_num=8;
   params.m_max_specular_depth=6;
-  params.m_media_step_size=0.01;
+  params.m_media_step_size=0.1;
   intrusive_ptr<DirectLightingLTEIntegrator> p_lte_int( new DirectLightingLTEIntegrator(mp_scene, params) );
+*/
 
-/*
   PhotonLTEIntegratorParams params;
   params.m_direct_light_samples_num=8;
   params.m_gather_samples_num=8;
@@ -173,15 +178,15 @@ inline void TestTracer::RenderImage()
   params.m_max_specular_depth=10;
   params.m_media_step_size=0.01;
   intrusive_ptr<PhotonLTEIntegrator> p_lte_int( new PhotonLTEIntegrator(mp_scene, params) );
-*/
+
 
   t0 = tbb::tick_count::now();
-  //p_lte_int->ShootPhotons(1000000, 20000000, 20000000, true);
+  p_lte_int->ShootPhotons(0, 100000, 100000, true);
   t1 = tbb::tick_count::now();
   printf("Shooting: %lf\n", (t1-t0).seconds());
 
   intrusive_ptr<SamplerBasedRenderer> p_renderer( new SamplerBasedRenderer(p_lte_int, p_sampler) );
-  p_renderer->SetDisplayUpdateCallback(mp_callback, 60.0);
+  p_renderer->SetDisplayUpdateCallback(mp_callback, 20.0);
  
   tbb::task_scheduler_init init;
   t0 = tbb::tick_count::now();
@@ -189,7 +194,9 @@ inline void TestTracer::RenderImage()
   t1 = tbb::tick_count::now();
 
   printf("Rendering: %lf\n", (t1-t0).seconds());
-  p_film->ClearFilm();
+
+  //p_film->ClearFilm();
+  p_camera->GetFilm()->ClearFilm();
   p_sampler->Reset();
 
 /*

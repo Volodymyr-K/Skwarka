@@ -58,11 +58,6 @@ struct PhotonLTEIntegratorParams
 */
 class PhotonLTEIntegrator: public LTEIntegrator
   {
-  private:
-    struct Photon;
-    struct IrradiancePhoton;
-    typedef KDTree<Photon>::NearestPoint NearestPhoton;
-
   public:
     /**
     * Creates PhotonLTEIntegrator instance.
@@ -86,6 +81,10 @@ class PhotonLTEIntegrator: public LTEIntegrator
     void ShootPhotons(size_t i_caustic_photons, size_t i_direct_photons, size_t i_indirect_photons, bool i_low_thread_priority = false);
 
   private:
+    struct Photon;
+    struct IrradiancePhoton;
+    typedef KDTree<Photon>::NearestPoint NearestPhoton;
+
     class PhotonFilter;
     class IrradiancePhotonFilter;
 
@@ -161,7 +160,7 @@ class PhotonLTEIntegrator: public LTEIntegrator
     * The method returns pair of irradiance values for two sides of the surface.
     */
     std::pair<Spectrum_f, Spectrum_f> _LookupPhotonIrradiance(const Point3D_d &i_point, const Vector3D_d &i_normal,
-      shared_ptr<const KDTree<Photon> > ip_photon_map, size_t i_photon_paths, size_t i_lookup_photons_num, double i_max_lookup_dist, NearestPhoton *ip_nearest_photons) const;
+      shared_ptr<const KDTree<Photon> > ip_photon_map, size_t i_photon_paths, size_t i_lookup_photons_num, double i_max_lookup_dist, NearestPhoton *op_nearest_photons) const;
 
     /**
     * Creates irradiance photons and constructs KDTree for them.
@@ -209,10 +208,10 @@ class PhotonLTEIntegrator: public LTEIntegrator
     size_t m_bsdf_1D_samples_id, m_bsdf_2D_samples_id, m_direction_1D_samples_id, m_direction_2D_samples_id;
 
     // Photon maps.
-    shared_ptr<const KDTree<Photon> > mp_caustic_map, mp_direct_map, mp_indirect_map, mp_indirect_specular_map;
+    shared_ptr<const KDTree<Photon> > mp_caustic_map, mp_direct_map, mp_indirect_map;
     
     // Number of photon paths used to gather photons of the corresponding type.
-    size_t m_caustic_paths, m_direct_paths, m_indirect_paths, m_indirect_specular_paths;
+    size_t m_caustic_paths, m_direct_paths, m_indirect_paths;
 
     // Irradiance photon map.
     shared_ptr<const KDTree<IrradiancePhoton> > mp_irradiance_map;

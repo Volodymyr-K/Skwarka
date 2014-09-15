@@ -4,12 +4,15 @@
 #include <Math/SamplingRoutines.h>
 #include <utility>
 
+// Register the derived class in the boost serialization framework.
+BOOST_CLASS_EXPORT_IMPLEMENT(ParallelLight);
+
 ParallelLight::ParallelLight(const Vector3D_d &i_direction, const Spectrum_d &i_radiance, const BBox3D_d &i_world_bounds): DeltaLightSource(),
 m_direction(i_direction), m_radiance(i_radiance), m_world_bounds(i_world_bounds)
   {
-  m_direction.Normalize();
   ASSERT(m_direction.IsNormalized());
   ASSERT(InRange(i_radiance,0.0,DBL_INF));
+  m_direction.Normalize();
 
   double min_x=i_world_bounds.m_min[0], max_x=i_world_bounds.m_max[0];
   double min_y=i_world_bounds.m_min[1], max_y=i_world_bounds.m_max[1];
@@ -21,6 +24,8 @@ m_direction(i_direction), m_radiance(i_radiance), m_world_bounds(i_world_bounds)
 
   double x_extent = max_x-min_x, y_extent = max_y-min_y, z_extent = max_z-min_z;
   m_bbox_projected_area = x_extent*y_extent*fabs(i_direction[2])+x_extent*z_extent*fabs(i_direction[1])+y_extent*z_extent*fabs(i_direction[0]);
+  m_inv_bbox_projected_area = (m_bbox_projected_area > DBL_EPS) ? 1.0 / m_bbox_projected_area : 0.0;
+
   m_power = m_bbox_projected_area * i_radiance;
 
   double emitting_x = i_direction[0]>0 ? min_x : max_x;
@@ -91,7 +96,7 @@ Spectrum_d ParallelLight::SamplePhoton(const Point2D_d &i_sample, Ray &o_photon_
   o_photon_ray.m_min_t = 0.0;
   o_photon_ray.m_max_t = DBL_INF;
 
-  o_pdf = 1.0/m_bbox_projected_area;
+  o_pdf = m_inv_bbox_projected_area;
 
   return m_radiance;
   }

@@ -58,7 +58,7 @@ class PowerLightsSamplingStrategyTestSuite : public CxxTest::TestSuite
         if (i>0 && cdf[i]<cdf[i-1]) {TS_FAIL("CDF values aren't ordered non-descendingly."); break;}
         }
 
-      TS_ASSERT_EQUALS(cdf[lights_num-1], 1.0);
+      TS_ASSERT_DELTA(cdf[lights_num-1], 1.0, DBL_EPS);
       }
 
     void test_PowerLightsSamplingStrategy_WithNormal()

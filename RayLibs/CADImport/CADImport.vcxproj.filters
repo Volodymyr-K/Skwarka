@@ -1,0 +1,95 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="SceneImporters">
+      <UniqueIdentifier>{0a9075a9-7c41-4878-b3eb-59d05b61249c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SceneImporters\Header Files">
+      <UniqueIdentifier>{fa361684-290b-4e2b-b984-3fb72ef6c1cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SceneImporters\Source Files">
+      <UniqueIdentifier>{e8f38e08-79b0-4c48-bc38-bf731d0df416}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SceneImporters\Source Files\PbrtSceneImporter">
+      <UniqueIdentifier>{1ab8cd51-9ac2-4bd0-b916-f2fd2c5fc661}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SceneImporters\Source Files\PbrtSceneImporter\Factories">
+      <UniqueIdentifier>{775a654b-fb1d-430b-bd66-265a19469c28}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core">
+      <UniqueIdentifier>{4eb2339b-a31a-47a2-ae23-e54d44648503}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Core\Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="SceneImporters\PbrtSceneImporter.h">
+      <Filter>SceneImporters\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneImporters\PbrtSceneImporter\PbrtGraphicsState.h">
+      <Filter>SceneImporters\Source Files\PbrtSceneImporter</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneImporters\PbrtSceneImporter\PbrtParamSet.h">
+      <Filter>SceneImporters\Source Files\PbrtSceneImporter</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneImporters\PbrtSceneImporter\PbrtRenderOptions.h">
+      <Filter>SceneImporters\Source Files\PbrtSceneImporter</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneImporters\PbrtSceneImporter\PbrtStringRoutines.h">
+      <Filter>SceneImporters\Source Files\PbrtSceneImporter</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneImporters\PbrtSceneImporter\PbrtUtils.h">
+      <Filter>SceneImporters\Source Files\PbrtSceneImporter</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneImporters\PbrtSceneImporter\Factories\CameraFactory.h">
+      <Filter>SceneImporters\Source Files\PbrtSceneImporter\Factories</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneImporters\PbrtSceneImporter\Factories\FilmFactory.h">
+      <Filter>SceneImporters\Source Files\PbrtSceneImporter\Factories</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneImporters\PbrtSceneImporter\Factories\FilmFilterFactory.h">
+      <Filter>SceneImporters\Source Files\PbrtSceneImporter\Factories</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneImporters\PbrtSceneImporter\Factories\LightSourceFactory.h">
+      <Filter>SceneImporters\Source Files\PbrtSceneImporter\Factories</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneImporters\PbrtSceneImporter\Factories\MaterialFactory.h">
+      <Filter>SceneImporters\Source Files\PbrtSceneImporter\Factories</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneImporters\PbrtSceneImporter\Factories\ShapeFactory.h">
+      <Filter>SceneImporters\Source Files\PbrtSceneImporter\Factories</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneImporters\PbrtSceneImporter\Factories\TextureFactory.h">
+      <Filter>SceneImporters\Source Files\PbrtSceneImporter\Factories</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneImporters\PbrtSceneImporter\Factories\VolumeRegionFactory.h">
+      <Filter>SceneImporters\Source Files\PbrtSceneImporter\Factories</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\SceneImporter.h">
+      <Filter>Core\Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="SceneImporters\PbrtSceneImporter\PbrtGraphicsState.cpp">
+      <Filter>SceneImporters\Source Files\PbrtSceneImporter</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneImporters\PbrtSceneImporter\PbrtParamSet.cpp">
+      <Filter>SceneImporters\Source Files\PbrtSceneImporter</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneImporters\PbrtSceneImporter\PbrtRenderOptions.cpp">
+      <Filter>SceneImporters\Source Files\PbrtSceneImporter</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneImporters\PbrtSceneImporter\PbrtSceneImporter_hooks.cpp">
+      <Filter>SceneImporters\Source Files\PbrtSceneImporter</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneImporters\PbrtSceneImporter\PbrtSceneImporter_main.cpp">
+      <Filter>SceneImporters\Source Files\PbrtSceneImporter</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

@@ -63,7 +63,7 @@ class FresnelConductor
 /**
 * Approximates the refractive index and absorption coefficient for a conductor material with the specified reflectance.
 * The specified reflectance value is the reflectance of the material for a normal incident direction (i.e. when the theta angle is zero).
-* The method uses value 2.0 as the first guess for the of the abosrption coefficient. This works well for most of the conductor materials.
+* The method uses value 2.0 as the first guess for the absorption coefficient. This works well for most of the conductor materials.
 * @param i_reflection Reflectance of the material for a normal incident direction (i.e. when the theta angle is zero). Each spectrum component should be in [0;1] range.
 * @param[out] o_refractive_index Refractive index of the object. Each spectrum component will be positive.
 * @param[out] o_absorption Object absorption coefficient. Each spectrum component will be positive.

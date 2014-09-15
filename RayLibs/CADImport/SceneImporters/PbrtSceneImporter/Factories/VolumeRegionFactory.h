@@ -25,7 +25,7 @@ namespace PbrtImport
         else if (i_name == "exponential")
           return _CreateExponentialVolumeRegion(i_volume_to_world, i_params);
         else
-          PbrtImport::Utils::LogWarning(mp_log, std::string("Volume region \"") + i_name + std::string("\" unknown."));
+          PbrtImport::Utils::LogError(mp_log, std::string("Volume region \"") + i_name + std::string("\" unknown."));
 
         return NULL;
         }

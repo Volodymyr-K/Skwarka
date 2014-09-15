@@ -10,7 +10,7 @@
 /**
 * Implementation of the VolumeRegion that acts as a container for other volume regions.
 * The class is used by Scene to represent all volume regions as a single object to make calls to.
-* Current implementation stores all underlying volume regions in a vector and has linear complexity (by the number of regions) for most of the methods.
+* Current implementation stores all underlying volume regions in a vector and has linear complexity (with respect to the number of regions) for most of the methods.
 */
 class AggregateVolumeRegion: public VolumeRegion
   {
@@ -111,6 +111,6 @@ void AggregateVolumeRegion::serialize(Archive &i_ar, const unsigned int i_versio
   }
 
 // Register the derived class in the boost serialization framework.
-BOOST_CLASS_EXPORT(AggregateVolumeRegion)
+BOOST_CLASS_EXPORT_KEY(AggregateVolumeRegion)
 
 #endif // VOLUME_REGION_H

@@ -81,16 +81,13 @@ namespace PbrtImport
         }
 
     private:
-      void _AddBumMap(intrusive_ptr<const Material> ip_ret, intrusive_ptr<const Texture<double> > ip_bumpMap)const
+      void _AddBumpMap(intrusive_ptr<const Material> ip_ret, intrusive_ptr<const Texture<double> > ip_bumpMap)const
         {
         if (ip_bumpMap == NULL) return;
         const Texture<double> *p_bump_map = ip_bumpMap.get();
-        const ConstantTexture<double> *p_constant_bum_map = dynamic_cast<const ConstantTexture<double>*>(p_bump_map);
-        if (p_constant_bum_map == NULL)
+        const ConstantTexture<double> *p_constant_bump_map = dynamic_cast<const ConstantTexture<double>*>(p_bump_map);
+        if (p_constant_bump_map == NULL)
           m_material_to_bump_map[ip_ret.get()] = ip_bumpMap;
-        else
-          if (p_constant_bum_map->Evaluate(DifferentialGeometry(), 0) != 0.0)
-            m_material_to_bump_map[ip_ret.get()] = ip_bumpMap;
         }
 
       intrusive_ptr<const Material> _CreateMatteMaterial(const TextureParams &i_params) const
@@ -100,7 +97,7 @@ namespace PbrtImport
         intrusive_ptr<const Texture<double> > bumpMap = i_params.GetFloatTexture("bumpmap", 0.0, mp_log);
 
         intrusive_ptr<const Material> p_ret(new MatteMaterial(Kd, sigma));
-        _AddBumMap(p_ret, bumpMap);
+        _AddBumpMap(p_ret, bumpMap);
         return p_ret;
         }
 
@@ -112,7 +109,7 @@ namespace PbrtImport
         intrusive_ptr<const Texture<double> > bumpMap = i_params.GetFloatTexture("bumpmap", 0.0f, mp_log);
 
         intrusive_ptr<const Material> p_ret(new PlasticMaterial(Kd, Ks, roughness));
-        _AddBumMap(p_ret, bumpMap);
+        _AddBumpMap(p_ret, bumpMap);
         return p_ret;
         }
 
@@ -134,7 +131,7 @@ namespace PbrtImport
           refractive_index = index->Evaluate(DifferentialGeometry(), 0);
 
         intrusive_ptr<const Material> p_ret(new TransparentMaterial(Kr, Kt, refractive_index));
-        _AddBumMap(p_ret, bumpMap);
+        _AddBumpMap(p_ret, bumpMap);
         return p_ret;
         }
 
@@ -145,7 +142,7 @@ namespace PbrtImport
 
         intrusive_ptr<const Texture<SpectrumCoef_d> > Kt(new ConstantTexture<SpectrumCoef_d>(SpectrumCoef_d(0.0)));
         intrusive_ptr<const Material> p_ret(new TransparentMaterial(Kr, Kt, 1e10));
-        _AddBumMap(p_ret, bumpMap);
+        _AddBumpMap(p_ret, bumpMap);
         return p_ret;
         }
 
@@ -162,7 +159,7 @@ namespace PbrtImport
         if (bumpMap1!=NULL && bumpMap2!=NULL)
           bumpMap = new ScaleTexture<double, double>(bumpMap1, bumpMap2);
 
-        _AddBumMap(p_ret, bumpMap);
+        _AddBumpMap(p_ret, bumpMap);
         return p_ret;
         }
 
@@ -179,7 +176,7 @@ namespace PbrtImport
 
         intrusive_ptr<const Material> p_ret(new MetalMaterial(eta, k, roughness));
         if (bumpMap) m_material_to_bump_map[p_ret.get()] = bumpMap;
-        _AddBumMap(p_ret, bumpMap);
+        _AddBumpMap(p_ret, bumpMap);
         return p_ret;
         }
 
@@ -193,7 +190,7 @@ namespace PbrtImport
         intrusive_ptr<const Texture<double> > bumpMap = i_params.GetFloatTexture("bumpmap", 0.0f, mp_log);
 
         intrusive_ptr<const Material> p_ret(new SubstrateMaterial(Kd, Ks, uroughness, vroughness));
-        _AddBumMap(p_ret, bumpMap);
+        _AddBumpMap(p_ret, bumpMap);
         return p_ret;
         }
 
@@ -212,7 +209,7 @@ namespace PbrtImport
           refractive_index = eta->Evaluate(DifferentialGeometry(), 0);
 
         intrusive_ptr<const Material> p_ret(new UberMaterial(Kd, Ks, Kr, roughness, opacity, refractive_index));
-        _AddBumMap(p_ret, bumpMap);
+        _AddBumpMap(p_ret, bumpMap);
         return p_ret;
         }
 
@@ -247,7 +244,7 @@ namespace PbrtImport
 
         intrusive_ptr<MERLMeasuredData> p_merl_measured_data( new MERLMeasuredData(data_file) );
         intrusive_ptr<const Material> p_ret(new MERLMeasuredMaterial(p_merl_measured_data));
-        _AddBumMap(p_ret, bumpMap);
+        _AddBumpMap(p_ret, bumpMap);
         return p_ret;
         }
 

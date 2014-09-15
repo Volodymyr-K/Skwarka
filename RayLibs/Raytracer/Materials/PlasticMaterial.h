@@ -66,6 +66,6 @@ void PlasticMaterial::serialize(Archive &i_ar, const unsigned int i_version)
   }
 
 // Register the derived class in the boost serialization framework.
-BOOST_CLASS_EXPORT(PlasticMaterial)
+BOOST_CLASS_EXPORT_KEY(PlasticMaterial)
 
 #endif // PLASTIC_MATERIAL_H

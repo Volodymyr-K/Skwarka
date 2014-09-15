@@ -104,6 +104,9 @@ void* PhotonLTEIntegrator::PhotonsShootingFilter::operator()(void* ip_chunk)
   if (num_lights == 0)
     {
     ASSERT(0 && "If there are no lights in the scene we should not have got here.");
+
+    if (m_low_thread_priority)
+      CoreUtils::SetCurrentThreadPriority(prev_thread_priority);
     return p_chunk;
     }
 
@@ -130,7 +133,8 @@ void* PhotonLTEIntegrator::PhotonsShootingFilter::operator()(void* ip_chunk)
     else if (light_index < delta_lights+infinite_lights)
       weight = lights.m_infinite_light_sources[light_index-delta_lights]->SamplePhoton(position_sample, direction_sample, photon_ray, photon_pdf);
     else
-      weight = lights.m_area_light_sources[light_index-delta_lights-infinite_lights]->SamplePhoton((*p_rng)(1.0), position_sample, direction_sample, photon_ray, photon_pdf);
+      weight = lights.m_area_light_sources[light_index - delta_lights - infinite_lights]->SamplePhoton(
+        SamplingRoutines::RadicalInverse((unsigned int)path_index + 1, 13), position_sample, direction_sample, photon_ray, photon_pdf);
 
     if (photon_pdf == 0.0 || weight.IsBlack())
       continue;
@@ -150,11 +154,10 @@ void* PhotonLTEIntegrator::PhotonsShootingFilter::operator()(void* ip_chunk)
 
       Vector3D_d incident = photon_ray.m_direction*(-1.0);
       const BSDF *p_photon_BSDF = photon_isect.mp_primitive->GetBSDF(photon_isect.m_dg, photon_isect.m_triangle_index, *p_pool);
-      Vector3D_d photon_shading_normal = p_photon_BSDF->GetShadingNormal();
       bool has_non_specular = p_photon_BSDF->GetComponentsNum(non_specular_types) > 0;
 
       // Deposit photon at surface.
-      Photon photon(Convert<float>(photon_isect.m_dg.m_point), Convert<float>(weight), CompressedDirection(incident), CompressedDirection(photon_shading_normal));
+      Photon photon(Convert<float>(photon_isect.m_dg.m_point), Convert<float>(weight), CompressedDirection(incident), CompressedDirection(p_photon_BSDF->GetGeometricNormal()));
       if (intersections_num == 1)
         {
         if (has_non_specular && p_chunk->m_direct_done==false)
@@ -170,7 +173,7 @@ void* PhotonLTEIntegrator::PhotonsShootingFilter::operator()(void* ip_chunk)
         /*
         Important!
         We deposit indirect photons even on specular surfaces.
-        These are used later at the final gathering step when specular surfaces are approximated by a lambertian one.
+        They are used later at the final gathering step when specular surfaces are approximated by a lambertian one.
         Although this brings error to the final image it is usually not so bad since indirect photons are pretty equally distributed in the scene.
         This is probably the fastest method to deal with this kind of problem (e.g. pbrt does not account for this at all by returning black radiance for such final gather rays).
         */
@@ -190,8 +193,8 @@ void* PhotonLTEIntegrator::PhotonsShootingFilter::operator()(void* ip_chunk)
       // We only use low-discrepancy samples for first intersection because further intersections do not really gain from good stratification.
       if (intersections_num == 1)
         {
-        bsdf_sample = Point2D_d(SamplingRoutines::RadicalInverse((unsigned int)path_index+1, 13), SamplingRoutines::RadicalInverse((unsigned int)path_index+1, 17));
-        component_sample = SamplingRoutines::RadicalInverse((unsigned int)path_index+1, 19);
+        bsdf_sample = Point2D_d(SamplingRoutines::RadicalInverse((unsigned int)path_index+1, 17), SamplingRoutines::RadicalInverse((unsigned int)path_index+1, 19));
+        component_sample = SamplingRoutines::RadicalInverse((unsigned int)path_index+1, 23);
         }
       else
         {
@@ -207,7 +210,7 @@ void* PhotonLTEIntegrator::PhotonsShootingFilter::operator()(void* ip_chunk)
 
       // We do not multiply the bsdf by the cosine factor for specular scattering; this is already accounted for in the corresponding BxDFs.
       if (IsSpecular(sampled_type) == false)
-        weight_new *= fabs(exitant * photon_shading_normal);
+        weight_new *= fabs(exitant * p_photon_BSDF->GetShadingNormal());
 
       // Possibly terminate photon path with Russian roulette.
       // We use the termination probability equal to the luminance change due to the scattering.
@@ -248,14 +251,13 @@ void* PhotonLTEIntegrator::PhotonsMergingFilter::operator()(void* ip_chunk)
   {
   PhotonsChunk *p_chunk = static_cast<PhotonsChunk*>(ip_chunk);
 
-  if (p_chunk->m_caustic_done==false)
-    mp_photon_maps->AddCausticPhotons(p_chunk->m_caustic_photons, p_chunk->m_paths_num);
-
-  if (p_chunk->m_direct_done==false)
-    mp_photon_maps->AddDirectPhotons(p_chunk->m_direct_photons, p_chunk->m_paths_num);
-
-  if (p_chunk->m_indirect_done==false)
-    mp_photon_maps->AddIndirectPhotons(p_chunk->m_indirect_photons, p_chunk->m_paths_num);
+  /*
+  We add photons even if the photon maps already contain enough photons, because since we have already done
+  all the expensive computation, we can add the photons just as well.
+  */
+  mp_photon_maps->AddCausticPhotons(p_chunk->m_caustic_photons, p_chunk->m_paths_num);
+  mp_photon_maps->AddDirectPhotons(p_chunk->m_direct_photons, p_chunk->m_paths_num);
+  mp_photon_maps->AddIndirectPhotons(p_chunk->m_indirect_photons, p_chunk->m_paths_num);
 
   // Release the chunk.
   p_chunk->m_available = true;
@@ -392,8 +394,8 @@ void PhotonLTEIntegrator::PhotonMaps::_AddPhotonsToKDTree(shared_ptr<KDTree<Phot
     /*
     Yes, we use the "dirty" trick with the const_cast.
     This looks to be the best option since KDTree can not provide a method that returns non-constant reference to a point
-    because the calling code will be able to change it's coordinates (which will invalidate the tree).
-    Since we do not change the photon's position and only change it's weight it is relatively safe to use the const_cast.
+    because the calling code will be able to change its coordinates (which will invalidate the tree).
+    Since we do not change the photon's position and only change its weight it is relatively safe to use the const_cast.
     */
     const_cast<Photon*>(p_nearest_photon)->m_weight += photon.m_weight;
     }

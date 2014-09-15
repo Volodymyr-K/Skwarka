@@ -121,12 +121,14 @@ inline MemoryPool::~MemoryPool()
     delete[] m_used_blocks[i];
   for (size_t i = 0; i < m_available_blocks.size(); ++i)
     delete[] m_available_blocks[i];
+  for (size_t i = 0; i < m_large_blocks.size(); ++i)
+    delete[] m_large_blocks[i];
   }
 
 inline void *MemoryPool::Alloc(size_t i_size)
   {
   // Round up i_size to minimum machine alignment.
-  i_size = ((i_size + 7) & (~7));
+  i_size = ((i_size + 15) & (~15));
 
   if (m_current_block_pos + i_size > m_block_size)
     {

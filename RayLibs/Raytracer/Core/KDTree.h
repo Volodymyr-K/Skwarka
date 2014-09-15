@@ -228,7 +228,7 @@ struct KDTree<TPoint3D>::Node
 ////////////////////////////////////////// PointsComparator ///////////////////////////////////////////////
 
 /**
-* The helper class used to sort the 3D point by a specified axis (X,Y or Z).
+* The helper class is used to sort 3D points by a specified axis (X, Y or Z).
 */
 template<typename TPoint3D>
 struct KDTree<TPoint3D>::PointsComparator

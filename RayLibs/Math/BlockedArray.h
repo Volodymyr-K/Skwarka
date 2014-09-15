@@ -154,12 +154,11 @@ template<typename T, size_t block_size_log>
 size_t BlockedArray<T,block_size_log>::_ElementIndex(size_t i_u, size_t i_v) const
   {
   ASSERT(i_u < m_size_u && i_v < m_size_v);
-  size_t block_size = 1<<block_size_log;
 
   size_t block_u = _BlockIndex(i_u), block_v = _BlockIndex(i_v);
   size_t offset_u = _BlockOffset(i_u), offset_v = _BlockOffset(i_v);
-  size_t offset = block_size * block_size * (m_u_blocks * block_v + block_u);
-  offset += block_size * offset_v + offset_u;
+  size_t offset = (m_u_blocks * block_v + block_u) << (2*block_size_log);
+  offset += (offset_v<<block_size_log) + offset_u;
 
   return offset;
   }

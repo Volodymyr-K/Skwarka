@@ -49,7 +49,7 @@ namespace PbrtImport
         else if (i_name == "windy")
           return _CreateWindyFloatTexture(i_tex_to_world, i_params);
         else
-          PbrtImport::Utils::LogWarning(mp_log, std::string("Float texture \"") + i_name + std::string("\" unknown."));
+          PbrtImport::Utils::LogError(mp_log, std::string("Float texture \"") + i_name + std::string("\" unknown."));
 
         return NULL;
         }
@@ -81,7 +81,7 @@ namespace PbrtImport
         else if (i_name == "windy")
           return _CreateWindySpectrumCoefTexture(i_tex_to_world, i_params);
         else
-          PbrtImport::Utils::LogWarning(mp_log, std::string("Spectrum texture \"") + i_name + std::string("\" unknown."));
+          PbrtImport::Utils::LogError(mp_log, std::string("Spectrum texture \"") + i_name + std::string("\" unknown."));
 
         return NULL;
         }

@@ -2,6 +2,9 @@
 #include <Math/Constants.h>
 #include <Math/SamplingRoutines.h>
 
+// Register the derived class in the boost serialization framework.
+BOOST_CLASS_EXPORT_IMPLEMENT(PointLight);
+
 PointLight::PointLight(const Point3D_d &i_position, const Spectrum_d &i_intensity): DeltaLightSource(),
 m_position(i_position), m_intensity(i_intensity)
   {

@@ -40,7 +40,7 @@ class MIPMap: public ReferenceCounted
     /**
     * Returns filtered value of image at the specified point using trilinear filter.
     * @param i_point Point at which the image is to be filtered. The range [0;1]x[0;1] corresponds to the points inside the image.
-    * @param i_width Filter width in normalized coordinates space. Please note that the actual filter's extend is twice the width.
+    * @param i_width Filter width in normalized coordinates space. Please note that the actual filter's extent is twice the width.
     */
     T Evaluate(const Point2D_d &i_point, double i_width) const;
 
@@ -66,7 +66,7 @@ class MIPMap: public ReferenceCounted
   private:
     /**
     * This method is called from constructors to initialize the class instance.
-    * It resamples the input image, builds the MIPMap levels and initialies EWA weights.
+    * It resamples the input image, builds the MIPMap levels and initializes EWA weights.
     */
     void _Initialize(const std::vector<std::vector<T> > &i_values, double i_max_anisotropy);
 
@@ -188,7 +188,7 @@ void MIPMap<T>::_Initialize(const std::vector<std::vector<T> > &i_values, double
   ASSERT(i_max_anisotropy>=1.0);
   m_max_anisotropy = std::max(i_max_anisotropy, 1.0);
 
-  // Resample original image so that it's width and height are both powers of 2.
+  // Resample original image so that its width and height are both powers of 2.
   BlockedArray<T> *p_resampled_image = _ResampleImage(i_values);
 
   m_height = p_resampled_image->GetSizeU();
@@ -396,7 +396,7 @@ const T &MIPMap<T>::_GetTexel(size_t i_level, int i_x, int i_y) const
       return black;
       }
 
-  ASSERT(i_x>=0 && i>y=0);
+  ASSERT(i_x>=0 && i_y>=0);
   return level.Get((size_t)i_y, (size_t)i_x);
   }
 
@@ -449,7 +449,7 @@ T MIPMap<T>::Evaluate(const Point2D_d &i_point, Vector2D_d i_dxy_1, Vector2D_d i
     return _Interpolate(0, i_point);
 
   // Clamp ellipse eccentricity if too large.
-  if (minor_length * m_max_anisotropy < major_length && minor_length > 0.0)
+  if (minor_length * m_max_anisotropy < major_length)
     {
     double scale = major_length / (minor_length * m_max_anisotropy);
     i_dxy_2 *= scale;

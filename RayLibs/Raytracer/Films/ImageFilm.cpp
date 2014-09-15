@@ -1,6 +1,9 @@
 #include "ImageFilm.h"
 #include <Math/MathRoutines.h>
 
+// Register the derived class in the boost serialization framework.
+BOOST_CLASS_EXPORT_IMPLEMENT(ImageFilm);
+
 ImageFilm::ImageFilm(): Film(), m_pixels(1,1)
   {
   }

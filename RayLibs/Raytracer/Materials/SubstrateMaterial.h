@@ -17,7 +17,7 @@ class SubstrateMaterial: public Material
   {
   public:
     /**
-    * Creates SubstrateMaterial instance with the specified textures defining the reflectances and roughness.
+    * Creates SubstrateMaterial instance with the specified textures defining the reflectance and roughness.
     * The roughness is constant for U and V directions and thus the material is isotropic.
     * @param ip_diffuse_reflectance The texture defining the reflectance(color) of the diffuse surface. Each spectrum component should be in [0;1] range.
     * @param ip_specular_reflectance The texture defining the reflectance of the glossy layer at normal incidence. Each spectrum component should be in [0;1] range.
@@ -27,12 +27,12 @@ class SubstrateMaterial: public Material
       intrusive_ptr<const Texture<double> > ip_roughness);
 
     /**
-    * Creates SubstrateMaterial instance with the specified textures defining the reflectances and roughness.
+    * Creates SubstrateMaterial instance with the specified textures defining the reflectance and roughness.
     * The roughness can be different for U and V directions and thus the material is anisotropic.
     * @param ip_diffuse_reflectance The texture defining the reflectance(color) of the diffuse surface. Each spectrum component should be in [0;1] range..
     * @param ip_specular_reflectance The texture defining the reflectance of the glossy layer at normal incidence. Each spectrum component should be in [0;1] range.
     * @param ip_u_roughness The texture defining the roughness of the surface in U direction. Values should be in [0;1] range.
-    * @param ip_v_roughness The texture defining the roughness of the surface in U direction. Values should be in [0;1] range.
+    * @param ip_v_roughness The texture defining the roughness of the surface in V direction. Values should be in [0;1] range.
     */
     SubstrateMaterial(intrusive_ptr<const Texture<SpectrumCoef_d> > ip_diffuse_reflectance, intrusive_ptr<const Texture<SpectrumCoef_d> > ip_specular_reflectance, 
       intrusive_ptr<const Texture<double> > ip_u_roughness, intrusive_ptr<const Texture<double> > ip_v_roughness);
@@ -80,6 +80,6 @@ void SubstrateMaterial::serialize(Archive &i_ar, const unsigned int i_version)
   }
 
 // Register the derived class in the boost serialization framework.
-BOOST_CLASS_EXPORT(SubstrateMaterial)
+BOOST_CLASS_EXPORT_KEY(SubstrateMaterial)
 
 #endif // SUBSTRATE_MATERIAL_H

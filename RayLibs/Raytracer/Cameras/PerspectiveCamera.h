@@ -78,6 +78,6 @@ void PerspectiveCamera::serialize(Archive &i_ar, const unsigned int i_version)
   }
 
 // Register the derived class in the boost serialization framework.
-BOOST_CLASS_EXPORT(PerspectiveCamera)
+BOOST_CLASS_EXPORT_KEY(PerspectiveCamera)
 
 #endif // PERSPECTIVE_CAMERA_H

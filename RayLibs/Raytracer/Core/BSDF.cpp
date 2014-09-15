@@ -34,9 +34,6 @@ SpectrumCoef_d BSDF::Evaluate(const Vector3D_d &i_incident, const Vector3D_d &i_
 
 double BSDF::PDF(const Vector3D_d &i_incident, const Vector3D_d &i_exitant, BxDFType i_flags) const
   {
-  if (m_BxDFs_num == 0)
-    return 0.0;
-
   Vector3D_d incident_local = WorldToLocal(i_incident), exitant_local = WorldToLocal(i_exitant);
   ASSERT(incident_local.IsNormalized());
   ASSERT(exitant_local.IsNormalized());
@@ -168,7 +165,7 @@ SpectrumCoef_d BSDF::Sample(const Vector3D_d &i_incident, Vector3D_d &o_exitant,
   if (num_matched>1)
     o_pdf/=num_matched;
 
-  // If sampled component is not specular compute BxDF values for all matching components.
+  // If sampled component is not specular, compute BxDF values for all matching components.
   if (IsSpecular(o_sampled_type)==false)
     {
     ret_value=SpectrumCoef_d(0.0);

@@ -137,10 +137,10 @@ struct TriangleAccelerator::Node
   // Pointers to children (NULL if not present).
   Node *m_children[3];
 
-  // Begin and end iterators of the associated triangles in the tree (see TriangleAccelerator::m_instance_nodes vector).
+  // Begin and end iterators of the associated triangles in the tree (see TriangleAccelerator::m_triangles vector).
   size_t m_triangles_begin, m_triangles_end;
 
-  // Begin and end iterators of the associated instanced primitives in the tree (see TriangleAccelerator::m_instance_primitive_indices vector).
+  // Begin and end iterators of the associated instanced primitives in the tree (see TriangleAccelerator::m_instance_nodes vector).
   size_t m_instances_begin, m_instances_end;
 
   // Bitset that defines whether the node is internal or a leaf. If it is internal it also defines the splitting axis (x,y or z).

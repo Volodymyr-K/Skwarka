@@ -7,9 +7,10 @@
 
 /////////////////////////////////// MERLMeasuredData::Segmentation2D //////////////////////////////////////
 
-MERLMeasuredData::Segmentation2D::Segmentation2D(const std::vector<std::vector<float> > &i_values, size_t i_size_X, size_t i_size_Y)
-  {
-  ASSERT(i_values.size()>=i_size_Y && i_values[0].size()>=i_size_X);
+MERLMeasuredData::Segmentation2D::Segmentation2D(const std::vector<std::vector<float> > &i_values)
+{
+  size_t size_x = SEGMENTATION_EXITANT_PHI_RES, size_y = SEGMENTATION_EXITANT_THETA_RES;
+  ASSERT(i_values.size()>=size_y && i_values[0].size()>=size_x);
   size_t n=i_values.size(), m=i_values[0].size();
 
   std::vector<float> sum_X(m), sum_Y(n);
@@ -20,51 +21,51 @@ MERLMeasuredData::Segmentation2D::Segmentation2D(const std::vector<std::vector<f
       sum_Y[i] += i_values[i][j];
       }
 
-  std::vector<size_t> reduction_X = _Reduce(sum_X, i_size_X);
-  std::vector<size_t> reduction_Y = _Reduce(sum_Y, i_size_Y);
+  std::vector<size_t> reduction_X = _Reduce(sum_X, size_x);
+  std::vector<size_t> reduction_Y = _Reduce(sum_Y, size_y);
 
   // Normalize X grid line coordinates.
-  m_grid_X.assign(i_size_X, 0.f);
-  for(size_t i=0;i<i_size_X;++i)
+  m_grid_X.assign(size_x, 0.f);
+  for(size_t i=0;i<size_x;++i)
     m_grid_X[i] = reduction_X[i] / (float)m;
 
   // Normalize Y grid line coordinates.
-  m_grid_Y.assign(i_size_Y, 0.f);
-  for(size_t i=0;i<i_size_Y;++i)
+  m_grid_Y.assign(size_y, 0.f);
+  for(size_t i=0;i<size_y;++i)
     m_grid_Y[i] = reduction_Y[i] / (float)n;
 
   // "Reduce" the original 2D array to a new one of the smaller size by summing the original value in each cell of the "reduced" grid.
-  // The values in each row are alos progressively summed up to build the CDF function.
-  for(size_t i=0;i<i_size_Y;++i)
-    for(size_t j=0;j<i_size_X;++j)
+  // The values in each row are also progressively summed up to build the CDF function.
+  for(size_t i=0;i<size_y;++i)
+    for(size_t j=0;j<size_x;++j)
       {
       if (j>0)
         m_CDF_cols[i][j]=m_CDF_cols[i][j-1];
       else
         m_CDF_cols[i][j]=0.f;
 
-      size_t end_y = (i+1<i_size_Y) ? reduction_Y[i+1] : n;
-      size_t end_x = (j+1<i_size_X) ? reduction_X[j+1] : m;
+      size_t end_y = (i+1<size_y) ? reduction_Y[i+1] : n;
+      size_t end_x = (j+1<size_x) ? reduction_X[j+1] : m;
       for(size_t i1=reduction_Y[i];i1<end_y;++i1)
         for(size_t j1=reduction_X[j];j1<end_x;++j1)
           m_CDF_cols[i][j] += i_values[i1][j1];
       }
 
   // Build CDF for rows.
-  m_CDF_rows.assign(i_size_Y, 0.f);
-  for(size_t i=0;i<i_size_Y;++i)
+  m_CDF_rows.assign(size_y, 0.f);
+  for(size_t i=0;i<size_y;++i)
     {
     if (i>0) m_CDF_rows[i]=m_CDF_rows[i-1];
-    m_CDF_rows[i] += m_CDF_cols[i][i_size_X-1];
+    m_CDF_rows[i] += m_CDF_cols[i][size_x-1];
     }
 
   // Normalize CDF values.
-  for(size_t i=0;i<i_size_Y;++i)
+  for(size_t i=0;i<size_y;++i)
     {
     m_CDF_rows[i] /= m_CDF_rows.back();
 
-    double inv = 1.0/m_CDF_cols[i][i_size_X-1];
-    for(size_t j=0;j<i_size_X;++j)
+    double inv = 1.0/m_CDF_cols[i][size_x-1];
+    for(size_t j=0;j<size_x;++j)
       m_CDF_cols[i][j] = (float)(m_CDF_cols[i][j]*inv);
     }
   }
@@ -210,6 +211,7 @@ void MERLMeasuredData::_InitializeSegmentations()
   // The point is that we are able to choose the positions of the grid lines more wisely when having the data with a higher resolution.
   const size_t exitant_theta_res = SEGMENTATION_MULTIPLIER*SEGMENTATION_EXITANT_THETA_RES;
   const size_t exitant_phi_res = SEGMENTATION_MULTIPLIER*SEGMENTATION_EXITANT_PHI_RES;
+  double phi_coef = M_PI / (exitant_phi_res), theta_coef = M_PI_2 / (exitant_theta_res);
 
   std::vector<std::vector<float> > values(exitant_theta_res, std::vector<float>(exitant_phi_res));
   for(size_t i=0;i<SEGMENTATION_INCIDENT_THETA_RES;++i)
@@ -217,8 +219,6 @@ void MERLMeasuredData::_InitializeSegmentations()
     double incident_theta = (i+0.5)*M_PI_2/SEGMENTATION_INCIDENT_THETA_RES;
     Vector3D_d incident = MathRoutines::SphericalDirection<double>(0.0, incident_theta);
 
-    double phi_coef = M_PI/(exitant_phi_res);
-    double theta_coef = M_PI_2/(exitant_theta_res);
     for(size_t i1=0;i1<exitant_theta_res;++i1)
       {
       double exitant_theta = (i1+0.5)*theta_coef;
@@ -233,7 +233,7 @@ void MERLMeasuredData::_InitializeSegmentations()
         }
       }
 
-    m_segmentations.push_back( Segmentation2D(values, SEGMENTATION_EXITANT_PHI_RES, SEGMENTATION_EXITANT_THETA_RES) );
+    m_segmentations.push_back( Segmentation2D(values) );
     }
   }
 

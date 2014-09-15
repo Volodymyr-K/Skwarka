@@ -1,0 +1,9 @@
+#include "OpenEXRRgbaImageSource.h"
+
+// Register the derived class in the boost serialization framework.
+BOOST_CLASS_EXPORT_IMPLEMENT(OpenEXRRgbaImageSource_float);
+BOOST_CLASS_EXPORT_IMPLEMENT(OpenEXRRgbaImageSource_double);
+BOOST_CLASS_EXPORT_IMPLEMENT(OpenEXRRgbaImageSource_Spectrum_float);
+BOOST_CLASS_EXPORT_IMPLEMENT(OpenEXRRgbaImageSource_Spectrum_double);
+BOOST_CLASS_EXPORT_IMPLEMENT(OpenEXRRgbaImageSource_SpectrumCoef_float);
+BOOST_CLASS_EXPORT_IMPLEMENT(OpenEXRRgbaImageSource_SpectrumCoef_double);

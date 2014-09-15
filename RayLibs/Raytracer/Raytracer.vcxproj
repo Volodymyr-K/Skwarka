@@ -1,0 +1,263 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{ED053B6A-E1C9-4781-93AE-633837016D00}</ProjectGuid>
+    <RootNamespace>Raytracer</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>12.0.21005.1</_ProjectFileVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>..\..\..\Binaries\$(Configuration)\</OutDir>
+    <IntDir>..\..\..\Intermediate\$(Configuration)\Raytracer\</IntDir>
+    <TargetName>$(ProjectName)d</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>..\..\..\Binaries\$(Configuration)\</OutDir>
+    <IntDir>..\..\..\Intermediate\$(Configuration)\Raytracer\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <AdditionalOptions>/MP %(AdditionalOptions)</AdditionalOptions>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>..\;..\..\..\ThirdParty\;..\..\..\ThirdParty\boost\1.56\;..\..\..\ThirdParty\TBB\4.2\include;..\..\..\ThirdParty\OpenEXR\Deploy\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>TBB_USE_DEBUG;_DEBUG;NOMINMAX;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;OPENEXR_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <FloatingPointModel>Precise</FloatingPointModel>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Lib>
+      <OutputFile>$(OutDir)$(ProjectName)d.lib</OutputFile>
+    </Lib>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <AdditionalOptions>/MP %(AdditionalOptions)</AdditionalOptions>
+      <Optimization>MaxSpeed</Optimization>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <AdditionalIncludeDirectories>..\;..\..\..\ThirdParty\;..\..\..\ThirdParty\boost\1.56\;..\..\..\ThirdParty\TBB\4.2\include;..\..\..\ThirdParty\OpenEXR\Deploy\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>NDEBUG;NOMINMAX;_SECURE_SCL=0;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;OPENEXR_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+      <FloatingPointModel>Precise</FloatingPointModel>
+      <ProgramDataBaseFileName>$(IntDir)vc90.pdb</ProgramDataBaseFileName>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="Core\BSDF.h" />
+    <ClInclude Include="Core\BxDF.h" />
+    <ClInclude Include="Core\Camera.h" />
+    <ClInclude Include="Core\Color.h" />
+    <ClInclude Include="Core\CoreCommon.h" />
+    <ClInclude Include="Core\CoreUtils.h" />
+    <ClInclude Include="Core\DifferentialGeometry.h" />
+    <ClInclude Include="Core\DirectLightingIntegrator.h" />
+    <ClInclude Include="Core\Film.h" />
+    <ClInclude Include="Core\FilmFilter.h" />
+    <ClInclude Include="Core\Fresnel.h" />
+    <ClInclude Include="Core\ImageSource.h" />
+    <ClInclude Include="Core\Intersection.h" />
+    <ClInclude Include="Core\KDTree.h" />
+    <ClInclude Include="Core\LightSources.h" />
+    <ClInclude Include="Core\LightsSamplingStrategy.h" />
+    <ClInclude Include="Core\LTEIntegrator.h" />
+    <ClInclude Include="Core\Mapping.h" />
+    <ClInclude Include="Core\Material.h" />
+    <ClInclude Include="Core\MIPMap.h" />
+    <ClInclude Include="Core\PhaseFunction.h" />
+    <ClInclude Include="Core\Primitive.h" />
+    <ClInclude Include="Core\Renderer.h" />
+    <ClInclude Include="Core\Sample.h" />
+    <ClInclude Include="Core\Sampler.h" />
+    <ClInclude Include="Core\Scene.h" />
+    <ClInclude Include="Core\Spectrum.h" />
+    <ClInclude Include="Core\SpectrumCoef.h" />
+    <ClInclude Include="Core\SpectrumRoutines.h" />
+    <ClInclude Include="Core\Texture.h" />
+    <ClInclude Include="Core\TriangleAccelerator.h" />
+    <ClInclude Include="Core\TriangleMesh.h" />
+    <ClInclude Include="Core\VolumeRegion.h" />
+    <ClInclude Include="Cameras\PerspectiveCamera.h" />
+    <ClInclude Include="FilmFilters\BoxFilter.h" />
+    <ClInclude Include="FilmFilters\MitchellFilter.h" />
+    <ClInclude Include="Films\ImageFilm.h" />
+    <ClInclude Include="Films\InteractiveFilm.h" />
+    <ClInclude Include="BxDFs\FresnelBlend.h" />
+    <ClInclude Include="BxDFs\Lambertian.h" />
+    <ClInclude Include="BxDFs\MERLMeasured.h" />
+    <ClInclude Include="BxDFs\Microfacet.h" />
+    <ClInclude Include="BxDFs\OrenNayar.h" />
+    <ClInclude Include="BxDFs\ScaledBxDF.h" />
+    <ClInclude Include="BxDFs\SpecularReflection.h" />
+    <ClInclude Include="BxDFs\SpecularTransmission.h" />
+    <ClInclude Include="Materials\MatteMaterial.h" />
+    <ClInclude Include="Materials\MERLMeasuredMaterial.h" />
+    <ClInclude Include="Materials\MetalMaterial.h" />
+    <ClInclude Include="Materials\MixMaterial.h" />
+    <ClInclude Include="Materials\PlasticMaterial.h" />
+    <ClInclude Include="Materials\SubstrateMaterial.h" />
+    <ClInclude Include="Materials\TransparentMaterial.h" />
+    <ClInclude Include="Materials\UberMaterial.h" />
+    <ClInclude Include="Textures\ConstantTexture.h" />
+    <ClInclude Include="Textures\ImageTexture.h" />
+    <ClInclude Include="Textures\ScaleTexture.h" />
+    <ClInclude Include="Samplers\ConsecutiveImagePixelsOrder.h" />
+    <ClInclude Include="Samplers\LDSampler.h" />
+    <ClInclude Include="Samplers\RandomBlockedImagePixelsOrder.h" />
+    <ClInclude Include="Samplers\RandomSampler.h" />
+    <ClInclude Include="Samplers\StratifiedSampler.h" />
+    <ClInclude Include="Samplers\UniformImagePixelsOrder.h" />
+    <ClInclude Include="MicrofacetDistributions\AnisotropicDistribution.h" />
+    <ClInclude Include="MicrofacetDistributions\BlinnDistribution.h" />
+    <ClInclude Include="LightSources\DiffuseAreaLightSource.h" />
+    <ClInclude Include="LightSources\ImageEnvironmentalLight.h" />
+    <ClInclude Include="LightSources\ParallelLight.h" />
+    <ClInclude Include="LightSources\PointLight.h" />
+    <ClInclude Include="LightSources\SpotPointLight.h" />
+    <ClInclude Include="Renderers\SamplerBasedRenderer.h" />
+    <ClInclude Include="LTEIntegrators\DirectLightingLTEIntegrator.h" />
+    <ClInclude Include="LTEIntegrators\PhotonLTEIntegrator.h" />
+    <ClInclude Include="LTEIntegrators\PhotonLTEIntegrator\PhotonInternalTypes.h" />
+    <ClInclude Include="LightsSamplingStrategies\IrradianceLightsSamplingStrategy.h" />
+    <ClInclude Include="LightsSamplingStrategies\PowerLightsSamplingStrategy.h" />
+    <ClInclude Include="Mappings\SphericalMapping2D.h" />
+    <ClInclude Include="Mappings\TransformMapping3D.h" />
+    <ClInclude Include="Mappings\UVMapping2D.h" />
+    <ClInclude Include="VolumeRegions\AggregateVolumeRegion.h" />
+    <ClInclude Include="VolumeRegions\GridDensityVolumeRegion.h" />
+    <ClInclude Include="VolumeRegions\HomogeneousVolumeRegion.h" />
+    <ClInclude Include="PhaseFunctions\HGPhaseFunction.h" />
+    <ClInclude Include="PhaseFunctions\IsotropicPhaseFunction.h" />
+    <ClInclude Include="PhaseFunctions\MieHazyPhaseFunction.h" />
+    <ClInclude Include="PhaseFunctions\MieMurkyPhaseFunction.h" />
+    <ClInclude Include="PhaseFunctions\RayleighPhaseFunction.h" />
+    <ClInclude Include="ImageSources\OpenEXRRgbaImageSource.h" />
+    <ClInclude Include="ImageSources\RGB24ImageSource.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Core\BSDF.cpp" />
+    <ClCompile Include="Core\BxDF.cpp" />
+    <ClCompile Include="Core\Camera.cpp" />
+    <ClCompile Include="Core\Color.cpp" />
+    <ClCompile Include="Core\DirectLightingIntegrator.cpp" />
+    <ClCompile Include="Core\FilmFilter.cpp" />
+    <ClCompile Include="Core\LightSources.cpp" />
+    <ClCompile Include="Core\LTEIntegrator.cpp" />
+    <ClCompile Include="Core\Primitive.cpp" />
+    <ClCompile Include="Core\Renderer.cpp" />
+    <ClCompile Include="Core\Sampler.cpp" />
+    <ClCompile Include="Core\SpectrumRoutines.cpp" />
+    <ClCompile Include="Core\TriangleAccelerator.cpp" />
+    <ClCompile Include="Core\TriangleMesh.cpp" />
+    <ClCompile Include="Core\VolumeRegion.cpp" />
+    <ClCompile Include="Cameras\PerspectiveCamera.cpp" />
+    <ClCompile Include="FilmFilters\BoxFilter.cpp" />
+    <ClCompile Include="FilmFilters\MitchellFilter.cpp" />
+    <ClCompile Include="Films\ImageFilm.cpp" />
+    <ClCompile Include="Films\InteractiveFilm.cpp" />
+    <ClCompile Include="BxDFs\FresnelBlend.cpp" />
+    <ClCompile Include="BxDFs\Lambertian.cpp" />
+    <ClCompile Include="BxDFs\MERLMeasured.cpp" />
+    <ClCompile Include="BxDFs\OrenNayar.cpp" />
+    <ClCompile Include="BxDFs\ScaledBxDF.cpp" />
+    <ClCompile Include="BxDFs\SpecularTransmission.cpp" />
+    <ClCompile Include="ImageSources\OpenEXRRgbaImageSource.cpp" />
+    <ClCompile Include="ImageSources\RGB24ImageSource.cpp" />
+    <ClCompile Include="Mappings\SphericalMapping2D.cpp" />
+    <ClCompile Include="Mappings\TransformMapping3D.cpp" />
+    <ClCompile Include="Mappings\UVMapping2D.cpp" />
+    <ClCompile Include="Materials\MatteMaterial.cpp" />
+    <ClCompile Include="Materials\MERLMeasuredMaterial.cpp" />
+    <ClCompile Include="Materials\MetalMaterial.cpp" />
+    <ClCompile Include="Materials\MixMaterial.cpp" />
+    <ClCompile Include="Materials\PlasticMaterial.cpp" />
+    <ClCompile Include="Materials\SubstrateMaterial.cpp" />
+    <ClCompile Include="Materials\TransparentMaterial.cpp" />
+    <ClCompile Include="Materials\UberMaterial.cpp" />
+    <ClCompile Include="PhaseFunctions\HGPhaseFunction.cpp" />
+    <ClCompile Include="PhaseFunctions\IsotropicPhaseFunction.cpp" />
+    <ClCompile Include="PhaseFunctions\MieHazyPhaseFunction.cpp" />
+    <ClCompile Include="PhaseFunctions\MieMurkyPhaseFunction.cpp" />
+    <ClCompile Include="PhaseFunctions\RayleighPhaseFunction.cpp">
+      <PreprocessToFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</PreprocessToFile>
+    </ClCompile>
+    <ClCompile Include="Samplers\ConsecutiveImagePixelsOrder.cpp" />
+    <ClCompile Include="Samplers\LDSampler.cpp" />
+    <ClCompile Include="Samplers\RandomBlockedImagePixelsOrder.cpp" />
+    <ClCompile Include="Samplers\RandomSampler.cpp" />
+    <ClCompile Include="Samplers\StratifiedSampler.cpp" />
+    <ClCompile Include="Samplers\UniformImagePixelsOrder.cpp" />
+    <ClCompile Include="LightSources\DiffuseAreaLightSource.cpp" />
+    <ClCompile Include="LightSources\ImageEnvironmentalLight.cpp" />
+    <ClCompile Include="LightSources\ParallelLight.cpp" />
+    <ClCompile Include="LightSources\PointLight.cpp" />
+    <ClCompile Include="LightSources\SpotPointLight.cpp" />
+    <ClCompile Include="Renderers\SamplerBasedRenderer.cpp" />
+    <ClCompile Include="LTEIntegrators\DirectLightingLTEIntegrator.cpp" />
+    <ClCompile Include="LTEIntegrators\PhotonLTEIntegrator\PhotonLTEIntegrator.cpp" />
+    <ClCompile Include="LTEIntegrators\PhotonLTEIntegrator\PhotonShootingPipeline.cpp" />
+    <ClCompile Include="LightsSamplingStrategies\IrradianceLightsSamplingStrategy.cpp" />
+    <ClCompile Include="LightsSamplingStrategies\PowerLightsSamplingStrategy.cpp" />
+    <ClCompile Include="Textures\ConstantTexture.cpp" />
+    <ClCompile Include="Textures\ImageTexture.cpp" />
+    <ClCompile Include="Textures\ScaleTexture.cpp" />
+    <ClCompile Include="VolumeRegions\AggregateVolumeRegion.cpp" />
+    <ClCompile Include="VolumeRegions\GridDensityVolumeRegion.cpp" />
+    <ClCompile Include="VolumeRegions\HomogeneousVolumeRegion.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Math\Math.vcxproj">
+      <Project>{82ac70fc-4cb6-4ff4-9cea-e8fa28d4aa3e}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

@@ -124,7 +124,7 @@ void PbrtSceneImporter::_pbrtCamera(const std::string &name, const PbrtImport::P
 
   mp_renderOptions->CameraName = name;
   mp_renderOptions->CameraParams = params;
-  mp_renderOptions->CameraToWorld = m_current_transform.Inverted()*MakeScale(-1,1,1);
+  mp_renderOptions->CameraToWorld = (m_current_transform*MakeScale(-1, 1, 1)).Inverted();
   m_namedCoordinateSystems["camera"] = mp_renderOptions->CameraToWorld;
   }
 
@@ -151,7 +151,7 @@ void PbrtSceneImporter::_pbrtAttributeEnd()
 
   if (!m_pushedGraphicsStates.size())
     {
-    PbrtImport::Utils::LogError(mp_log, "Unmatched pbrtAttributeEnd() encountered. Ignoring it.");
+    PbrtImport::Utils::LogError(mp_log, "Unmatched AttributeEnd encountered. Ignoring it.");
     return;
     }
 
@@ -174,7 +174,7 @@ void PbrtSceneImporter::_pbrtTransformEnd()
 
   if (!m_pushedTransforms.size())
     {
-    PbrtImport::Utils::LogError(mp_log, "Unmatched pbrtTransformEnd() encountered. Ignoring it.");
+    PbrtImport::Utils::LogError(mp_log, "Unmatched TransformEnd encountered. Ignoring it.");
     return;
     }
 
@@ -220,7 +220,7 @@ void PbrtSceneImporter::_pbrtMaterial(const std::string &name, const PbrtImport:
 
 void PbrtSceneImporter::_pbrtMakeNamedMaterial(const std::string &name, const PbrtImport::ParamSet &params)
   {
-  if (_VerifyWorld("Material")==false) return;
+  if (_VerifyWorld("MakeNamedMaterial")==false) return;
   PbrtImport::MaterialFactory material_factory(m_graphicsState.m_material_to_bump_map, mp_log);
 
   PbrtImport::TextureParams mp(params, m_graphicsState.materialParams, m_graphicsState.floatTextures, m_graphicsState.spectrumTextures);
@@ -347,7 +347,7 @@ void PbrtSceneImporter::_pbrtObjectEnd()
 
 void PbrtSceneImporter::_pbrtObjectInstance(const std::string &name)
   {
-  if (_VerifyWorld("ObjectEnd")==false) return;
+  if (_VerifyWorld("ObjectInstance")==false) return;
 
   // Object instance error checking
   if (mp_renderOptions->currentInstance)

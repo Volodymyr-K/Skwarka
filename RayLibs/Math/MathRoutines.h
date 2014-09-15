@@ -132,7 +132,6 @@ namespace MathRoutines
   */
   double DegreesToRadians(double i_degrees);
 
-
   /**
   * Converts radians to degrees.
   */

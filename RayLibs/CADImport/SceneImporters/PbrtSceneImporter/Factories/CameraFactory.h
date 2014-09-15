@@ -28,7 +28,7 @@ namespace PbrtImport
         else if (i_name == "environment")
           return _CreateEnvironmentCamera(i_params, camera_to_world, ip_film);
         else
-          PbrtImport::Utils::LogWarning(mp_log, std::string("Camera \"") + i_name + std::string("\" unknown."));
+          PbrtImport::Utils::LogError(mp_log, std::string("Camera \"") + i_name + std::string("\" unknown."));
 
         return NULL;
         }

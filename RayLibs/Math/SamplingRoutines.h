@@ -14,17 +14,17 @@
 namespace SamplingRoutines
   {
   /**
-  * Maps 2D sample in [0;1]x[0;1] to a unit radius disk.
+  * Maps 2D sample in [0;1)x[0;1) to a unit radius disk.
   * The "concentric" algorithm belongs to Peter Shirley and prevents the area distortion (elongation and/or compression).
-  * @param i_sample Input 2D sample in [0;1]x[0;1].
+  * @param i_sample Input 2D sample in [0;1)x[0;1).
   * @return Resulting 2D point in the unit radius disk.
   */
   Point2D_d ConcentricDiskSampling(const Point2D_d &i_sample);
 
   /**
-  * Maps 2D sample in [0;1]x[0;1] to a hemisphere point uniformly.
+  * Maps 2D sample in [0;1)x[0;1) to a hemisphere point uniformly.
   * The hemisphere is considered to be centered at origin above the XY plane.
-  * @param i_sample Input 2D sample in [0;1]x[0;1].
+  * @param i_sample Input 2D sample in [0;1)x[0;1).
   * @return Resulting 3D vector pointing to a point on the hemisphere surface.
   */
   Vector3D_d UniformHemisphereSampling(const Point2D_d &i_sample);
@@ -36,9 +36,9 @@ namespace SamplingRoutines
   double UniformHemispherePDF();
 
   /**
-  * Maps 2D sample in [0;1]x[0;1] to a sphere point uniformly.
+  * Maps 2D sample in [0;1)x[0;1) to a sphere point uniformly.
   * The sphere is considered to be centered at origin.
-  * @param i_sample Input 2D sample in [0;1]x[0;1].
+  * @param i_sample Input 2D sample in [0;1)x[0;1).
   * @return Resulting 3D vector pointing to a point on the sphere surface.
   */
   Vector3D_d UniformSphereSampling(const Point2D_d &i_sample);
@@ -50,9 +50,9 @@ namespace SamplingRoutines
   double UniformSpherePDF();
 
   /**
-  * Maps 2D sample in [0;1]x[0;1] to a hemisphere point with theta cosine distribution.
+  * Maps 2D sample in [0;1)x[0;1) to a hemisphere point with theta cosine distribution.
   * The hemisphere is considered to be centered at origin above the XY plane.
-  * @param i_sample Input 2D sample in [0;1]x[0;1].
+  * @param i_sample Input 2D sample in [0;1)x[0;1).
   * @return Resulting 3D vector pointing to a point on the hemisphere surface.
   */
   Vector3D_d CosineHemisphereSampling(const Point2D_d &i_sample);
@@ -65,9 +65,9 @@ namespace SamplingRoutines
   double CosineHemispherePDF(double i_cos_theta);
 
   /**
-  * Maps 2D sample in [0;1]x[0;1] to a direction lying inside of the cone with specified spread angle.
+  * Maps 2D sample in [0;1)x[0;1) to a direction lying inside of the cone with specified spread angle.
   * The axis of the cone is equal to Z axis.
-  * @param i_sample Input 2D sample in [0;1]x[0;1].
+  * @param i_sample Input 2D sample in [0;1)x[0;1).
   * @param i_cos_theta_max Cosine of the cone spread angle. Should be in [0;1) range.
   * @return Resulting 3D vector inside the cone. Should be normalized.
   */
@@ -81,16 +81,16 @@ namespace SamplingRoutines
   double UniformConePDF(double i_cos_theta_max);
 
   /**
-  * Maps 2D sample in [0;1]x[0;1] to a triangle point uniformly.
+  * Maps 2D sample in [0;1)x[0;1) to a triangle point uniformly.
   * The method returns three barycentric coordinates so it does not actually depend on the vertices coordinates.
-  * @param i_sample Input 2D sample in [0;1]x[0;1].
+  * @param i_sample Input 2D sample in [0;1)x[0;1).
   * @param[out] o_b1 First barycentric coordinates.
   * @param[out] o_b2 Second barycentric coordinates.
   */
   void UniformTriangleSampling(const Point2D_d &i_sample, double &o_b1, double &o_b2);
 
   /**
-  * Fills the specified range with stratified 1D values in [0;1] range. ValueIterator is a random-access iterator type.
+  * Fills the specified range with stratified 1D values in [0;1) range. ValueIterator is a random-access iterator type.
   * @param i_begin Begin iterator of the range to be filled with the values.
   * @param i_samples_num Number of samples.
   * @param i_jitter_samples If true the samples will be randomly moved inside their stratas.
@@ -100,7 +100,7 @@ namespace SamplingRoutines
   void StratifiedSampling1D(ValueIterator i_begin, size_t i_samples_num, bool i_jitter_samples, RandomGenerator<double> *ip_rng = NULL);
 
   /**
-  * Fills the specified range with stratified 2D values in [0;1]x[0;1] range. Point2DIterator is a random-access iterator type.
+  * Fills the specified range with stratified 2D values in [0;1)x[0;1) range. Point2DIterator is a random-access iterator type.
   * @param i_begin Begin iterator of the range to be filled with the values.
   * @param i_x_samples_num Number of samples in x direction.
   * @param i_y_samples_num Number of samples in y direction.
@@ -111,7 +111,7 @@ namespace SamplingRoutines
   void StratifiedSampling2D(Point2DIterator i_begin, size_t i_x_samples_num, size_t i_y_samples_num, bool i_jitter_samples, RandomGenerator<double> *ip_rng = NULL);
 
   /**
-  * Fills the specified range with 2D values produced by the LatinHypecube algorithm. Point2DIterator is a random-access iterator type.
+  * Fills the specified range with 2D values produced by the LatinHypecube algorithm in [0;1)x[0;1) range. Point2DIterator is a random-access iterator type.
   * @param i_begin Begin iterator of the range to be filled with the values.
   * @param i_samples_num Number of samples.
   * @param i_jitter_samples If true the samples will be randomly moved inside their stratas.
@@ -285,6 +285,7 @@ namespace SamplingRoutines
 
   inline Vector3D_d UniformConeSampling(const Point2D_d &i_sample, double i_cos_theta_max)
     {
+    ASSERT(i_sample[0]>=0.0 && i_sample[0]<1.0 && i_sample[1]>=0.0 && i_sample[1]<1.0);
     ASSERT(i_cos_theta_max >= 0.0 && i_cos_theta_max < 1.0);
 
     double cos_theta = (1.0 - i_sample[0]) + i_sample[0] * i_cos_theta_max;

@@ -58,6 +58,6 @@ void MERLMeasuredMaterial::serialize(Archive &i_ar, const unsigned int i_version
   }
 
 // Register the derived class in the boost serialization framework.
-BOOST_CLASS_EXPORT(MERLMeasuredMaterial)
+BOOST_CLASS_EXPORT_KEY(MERLMeasuredMaterial)
 
 #endif // MERL_MEASURED_MATERIAL_H

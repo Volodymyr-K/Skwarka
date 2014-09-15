@@ -6,6 +6,9 @@
 #include <Raytracer/MicrofacetDistributions/AnisotropicDistribution.h>
 #include <Math/MathRoutines.h>
 
+// Register the derived class in the boost serialization framework.
+BOOST_CLASS_EXPORT_IMPLEMENT(SubstrateMaterial);
+
 SubstrateMaterial::SubstrateMaterial(intrusive_ptr<const Texture<SpectrumCoef_d> > ip_diffuse_reflectance, intrusive_ptr<const Texture<SpectrumCoef_d> > ip_specular_reflectance, 
                      intrusive_ptr<const Texture<double> > ip_roughness):
 Material(), mp_specular_reflectance(ip_specular_reflectance), mp_diffuse_reflectance(ip_diffuse_reflectance), mp_roughness(ip_roughness)

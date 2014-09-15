@@ -5,6 +5,9 @@
 
 /////////////////////////////////////// ImageEnvironmentalLight ///////////////////////////////////////////
 
+// Register the derived class in the boost serialization framework.
+BOOST_CLASS_EXPORT_IMPLEMENT(ImageEnvironmentalLight);
+
 ImageEnvironmentalLight::ImageEnvironmentalLight(const BBox3D_d &i_world_bounds, const Transform &i_light_to_world,
                                                  const std::vector<std::vector<Spectrum_f> > &i_image, SpectrumCoef_d i_scale):
 m_world_bounds(i_world_bounds), m_light_to_world(i_light_to_world), m_world_to_light(i_light_to_world.Inverted()), m_scale(i_scale)
@@ -78,18 +81,19 @@ void ImageEnvironmentalLight::_Build(size_t i_node_index, size_t i_depth, const 
     // Each pixel value is filtered by the MIP-map instead of picking it directly from the image.
     double filter_width = 1.0 / std::max(m_width, m_height);
     double d_phi = 2.0*M_PI / m_width;
+    double inv_height = 1.0 / m_height, inv_width = 1.0 / m_width;
     m_nodes[i_node_index].m_total_radiance = Spectrum_d();
     for(int y=i_begin[1];y<i_end[1];++y)
       {
-      double y_normalized = (y+0.5)/(double)m_height;
+      double y_normalized = (y + 0.5) * inv_height;
       double d_cos_theta = cos(y*m_theta_coef) - cos((y+1)*m_theta_coef);
+      double pixel_solid_angle = d_phi*d_cos_theta;
 
       std::vector<double> &CDF_cols = m_CDF_cols[y];
 
       for(int x=i_begin[0];x<i_end[0];++x)
         {
-        double pixel_solid_angle = d_phi*d_cos_theta;
-        double x_normalized = (x+0.5)/(double)m_width;
+        double x_normalized = (x + 0.5) * inv_width;
         Spectrum_d pixel_radiance = pixel_solid_angle*Convert<double>(mp_image_map->Evaluate(Point2D_d(x_normalized, y_normalized), filter_width));
 
         m_nodes[i_node_index].m_total_radiance += pixel_radiance;

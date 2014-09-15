@@ -1,0 +1,635 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Core">
+      <UniqueIdentifier>{5cff4420-966d-4df9-bf15-bc9aa21fdd74}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Core\Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Cameras">
+      <UniqueIdentifier>{7869afea-1e66-4d43-ae48-b83193009b37}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Cameras\Header Files">
+      <UniqueIdentifier>{c8aff5f7-088f-44b0-9512-d7252463ff15}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Cameras\Source Files">
+      <UniqueIdentifier>{c0109287-ee73-43bf-b800-c2d37671a8e5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="FilmFilters">
+      <UniqueIdentifier>{b4b0a7bc-6137-4ad7-af05-c1204fa6e44a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="FilmFilters\Header Files">
+      <UniqueIdentifier>{a0e612e2-6230-40c9-b820-f621866450cf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="FilmFilters\Source Files">
+      <UniqueIdentifier>{8c325257-815d-4984-a501-b2d7369adadf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Films">
+      <UniqueIdentifier>{4190b55c-05be-48cc-b8c9-ce42cb7203ac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Films\Header Files">
+      <UniqueIdentifier>{b158d834-7af9-4ebb-a265-f7cca5a0a719}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Films\Source Files">
+      <UniqueIdentifier>{e9d754f8-c3e0-4755-af39-f30a9b08b5ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="BxDFs">
+      <UniqueIdentifier>{a4093bcc-fd34-44b8-a36d-1fe4f1923b86}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="BxDFs\Header Files">
+      <UniqueIdentifier>{30d72310-83ea-471a-8fa8-67cb8d13877c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="BxDFs\Source Files">
+      <UniqueIdentifier>{411bd21e-1dfa-45a7-b77c-9f22814ff975}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Materials">
+      <UniqueIdentifier>{5d685033-0e7a-484f-8f03-b67e699ba54b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Materials\Header Files">
+      <UniqueIdentifier>{8a169c88-0c9d-4214-9b88-a242baa6f2e4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Materials\Source Files">
+      <UniqueIdentifier>{999b2ee5-5ec7-4e3a-9a12-31df811590b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Textures">
+      <UniqueIdentifier>{c805c70b-29e7-45a0-84ad-4b1f8d5e396a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Textures\Header Files">
+      <UniqueIdentifier>{d43921de-dc4d-4158-8eb1-d0ed5b9e81ae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Textures\Source Files">
+      <UniqueIdentifier>{bddff355-a556-4c1d-98d3-4092c3accef6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Samplers">
+      <UniqueIdentifier>{a4e52c74-41a2-40de-aed2-c155e06e1812}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Samplers\Header Files">
+      <UniqueIdentifier>{1dddb22d-b00c-47ed-a2cb-e093efb9e24c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Samplers\Source Files">
+      <UniqueIdentifier>{0a99b4f0-6fdb-4965-8a22-467f9ea23424}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MicrofacetDistributions">
+      <UniqueIdentifier>{f12511f0-5661-46e0-96b0-a904bc2acbe2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MicrofacetDistributions\Header Files">
+      <UniqueIdentifier>{69ed8098-30c7-4381-a724-475aec86d8ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MicrofacetDistributions\Source Files">
+      <UniqueIdentifier>{b5b57a87-c338-4467-8067-93c61f7827ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LightSources">
+      <UniqueIdentifier>{6b271a64-f808-41ab-8948-a612def05a18}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LightSources\Header Files">
+      <UniqueIdentifier>{6db0b9dc-1cb5-4848-b928-1332283cf551}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LightSources\Source Files">
+      <UniqueIdentifier>{f2ccd16e-7f00-483f-ae1b-1ef37b4a557e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Renderers">
+      <UniqueIdentifier>{a709953a-fc47-49a4-9553-6dcf38683c0d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Renderers\Header Files">
+      <UniqueIdentifier>{5b9b219a-efbe-4c11-bdfb-0257ebb8c181}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Renderers\Source Files">
+      <UniqueIdentifier>{93ea4416-4a54-4ab9-b709-b6b7f9595f35}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LTEIntegrators">
+      <UniqueIdentifier>{ab69cc07-1faa-48bd-aa87-86e7a8cd3c7b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LTEIntegrators\Header Files">
+      <UniqueIdentifier>{fc29eaa3-4073-4cfb-8ef0-10d6f9fea136}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LTEIntegrators\Source Files">
+      <UniqueIdentifier>{683d4090-5cec-4053-9909-9cbf16c3716f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LTEIntegrators\Source Files\PhotonLTEIntegrator">
+      <UniqueIdentifier>{43c188e1-f3a8-4e83-9bb7-d2201c953c3b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LightsSamplingStrategies">
+      <UniqueIdentifier>{1546442b-7095-4f9f-8355-0c6aae68a38d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LightsSamplingStrategies\Header Files">
+      <UniqueIdentifier>{9846a34c-1103-4006-a67b-97e155fd7eba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LightsSamplingStrategies\Source Files">
+      <UniqueIdentifier>{8ce0fda0-f298-4964-8800-fa7001bfc4fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mappings">
+      <UniqueIdentifier>{10c183bb-6412-4d77-a75c-9493f10f2e9a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mappings\Header Files">
+      <UniqueIdentifier>{43106f6c-89dd-4af3-8d8d-b980fb0e19c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mappings\Source Files">
+      <UniqueIdentifier>{72be57b8-2735-4661-87d1-77842021a4ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="VolumeRegions">
+      <UniqueIdentifier>{0da6a10a-ac85-443c-8694-1ac6f1fa065b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="VolumeRegions\Header Files">
+      <UniqueIdentifier>{812ba591-598f-47ae-aac2-697f5c12aeab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="VolumeRegions\Source Files">
+      <UniqueIdentifier>{af07ea15-5918-41f4-84fc-2cd63f8dacee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PhaseFunctions">
+      <UniqueIdentifier>{84e10b84-c15f-45df-97c3-04a0085e20eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PhaseFunctions\Header Files">
+      <UniqueIdentifier>{53759a2d-ae01-4489-a829-2a6686d9af59}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PhaseFunctions\Source Files">
+      <UniqueIdentifier>{3c07e2e5-f2cc-4a86-84bb-2c91637afcc6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ImageSources">
+      <UniqueIdentifier>{00630d44-eaad-4a63-88c1-b3f189beb862}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ImageSources\Header Files">
+      <UniqueIdentifier>{25937141-3dca-4e74-8377-18e25621ea33}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ImageSources\Source Files">
+      <UniqueIdentifier>{e4e67742-d71e-4d61-9ae4-caa059cb5dde}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Core\BSDF.h">
+      <Filter>Core\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\BxDF.h">
+      <Filter>Core\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Camera.h">
+      <Filter>Core\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Color.h">
+      <Filter>Core\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CoreCommon.h">
+      <Filter>Core\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CoreUtils.h">
+      <Filter>Core\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\DifferentialGeometry.h">
+      <Filter>Core\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\DirectLightingIntegrator.h">
+      <Filter>Core\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Film.h">
+      <Filter>Core\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\FilmFilter.h">
+      <Filter>Core\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Fresnel.h">
+      <Filter>Core\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\ImageSource.h">
+      <Filter>Core\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Intersection.h">
+      <Filter>Core\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\KDTree.h">
+      <Filter>Core\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\LightSources.h">
+      <Filter>Core\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\LightsSamplingStrategy.h">
+      <Filter>Core\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\LTEIntegrator.h">
+      <Filter>Core\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Mapping.h">
+      <Filter>Core\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Material.h">
+      <Filter>Core\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\MIPMap.h">
+      <Filter>Core\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\PhaseFunction.h">
+      <Filter>Core\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Primitive.h">
+      <Filter>Core\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Renderer.h">
+      <Filter>Core\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Sample.h">
+      <Filter>Core\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Sampler.h">
+      <Filter>Core\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Scene.h">
+      <Filter>Core\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Spectrum.h">
+      <Filter>Core\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\SpectrumCoef.h">
+      <Filter>Core\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\SpectrumRoutines.h">
+      <Filter>Core\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Texture.h">
+      <Filter>Core\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\TriangleAccelerator.h">
+      <Filter>Core\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\TriangleMesh.h">
+      <Filter>Core\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\VolumeRegion.h">
+      <Filter>Core\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Cameras\PerspectiveCamera.h">
+      <Filter>Cameras\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FilmFilters\BoxFilter.h">
+      <Filter>FilmFilters\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FilmFilters\MitchellFilter.h">
+      <Filter>FilmFilters\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Films\ImageFilm.h">
+      <Filter>Films\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Films\InteractiveFilm.h">
+      <Filter>Films\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BxDFs\FresnelBlend.h">
+      <Filter>BxDFs\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BxDFs\Lambertian.h">
+      <Filter>BxDFs\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BxDFs\MERLMeasured.h">
+      <Filter>BxDFs\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BxDFs\Microfacet.h">
+      <Filter>BxDFs\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BxDFs\OrenNayar.h">
+      <Filter>BxDFs\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BxDFs\ScaledBxDF.h">
+      <Filter>BxDFs\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BxDFs\SpecularReflection.h">
+      <Filter>BxDFs\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BxDFs\SpecularTransmission.h">
+      <Filter>BxDFs\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Materials\MatteMaterial.h">
+      <Filter>Materials\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Materials\MERLMeasuredMaterial.h">
+      <Filter>Materials\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Materials\MetalMaterial.h">
+      <Filter>Materials\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Materials\MixMaterial.h">
+      <Filter>Materials\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Materials\PlasticMaterial.h">
+      <Filter>Materials\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Materials\SubstrateMaterial.h">
+      <Filter>Materials\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Materials\TransparentMaterial.h">
+      <Filter>Materials\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Materials\UberMaterial.h">
+      <Filter>Materials\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Textures\ConstantTexture.h">
+      <Filter>Textures\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Textures\ImageTexture.h">
+      <Filter>Textures\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Textures\ScaleTexture.h">
+      <Filter>Textures\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Samplers\ConsecutiveImagePixelsOrder.h">
+      <Filter>Samplers\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Samplers\LDSampler.h">
+      <Filter>Samplers\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Samplers\RandomBlockedImagePixelsOrder.h">
+      <Filter>Samplers\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Samplers\RandomSampler.h">
+      <Filter>Samplers\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Samplers\StratifiedSampler.h">
+      <Filter>Samplers\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Samplers\UniformImagePixelsOrder.h">
+      <Filter>Samplers\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MicrofacetDistributions\AnisotropicDistribution.h">
+      <Filter>MicrofacetDistributions\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MicrofacetDistributions\BlinnDistribution.h">
+      <Filter>MicrofacetDistributions\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LightSources\DiffuseAreaLightSource.h">
+      <Filter>LightSources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LightSources\ImageEnvironmentalLight.h">
+      <Filter>LightSources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LightSources\ParallelLight.h">
+      <Filter>LightSources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LightSources\PointLight.h">
+      <Filter>LightSources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LightSources\SpotPointLight.h">
+      <Filter>LightSources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderers\SamplerBasedRenderer.h">
+      <Filter>Renderers\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LTEIntegrators\DirectLightingLTEIntegrator.h">
+      <Filter>LTEIntegrators\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LTEIntegrators\PhotonLTEIntegrator.h">
+      <Filter>LTEIntegrators\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LTEIntegrators\PhotonLTEIntegrator\PhotonInternalTypes.h">
+      <Filter>LTEIntegrators\Source Files\PhotonLTEIntegrator</Filter>
+    </ClInclude>
+    <ClInclude Include="LightsSamplingStrategies\IrradianceLightsSamplingStrategy.h">
+      <Filter>LightsSamplingStrategies\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LightsSamplingStrategies\PowerLightsSamplingStrategy.h">
+      <Filter>LightsSamplingStrategies\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Mappings\SphericalMapping2D.h">
+      <Filter>Mappings\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Mappings\TransformMapping3D.h">
+      <Filter>Mappings\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Mappings\UVMapping2D.h">
+      <Filter>Mappings\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VolumeRegions\AggregateVolumeRegion.h">
+      <Filter>VolumeRegions\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VolumeRegions\GridDensityVolumeRegion.h">
+      <Filter>VolumeRegions\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VolumeRegions\HomogeneousVolumeRegion.h">
+      <Filter>VolumeRegions\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PhaseFunctions\HGPhaseFunction.h">
+      <Filter>PhaseFunctions\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PhaseFunctions\IsotropicPhaseFunction.h">
+      <Filter>PhaseFunctions\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PhaseFunctions\MieHazyPhaseFunction.h">
+      <Filter>PhaseFunctions\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PhaseFunctions\MieMurkyPhaseFunction.h">
+      <Filter>PhaseFunctions\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PhaseFunctions\RayleighPhaseFunction.h">
+      <Filter>PhaseFunctions\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ImageSources\OpenEXRRgbaImageSource.h">
+      <Filter>ImageSources\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ImageSources\RGB24ImageSource.h">
+      <Filter>ImageSources\Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Core\BSDF.cpp">
+      <Filter>Core\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\BxDF.cpp">
+      <Filter>Core\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Camera.cpp">
+      <Filter>Core\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Color.cpp">
+      <Filter>Core\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\DirectLightingIntegrator.cpp">
+      <Filter>Core\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\FilmFilter.cpp">
+      <Filter>Core\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\LightSources.cpp">
+      <Filter>Core\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\LTEIntegrator.cpp">
+      <Filter>Core\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Primitive.cpp">
+      <Filter>Core\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Renderer.cpp">
+      <Filter>Core\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Sampler.cpp">
+      <Filter>Core\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\SpectrumRoutines.cpp">
+      <Filter>Core\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\TriangleAccelerator.cpp">
+      <Filter>Core\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\TriangleMesh.cpp">
+      <Filter>Core\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\VolumeRegion.cpp">
+      <Filter>Core\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Cameras\PerspectiveCamera.cpp">
+      <Filter>Cameras\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FilmFilters\BoxFilter.cpp">
+      <Filter>FilmFilters\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FilmFilters\MitchellFilter.cpp">
+      <Filter>FilmFilters\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Films\ImageFilm.cpp">
+      <Filter>Films\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Films\InteractiveFilm.cpp">
+      <Filter>Films\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BxDFs\FresnelBlend.cpp">
+      <Filter>BxDFs\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BxDFs\Lambertian.cpp">
+      <Filter>BxDFs\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BxDFs\MERLMeasured.cpp">
+      <Filter>BxDFs\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BxDFs\OrenNayar.cpp">
+      <Filter>BxDFs\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BxDFs\ScaledBxDF.cpp">
+      <Filter>BxDFs\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BxDFs\SpecularTransmission.cpp">
+      <Filter>BxDFs\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Materials\MatteMaterial.cpp">
+      <Filter>Materials\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Materials\MERLMeasuredMaterial.cpp">
+      <Filter>Materials\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Materials\MetalMaterial.cpp">
+      <Filter>Materials\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Materials\MixMaterial.cpp">
+      <Filter>Materials\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Materials\PlasticMaterial.cpp">
+      <Filter>Materials\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Materials\SubstrateMaterial.cpp">
+      <Filter>Materials\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Materials\TransparentMaterial.cpp">
+      <Filter>Materials\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Materials\UberMaterial.cpp">
+      <Filter>Materials\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Samplers\ConsecutiveImagePixelsOrder.cpp">
+      <Filter>Samplers\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Samplers\LDSampler.cpp">
+      <Filter>Samplers\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Samplers\RandomBlockedImagePixelsOrder.cpp">
+      <Filter>Samplers\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Samplers\RandomSampler.cpp">
+      <Filter>Samplers\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Samplers\StratifiedSampler.cpp">
+      <Filter>Samplers\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Samplers\UniformImagePixelsOrder.cpp">
+      <Filter>Samplers\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LightSources\DiffuseAreaLightSource.cpp">
+      <Filter>LightSources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LightSources\ImageEnvironmentalLight.cpp">
+      <Filter>LightSources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LightSources\ParallelLight.cpp">
+      <Filter>LightSources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LightSources\PointLight.cpp">
+      <Filter>LightSources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LightSources\SpotPointLight.cpp">
+      <Filter>LightSources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderers\SamplerBasedRenderer.cpp">
+      <Filter>Renderers\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LTEIntegrators\DirectLightingLTEIntegrator.cpp">
+      <Filter>LTEIntegrators\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LTEIntegrators\PhotonLTEIntegrator\PhotonLTEIntegrator.cpp">
+      <Filter>LTEIntegrators\Source Files\PhotonLTEIntegrator</Filter>
+    </ClCompile>
+    <ClCompile Include="LTEIntegrators\PhotonLTEIntegrator\PhotonShootingPipeline.cpp">
+      <Filter>LTEIntegrators\Source Files\PhotonLTEIntegrator</Filter>
+    </ClCompile>
+    <ClCompile Include="LightsSamplingStrategies\IrradianceLightsSamplingStrategy.cpp">
+      <Filter>LightsSamplingStrategies\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LightsSamplingStrategies\PowerLightsSamplingStrategy.cpp">
+      <Filter>LightsSamplingStrategies\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VolumeRegions\AggregateVolumeRegion.cpp">
+      <Filter>VolumeRegions\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VolumeRegions\GridDensityVolumeRegion.cpp">
+      <Filter>VolumeRegions\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VolumeRegions\HomogeneousVolumeRegion.cpp">
+      <Filter>VolumeRegions\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ImageSources\OpenEXRRgbaImageSource.cpp">
+      <Filter>ImageSources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ImageSources\RGB24ImageSource.cpp">
+      <Filter>ImageSources\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Mappings\SphericalMapping2D.cpp">
+      <Filter>Mappings\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Mappings\TransformMapping3D.cpp">
+      <Filter>Mappings\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Mappings\UVMapping2D.cpp">
+      <Filter>Mappings\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PhaseFunctions\HGPhaseFunction.cpp">
+      <Filter>PhaseFunctions\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PhaseFunctions\IsotropicPhaseFunction.cpp">
+      <Filter>PhaseFunctions\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PhaseFunctions\MieHazyPhaseFunction.cpp">
+      <Filter>PhaseFunctions\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PhaseFunctions\MieMurkyPhaseFunction.cpp">
+      <Filter>PhaseFunctions\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PhaseFunctions\RayleighPhaseFunction.cpp">
+      <Filter>PhaseFunctions\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Textures\ConstantTexture.cpp">
+      <Filter>Textures\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Textures\ImageTexture.cpp">
+      <Filter>Textures\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Textures\ScaleTexture.cpp">
+      <Filter>Textures\Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

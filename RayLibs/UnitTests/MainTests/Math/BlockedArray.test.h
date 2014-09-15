@@ -12,7 +12,7 @@ class BlockedArrayTestSuite : public CxxTest::TestSuite
     void test_BlockedArray_ConstrFromData()
       {
       size_t n=55,m=122;
-      std::vector<std::vector<Spectrum_d> > spectrums(n,m);
+      std::vector<std::vector<Spectrum_d> > spectrums(n, std::vector<Spectrum_d>(m));
       for(size_t i=0;i<n;++i)
         for(size_t j=0;j<m;++j)
           spectrums[i][j]=Spectrum_d(i*3+j);

@@ -2,6 +2,7 @@
 #define IMAGE_SOURCE_H
 
 #include <Common/Common.h>
+#include <vector>
 
 /**
 * An abstract class defining the contract for getting 2D array of values.

@@ -39,6 +39,6 @@ void BoxFilter::serialize(Archive &i_ar, const unsigned int i_version)
   }
 
 // Register the derived class in the boost serialization framework.
-BOOST_CLASS_EXPORT(BoxFilter)
+BOOST_CLASS_EXPORT_KEY(BoxFilter)
 
 #endif // BOX_FILTER_H

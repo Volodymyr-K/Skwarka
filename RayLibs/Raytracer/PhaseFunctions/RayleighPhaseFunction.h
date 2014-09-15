@@ -38,6 +38,6 @@ void serialize(Archive &i_ar, RayleighPhaseFunction &i_phase_function, const uns
   }
 
 // Register the derived class in the boost serialization framework.
-BOOST_CLASS_EXPORT(RayleighPhaseFunction)
+BOOST_CLASS_EXPORT_KEY(RayleighPhaseFunction)
 
 #endif // RAYLEIGH_PHASE_FUNCTION_H

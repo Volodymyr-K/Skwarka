@@ -11,7 +11,7 @@
 /**
 * Environment light source that uses 2D array of spectrum values (i.e. image) to determine radiance coming from different directions.
 * The light allows for sampling light directions with PDF based on the radiance luminance and cosine factor therefore providing
-* best possible sampling strategy (with cost of some memory requirements).
+* best possible sampling strategy (at the cost of some memory requirements).
 * The implementation constructs kD-tree on the image map. Each leaf corresponds to a non-empty rectangle on the image map. All leaves of the tree cover the entire image.
 * For each possible normal (discretized with CompressedDirection) the probability (to be sampled) for each tree node is precomputed.
 * Having the probabilities the sampling comes down to constructing a path from the root of the tree to one of the leaves each time using children's probabilities to decide which path to go.
@@ -275,6 +275,6 @@ void ImageEnvironmentalLight::serialize(Archive &i_ar, const unsigned int i_vers
   }
 
 // Register the derived class in the boost serialization framework.
-BOOST_CLASS_EXPORT(ImageEnvironmentalLight)
+BOOST_CLASS_EXPORT_KEY(ImageEnvironmentalLight)
 
 #endif // IMAGE_ENVIRONMENTAL_LIGHT_H

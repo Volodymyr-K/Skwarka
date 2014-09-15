@@ -1,6 +1,7 @@
 #ifndef CONSTANT_TEXTURE_H
 #define CONSTANT_TEXTURE_H
 
+#include <Raytracer/Core/Spectrum.h>
 #include <Raytracer/Core/Texture.h>
 #include <Raytracer/Core/DifferentialGeometry.h>
 
@@ -67,11 +68,11 @@ typedef ConstantTexture<SpectrumCoef_d> ConstantTexture_SpectrumCoef_d;
 typedef ConstantTexture<float> ConstantTexture_float;
 typedef ConstantTexture<double> ConstantTexture_double;
 
-BOOST_CLASS_EXPORT(ConstantTexture_Spectrum_f)
-BOOST_CLASS_EXPORT(ConstantTexture_Spectrum_d)
-BOOST_CLASS_EXPORT(ConstantTexture_SpectrumCoef_f)
-BOOST_CLASS_EXPORT(ConstantTexture_SpectrumCoef_d)
-BOOST_CLASS_EXPORT(ConstantTexture_float)
-BOOST_CLASS_EXPORT(ConstantTexture_double)
+BOOST_CLASS_EXPORT_KEY(ConstantTexture_Spectrum_f)
+BOOST_CLASS_EXPORT_KEY(ConstantTexture_Spectrum_d)
+BOOST_CLASS_EXPORT_KEY(ConstantTexture_SpectrumCoef_f)
+BOOST_CLASS_EXPORT_KEY(ConstantTexture_SpectrumCoef_d)
+BOOST_CLASS_EXPORT_KEY(ConstantTexture_float)
+BOOST_CLASS_EXPORT_KEY(ConstantTexture_double)
 
 #endif // CONSTANT_TEXTURE_H

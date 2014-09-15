@@ -58,7 +58,7 @@ namespace PbrtImport
 
       if (cur.empty()==false) parts.push_back(cur);
 
-      // Now remove all references top the parent directory ("..").
+      // Now remove all references to the parent directory ("..").
       while(true)
         {
         bool changed=false;
@@ -70,7 +70,7 @@ namespace PbrtImport
             break;
             }
 
-          if (changed==false) break;
+        if (changed==false) break;
         }
 
       std::string ret;
@@ -117,7 +117,7 @@ namespace PbrtImport
       {
       for(size_t i=i_start;i<i_parts.size();++i)
         {
-        if (i_parts[i].size()>=2 && i_parts[i][0]=='[' && i_parts[i][i_parts[i].size()-1]==']')
+        if (i_parts[i].size()>=2 && i_parts[i][0]=='[' && i_parts[i].back()==']')
           {
           std::vector<std::string> expanded_parts;
           if (Split(i_parts[i].substr(1,i_parts[i].size()-2), expanded_parts, ip_log)==false) return false;
@@ -157,12 +157,7 @@ namespace PbrtImport
     inline bool ParseStringValues(const std::vector<std::string> &i_string_values, std::vector<std::string> &o_converted_values, intrusive_ptr<Log> ip_log)
       {
       o_converted_values.clear();
-
-      try
-        {
-        for(size_t i=0;i<i_string_values.size();++i) o_converted_values.push_back(TrimQuotes(i_string_values[i]));
-        }
-      catch(boost::bad_lexical_cast &) {PbrtImport::Utils::LogError(ip_log, "Can not parse string values.");return false;}
+      for(size_t i=0;i<i_string_values.size();++i) o_converted_values.push_back(TrimQuotes(i_string_values[i]));
       return true;
       }
 

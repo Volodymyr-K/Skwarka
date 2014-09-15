@@ -15,7 +15,7 @@ class Shape
 
     /**
     * Builds triangle mesh.
-    * @return Smart pointer to the built mesh or a point to NULL if the mesh can not be built (e.g. not all required parameters are set yet).
+    * @return Smart pointer to the built mesh or a NULL pointer if the mesh can not be built (e.g. not all required parameters are set yet).
     */
     virtual intrusive_ptr<TriangleMesh> BuildMesh() = 0;
 

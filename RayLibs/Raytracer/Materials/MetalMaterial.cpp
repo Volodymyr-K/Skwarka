@@ -7,6 +7,9 @@
 #include <Raytracer/Core/Fresnel.h>
 #include <Math/MathRoutines.h>
 
+// Register the derived class in the boost serialization framework.
+BOOST_CLASS_EXPORT_IMPLEMENT(MetalMaterial);
+
 MetalMaterial::MetalMaterial(intrusive_ptr<const Texture<SpectrumCoef_d> > ip_refractive_index, intrusive_ptr<const Texture<SpectrumCoef_d> > ip_absorption,
              intrusive_ptr<const Texture<double> > ip_roughness):
 Material(), mp_refractive_index(ip_refractive_index), mp_absorption(ip_absorption), mp_roughness(ip_roughness)

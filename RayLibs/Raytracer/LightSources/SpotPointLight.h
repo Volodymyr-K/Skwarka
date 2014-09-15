@@ -93,6 +93,6 @@ void SpotPointLight::serialize(Archive &i_ar, const unsigned int i_version)
   }
 
 // Register the derived class in the boost serialization framework.
-BOOST_CLASS_EXPORT(SpotPointLight)
+BOOST_CLASS_EXPORT_KEY(SpotPointLight)
 
 #endif // SPOT_POINT_LIGHT_H

@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup
+    Condition="'$(CxxTestBeforeTargets)' == '' and '$(CxxTestAfterTargets)' == '' and '$(ConfigurationType)' != 'Makefile'">
+    <CxxTestBeforeTargets>Midl</CxxTestBeforeTargets>
+    <CxxTestAfterTargets>CustomBuild</CxxTestAfterTargets>
+  </PropertyGroup>
+  <PropertyGroup>
+    <CxxTestDependsOn
+      Condition="'$(ConfigurationType)' != 'Makefile'">_SelectedFiles;$(CxxTestDependsOn)</CxxTestDependsOn>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <CxxTest>
+      <testgen>python ..\..\..\ThirdParty\cxxtest\3.10.1\cxxtestgen.py</testgen>
+      <output>%(Filename).cpp</output>
+      <runner>0</runner>
+      <CommandLineTemplate>[testgen] [runner] [output] [inputs]</CommandLineTemplate>
+      <Outputs>%(Filename).cpp</Outputs>
+      <ExecutionDescription>Generating tests</ExecutionDescription>
+    </CxxTest>
+  </ItemDefinitionGroup>
+</Project>

@@ -8,7 +8,7 @@
 #include <istream>
 
 /**
-* Represents the light spectrum. Can define radiance, radiance, flux and other light values.
+* Represents the light spectrum. Can define radiance, irradiance, flux and other light values.
 * Don't mix it up with the SpectrumCoef class (which is a dimensionless quantity) that is used to represent properties of
 * surface or volume media like surface reflectivity, volume transmittance.
 * The spectrum data is represented by a piecewise-constant function with three segments on the wavelengths domain.

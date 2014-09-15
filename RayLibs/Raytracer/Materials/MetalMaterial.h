@@ -101,6 +101,6 @@ void MetalMaterial::serialize(Archive &i_ar, const unsigned int i_version)
   }
 
 // Register the derived class in the boost serialization framework.
-BOOST_CLASS_EXPORT(MetalMaterial)
+BOOST_CLASS_EXPORT_KEY(MetalMaterial)
 
 #endif // METAL_MATERIAL_H

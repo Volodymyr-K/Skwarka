@@ -59,7 +59,7 @@ class ParallelLight: public DeltaLightSource
     BBox3D_d m_world_bounds;
 
     // Total projected area of the bounding box.
-    double m_bbox_projected_area;
+    double m_bbox_projected_area, m_inv_bbox_projected_area;
 
     Spectrum_d m_radiance, m_power;
 
@@ -88,6 +88,6 @@ void ParallelLight::serialize(Archive &i_ar, const unsigned int i_version)
   }
 
 // Register the derived class in the boost serialization framework.
-BOOST_CLASS_EXPORT(ParallelLight)
+BOOST_CLASS_EXPORT_KEY(ParallelLight)
 
 #endif // POINT_LIGHT_H

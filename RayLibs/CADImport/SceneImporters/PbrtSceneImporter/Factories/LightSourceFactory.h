@@ -32,6 +32,7 @@ namespace PbrtImport
         else if (i_name == "distant")
           return _CreateDistantLight(i_light_to_world, i_params, i_world_bounds);
 
+        PbrtImport::Utils::LogError(mp_log, std::string("Delta light \"") + i_name + std::string("\" unknown."));
         return NULL;
         }
 
@@ -40,6 +41,7 @@ namespace PbrtImport
         if (i_name == "infinite" || i_name == "exinfinite")
           return _CreateInfiniteLight(i_light_to_world, i_params, i_world_bounds);
 
+        PbrtImport::Utils::LogError(mp_log, std::string("Infinite light \"") + i_name + std::string("\" unknown."));
         return NULL;
         }
 
@@ -48,7 +50,7 @@ namespace PbrtImport
         if (i_name == "area" || i_name == "diffuse")
           return _CreateDiffuseAreaLight(i_light_to_world, i_params, ip_mesh);
 
-        PbrtImport::Utils::LogWarning(mp_log, std::string("Area light \"") + i_name + std::string("\" unknown."));
+        PbrtImport::Utils::LogError(mp_log, std::string("Area light \"") + i_name + std::string("\" unknown."));
         return NULL;
         }
 

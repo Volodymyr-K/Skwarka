@@ -40,7 +40,7 @@ namespace PbrtImport
         else if (i_name == "nurbs")
           return _CreateNURBSShape(i_obj_to_world, i_graphics_state.reverseOrientation, i_params);
         else
-          PbrtImport::Utils::LogWarning(mp_log, std::string("Shape \"") + i_name + std::string("\" unknown."));
+          PbrtImport::Utils::LogError(mp_log, std::string("Shape \"") + i_name + std::string("\" unknown."));
 
         return NULL;
         }
@@ -52,6 +52,10 @@ namespace PbrtImport
         float zmin = i_params.FindOneFloat("zmin", -radius);
         float zmax = i_params.FindOneFloat("zmax", radius);
         float phimax = i_params.FindOneFloat("phimax", 360.f);
+
+        if (zmin != -radius) PbrtImport::Utils::LogWarning(mp_log, std::string("Parameter zmin is not support for Sphere shape."));
+        if (zmax != radius) PbrtImport::Utils::LogWarning(mp_log, std::string("Parameter zmax is not support for Sphere shape."));
+        if (phimax != 360.f) PbrtImport::Utils::LogWarning(mp_log, std::string("Parameter phimax is not support for Sphere shape."));
 
         Sphere sphere;
         sphere.SetTransformation(i_obj_to_world * MakeScale(radius));
@@ -158,7 +162,7 @@ namespace PbrtImport
           if (vi[i] >= npi)
             {
             std::string message = std::string("TriangleMesh has out of-bounds vertex index ");
-            message += vi[i]; message += " ("; message += npi; message += " \"P\" values were given";
+            message += vi[i]; message += " ("; message += npi; message += " \"P\" values were given)";
             PbrtImport::Utils::LogError(mp_log, message);
             return NULL;
             }

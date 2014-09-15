@@ -146,17 +146,17 @@ class MERLMeasured: public BxDF
 /**
 * Defines 2D PDF function for sampling the exitant vector.
 * The PDF function is defined by a 2D array, each row of which represents CDF function for the corresponding theta angle.
-* Rows and columns of the table corresponds to the regions of theta and phi angles of the domain respectively and together define a grid on the domain.
+* Rows and columns of the table correspond to the regions of theta and phi angles of the domain respectively and together define a grid on the domain.
 * The grid is not regular, the position of the grid lines are positioned in a specific way to reduce the sampling variance.
 */
 class MERLMeasuredData::Segmentation2D
   {
   public:
     /**
-    * Initializes Segmentation2D with the specified 2D array of luminance values and the desired size of the PDF table.
-    * The input array will be reduced to the specified size by merging some adjacent rows and columns (see _Reduce() method).
+    * Initializes Segmentation2D with the specified 2D array of luminance values.
+    * The input array will be reduced to the necessary size by merging some adjacent rows and columns (see _Reduce() method).
     */
-    Segmentation2D(const std::vector<std::vector<float> > &i_values, size_t i_size_X, size_t i_size_Y);
+    Segmentation2D(const std::vector<std::vector<float> > &i_values);
 
     /**
     * Samples 2D point on the [0;1]x[0;1] domain with the PDF defined by the class instance.

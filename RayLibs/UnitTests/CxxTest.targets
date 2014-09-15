@@ -1,0 +1,85 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <PropertyPageSchema
+      Include="$(MSBuildThisFileDirectory)$(MSBuildThisFileName).xml" />
+    <AvailableItemName
+      Include="CxxTest">
+      <Targets>_CxxTest</Targets>
+    </AvailableItemName>
+  </ItemGroup>
+  <UsingTask
+    TaskName="CxxTest"
+    TaskFactory="XamlTaskFactory"
+    AssemblyName="Microsoft.Build.Tasks.v4.0, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <Task>$(MSBuildThisFileDirectory)$(MSBuildThisFileName).xml</Task>
+  </UsingTask>
+  <Target
+    Name="_CxxTest"
+    BeforeTargets="$(CxxTestBeforeTargets)"
+    AfterTargets="$(CxxTestAfterTargets)"
+    Condition="'@(CxxTest)' != ''"
+    DependsOnTargets="$(CxxTestDependsOn);ComputeCxxTestOutput"
+    Outputs="%(CxxTest.Outputs)"
+    Inputs="%(CxxTest.Identity);%(CxxTest.AdditionalDependencies);$(MSBuildProjectFile)">
+    <ItemGroup
+      Condition="'@(SelectedFiles)' != ''">
+      <CxxTest
+        Remove="@(CxxTest)"
+        Condition="'%(Identity)' != '@(SelectedFiles)'" />
+    </ItemGroup>
+    <ItemGroup>
+      <CxxTest_tlog
+        Include="%(CxxTest.Outputs)"
+        Condition="'%(CxxTest.Outputs)' != '' and '%(CxxTest.ExcludedFromBuild)' != 'true'">
+        <Source>@(CxxTest, '|')</Source>
+      </CxxTest_tlog>
+    </ItemGroup>
+    <Message
+      Importance="High"
+      Text="%(CxxTest.ExecutionDescription)" />
+    <WriteLinesToFile
+      Condition="'@(CxxTest_tlog)' != '' and '%(CxxTest_tlog.ExcludedFromBuild)' != 'true'"
+      File="$(TLogLocation)$(ProjectName).write.1u.tlog"
+      Lines="^%(CxxTest_tlog.Source);@(CxxTest_tlog-&gt;'%(Fullpath)')"
+      Encoding="Unicode" />
+    <CxxTest
+      Condition="'@(CxxTest)' != '' and '%(CxxTest.ExcludedFromBuild)' != 'true'"
+      CommandLineTemplate="%(CxxTest.CommandLineTemplate)"
+      testgen="%(CxxTest.testgen)"
+      output="%(CxxTest.output)"
+      runner="%(CxxTest.runner)"
+      AdditionalOptions="%(CxxTest.AdditionalOptions)"
+      Inputs="%(CxxTest.Identity)" />
+  </Target>
+  <PropertyGroup>
+    <ComputeLinkInputsTargets>
+            $(ComputeLinkInputsTargets);
+            ComputeCxxTestOutput;
+          </ComputeLinkInputsTargets>
+    <ComputeLibInputsTargets>
+            $(ComputeLibInputsTargets);
+            ComputeCxxTestOutput;
+          </ComputeLibInputsTargets>
+  </PropertyGroup>
+  <Target
+    Name="ComputeCxxTestOutput"
+    Condition="'@(CxxTest)' != ''">
+    <ItemGroup>
+      <CxxTestDirsToMake
+        Condition="'@(CxxTest)' != '' and '%(CxxTest.ExcludedFromBuild)' != 'true'"
+        Include="%(CxxTest.Outputs)" />
+      <Link
+        Include="%(CxxTestDirsToMake.Identity)"
+        Condition="'%(Extension)'=='.obj' or '%(Extension)'=='.res' or '%(Extension)'=='.rsc' or '%(Extension)'=='.lib'" />
+      <Lib
+        Include="%(CxxTestDirsToMake.Identity)"
+        Condition="'%(Extension)'=='.obj' or '%(Extension)'=='.res' or '%(Extension)'=='.rsc' or '%(Extension)'=='.lib'" />
+      <ImpLib
+        Include="%(CxxTestDirsToMake.Identity)"
+        Condition="'%(Extension)'=='.obj' or '%(Extension)'=='.res' or '%(Extension)'=='.rsc' or '%(Extension)'=='.lib'" />
+    </ItemGroup>
+    <MakeDir
+      Directories="@(CxxTestDirsToMake-&gt;'%(RootDir)%(Directory)')" />
+  </Target>
+</Project>

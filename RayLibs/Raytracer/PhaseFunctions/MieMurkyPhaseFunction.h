@@ -38,6 +38,6 @@ void serialize(Archive &i_ar, MieMurkyPhaseFunction &i_phase_function, const uns
   }
 
 // Register the derived class in the boost serialization framework.
-BOOST_CLASS_EXPORT(MieMurkyPhaseFunction)
+BOOST_CLASS_EXPORT_KEY(MieMurkyPhaseFunction)
 
 #endif // MIE_MURKY_PHASE_FUNCTION_H

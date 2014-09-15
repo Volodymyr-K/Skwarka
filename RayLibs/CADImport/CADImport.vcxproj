@@ -1,0 +1,129 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{74EE4312-D17B-475E-ABA7-CB2C8C129999}</ProjectGuid>
+    <RootNamespace>CADImport</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>NotSet</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>NotSet</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>12.0.21005.1</_ProjectFileVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>..\..\..\Binaries\$(Configuration)\</OutDir>
+    <IntDir>..\..\..\Intermediate\$(Configuration)\CADImport\</IntDir>
+    <TargetName>$(ProjectName)d</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>..\..\..\Binaries\$(Configuration)\</OutDir>
+    <IntDir>..\..\..\Intermediate\$(Configuration)\CADImport\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <AdditionalOptions>/MP /bigobj %(AdditionalOptions)</AdditionalOptions>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>..\;..\..\..\ThirdParty\;..\..\..\ThirdParty\boost\1.56\;..\..\..\ThirdParty\TBB\4.2\include;..\..\..\ThirdParty\OpenEXR\Deploy\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>TBB_USE_DEBUG;_DEBUG;NOMINMAX;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;OPENEXR_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Lib>
+      <OutputFile>$(OutDir)$(ProjectName)d.lib</OutputFile>
+      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <AdditionalOptions>/MP /bigobj %(AdditionalOptions)</AdditionalOptions>
+      <Optimization>MaxSpeed</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <AdditionalIncludeDirectories>..\;..\..\..\ThirdParty\;..\..\..\ThirdParty\boost\1.56\;..\..\..\ThirdParty\TBB\4.2\include;..\..\..\ThirdParty\OpenEXR\Deploy\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>NDEBUG;NOMINMAX;_SECURE_SCL=0;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;OPENEXR_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <SmallerTypeCheck>false</SmallerTypeCheck>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="SceneImporters\PbrtSceneImporter.h" />
+    <ClInclude Include="SceneImporters\PbrtSceneImporter\PbrtGraphicsState.h" />
+    <ClInclude Include="SceneImporters\PbrtSceneImporter\PbrtParamSet.h" />
+    <ClInclude Include="SceneImporters\PbrtSceneImporter\PbrtRenderOptions.h" />
+    <ClInclude Include="SceneImporters\PbrtSceneImporter\PbrtStringRoutines.h" />
+    <ClInclude Include="SceneImporters\PbrtSceneImporter\PbrtUtils.h" />
+    <ClInclude Include="SceneImporters\PbrtSceneImporter\Factories\CameraFactory.h" />
+    <ClInclude Include="SceneImporters\PbrtSceneImporter\Factories\FilmFactory.h" />
+    <ClInclude Include="SceneImporters\PbrtSceneImporter\Factories\FilmFilterFactory.h" />
+    <ClInclude Include="SceneImporters\PbrtSceneImporter\Factories\LightSourceFactory.h" />
+    <ClInclude Include="SceneImporters\PbrtSceneImporter\Factories\MaterialFactory.h" />
+    <ClInclude Include="SceneImporters\PbrtSceneImporter\Factories\ShapeFactory.h" />
+    <ClInclude Include="SceneImporters\PbrtSceneImporter\Factories\TextureFactory.h" />
+    <ClInclude Include="SceneImporters\PbrtSceneImporter\Factories\VolumeRegionFactory.h" />
+    <ClInclude Include="Core\SceneImporter.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="SceneImporters\PbrtSceneImporter\PbrtGraphicsState.cpp" />
+    <ClCompile Include="SceneImporters\PbrtSceneImporter\PbrtParamSet.cpp" />
+    <ClCompile Include="SceneImporters\PbrtSceneImporter\PbrtRenderOptions.cpp" />
+    <ClCompile Include="SceneImporters\PbrtSceneImporter\PbrtSceneImporter_hooks.cpp" />
+    <ClCompile Include="SceneImporters\PbrtSceneImporter\PbrtSceneImporter_main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Math\Math.vcxproj">
+      <Project>{82ac70fc-4cb6-4ff4-9cea-e8fa28d4aa3e}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\Raytracer\Raytracer.vcxproj">
+      <Project>{ed053b6a-e1c9-4781-93ae-633837016d00}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\Shapes\Shapes.vcxproj">
+      <Project>{c22874bd-aba3-4e5e-86d6-31f98520b557}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

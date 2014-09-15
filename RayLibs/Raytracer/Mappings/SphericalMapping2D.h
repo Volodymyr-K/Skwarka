@@ -4,6 +4,7 @@
 #include <Common/Common.h>
 #include <Math/Geometry.h>
 #include <Math/Transform.h>
+#include <Math/MathRoutines.h>
 #include <Raytracer/Core/Mapping.h>
 
 /**
@@ -123,6 +124,6 @@ void SphericalMapping2D::serialize(Archive &i_ar, const unsigned int i_version)
   }
 
 // Register the derived class in the boost serialization framework.
-BOOST_CLASS_EXPORT(SphericalMapping2D)
+BOOST_CLASS_EXPORT_KEY(SphericalMapping2D)
 
 #endif // SPHERICAL_MAPPING_2D_H

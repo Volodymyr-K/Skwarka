@@ -97,7 +97,7 @@ MeshTriangle::MeshTriangle(size_t i_v1, size_t i_v2, size_t i_v3)
 /////////////// IllegalTrianglesPredicate ////////////////
 
 /**
-* This is a helper predicate class that is used for removing triangles with of-bounds vertex indices and degenerated triangles.
+* This is a helper predicate class that is used for removing triangles with out of-bounds vertex indices and degenerated triangles.
 */
 class TriangleMesh::IllegalTrianglePredicate
   {
@@ -160,40 +160,21 @@ void TriangleMesh::_Initialize(const std::vector<Point3D_f> &i_vertices, const s
   ASSERT(i_shading_normals.empty() || i_shading_normals.size()==i_vertices.size());
   ASSERT(i_tangents.empty() || i_tangents.size()==i_vertices.size());
 
-  bool invalid_triangles_exist=false;
-  for(size_t i=0;i<m_triangles.size();++i)
+  IllegalTrianglePredicate pred(m_vertices.size());
+  std::vector<MeshTriangle>::iterator it=std::remove_if(m_triangles.begin(), m_triangles.end(), pred);
+  if (it < m_triangles.end())
     {
-    const MeshTriangle &triangle = m_triangles[i];
-    if (triangle.m_vertices[0] >= m_vertices.size() || triangle.m_vertices[1] >= m_vertices.size() || triangle.m_vertices[2] >= m_vertices.size())
-      {
-      ASSERT(0 && "TriangleMesh has out of-bounds vertex index. Skipping such triangles.");
-      invalid_triangles_exist=true;
-      break;
-      }
-
-    // Skip degenerated triangles.
-    if (triangle.m_vertices[0] == triangle.m_vertices[1] || triangle.m_vertices[0] == triangle.m_vertices[2] || triangle.m_vertices[1] == triangle.m_vertices[2])
-      {
-      ASSERT(0 && "TriangleMesh has degenerated triangles. Skipping such triangles.");
-      invalid_triangles_exist=true;
-      break;
-      }
-    }
-
-  if (invalid_triangles_exist)
-    {
-    IllegalTrianglePredicate pred(m_vertices.size());
-    std::vector<MeshTriangle>::iterator it=std::remove_if(m_triangles.begin(), m_triangles.end(), pred);
+    ASSERT(0 && "TriangleMesh has out of-bounds vertex index or degenerated triangles. Skipping such triangles.");
     m_triangles.erase(it,m_triangles.end());
     }
 
-  // Compute the bounding box.
+  // Compute the bounding box and ares.
+  m_area = 0.f;
   if (m_triangles.empty())
     m_bbox.m_min=m_bbox.m_max=Point3D_f(0.f,0.f,0.f);
   else
     {
     m_bbox = BBox3D_f();
-    m_area = 0.f;
     for(size_t i=0;i<m_triangles.size();++i)
       {
       const MeshTriangle &triangle = m_triangles[i];
@@ -351,6 +332,7 @@ TopologyInfo TriangleMesh::_ComputeTopologyInfo(const ConnectivityData &i_connec
 
           // Iterate by all the triangles incident to the current edge.
           for(size_t t=0;t<triangles.size();++t)
+            {
             if (triangles[t]!=current_triangle_index)
               if (_ConsistentlyOriented(current_triangle_index,triangles[t])==false)
                 topology_info.m_manifold=false;
@@ -363,11 +345,10 @@ TopologyInfo TriangleMesh::_ComputeTopologyInfo(const ConnectivityData &i_connec
                   visited[triangles[t]]=true;
                   }
                 }
+            }
 
-              if (adjacent_triangles==0)
-                topology_info.m_solid=false;
-              if (adjacent_triangles>1)
-                topology_info.m_manifold=false;
+          if (adjacent_triangles==0) topology_info.m_solid=false;
+          if (adjacent_triangles>1) topology_info.m_manifold=false;
           }
         } // while(qu.empty()==false)
 
@@ -410,8 +391,8 @@ bool TriangleMesh::_ConsistentlyOriented(size_t i_triangle_index1, size_t i_tria
   }
 
 /**
-* Computes the point of intersection of the specified ray an the triangle's plane.
-* @param i_triangle Mesh triangle.
+* Computes the point of intersection of the specified ray and the triangle's plane.
+* @param i_vertices Triangle vertices.
 * @param i_origin Ray origin.
 * @param i_direction Ray direction.
 * @param[out] o_b1 A barycentric coordinate of the intersection point corresponding to the 1th vertex of the specified triangle (0-based).
@@ -529,7 +510,10 @@ void TriangleMesh::ComputeDifferentialGeometry(size_t i_triangle_index, const Ra
   if (tangent2.LengthSqr() > DBL_EPS)
     o_dg.m_tangent = (tangent2 ^ o_dg.m_shading_normal).Normalized();
   else
+    {
     MathRoutines::CoordinateSystem(o_dg.m_shading_normal, tangent, tangent2);
+    o_dg.m_tangent = tangent;
+    }
 
   // Compute screen-space differentials.
   double b0_x,b1_x,b2_x,t_x;

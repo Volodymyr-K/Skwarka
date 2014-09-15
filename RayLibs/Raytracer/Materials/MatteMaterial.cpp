@@ -5,6 +5,9 @@
 #include <Raytracer/BxDFs/OrenNayar.h>
 #include <Math/MathRoutines.h>
 
+// Register the derived class in the boost serialization framework.
+BOOST_CLASS_EXPORT_IMPLEMENT(MatteMaterial);
+
 MatteMaterial::MatteMaterial(intrusive_ptr<const Texture<SpectrumCoef_d> > ip_reflectance, intrusive_ptr<const Texture<double> > ip_sigma):
 Material(), mp_reflectance(ip_reflectance), mp_sigma(ip_sigma)
   {

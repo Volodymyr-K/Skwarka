@@ -23,7 +23,7 @@ void UniformImagePixelsOrder::SetImageSize(const Point2D_i &i_image_begin, const
 
 size_t UniformImagePixelsOrder::GetTotalPixelsNum() const
   {
-  return (m_image_end[0]-m_image_begin[0])*(m_image_end[1]-m_image_begin[1]);
+  return m_size_x*m_size_y;
   }
 
 void UniformImagePixelsOrder::Reset()
@@ -82,5 +82,5 @@ bool UniformImagePixelsOrder::GetNextPixel(Point2D_i &o_image_pixel)
     }
 
   ASSERT(0 && "This code should never be executed, the method should return eariler."); 
-  return true;
+  return false;
   }

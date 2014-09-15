@@ -10,15 +10,10 @@
 #include <string>
 #include <exception>
 
-// Disable compiler warning raised in the OpenEXR's code.
-#pragma warning( push )
-#pragma warning( disable : 4231 )
-#pragma warning( disable : 4996 )
 #include <ImfRgbaFile.h>
 #include <ImfRgba.h>
 #include <ImfArray.h>
 #include <ImfChromaticitiesAttribute.h>
-#pragma warning( pop )
 
 /**
 * ImageSource implementation that converts Open EXR Rgba image to 2D array of the specified type (see template parameter of the class).
@@ -316,12 +311,12 @@ typedef OpenEXRRgbaImageSource<Spectrum_d> OpenEXRRgbaImageSource_Spectrum_doubl
 typedef OpenEXRRgbaImageSource<SpectrumCoef_f> OpenEXRRgbaImageSource_SpectrumCoef_float;
 typedef OpenEXRRgbaImageSource<SpectrumCoef_d> OpenEXRRgbaImageSource_SpectrumCoef_double;
 
-BOOST_CLASS_EXPORT(OpenEXRRgbaImageSource_float)
-BOOST_CLASS_EXPORT(OpenEXRRgbaImageSource_double)
-BOOST_CLASS_EXPORT(OpenEXRRgbaImageSource_Spectrum_float)
-BOOST_CLASS_EXPORT(OpenEXRRgbaImageSource_Spectrum_double)
-BOOST_CLASS_EXPORT(OpenEXRRgbaImageSource_SpectrumCoef_float)
-BOOST_CLASS_EXPORT(OpenEXRRgbaImageSource_SpectrumCoef_double)
+BOOST_CLASS_EXPORT_KEY(OpenEXRRgbaImageSource_float)
+BOOST_CLASS_EXPORT_KEY(OpenEXRRgbaImageSource_double)
+BOOST_CLASS_EXPORT_KEY(OpenEXRRgbaImageSource_Spectrum_float)
+BOOST_CLASS_EXPORT_KEY(OpenEXRRgbaImageSource_Spectrum_double)
+BOOST_CLASS_EXPORT_KEY(OpenEXRRgbaImageSource_SpectrumCoef_float)
+BOOST_CLASS_EXPORT_KEY(OpenEXRRgbaImageSource_SpectrumCoef_double)
 
 /////////////////////////////////// Serialization for Open EXR classes ////////////////////////////////////////
 

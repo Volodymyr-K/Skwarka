@@ -10,7 +10,7 @@
 #include <sstream>
 
 /*
-This file defines ValueTraits specializations for some of the custom classes classes.
+This file defines ValueTraits specializations for some of the custom classes.
 This is needed to make TS_ASSERT_EQUALS() support these types.
 It also contains assert functions for point and vector delta assertions.
 

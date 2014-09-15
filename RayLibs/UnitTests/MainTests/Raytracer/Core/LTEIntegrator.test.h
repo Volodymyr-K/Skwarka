@@ -50,7 +50,7 @@ class LTEIntegratorTestSuite : public CxxTest::TestSuite
       // Nothing to clear.
       }
 
-    void test_LTEIntegratorTestSuite_RadianceInsideSphere_NoMedia()
+    void test_LTEIntegrator_RadianceInsideSphere_NoMedia()
       {
       intrusive_ptr<LTEIntegrator> p_lte_int( new LTEIntegratorMock(mp_scene_no_media) );
 

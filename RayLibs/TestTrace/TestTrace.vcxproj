@@ -1,0 +1,172 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{1B889D66-FDEF-4835-A924-698B5CCCDE78}</ProjectGuid>
+    <RootNamespace>TestTrace</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>12.0.21005.1</_ProjectFileVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>..\..\..\Binaries\$(Configuration)\</OutDir>
+    <IntDir>..\..\..\Intermediate\$(Configuration)\</IntDir>
+    <LinkIncremental>true</LinkIncremental>
+    <TargetName>$(ProjectName)d</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>..\..\..\Binaries\$(Configuration)\</OutDir>
+    <IntDir>..\..\..\Intermediate\$(Configuration)\</IntDir>
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <AdditionalOptions>/MP /bigobj %(AdditionalOptions)</AdditionalOptions>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>..\;..\..\..\ThirdParty\;..\..\..\ThirdParty\boost\1.56\;..\..\..\ThirdParty\TBB\4.2\include;..\..\..\ThirdParty\EasyBMP\1.06;..\..\..\ThirdParty\OpenEXR\Deploy\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>TBB_USE_DEBUG;WIN32;_DEBUG;_WINDOWS;NOMINMAX;OPENEXR_DLL;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>tbb_debug.lib;Half.lib;Iex.lib;IlmImf.lib;IlmThread.lib;Imath.lib;zdll.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>$(OutDir)$(ProjectName)d.exe</OutputFile>
+      <AdditionalLibraryDirectories>..\..\..\ThirdParty\TBB\4.2\lib\ia32\vc12;..\..\..\ThirdParty\OpenEXR\Deploy\lib\Debug;..\..\..\ThirdParty\boost\libs\1.56;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention />
+      <TargetMachine>MachineX86</TargetMachine>
+      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
+    </Link>
+    <PostBuildEvent>
+      <Message>Copying TBB DLLs and PDBs</Message>
+      <Command>copy "..\..\..\ThirdParty\TBB\4.2\bin\ia32\vc12\tbb_debug.dll" "$(OutDir)"
+copy  "..\..\..\ThirdParty\TBB\4.2\bin\ia32\vc12\tbb_debug.pdb" "$(OutDir)"
+copy  "..\..\..\ThirdParty\OpenEXR\Deploy\bin\Debug\IlmImf.dll" "$(OutDir)"
+copy  "..\..\..\ThirdParty\OpenEXR\Deploy\bin\Debug\Half.dll" "$(OutDir)"
+copy  "..\..\..\ThirdParty\OpenEXR\Deploy\bin\Debug\Iex.dll" "$(OutDir)"
+copy  "..\..\..\ThirdParty\OpenEXR\Deploy\bin\Debug\IlmThread.dll" "$(OutDir)"
+copy  "..\..\..\ThirdParty\OpenEXR\Deploy\bin\Debug\zlib1.dll" "$(OutDir)"
+</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <AdditionalOptions>/MP /bigobj %(AdditionalOptions)</AdditionalOptions>
+      <Optimization>MaxSpeed</Optimization>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <AdditionalIncludeDirectories>..\;..\..\..\ThirdParty\;..\..\..\ThirdParty\boost\1.56\;..\..\..\ThirdParty\TBB\4.2\include;..\..\..\ThirdParty\EasyBMP\1.06;..\..\..\ThirdParty\OpenEXR\Deploy\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;NOMINMAX;_SECURE_SCL=0;OPENEXR_DLL;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+      <FloatingPointModel>Precise</FloatingPointModel>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <AssemblerOutput />
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <EnablePREfast>false</EnablePREfast>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>tbb.lib;Half.lib;Iex.lib;IlmImf.lib;IlmThread.lib;Imath.lib;zdll.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\..\ThirdParty\TBB\4.2\lib\ia32\vc12;..\..\..\ThirdParty\OpenEXR\Deploy\lib\Release;..\..\..\ThirdParty\boost\libs\1.56;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention />
+      <TargetMachine>MachineX86</TargetMachine>
+      <Profile>true</Profile>
+    </Link>
+    <PostBuildEvent>
+      <Message>Copying TBB DLLs and PDBs</Message>
+      <Command>copy "..\..\..\ThirdParty\TBB\4.2\bin\ia32\vc12\tbb.dll" "$(OutDir)"
+copy  "..\..\..\ThirdParty\TBB\4.2\bin\ia32\vc12\tbb.pdb" "$(OutDir)"
+copy  "..\..\..\ThirdParty\OpenEXR\Deploy\bin\Release\IlmImf.dll" "$(OutDir)"
+copy  "..\..\..\ThirdParty\OpenEXR\Deploy\bin\Release\Half.dll" "$(OutDir)"
+copy  "..\..\..\ThirdParty\OpenEXR\Deploy\bin\Release\Iex.dll" "$(OutDir)"
+copy  "..\..\..\ThirdParty\OpenEXR\Deploy\bin\Release\IlmThread.dll" "$(OutDir)"
+copy  "..\..\..\ThirdParty\OpenEXR\Deploy\bin\Release\zlib1.dll" "$(OutDir)"
+</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\ThirdParty\EasyBMP\1.06\EasyBMP.cpp" />
+    <ClCompile Include="raytracer_app.cpp" />
+    <ClCompile Include="stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Console.h" />
+    <ClInclude Include="MeshLoader.h" />
+    <ClInclude Include="raytracer_app.h" />
+    <ClInclude Include="Resource.h" />
+    <ClInclude Include="StdAfx.h" />
+    <ClInclude Include="TestTracer.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CADImport\CADImport.vcxproj">
+      <Project>{74ee4312-d17b-475e-aba7-cb2c8c129999}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\Math\Math.vcxproj">
+      <Project>{82ac70fc-4cb6-4ff4-9cea-e8fa28d4aa3e}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\Raytracer\Raytracer.vcxproj">
+      <Project>{ed053b6a-e1c9-4781-93ae-633837016d00}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\Shapes\Shapes.vcxproj">
+      <Project>{c22874bd-aba3-4e5e-86d6-31f98520b557}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

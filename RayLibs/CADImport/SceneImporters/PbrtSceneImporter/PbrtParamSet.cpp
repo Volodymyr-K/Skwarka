@@ -8,8 +8,15 @@ namespace PbrtImport
   {
 
   // ParamSet Macros
-  #define ADD_PARAM_TYPE(T, vec) \
-      (vec).push_back(new ParamSetItem<T>(name, (T *)data, nItems))
+  #define ERASE_PARAM(vec) \
+      for (size_t i = 0; i < vec.size(); ++i) \
+      if (vec[i]->name == n) \
+        { \
+        vec.erase(vec.begin() + i); \
+        return true; \
+        } \
+    return false
+
   #define LOOKUP_PTR(vec) \
       for (size_t i = 0; i < (vec).size(); ++i) \
           if ((vec)[i]->name == name) { \
@@ -17,6 +24,7 @@ namespace PbrtImport
               return (vec)[i]->data; \
           } \
       return NULL
+
   #define LOOKUP_ONE(vec) \
       for (size_t i = 0; i < (vec).size(); ++i) { \
           if ((vec)[i]->name == name && \
@@ -35,31 +43,43 @@ namespace PbrtImport
   void ParamSet::AddInt(const std::string &name, const int *data, int nItems)
     {
     EraseInt(name);
-    ADD_PARAM_TYPE(int, ints);
+    ints.push_back(new ParamSetItem<int>(name, data, nItems));
     }
 
   void ParamSet::AddBool(const std::string &name, const bool *data, int nItems)
     {
     EraseBool(name);
-    ADD_PARAM_TYPE(bool, bools);
+    bools.push_back(new ParamSetItem<bool>(name, data, nItems));
     }
 
   void ParamSet::AddPoint(const std::string &name, const Point3D_d *data, int nItems)
     {
     ErasePoint(name);
-    ADD_PARAM_TYPE(Point3D_d, points);
+    points.push_back(new ParamSetItem<Point3D_d>(name, data, nItems));
     }
 
   void ParamSet::AddVector(const std::string &name, const Vector3D_d *data, int nItems)
     {
     EraseVector(name);
-    ADD_PARAM_TYPE(Vector3D_d, vectors);
+    vectors.push_back(new ParamSetItem<Vector3D_d>(name, data, nItems));
     }
 
   void ParamSet::AddNormal(const std::string &name, const Vector3D_d *data, int nItems)
     {
     EraseNormal(name);
-    ADD_PARAM_TYPE(Vector3D_d, normals);
+    normals.push_back(new ParamSetItem<Vector3D_d>(name, data, nItems));
+    }
+
+  void ParamSet::AddString(const std::string &name, const std::string *data, int nItems)
+    {
+    EraseString(name);
+    strings.push_back(new ParamSetItem<std::string>(name, data, nItems));
+    }
+
+  void ParamSet::AddTexture(const std::string &name, const std::string &value)
+    {
+    EraseTexture(name);
+    textures.push_back(new ParamSetItem<std::string>(name, (std::string *)&value, 1));
     }
 
   void ParamSet::AddRGBSpectrum(const std::string &name, const float *data, int nItems)
@@ -235,149 +255,64 @@ namespace PbrtImport
   std::map<std::string , Spectrum_d> ParamSet::cachedSpectrums;
   std::map<std::string , SpectrumCoef_d> ParamSet::cachedSpectrumCoefs;
 
-  void ParamSet::AddString(const std::string &name, const std::string *data, int nItems)
-    {
-    EraseString(name);
-    ADD_PARAM_TYPE(std::string, strings);
-    }
-
-  void ParamSet::AddTexture(const std::string &name, const std::string &value)
-    {
-    EraseTexture(name);
-    textures.push_back(new ParamSetItem<std::string >(name, (std::string *)&value, 1));
-    }
-
   bool ParamSet::EraseInt(const std::string &n)
     {
-    for (size_t i = 0; i < ints.size(); ++i)
-      if (ints[i]->name == n)
-        {
-        ints.erase(ints.begin() + i);
-        return true;
-        }
-
-    return false;
+    ERASE_PARAM(ints);
     }
 
   bool ParamSet::EraseBool(const std::string &n)
     {
-    for (size_t i = 0; i < bools.size(); ++i)
-      if (bools[i]->name == n)
-        {
-        bools.erase(bools.begin() + i);
-        return true;
-        }
-
-    return false;
+    ERASE_PARAM(bools);
     }
 
   bool ParamSet::EraseFloat(const std::string &n)
     {
-    for (size_t i = 0; i < floats.size(); ++i)
-      if (floats[i]->name == n)
-        {
-        floats.erase(floats.begin() + i);
-        return true;
-        }
-
-    return false;
+    ERASE_PARAM(floats);
     }
 
   bool ParamSet::ErasePoint(const std::string &n)
     {
-    for (size_t i = 0; i < points.size(); ++i)
-        if (points[i]->name == n)
-          {
-          points.erase(points.begin() + i);
-          return true;
-          }
-    return false;
+    ERASE_PARAM(points);
     }
-
 
   bool ParamSet::EraseVector(const std::string &n)
     {
-    for (size_t i = 0; i < vectors.size(); ++i)
-      if (vectors[i]->name == n)
-        {
-        vectors.erase(vectors.begin() + i);
-        return true;
-        }
-    return false;
+    ERASE_PARAM(vectors);
     }
 
   bool ParamSet::EraseNormal(const std::string &n)
     {
-    for (size_t i = 0; i < normals.size(); ++i)
-      if (normals[i]->name == n)
-        {
-        normals.erase(normals.begin() + i);
-        return true;
-        }
-    return false;
+    ERASE_PARAM(normals);
     }
 
   bool ParamSet::EraseSpectrum(const std::string &n)
     {
-    for (size_t i = 0; i < spectrums.size(); ++i)
-      if (spectrums[i]->name == n)
-        {
-        spectrums.erase(spectrums.begin() + i);
-        return true;
-        }
-    return false;
+    ERASE_PARAM(spectrums);
     }
 
   bool ParamSet::EraseSpectrumCoef(const std::string &n)
     {
-    for (size_t i = 0; i < spectrum_coefs.size(); ++i)
-      if (spectrum_coefs[i]->name == n)
-        {
-        spectrum_coefs.erase(spectrum_coefs.begin() + i);
-        return true;
-        }
-      return false;
+    ERASE_PARAM(spectrum_coefs);
     }
 
   bool ParamSet::EraseString(const std::string &n)
     {
-    for (size_t i = 0; i < strings.size(); ++i)
-      if (strings[i]->name == n)
-        {
-        strings.erase(strings.begin() + i);
-        return true;
-        }
-    return false;
+    ERASE_PARAM(strings);
     }
 
   bool ParamSet::EraseTexture(const std::string &n)
     {
-    for (size_t i = 0; i < textures.size(); ++i)
-      if (textures[i]->name == n)
-        {
-        textures.erase(textures.begin() + i);
-        return true;
-        }
-    return false;
+    ERASE_PARAM(textures);
     }
 
   float ParamSet::FindOneFloat(const std::string &name, float d) const
     {
-    for (size_t i = 0; i < floats.size(); ++i)
-      if (floats[i]->name == name && floats[i]->nItems == 1)
-        return *(floats[i]->data);
-    return d;
+    LOOKUP_ONE(floats);
     }
 
-  const float *ParamSet::FindFloat(const std::string &name, int *n) const
+  const float *ParamSet::FindFloat(const std::string &name, int *nItems) const
     {
-    for (size_t i = 0; i < floats.size(); ++i)
-      if (floats[i]->name == name)
-        {
-        *n = floats[i]->nItems;
-        return floats[i]->data;
-        }
-    return NULL;
+    LOOKUP_PTR(floats);
     }
 
   const int *ParamSet::FindInt(const std::string &name, int *nItems) const

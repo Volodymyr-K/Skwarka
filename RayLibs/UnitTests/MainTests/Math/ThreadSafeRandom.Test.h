@@ -31,7 +31,7 @@ class ThreadSafeRandomTestSuite : public CxxTest::TestSuite
         if (r<mn) mn=r;
         if (r>mx) mx=r;
         }
-      TS_ASSERT(mn>=-10.0 && mn<123.0 && mx>=-10.0 && mx<123.0);
+      TS_ASSERT(mn>-10.0 && mn<=123.0 && mx>-10.0 && mx<=123.0);
       }
 
     void test_RandomIntRange1()

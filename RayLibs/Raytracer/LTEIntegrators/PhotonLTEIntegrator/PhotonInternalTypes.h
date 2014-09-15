@@ -230,11 +230,11 @@ class PhotonLTEIntegrator::IrradiancePhotonProcess
 /**
 * The class contains caustic, direct and indirect photon maps.
 * It is used by the photon shooting TBB pipeline as the storage for all found photons.
-* The class provides methods to merge a vector of photons into a specific photon map and get current numbers of photons added.
+* The class provides methods to merge a vector of photons into a specific photon map and get current numbers of photons of each type.
 * 
 * For each photon map the merged photons are added to an internal vector of photons until the vector reaches the size threshold (see MAX_PHOTONS_IN_MAP constant).
-* After that the KDTree is built from that vector of photons. For all future photons to be merged the nearest photon form the tree is found and the photon's
-* weight is simply added to the photon form the tree.
+* After that the KDTree is built from that vector of photons. For all future photons to be merged the nearest photon from the tree is found and the photon's
+* weight is simply added to the photon from the tree.
 * That allows us to keep the size of the photon maps reasonable while still being able to shoot as many photon paths as needed.
 */
 class PhotonLTEIntegrator::PhotonMaps
@@ -317,7 +317,7 @@ class PhotonLTEIntegrator::PhotonMaps
 * The class is passed through the TBB pipeline by PhotonsInputFilter, PhotonsShootingFilter and PhotonsMergingFilter.
 * The class also keeps MemoryPool and RandomGenerator instances used by the PhotonsShootingFilter.
 * Since the class is used by multiple threads it has a simple locking mechanism implemented by m_available field.
-* When PhotonsInputFilter picks a chunk it check if it is available by checking this field and if it is set the field to false.
+* When PhotonsInputFilter picks a chunk it checks if it is available by checking this field and if it is set the field to false.
 * PhotonsMergingFilter releases the chunk by setting it back to true.
 * Although this locking strategy is not really thread-safe it works well for PhotonsInputFilter because this filter is serial and multiple
 * threads will never race to acquire the lock over the same PhotonsChunk.

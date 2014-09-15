@@ -94,6 +94,7 @@ CompressedDirection::CompressedDirection(Vector3D<T> i_vector): m_data(0)
   ASSERT(y>=0 && y<127);
   ASSERT(x+y<127);
 
+  // For sampling, we transform the triangle into a rectangle of size 128x64
   if (y>=64)
     {
     x = 127-x;

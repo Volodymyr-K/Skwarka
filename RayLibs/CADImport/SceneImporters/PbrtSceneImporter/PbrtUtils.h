@@ -31,7 +31,7 @@ namespace PbrtImport
         ip_log->LogMessage(Log::ERROR_LEVEL, i_message);
       }
 
-    inline bool ReadFloatFile(const std::string &filename, std::vector<float> *values, intrusive_ptr<Log> ip_log = NULL)
+    inline bool ReadFloatFile(const std::string &filename, std::vector<float> *op_values, intrusive_ptr<Log> ip_log = NULL)
       {
       FILE *f = fopen(filename.c_str(), "r");
       if (!f)
@@ -55,7 +55,7 @@ namespace PbrtImport
           else
             {
             curNumber[curNumberPos++] = '\0';
-            values->push_back((float)atof(curNumber));
+            op_values->push_back((float)atof(curNumber));
             ASSERT(curNumberPos < (int)sizeof(curNumber));
             inNumber = false;
             curNumberPos = 0;

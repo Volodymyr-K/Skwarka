@@ -28,7 +28,7 @@ namespace PbrtImport
         else if (i_name == "triangle")
           return _CreateTriangleFilter(i_params);
         else
-          PbrtImport::Utils::LogWarning(mp_log, std::string("Filter \"") + i_name + std::string("\" unknown."));
+          PbrtImport::Utils::LogError(mp_log, std::string("Filter \"") + i_name + std::string("\" unknown."));
 
         return NULL;
         }

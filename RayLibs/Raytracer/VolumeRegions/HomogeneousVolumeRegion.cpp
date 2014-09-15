@@ -1,5 +1,8 @@
 #include "HomogeneousVolumeRegion.h"
 
+// Register the derived class in the boost serialization framework.
+BOOST_CLASS_EXPORT_IMPLEMENT(HomogeneousVolumeRegion);
+
 HomogeneousVolumeRegion::HomogeneousVolumeRegion(const BBox3D_d &i_bounds, Spectrum_d &i_emission, SpectrumCoef_d &i_absorption,
                                                  SpectrumCoef_d &i_scattering, intrusive_ptr<const PhaseFunction> ip_phase_function):
 m_bounds(i_bounds), m_emission(i_emission), m_absorption(i_absorption), m_scattering(i_scattering), mp_phase_function(ip_phase_function)

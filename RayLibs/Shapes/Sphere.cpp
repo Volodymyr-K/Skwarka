@@ -33,7 +33,7 @@ intrusive_ptr<TriangleMesh> Sphere::BuildMesh()
   // Vector holding all the mesh triangles.
   std::vector<MeshTriangle> triangles(4);
 
-  // When subdividing a triangle into four new ones, the original triangle is not removed form the vector, instead it is marked as deleted.
+  // When subdividing a triangle into four new ones, the original triangle is not removed from the vector, instead it is marked as deleted.
   // This vector tracks what triangles have been marked as deleted so far.
   std::vector<bool> deleted(4, false);
 
@@ -50,7 +50,7 @@ intrusive_ptr<TriangleMesh> Sphere::BuildMesh()
   triangles[3]=MeshTriangle(0,2,3);
 
   // Each edge is subdivided by splitting it by a vertex.
-  // Not to add separate splitting vertices for the adjacent triangles, this map keeps track of what edges have been split by what vertices.
+  // To avoid adding separate splitting vertices for adjacent triangles, this map keeps track of what edges have been split by what vertices.
   std::map<std::pair<size_t,size_t>,size_t> edges_to_vertices;
 
   // Iteratively subdivide the mesh.

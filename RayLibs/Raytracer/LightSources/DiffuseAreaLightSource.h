@@ -8,7 +8,7 @@
 /**
 * Represents light source properties of a triangle mesh.
 * Each surface point has a constant radiance value for all directions on the hemisphere.
-* Each triangle radiate light only on its positive side, i.e. the side where the triangle normal points to.
+* Each triangle radiates light only on its positive side, i.e. the side where the triangle normal points to.
 */
 class DiffuseAreaLightSource: public AreaLightSource
   { 
@@ -91,9 +91,9 @@ class DiffuseAreaLightSource: public AreaLightSource
     intrusive_ptr<const TriangleMesh> mp_mesh;
 
     /**
-    * Total area of the triangle mesh.
+    * Total area of the triangle mesh and its inverted value.
     */
-    double m_area;
+    double m_area, m_inv_area;
 
     /**
     * Cumulative density function used to sample surface points on the triangle mesh uniformly with respect to the surface area.
@@ -115,6 +115,6 @@ void DiffuseAreaLightSource::serialize(Archive &i_ar, const unsigned int i_versi
   }
 
 // Register the derived class in the boost serialization framework.
-BOOST_CLASS_EXPORT(DiffuseAreaLightSource)
+BOOST_CLASS_EXPORT_KEY(DiffuseAreaLightSource)
 
 #endif // DIFFUSE_AREA_LIGHT_SOURCE_H

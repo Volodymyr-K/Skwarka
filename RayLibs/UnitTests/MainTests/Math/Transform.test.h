@@ -123,6 +123,8 @@ class TransformTestSuite : public CxxTest::TestSuite
       Vector3D_d v2=t(v);
 
       // Normal and the tangent vectors should still be orthogonal after the transformation.
+      TS_ASSERT(n2.LengthSqr()>DBL_EPS);
+      TS_ASSERT(v2.LengthSqr()>DBL_EPS);
       TS_ASSERT_DELTA(n2*v2, 0.0, 1e-9);
       }
 

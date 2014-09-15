@@ -1,6 +1,7 @@
 #ifndef SCALE_TEXTURE_H
 #define SCALE_TEXTURE_H
 
+#include <Raytracer/Core/Spectrum.h>
 #include <Raytracer/Core/Texture.h>
 #include <Raytracer/Core/DifferentialGeometry.h>
 
@@ -74,11 +75,11 @@ typedef ScaleTexture<SpectrumCoef_d,SpectrumCoef_d> ScaleTexture_SpectrumCoef_d_
 typedef ScaleTexture<float,float> ScaleTexture_float_float;
 typedef ScaleTexture<double,double> ScaleTexture_double_double;
 
-BOOST_CLASS_EXPORT(ScaleTexture_SpectrumCoef_f_Spectrum_f)
-BOOST_CLASS_EXPORT(ScaleTexture_SpectrumCoef_d_Spectrum_d)
-BOOST_CLASS_EXPORT(ScaleTexture_SpectrumCoef_f_SpectrumCoef_f)
-BOOST_CLASS_EXPORT(ScaleTexture_SpectrumCoef_d_SpectrumCoef_d)
-BOOST_CLASS_EXPORT(ScaleTexture_float_float)
-BOOST_CLASS_EXPORT(ScaleTexture_double_double)
+BOOST_CLASS_EXPORT_KEY(ScaleTexture_SpectrumCoef_f_Spectrum_f)
+BOOST_CLASS_EXPORT_KEY(ScaleTexture_SpectrumCoef_d_Spectrum_d)
+BOOST_CLASS_EXPORT_KEY(ScaleTexture_SpectrumCoef_f_SpectrumCoef_f)
+BOOST_CLASS_EXPORT_KEY(ScaleTexture_SpectrumCoef_d_SpectrumCoef_d)
+BOOST_CLASS_EXPORT_KEY(ScaleTexture_float_float)
+BOOST_CLASS_EXPORT_KEY(ScaleTexture_double_double)
 
 #endif // SCALE_TEXTURE_H

@@ -22,7 +22,7 @@ namespace PbrtImport
         if (i_name == "image")
           return _CreateImageFilm(i_params, ip_filter);
         else
-          PbrtImport::Utils::LogWarning(mp_log, std::string("Film \"") + i_name + std::string("\" unknown."));
+          PbrtImport::Utils::LogError(mp_log, std::string("Film \"") + i_name + std::string("\" unknown."));
 
         return NULL;
         }

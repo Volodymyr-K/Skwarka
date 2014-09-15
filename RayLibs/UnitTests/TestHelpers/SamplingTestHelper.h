@@ -33,22 +33,18 @@ namespace SamplingTestHelper
   /*
   This method checks that the given 1D distribution of samples does not have regions of clumping samples.
   This test checks the same property that the stratified sampling has, that there is no segment of one strata's size with more than two samples inside.
-  Return true if there are no clumping regions.
-
-  The method takes vector of samples by value instead of a reference because it needs to change it, so this is equal to passing by a reference and then making a local copy.
+  Returns true if there are no clumping regions.
   */
   template<typename T>
-  bool TestSamplesClumping1D(std::vector<T> i_values, T i_low, T i_high);
+  bool TestSamplesClumping1D(const std::vector<T> &i_values, T i_low, T i_high);
 
   /*
   This method checks that the given 2D distribution of samples does not have regions of clumping samples.
   This test checks the same property that the stratified sampling has, that there is no segment of one strata's size with more than four samples inside.
   Return true if there are no clumping regions.
-
-  The method takes vector of samples by value instead of a reference because it needs to change it, so this is equal to passing by a reference and then making a local copy.
   */
   template<typename T>
-  bool TestSamplesClumping2D(std::vector<Point2D<T> > i_values, Point2D<T> i_low, Point2D<T> i_high, size_t i_x_num_samples, size_t i_y_num_samples);
+  bool TestSamplesClumping2D(const std::vector<Point2D<T> > &i_values, Point2D<T> i_low, Point2D<T> i_high, size_t i_x_num_samples, size_t i_y_num_samples);
 
   /*
   This method checks that the given 2D distribution of samples does not have regions of clumping samples.
@@ -56,12 +52,10 @@ namespace SamplingTestHelper
   The difference between this and TestSamplesClumping2D() method is that this method tests each dimension separately while TestSamplesClumping2D() looks for the
   clumping in 2D taking both dimensions into the account at the same time.
 
-  Return true if there are no clumping regions.
-
-  The method takes vector of samples by value instead of a reference because it needs to change it, so this is equal to passing by a reference and then making a local copy.
+  Returns true if there are no clumping regions.
   */
   template<typename T>
-  bool TestLatinHypercubeDistribution2D(std::vector<Point2D<T> > i_values, Point2D<T> i_low, Point2D<T> i_high);
+  bool TestLatinHypercubeDistribution2D(const std::vector<Point2D<T> > &i_values, Point2D<T> i_low, Point2D<T> i_high);
 
   /*
   This method checks that the given 2D distribution of samples conforms to the (0,2)-sequence property.
@@ -130,12 +124,13 @@ namespace SamplingTestHelper
     }
 
   template<typename T>
-  bool TestSamplesClumping1D(std::vector<T> i_values, T i_low, T i_high)
+  bool TestSamplesClumping1D(const std::vector<T> &i_values, T i_low, T i_high)
     {
     size_t N=i_values.size();
     double strata_size = (i_high-i_low)/N - DBL_EPS;
 
-    std::sort(i_values.begin(), i_values.end());
+    std::vector<T> values(i_values);
+    std::sort(values.begin(), values.end());
     
     for(size_t i=0;i<N;++i)
       {
@@ -143,8 +138,8 @@ namespace SamplingTestHelper
       double right=left+strata_size;
 
       // Lower bound is used for both bounds to exclude the samples with the same value as "right".
-      std::vector<T>::iterator it1=std::lower_bound(i_values.begin(), i_values.end(), left);
-      std::vector<T>::iterator it2=std::lower_bound(i_values.begin(), i_values.end(), right);
+      std::vector<T>::iterator it1=std::lower_bound(values.begin(), values.end(), left);
+      std::vector<T>::iterator it2=std::lower_bound(values.begin(), values.end(), right);
 
       if (std::distance(it1,it2) > 2)
         return false;
@@ -165,18 +160,20 @@ namespace SamplingTestHelper
     };
 
   template<typename T>
-  bool TestSamplesClumping2D(std::vector<Point2D<T> > i_values, Point2D<T> i_low, Point2D<T> i_high, size_t i_x_num_samples, size_t i_y_num_samples)
+  bool TestSamplesClumping2D(const std::vector<Point2D<T> > &i_values, Point2D<T> i_low, Point2D<T> i_high, size_t i_x_num_samples, size_t i_y_num_samples)
     {
     const size_t N = i_x_num_samples*i_y_num_samples;
     ASSERT(i_values.size()==N);
     if (i_values.size()!=N)
       return false;
 
+    std::vector<Point2D<T> > values(i_values);
+
     double strata_size_x = (i_high[0]-i_low[0])/i_x_num_samples - DBL_EPS;
     double strata_size_y = (i_high[1]-i_low[1])/i_y_num_samples - DBL_EPS;
 
     // Sort by X coordinate.
-    std::sort(i_values.begin(), i_values.end(), Point2DComparator<T,0>());
+    std::sort(values.begin(), values.end(), Point2DComparator<T,0>());
 
     std::vector<Point2D<T> > clumped_by_x;
     for(size_t i=0;i<N;++i)
@@ -185,8 +182,8 @@ namespace SamplingTestHelper
       double right=left+strata_size_x;
 
       // Lower bound is used for both bounds to exclude the samples with the same value as "right".
-      std::vector<Point2D<T> >::iterator it1=std::lower_bound(i_values.begin(), i_values.end(), Point2D_d(left,0.0), Point2DComparator<T,0>());
-      std::vector<Point2D<T> >::iterator it2=std::lower_bound(i_values.begin(), i_values.end(), Point2D_d(right,0.0), Point2DComparator<T,0>());
+      std::vector<Point2D<T> >::iterator it1=std::lower_bound(values.begin(), values.end(), Point2D_d(left,0.0), Point2DComparator<T,0>());
+      std::vector<Point2D<T> >::iterator it2=std::lower_bound(values.begin(), values.end(), Point2D_d(right,0.0), Point2DComparator<T,0>());
 
       // No need to look for clumping by Y if there is less than 5 points.
       if (std::distance(it1,it2)<5)
@@ -206,16 +203,18 @@ namespace SamplingTestHelper
     }
 
   template<typename T>
-  bool TestLatinHypercubeDistribution2D(std::vector<Point2D<T> > i_values, Point2D<T> i_low, Point2D<T> i_high)
+  bool TestLatinHypercubeDistribution2D(const std::vector<Point2D<T> > &i_values, Point2D<T> i_low, Point2D<T> i_high)
     {
     size_t N=i_values.size();
     std::vector<T> values_x, values_y;
     values_x.reserve(N);
     values_y.reserve(N);
+
+    std::vector<Point2D<T> > values(i_values);
     for(size_t i=0;i<N;++i)
       {
-      values_x.push_back(i_values[i][0]);
-      values_y.push_back(i_values[i][1]);
+      values_x.push_back(values[i][0]);
+      values_y.push_back(values[i][1]);
       }
 
     bool not_clumped_x = TestSamplesClumping1D(values_x,i_low[0],i_high[0]);

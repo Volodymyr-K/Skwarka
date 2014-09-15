@@ -194,16 +194,18 @@ Spectrum_d DirectLightingIntegrator::_SampleLights(const Intersection &i_interse
       if (light_pdf>0.0 && light.IsBlack()==false)
         {
         light *= ip_bsdf->Evaluate(i_view_direction, lighting_ray.m_direction);
-
-        double bsdf_pdf = ip_bsdf->PDF(i_view_direction, lighting_ray.m_direction);
-
-        // Compute weighting coefficient for the multiple importance sampling.
-        double weight = SamplingRoutines::PowerHeuristic(m_lights_samples_num, light_pdf*light_component_pdf, m_bsdf_samples_num, bsdf_pdf*light_component_pdf*inv_infinity_lights_probability);
-        weight *= fabs(lighting_ray.m_direction*shading_normal) / (light_pdf*light_component_pdf);
-
         lighting_ray.m_min_t = CoreUtils::GetNextMinT(i_intersection, lighting_ray.m_direction);
-        if (weight>0.0 && light.IsBlack()==false && mp_scene->IntersectTest(lighting_ray)==false)
+
+        if (light.IsBlack() == false && mp_scene->IntersectTest(lighting_ray) == false)
+          {
+          double bsdf_pdf = ip_bsdf->PDF(i_view_direction, lighting_ray.m_direction);
+
+          // Compute weighting coefficient for the multiple importance sampling.
+          double weight = SamplingRoutines::PowerHeuristic(m_lights_samples_num, light_pdf*light_component_pdf, m_bsdf_samples_num, bsdf_pdf*light_component_pdf*inv_infinity_lights_probability);
+          weight *= fabs(lighting_ray.m_direction*shading_normal) / (light_pdf*light_component_pdf);
+
           radiance.AddWeighted(light*_MediaTransmittance(lighting_ray, i_ts), weight);
+          }
         }
       }
     else
@@ -216,23 +218,25 @@ Spectrum_d DirectLightingIntegrator::_SampleLights(const Intersection &i_interse
 
       if (light_pdf>0.0 && light.IsBlack()==false)
         {
-        lighting_ray.m_max_t -= (1e-4); // To avoid intersection with the area light.
         light *= ip_bsdf->Evaluate(i_view_direction, lighting_ray.m_direction);
-
-        double bsdf_pdf = ip_bsdf->PDF(i_view_direction, lighting_ray.m_direction);
-
-        /*
-        Compute weighting coefficient for the multiple importance sampling.
-        The subtle point here is that for the BSDF probability we don't multiply it by the probability of sampling exactly this light source and exactly this triangle.
-        This is because when sampling the BSDF there is exactly one area light and exactly one triangle contributing to the direct lighting along this direction.
-        If the light source (or triangle) currently being sampled is not the nearest one it will contribute zero radiance to the direct lighting along this direction.
-        */
-        double weight = SamplingRoutines::PowerHeuristic(m_lights_samples_num, light_pdf*light_component_pdf, m_bsdf_samples_num, bsdf_pdf);
-        weight *= fabs(lighting_ray.m_direction*shading_normal) / (light_pdf*light_component_pdf);
-
         lighting_ray.m_min_t = CoreUtils::GetNextMinT(i_intersection, lighting_ray.m_direction);
-        if (weight>0.0 && light.IsBlack()==false && mp_scene->IntersectTest(lighting_ray)==false)
+        lighting_ray.m_max_t -= (1e-4); // To avoid intersection with the area light.
+
+        if (light.IsBlack() == false && mp_scene->IntersectTest(lighting_ray) == false)
+          {
+          double bsdf_pdf = ip_bsdf->PDF(i_view_direction, lighting_ray.m_direction);
+
+          /*
+          Compute weighting coefficient for the multiple importance sampling.
+          The subtle point here is that for the BSDF probability we don't multiply it by the probability of sampling exactly this light source and exactly this triangle.
+          This is because when sampling the BSDF there is exactly one area light and exactly one triangle contributing to the direct lighting along this direction.
+          If the light source (or triangle) currently being sampled is not the nearest one it will contribute zero radiance to the direct lighting along this direction.
+          */
+          double weight = SamplingRoutines::PowerHeuristic(m_lights_samples_num, light_pdf*light_component_pdf, m_bsdf_samples_num, bsdf_pdf);
+          weight *= fabs(lighting_ray.m_direction*shading_normal) / (light_pdf*light_component_pdf);
+
           radiance.AddWeighted(light*_MediaTransmittance(lighting_ray, i_ts), weight);
+          }
         }
       }
 

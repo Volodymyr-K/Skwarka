@@ -24,8 +24,8 @@ class BSDF
   {
   public:
     /**
-    * Creates BSDF instance for the specified surface point defines by the DifferentialGeometry.
-    * The shading normal is used to defines the BSDF's local coordinate system, not the geometrical one.
+    * Creates BSDF instance for the specified surface point defined by the DifferentialGeometry.
+    * The shading normal is used to define the BSDF's local coordinate system, not the geometrical one.
     * @param i_dg DifferentialGeometry objects defining the surface point.
     * @param i_refractive_index Refractive index of the object. Should be greater than zero.
     */
@@ -35,6 +35,11 @@ class BSDF
     * Returns shading normal at the surface point.
     */
     Vector3D_d GetShadingNormal() const;
+
+    /**
+    * Returns geometric normal at the surface point.
+    */
+    Vector3D_d GetGeometricNormal() const;
 
     /**
     * Returns refractive index of the object.
@@ -74,11 +79,11 @@ class BSDF
     * The method selects a BxDF component to be sampled based on the specified sample value. Sampling that component gives
     * the exitant direction. After the chosen component is sampled the resulting BSDF and PDF value is computed using 
     * all BxDF components that match the specified flags.
-    * If the chosen component was a specular one than the other BxDFs components are not used and the BSDF and PDF value is returned
+    * If the chosen component was a specular one than the other BxDF components are not used and the BSDF and PDF value is returned
     * directly from the sampled BxDFs.
     * @param i_incident Incident direction. Should be normalized.
     * @param[out] o_exitant Exitant direction. The returned value should be normalized.
-    * @param i_sample 2D sample used to sample the selected BxDFs. Should be in [0;1)^2 range.
+    * @param i_sample 2D sample used to sample the selected BxDF. Should be in [0;1)^2 range.
     * @param i_component_sample A sample value used to select a BxDF component. Should be in [0;1) range.
     * @param[out] o_pdf PDF value for the sampled exitant direction. The returned value should be greater or equal than zero.
     * @param[out] o_sampled_type BxDFType of the sampled component.
@@ -110,7 +115,7 @@ class BSDF
     * Returns total scattering (i.e. fraction of scattered light) assuming a unit of light coming from the specified incident direction.
     * Only BxDF components matching specified flags are considered.
     * @param i_incident Incident direction. Should be normalized.
-    * @param i_samples Samples sequence which is to be used for all matching BxDf component. Should have at least one element.
+    * @param i_samples Samples sequence which is to be used for all matching BxDF components. Should have at least one element.
     * @param i_flags Specifies the subset of BxDF components.
     * @return Total scattering value. Each spectrum component will be in [0;1] range.
     */
@@ -176,6 +181,11 @@ inline Vector3D_d BSDF::GetShadingNormal() const
   {
   return m_normal;
   }
+
+inline Vector3D_d BSDF::GetGeometricNormal() const
+{
+  return m_geometric_normal;
+}
 
 inline double BSDF::GetRefractiveIndex() const
   {

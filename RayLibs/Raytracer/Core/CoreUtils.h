@@ -33,7 +33,7 @@ namespace CoreUtils
   void SetTransmittedDifferentials(const RayDifferential &i_incident_ray, const DifferentialGeometry &i_dg, double i_refractive_index, RayDifferential &o_exitant_ray);
 
   /**
-  * Helper method that given an intersection and an outgoing direction returns the minimum ray parameter that avoid intersecting with the same triangle.
+  * Helper method that given an intersection and an outgoing direction returns the minimum ray parameter that avoids intersecting with the same triangle.
   * The ray origin is assumed to be at the specified intersection point.
   */
   double GetNextMinT(const Intersection &i_intersection, const Vector3D_d &i_direction);

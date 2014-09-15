@@ -3,6 +3,9 @@
 #include <Math/SamplingRoutines.h>
 #include <Math/MathRoutines.h>
 
+// Register the derived class in the boost serialization framework.
+BOOST_CLASS_EXPORT_IMPLEMENT(DiffuseAreaLightSource);
+
 DiffuseAreaLightSource::DiffuseAreaLightSource(const Spectrum_d &i_radiance, intrusive_ptr<const TriangleMesh> ip_mesh): AreaLightSource(ip_mesh),
 m_radiance(i_radiance), mp_mesh(ip_mesh)
   {
@@ -23,10 +26,13 @@ m_radiance(i_radiance), mp_mesh(ip_mesh)
     if (i>0) m_area_CDF[i] += m_area_CDF[i-1];
     }
 
-  if (number_of_triangles>0)
-    m_area=m_area_CDF.back();
+  if (number_of_triangles > 0)
+  {
+    m_area = m_area_CDF.back();
+    m_inv_area = 1.0 / m_area;
+  }
   else
-    m_area=0.0;
+    m_area = m_inv_area = 0.0;
 
   ASSERT(m_area>=0.0);
   if (m_area>0.0)
@@ -78,7 +84,7 @@ Spectrum_d DiffuseAreaLightSource::SampleLighting(const Point3D_d &i_point, doub
   ASSERT(o_pdf>=0.0);
 
   // Check if the input point is on the lighting side of the triangle.
-  if (light_normal*Vector3D_d(i_point-sampled_point) > 0.0)   
+  if (light_normal*lighting_direction < 0.0)
     return m_radiance;
   else
     return Spectrum_d(0.0);
@@ -123,7 +129,7 @@ Spectrum_d DiffuseAreaLightSource::SamplePhoton(double i_triangle_sample, const 
 
   // Epsilon is used to avoid intersection with the area light at the same point.
   o_photon_ray = Ray(sampled_point, light_direction, (1e-4));
-  o_pdf = SamplingRoutines::CosineHemispherePDF(local_direction[2]) / m_area;
+  o_pdf = SamplingRoutines::CosineHemispherePDF(local_direction[2]) * m_inv_area;
 
   double dot = o_photon_ray.m_direction * light_normal;
   ASSERT(dot >= 0.0);

@@ -62,7 +62,7 @@ bool PbrtSceneImporter::_VerifyInitialized(const std::string &i_method) const
   {
   if (m_currentApiState == STATE_UNINITIALIZED)
     {
-    PbrtImport::Utils::LogError(mp_log, std::string("_pbrtInit() must be before calling ") + i_method + std::string(". Ignoring."));
+    PbrtImport::Utils::LogError(mp_log, std::string("_pbrtInit() must be called before calling ") + i_method + std::string(". Ignoring."));
     return false;
     }
   return true;
@@ -148,7 +148,7 @@ bool PbrtSceneImporter::_ReadLines(const std::string &i_filename)
     return false;
     }
 
-  // Push the current file to the stack for the later cycle detection/
+  // Push the current file to the stack for the later cycle detection.
   m_pushed_filenames.push_back(filename);
 
   std::string s;
