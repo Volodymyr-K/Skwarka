@@ -32,7 +32,6 @@ namespace PbrtImport
         else if (i_name == "distant")
           return _CreateDistantLight(i_light_to_world, i_params, i_world_bounds);
 
-        PbrtImport::Utils::LogError(mp_log, std::string("Delta light \"") + i_name + std::string("\" unknown."));
         return NULL;
         }
 
@@ -41,7 +40,6 @@ namespace PbrtImport
         if (i_name == "infinite" || i_name == "exinfinite")
           return _CreateInfiniteLight(i_light_to_world, i_params, i_world_bounds);
 
-        PbrtImport::Utils::LogError(mp_log, std::string("Infinite light \"") + i_name + std::string("\" unknown."));
         return NULL;
         }
 
@@ -104,19 +102,22 @@ namespace PbrtImport
 
       intrusive_ptr<const InfiniteLightSource> _CreateInfiniteLight(const Transform &i_light_to_world,  const ParamSet &i_params, BBox3D_d i_world_bounds) const
         {
-        SpectrumCoef_d L = i_params.FindOneSpectrumCoef("L", SpectrumCoef_d(1.0));
+        Spectrum_d L = i_params.FindOneSpectrum("L", Spectrum_d(1.0));
         SpectrumCoef_d sc = i_params.FindOneSpectrumCoef("scale", SpectrumCoef_d(1.0));
 
         std::string texmap = i_params.FindOneFilename("mapname", "");
 
-        intrusive_ptr<const ImageSource<Spectrum_f> > p_image_source =
-          PbrtImport::Utils::CreateImageSourceFromFile<Spectrum_f>(texmap, false, 1.0, mp_log);
+        if (texmap.empty()==false)
+          {
+          intrusive_ptr<const ImageSource<Spectrum_f> > p_image_source =
+            PbrtImport::Utils::CreateImageSourceFromFile<Spectrum_f>(texmap, false, 1.0, mp_log);
 
-        if (p_image_source && p_image_source->GetHeight() > 0)
-          return new ImageEnvironmentalLight(i_world_bounds, i_light_to_world, p_image_source, L * sc);
+          if (p_image_source && p_image_source->GetHeight() > 0)
+            return new ImageEnvironmentalLight(i_world_bounds, i_light_to_world, p_image_source, sc);
+          }
 
-        std::vector<std::vector<Spectrum_f> > values(1, std::vector<Spectrum_f>(1, Spectrum_f(1.0) * Convert<float>(L*sc)));
-        return new ImageEnvironmentalLight(i_world_bounds, i_light_to_world, values);
+        std::vector<std::vector<Spectrum_f> > values(1, std::vector<Spectrum_f>(1, Convert<float>(L)));
+        return new ImageEnvironmentalLight(i_world_bounds, i_light_to_world, values, sc);
         }
 
       intrusive_ptr<const AreaLightSource> _CreateDiffuseAreaLight(const Transform &i_light_to_world,  const ParamSet &i_params, intrusive_ptr<const TriangleMesh> ip_mesh) const

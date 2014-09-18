@@ -60,6 +60,7 @@ namespace PbrtImport
         Sphere sphere;
         sphere.SetTransformation(i_obj_to_world * MakeScale(radius));
         sphere.SetInvertOrientation(i_reverse_orientation);
+        sphere.SetSubdivisions(5);
         return sphere.BuildMesh();
         }
 

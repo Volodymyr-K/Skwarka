@@ -11,8 +11,60 @@
 
 namespace PbrtImport
   {
+
+  /**
+  * Helper class that represents a sub-string defined by two string iterators of some parent string.
+  * The actual storage of the string is not handled by this class and is defined by the parent string container,
+  * therefore care must be taken to use this class only while the parent string container is live and unchanged.
+  */
+  struct SubString
+    {
+    std::string::const_iterator m_begin, m_end;
+
+    SubString(std::string::const_iterator i_begin, std::string::const_iterator i_end) : m_begin(i_begin), m_end(i_end) { ASSERT(i_begin<=i_end); }
+    SubString(const std::string &i_str) : m_begin(i_str.begin()), m_end(i_str.end()) {}
+
+    size_t size() const
+      {
+      ASSERT(m_begin<=m_end);
+      return m_end-m_begin;
+      }
+
+    bool empty() const
+      {
+      ASSERT(m_begin<=m_end);
+      return m_begin>=m_end;
+      }
+
+    std::string::value_type front() const
+      {
+      ASSERT(m_begin<=m_end);
+      return *m_begin;
+      }
+
+    std::string::value_type back() const
+      {
+      ASSERT(m_begin<=m_end);
+      return *(m_end-1);
+      }
+
+    std::string to_string() const
+      {
+      ASSERT(m_begin<=m_end);
+      return std::string(m_begin, m_end);
+      }
+    };
+
   namespace StringRoutines
     {
+
+    inline SubString TrimQuotes(SubString i_str)
+      {
+      if (i_str.size()>=2 && i_str.front()=='\"' && i_str.back()=='\"')
+        return SubString(i_str.m_begin+1, i_str.m_end-1);
+      else
+        return i_str;
+      }
 
     inline std::string TrimQuotes(const std::string &i_str)
       {
@@ -20,15 +72,6 @@ namespace PbrtImport
         return i_str.substr(1, i_str.size()-2);
       else
         return i_str;
-      }
-
-    inline std::string GetFirstWord(const std::string &i_str)
-      {
-      size_t space_pos = i_str.find_first_of(" \t");
-      if (space_pos == std::string::npos)
-        return i_str;
-      else
-        return i_str.substr(0,space_pos);
       }
 
     inline std::string GetDirectoryPath(const std::string &i_filename)
@@ -82,45 +125,43 @@ namespace PbrtImport
       return ret;
       }
 
-    inline bool Split(const std::string &i_str, std::vector<std::string> &o_parts, intrusive_ptr<Log> ip_log)
+    inline bool Split(SubString i_str, std::vector<SubString> &o_parts, intrusive_ptr<Log> ip_log)
       {
       o_parts.clear();
+      o_parts.reserve(i_str.size()/10);
 
-      std::string cur;
+      std::string::const_iterator cur_begin = i_str.m_begin;
       int quotes = 0, braces = 0;
-
-      for(size_t i=0;i<i_str.size();++i)
+      for (std::string::const_iterator it = i_str.m_begin; it != i_str.m_end; ++it)
         {
-        if (i_str[i]==' ' || i_str[i]=='\t')
+        if (*it==' ' || *it=='\t')
           {
-          if (cur.empty()) continue;
-          if (quotes==0 && braces==0) {o_parts.push_back(cur);cur="";continue;}
-          cur += i_str[i];
+          if (cur_begin==it) { cur_begin = it+1; continue; }
+          if (quotes==0 && braces==0) { o_parts.push_back(SubString(cur_begin, it)); cur_begin = it+1; continue; }
           }
         else
           {
-          cur += i_str[i];
-          if (i_str[i]=='\"') quotes = 1-quotes;
-          if (i_str[i]=='[') ++braces;
-          if (i_str[i]==']') if (--braces<0) {PbrtImport::Utils::LogError(ip_log, "Closing square bracket (]) does not have a matching opening one.");return false;}
+          if (*it=='\"') quotes = 1-quotes;
+          if (*it=='[') ++braces;
+          if (*it==']' && (--braces)<0) { PbrtImport::Utils::LogError(ip_log, "Closing square bracket (]) does not have a matching opening one."); return false; }
           }
         }
 
       if (quotes!=0) {PbrtImport::Utils::LogError(ip_log, "Quotes structure is incorrect.");return false;}
       if (braces!=0) {PbrtImport::Utils::LogError(ip_log, "Square brackets structure is incorrect.");return false;}
 
-      if (cur.empty()==false) o_parts.push_back(cur);
+      if (cur_begin < i_str.m_end) o_parts.push_back(SubString(cur_begin, i_str.m_end));
       return true;
       }
 
-    inline bool ExpandBraces(const std::vector<std::string> &i_parts, size_t i_start, std::vector<std::string> &o_expanded, intrusive_ptr<Log> ip_log)
+    inline bool ExpandBraces(const std::vector<SubString> &i_parts, size_t i_start, std::vector<SubString> &o_expanded, intrusive_ptr<Log> ip_log)
       {
       for(size_t i=i_start;i<i_parts.size();++i)
         {
-        if (i_parts[i].size()>=2 && i_parts[i][0]=='[' && i_parts[i].back()==']')
+        if (i_parts[i].size()>=2 && i_parts[i].front()=='[' && i_parts[i].back()==']')
           {
-          std::vector<std::string> expanded_parts;
-          if (Split(i_parts[i].substr(1,i_parts[i].size()-2), expanded_parts, ip_log)==false) return false;
+          std::vector<SubString> expanded_parts;
+          if (Split(SubString(i_parts[i].m_begin+1, i_parts[i].m_end-1), expanded_parts, ip_log)==false) return false;
           if (ExpandBraces(expanded_parts, 0, o_expanded, ip_log)==false) return false;
           }
         else
@@ -130,87 +171,93 @@ namespace PbrtImport
       return true;
       }
 
-    inline bool ParseFloatValues(const std::vector<std::string> &i_string_values, std::vector<float> &o_converted_values, intrusive_ptr<Log> ip_log)
+    inline bool ParseFloatValues(const std::vector<SubString> &i_string_values, std::vector<float> &o_converted_values, intrusive_ptr<Log> ip_log)
       {
       o_converted_values.clear();
-
       try
         {
-        for(size_t i=0;i<i_string_values.size();++i) o_converted_values.push_back( boost::lexical_cast<float>( i_string_values[i] ) );
+        for (size_t i = 0; i<i_string_values.size(); ++i) o_converted_values.push_back(std::stof(i_string_values[i].to_string()));
         }
-      catch(boost::bad_lexical_cast &) {PbrtImport::Utils::LogError(ip_log, "Can not parse float values.");return false;}
+      catch (std::invalid_argument &) { PbrtImport::Utils::LogError(ip_log, "Can not parse float values."); return false; }
+      catch (std::out_of_range &) { PbrtImport::Utils::LogError(ip_log, "Can not parse float values. Values out of range."); return false; }
+
       return true;
       }
 
-    inline bool ParseIntegerValues(const std::vector<std::string> &i_string_values, std::vector<int> &o_converted_values, intrusive_ptr<Log> ip_log)
+    inline bool ParseIntegerValues(const std::vector<SubString> &i_string_values, std::vector<int> &o_converted_values, intrusive_ptr<Log> ip_log)
       {
       o_converted_values.clear();
-
       try
         {
-        for(size_t i=0;i<i_string_values.size();++i) o_converted_values.push_back( boost::lexical_cast<int>( i_string_values[i] ) );
+        for (size_t i = 0; i<i_string_values.size(); ++i) o_converted_values.push_back(std::stoi(i_string_values[i].to_string()));
         }
-      catch(boost::bad_lexical_cast &) {PbrtImport::Utils::LogError(ip_log, "Can not parse integer values.");return false;}
+      catch (std::invalid_argument &) { PbrtImport::Utils::LogError(ip_log, "Can not parse integer values."); return false; }
+      catch (std::out_of_range &) { PbrtImport::Utils::LogError(ip_log, "Can not parse integer values. Values out of range."); return false; }
+
       return true;
       }
 
-    inline bool ParseStringValues(const std::vector<std::string> &i_string_values, std::vector<std::string> &o_converted_values, intrusive_ptr<Log> ip_log)
+    inline bool ParseStringValues(const std::vector<SubString> &i_string_values, std::vector<std::string> &o_converted_values, intrusive_ptr<Log> ip_log)
       {
       o_converted_values.clear();
-      for(size_t i=0;i<i_string_values.size();++i) o_converted_values.push_back(TrimQuotes(i_string_values[i]));
+      for(size_t i=0;i<i_string_values.size();++i) o_converted_values.push_back(TrimQuotes(i_string_values[i]).to_string());
       return true;
       }
 
-    inline bool ParseBoolValues(const std::vector<std::string> &i_string_values, std::vector<char> &o_converted_values, intrusive_ptr<Log> ip_log)
+    inline bool ParseBoolValues(const std::vector<SubString> &i_string_values, std::vector<char> &o_converted_values, intrusive_ptr<Log> ip_log)
       {
       o_converted_values.clear();
-
       try
         {
         for(size_t i=0;i<i_string_values.size();++i)
           {
-          if (boost::iequals(TrimQuotes(i_string_values[i]),"true")) o_converted_values.push_back(1); else o_converted_values.push_back(0);
+          SubString trimmed(TrimQuotes(i_string_values[i]));
+          if (boost::iequals(trimmed.to_string(), "true")) o_converted_values.push_back(1); else o_converted_values.push_back(0);
           }
         }
       catch(boost::bad_lexical_cast &) {PbrtImport::Utils::LogError(ip_log, "Can not parse bool values.");return false;}
       return true;
       }
 
-    inline bool ParsePoint3DValues(const std::vector<std::string> &i_string_values, std::vector<Point3D_d> &o_converted_values, intrusive_ptr<Log> ip_log)
+    inline bool ParsePoint3DValues(const std::vector<SubString> &i_string_values, std::vector<Point3D_d> &o_converted_values, intrusive_ptr<Log> ip_log)
       {
       o_converted_values.clear();
       if ((i_string_values.size()%3)!=0) PbrtImport::Utils::LogWarning(ip_log, "Excess values given with point parameter. Ignoring the excess values.");
 
       try
         {
-        for(size_t i=0;i+2<i_string_values.size();i+=3)
+        for (size_t i = 0; i+2<i_string_values.size(); i += 3)
           {
-          double x = boost::lexical_cast<double>(i_string_values[i+0]);
-          double y = boost::lexical_cast<double>(i_string_values[i+1]);
-          double z = boost::lexical_cast<double>(i_string_values[i+2]);
-          o_converted_values.push_back(Point3D_d(x,y,z));
+          double x = std::stod(i_string_values[i+0].to_string());
+          double y = std::stod(i_string_values[i+1].to_string());
+          double z = std::stod(i_string_values[i+2].to_string());
+          o_converted_values.push_back(Point3D_d(x, y, z));
           }
         }
-      catch(boost::bad_lexical_cast &) {PbrtImport::Utils::LogError(ip_log, "Can not parse Point3D values.");return false;}
+      catch (std::invalid_argument &) { PbrtImport::Utils::LogError(ip_log, "Can not parse Point3D values."); return false; }
+      catch (std::out_of_range &) { PbrtImport::Utils::LogError(ip_log, "Can not parse Point3D values. Values out of range."); return false; }
+
       return true;
       }
 
-    inline bool ParseVector3DValues(const std::vector<std::string> &i_string_values, std::vector<Vector3D_d> &o_converted_values, intrusive_ptr<Log> ip_log)
+    inline bool ParseVector3DValues(const std::vector<SubString> &i_string_values, std::vector<Vector3D_d> &o_converted_values, intrusive_ptr<Log> ip_log)
       {
       o_converted_values.clear();
       if ((i_string_values.size()%3)!=0) PbrtImport::Utils::LogWarning(ip_log, "Excess values given with vector parameter. Ignoring the excess values.");
-
+      
       try
         {
-        for(size_t i=0;i+2<i_string_values.size();i+=3)
+        for (size_t i = 0; i+2<i_string_values.size(); i += 3)
           {
-          double x = boost::lexical_cast<double>(i_string_values[i+0]);
-          double y = boost::lexical_cast<double>(i_string_values[i+1]);
-          double z = boost::lexical_cast<double>(i_string_values[i+2]);
-          o_converted_values.push_back(Vector3D_d(x,y,z));
+          double x = std::stod(i_string_values[i+0].to_string());
+          double y = std::stod(i_string_values[i+1].to_string());
+          double z = std::stod(i_string_values[i+2].to_string());
+          o_converted_values.push_back(Vector3D_d(x, y, z));
           }
         }
-      catch(boost::bad_lexical_cast &) {PbrtImport::Utils::LogError(ip_log,"Can not parse Vector3D values.");return false;}
+      catch (std::invalid_argument &) { PbrtImport::Utils::LogError(ip_log, "Can not parse Vector3D values."); return false; }
+      catch (std::out_of_range &) { PbrtImport::Utils::LogError(ip_log, "Can not parse Vector3D values. Values out of range."); return false; }
+
       return true;
       }
 

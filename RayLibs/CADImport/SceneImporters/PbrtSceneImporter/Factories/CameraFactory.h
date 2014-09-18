@@ -19,7 +19,7 @@ namespace PbrtImport
 
       intrusive_ptr<const Camera> CreateCamera(const std::string &i_name, const ParamSet &i_params, const Transform &i_camera_to_world, intrusive_ptr<Film> ip_film) const
         {
-        Transform camera_to_world = MakeScale(1,1,1) * i_camera_to_world;
+        Transform camera_to_world = i_camera_to_world;
 
         if (i_name == "perspective")
           return _CreatePerspectiveCamera(i_params, camera_to_world, ip_film);

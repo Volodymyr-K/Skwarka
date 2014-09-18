@@ -93,7 +93,7 @@ namespace PbrtImport
       size_t dot_pos = i_filename.find_last_of('.');
       if (dot_pos == std::string::npos || dot_pos+1 == i_filename.size())
         {
-        LogError(ip_log, "Incorrect filename.");
+        LogError(ip_log, "Incorrect filename: " + i_filename);
         return NULL;
         }
 

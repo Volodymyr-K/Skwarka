@@ -8,6 +8,7 @@
 #include "PbrtSceneImporter/PbrtParamSet.h"
 #include "PbrtSceneImporter/PbrtRenderOptions.h"
 #include "PbrtSceneImporter/PbrtGraphicsState.h"
+#include "PbrtSceneImporter/PbrtStringRoutines.h"
 #include <string>
 #include <vector>
 
@@ -28,44 +29,44 @@ class PbrtSceneImporter: public SceneImporter
     void _pbrtInit();
     void _pbrtCleanup();
     void _pbrtIdentity();
-    void _pbrtTranslate(float dx, float dy, float dz);
-    void _pbrtTransform(float tr[16]);
-    void _pbrtConcatTransform(float tr[16]);
-    void _pbrtRotate(float angle, float dx, float dy, float dz);
-    void _pbrtScale(float sx, float sy, float sz);
-    void _pbrtLookAt(float ex, float ey, float ez, float lx, float ly, float lz, float ux, float uy, float uz);
-    void _pbrtCoordinateSystem(const std::string &name);
-    void _pbrtCoordSysTransform(const std::string &name);
-    void _pbrtPixelFilter(const std::string &name, const PbrtImport::ParamSet &params);
-    void _pbrtFilm(const std::string &type, const PbrtImport::ParamSet &params);
-    void _pbrtCamera(const std::string &name, const PbrtImport::ParamSet &params);
+    void _pbrtTranslate(float i_dx, float i_dy, float i_dz);
+    void _pbrtTransform(float i_tr[16]);
+    void _pbrtConcatTransform(float i_tr[16]);
+    void _pbrtRotate(float i_angle, float i_dx, float i_dy, float i_dz);
+    void _pbrtScale(float i_sx, float i_sy, float i_sz);
+    void _pbrtLookAt(float i_ex, float i_ey, float i_ez, float i_lx, float i_ly, float i_lz, float i_ux, float i_uy, float i_uz);
+    void _pbrtCoordinateSystem(PbrtImport::SubString i_name);
+    void _pbrtCoordSysTransform(PbrtImport::SubString i_name);
+    void _pbrtPixelFilter(PbrtImport::SubString i_name, const PbrtImport::ParamSet &i_params);
+    void _pbrtFilm(PbrtImport::SubString i_type, const PbrtImport::ParamSet &i_params);
+    void _pbrtCamera(PbrtImport::SubString i_name, const PbrtImport::ParamSet &i_params);
     void _pbrtWorldBegin();
     void _pbrtAttributeBegin();
     void _pbrtAttributeEnd();
     void _pbrtTransformBegin();
     void _pbrtTransformEnd();
-    void _pbrtTexture(const std::string &name, const std::string &type, const std::string &texname, const PbrtImport::ParamSet &params);
-    void _pbrtMaterial(const std::string &name, const PbrtImport::ParamSet &params);
-    void _pbrtMakeNamedMaterial(const std::string &name, const PbrtImport::ParamSet &params);
-    void _pbrtNamedMaterial(const std::string &name);
-    void _pbrtLightSource(const std::string &name, const PbrtImport::ParamSet &params);
-    void _pbrtAreaLightSource(const std::string &name, const PbrtImport::ParamSet &params);
-    void _pbrtShape(const std::string &name, const PbrtImport::ParamSet &params);
+    void _pbrtTexture(PbrtImport::SubString i_name, PbrtImport::SubString i_type, PbrtImport::SubString i_texname, const PbrtImport::ParamSet &i_params);
+    void _pbrtMaterial(PbrtImport::SubString i_name, const PbrtImport::ParamSet &i_params);
+    void _pbrtMakeNamedMaterial(PbrtImport::SubString i_name, const PbrtImport::ParamSet &i_params);
+    void _pbrtNamedMaterial(PbrtImport::SubString i_name);
+    void _pbrtLightSource(PbrtImport::SubString i_name, const PbrtImport::ParamSet &i_params);
+    void _pbrtAreaLightSource(PbrtImport::SubString i_name, const PbrtImport::ParamSet &i_params);
+    void _pbrtShape(PbrtImport::SubString i_name, const PbrtImport::ParamSet &i_params);
     void _pbrtReverseOrientation();
-    void _pbrtVolume(const std::string &name, const PbrtImport::ParamSet &params);
-    void _pbrtObjectBegin(const std::string &name);
+    void _pbrtVolume(PbrtImport::SubString i_name, const PbrtImport::ParamSet &i_params);
+    void _pbrtObjectBegin(PbrtImport::SubString i_name);
     void _pbrtObjectEnd();
-    void _pbrtObjectInstance(const std::string &name);
+    void _pbrtObjectInstance(PbrtImport::SubString i_name);
     void _pbrtWorldEnd();
 
     void _ReadScene();
     void _ParseFile();
     bool _ReadLines(const std::string &i_filename);
-    bool _AddLine(const std::string &i_line);
+    bool _AddLine(const char *i_begin, const char *i_end);
     bool _ProcessCommand();
 
-    bool _CheckParameters(const std::vector<std::string> &i_parts, size_t i_num, const std::string &i_command_name) const;
-    bool _ParseParamSet(const std::vector<std::string> &i_parts, PbrtImport::ParamSet &o_params, size_t i_first = 2) const;
+    bool _CheckParameters(const std::vector<PbrtImport::SubString> &i_parts, size_t i_num, const std::string &i_command_name) const;
+    bool _ParseParamSet(const std::vector<PbrtImport::SubString> &i_parts, PbrtImport::ParamSet &o_params, size_t i_first = 2) const;
 
 
   private:

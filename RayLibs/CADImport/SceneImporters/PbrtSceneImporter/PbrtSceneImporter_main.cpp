@@ -5,7 +5,7 @@
 #include <string>
 #include <algorithm>
 #include <boost/algorithm/string.hpp>
-#include <boost/lexical_cast.hpp>
+#include <boost/iostreams/device/mapped_file.hpp>
 
 PbrtSceneImporter::PbrtSceneImporter(std::string i_filename, intrusive_ptr<Log> ip_log):
 m_filename(i_filename), mp_log(ip_log)
@@ -51,8 +51,7 @@ m_filename(i_filename), mp_log(ip_log)
   m_known_commands.push_back("WorldBegin");
   m_known_commands.push_back("WorldEnd");
 
-  for(size_t i=0;i<m_known_commands.size();++i)
-    boost::to_lower(m_known_commands[i]);
+  for (size_t i = 0; i<m_known_commands.size(); ++i) m_known_commands[i];
   std::sort(m_known_commands.begin(), m_known_commands.end());
 
   _ReadScene();
@@ -141,8 +140,8 @@ bool PbrtSceneImporter::_ReadLines(const std::string &i_filename)
     return false;
     }
 
-  FILE *fp = fopen(filename.c_str(), "r"); 
-  if (fp==NULL)
+  boost::iostreams::mapped_file mmap(filename, boost::iostreams::mapped_file::readonly);
+  if (mmap.is_open() == false)
     {
     PbrtImport::Utils::LogError(mp_log, std::string("The file \"") + i_filename + std::string("\" can not be opened."));
     return false;
@@ -151,37 +150,29 @@ bool PbrtSceneImporter::_ReadLines(const std::string &i_filename)
   // Push the current file to the stack for the later cycle detection.
   m_pushed_filenames.push_back(filename);
 
-  std::string s;
-  char c = fgetc(fp);
-  do
+  const char *begin = mmap.const_data();
+  const char *end = begin + mmap.size();
+  while (begin && begin<end)
     {
-    if (c=='\n' || c=='\r')
+    const char *line_end = begin;
+    while (line_end<end && (*line_end!='\n' && *line_end!='\r')) ++line_end;
+    
+    // Remove comments following the '#' character but make sure it is not a part of a string value embraced by quotes.
+    int quotes = 0;
+    const char *line_end_without_comments = line_end;
+    for (const char *i = begin; i<line_end; ++i)
       {
-      // Remove comments following the '#' character but make sure it is not a part of a string value embraced by quotes.
-      int quotes = 0, hash_pos = -1;
-      for(size_t i=0;i<s.size();++i)
-        {
-        if (s[i]=='\"') quotes = 1-quotes;
-        if (s[i]=='#' && quotes==0) {hash_pos=i;break;}
-        }
-      if (hash_pos != -1) s.erase(hash_pos);
-
-      // Adds line to the buffer and executes the command if necessary.
-      if (_AddLine(s)==false) {fclose(fp);m_pushed_filenames.pop_back();return false;}
-      s.clear();
-      c = fgetc(fp);
-      continue;
+      if (*i=='\"') quotes = 1-quotes;
+      if (*i=='#' && quotes==0) { line_end_without_comments = i; break; }
       }
-    s += c;
 
-    c = fgetc(fp);
-    } while (feof(fp) == 0); 
+    if (_AddLine(begin, line_end_without_comments)==false) { m_pushed_filenames.pop_back(); mmap.close(); return false; }
 
-  // Don't forget about the last read line.
-  if (_AddLine(s)==false) {fclose(fp);m_pushed_filenames.pop_back();return false;}
+    begin = line_end+1;
+    }
 
-  fclose(fp);
   m_pushed_filenames.pop_back();
+  mmap.close();
   return true;
   }
 
@@ -189,16 +180,24 @@ bool PbrtSceneImporter::_ReadLines(const std::string &i_filename)
 * Adds the specified line to the current buffer and processes the commands if an entire command has been read.
 * The method also calls _ReadLines() method for "Include" commands to process the included files.
 */
-bool PbrtSceneImporter::_AddLine(const std::string &i_line)
+bool PbrtSceneImporter::_AddLine(const char *i_begin, const char *i_end)
   {
-  std::string line = boost::trim_copy(i_line);
-  if (line.empty()) return true;
+  // Trim the string
+  while (i_begin<i_end && (*i_begin==' ' || *i_begin=='\t')) ++i_begin;
+  while (i_begin<i_end && (*(i_end-1)==' ' || *(i_end-1)=='\t')) --i_end;
+
+  if (i_begin>=i_end) return true;
+
+  //  Get the first word
+  const char *next_space = i_begin;
+  while (next_space<i_end && (*next_space!=' ' && *next_space!='\t')) ++next_space;
+  std::string first_word(i_begin, next_space);
 
   // If this is the "Include" command we call the _ReadLines() method recursively to process the included file.
-  std::string first_word = PbrtImport::StringRoutines::GetFirstWord(line);
-  if (boost::iequals(first_word, "Include"))
+  if (first_word=="Include")
     {
-    std::string new_filename = boost::trim_copy( line.substr(first_word.size()) );
+    // Get the part after the first word, it should be a new filename
+    std::string new_filename = boost::trim_copy(std::string(next_space+1, i_end));
     new_filename = PbrtImport::StringRoutines::TrimQuotes(new_filename);
 
     // Make sure the path is absolute.
@@ -211,15 +210,15 @@ bool PbrtSceneImporter::_AddLine(const std::string &i_line)
     {
     // Check if the new line contains new command.
     // If this is the case we are ready to process the previous command.
-    bool new_command = std::binary_search(m_known_commands.begin(), m_known_commands.end(), boost::to_lower_copy(first_word));
+    bool new_command = std::binary_search(m_known_commands.begin(), m_known_commands.end(), first_word);
     if (new_command)
       {
       if (_ProcessCommand()==false) return false;
-      m_buffer = line;
+      m_buffer.assign(i_begin, i_end);
       }
     else
       // Otherwise just add the current line to the buffer.
-      m_buffer += std::string(m_buffer.empty() ? "" : " ") + line;
+      m_buffer.append(" ").append(i_begin, i_end);
     }
 
   return true;
@@ -233,12 +232,12 @@ bool PbrtSceneImporter::_ProcessCommand()
   if (m_buffer.empty()) return true;
 
   // Split the buffer into parts so that each part is either a single word or a text block enclosed by quotes(") or square brackets([]).
-  std::vector<std::string> parts;
+  std::vector<PbrtImport::SubString> parts;
   if (PbrtImport::StringRoutines::Split(m_buffer, parts, mp_log)==false) return false;
   if (parts.empty()) {ASSERT(0 && "No command name. How did that happen?..");return false;}
 
   // The name of the command is the first "part".
-  std::string command_name = parts[0];
+  std::string command_name(parts[0].to_string());
 
   try 
     {
@@ -249,100 +248,100 @@ bool PbrtSceneImporter::_ProcessCommand()
       }
     else if (boost::iequals(command_name, "Identity"))
       {
-      std::vector<std::string> expanded_parts;
+      std::vector<PbrtImport::SubString> expanded_parts;
       if (PbrtImport::StringRoutines::ExpandBraces(parts, 1, expanded_parts, mp_log)==false) return false;
       if (_CheckParameters(expanded_parts, 0, command_name)==false) return false;
       _pbrtIdentity();
       }
     else if (boost::iequals(command_name, "Translate"))
       {
-      std::vector<std::string> expanded_parts;
+      std::vector<PbrtImport::SubString> expanded_parts;
       if (PbrtImport::StringRoutines::ExpandBraces(parts, 1, expanded_parts, mp_log)==false) return false;
       if (_CheckParameters(expanded_parts, 3, command_name)==false) return false;
-      float x = boost::lexical_cast<float>(expanded_parts[0]);
-      float y = boost::lexical_cast<float>(expanded_parts[1]);
-      float z = boost::lexical_cast<float>(expanded_parts[2]);
+      float x = std::stof(expanded_parts[0].to_string());
+      float y = std::stof(expanded_parts[1].to_string());
+      float z = std::stof(expanded_parts[2].to_string());
       _pbrtTranslate(x,y,z);
       }
     else if (boost::iequals(command_name, "Scale"))
       {
-      std::vector<std::string> expanded_parts;
+      std::vector<PbrtImport::SubString> expanded_parts;
       if (PbrtImport::StringRoutines::ExpandBraces(parts, 1, expanded_parts, mp_log)==false) return false;
       if (_CheckParameters(expanded_parts, 3, command_name)==false) return false;
-      float x = boost::lexical_cast<float>(expanded_parts[0]);
-      float y = boost::lexical_cast<float>(expanded_parts[1]);
-      float z = boost::lexical_cast<float>(expanded_parts[2]);
+      float x = std::stof(expanded_parts[0].to_string());
+      float y = std::stof(expanded_parts[1].to_string());
+      float z = std::stof(expanded_parts[2].to_string());
       _pbrtScale(x,y,z);
       }
     else if (boost::iequals(command_name, "Rotate"))
       {
-      std::vector<std::string> expanded_parts;
+      std::vector<PbrtImport::SubString> expanded_parts;
       if (PbrtImport::StringRoutines::ExpandBraces(parts, 1, expanded_parts, mp_log)==false) return false;
       if (_CheckParameters(expanded_parts, 4, command_name)==false) return false;
-      float angle = boost::lexical_cast<float>(expanded_parts[0]);
-      float x = boost::lexical_cast<float>(expanded_parts[1]);
-      float y = boost::lexical_cast<float>(expanded_parts[2]);
-      float z = boost::lexical_cast<float>(expanded_parts[3]);
+      float angle = std::stof(expanded_parts[0].to_string());
+      float x = std::stof(expanded_parts[1].to_string());
+      float y = std::stof(expanded_parts[2].to_string());
+      float z = std::stof(expanded_parts[3].to_string());
       _pbrtRotate(angle,x,y,z);
       }
     else if (boost::iequals(command_name, "LookAt"))
       {
-      std::vector<std::string> expanded_parts;
+      std::vector<PbrtImport::SubString> expanded_parts;
       if (PbrtImport::StringRoutines::ExpandBraces(parts, 1, expanded_parts, mp_log)==false) return false;
       if (_CheckParameters(expanded_parts, 9, command_name)==false) return false;
-      float ex = boost::lexical_cast<float>(expanded_parts[0]);
-      float ey = boost::lexical_cast<float>(expanded_parts[1]);
-      float ez = boost::lexical_cast<float>(expanded_parts[2]);
-      float lx = boost::lexical_cast<float>(expanded_parts[3]);
-      float ly = boost::lexical_cast<float>(expanded_parts[4]);
-      float lz = boost::lexical_cast<float>(expanded_parts[5]);
-      float ux = boost::lexical_cast<float>(expanded_parts[6]);
-      float uy = boost::lexical_cast<float>(expanded_parts[7]);
-      float uz = boost::lexical_cast<float>(expanded_parts[8]);
+      float ex = std::stof(expanded_parts[0].to_string());
+      float ey = std::stof(expanded_parts[1].to_string());
+      float ez = std::stof(expanded_parts[2].to_string());
+      float lx = std::stof(expanded_parts[3].to_string());
+      float ly = std::stof(expanded_parts[4].to_string());
+      float lz = std::stof(expanded_parts[5].to_string());
+      float ux = std::stof(expanded_parts[6].to_string());
+      float uy = std::stof(expanded_parts[7].to_string());
+      float uz = std::stof(expanded_parts[8].to_string());
       _pbrtLookAt(ex,ey,ez,lx,ly,lz,ux,uy,uz);
       }
     else if (boost::iequals(command_name, "CoordinateSystem"))
       {
-      std::vector<std::string> expanded_parts;
+      std::vector<PbrtImport::SubString> expanded_parts;
       if (PbrtImport::StringRoutines::ExpandBraces(parts, 1, expanded_parts, mp_log)==false) return false;
       if (_CheckParameters(expanded_parts, 1, command_name)==false) return false;
       _pbrtCoordinateSystem(PbrtImport::StringRoutines::TrimQuotes(expanded_parts[0]));
       }
     else if (boost::iequals(command_name, "CoordSysTransform"))
       {
-      std::vector<std::string> expanded_parts;
+      std::vector<PbrtImport::SubString> expanded_parts;
       if (PbrtImport::StringRoutines::ExpandBraces(parts, 1, expanded_parts, mp_log)==false) return false;
       if (_CheckParameters(expanded_parts, 1, command_name)==false) return false;
       _pbrtCoordSysTransform(PbrtImport::StringRoutines::TrimQuotes(expanded_parts[0]));
       }
     else if (boost::iequals(command_name, "Transform"))
       {
-      std::vector<std::string> expanded_parts;
+      std::vector<PbrtImport::SubString> expanded_parts;
       if (PbrtImport::StringRoutines::ExpandBraces(parts, 1, expanded_parts, mp_log)==false) return false;
       if (_CheckParameters(expanded_parts, 16, command_name)==false) return false;
       float m[16];
-      for(size_t i=0;i<16;++i) m[i] = boost::lexical_cast<float>(expanded_parts[i]);
+      for (size_t i = 0; i<16; ++i) m[i] = std::stof(expanded_parts[i].to_string());
       _pbrtTransform(m);
       }
     else if (boost::iequals(command_name, "ConcatTransform"))
       {
-      std::vector<std::string> expanded_parts;
+      std::vector<PbrtImport::SubString> expanded_parts;
       if (PbrtImport::StringRoutines::ExpandBraces(parts, 1, expanded_parts, mp_log)==false) return false;
       if (_CheckParameters(expanded_parts, 16, command_name)==false) return false;
       float m[16];
-      for(size_t i=0;i<16;++i) m[i] = boost::lexical_cast<float>(expanded_parts[i]);
+      for (size_t i = 0; i<16; ++i) m[i] = std::stof(expanded_parts[i].to_string());
       _pbrtConcatTransform(m);
       }
     else if (boost::iequals(command_name, "AttributeBegin"))
       {
-      std::vector<std::string> expanded_parts;
+      std::vector<PbrtImport::SubString> expanded_parts;
       if (PbrtImport::StringRoutines::ExpandBraces(parts, 1, expanded_parts, mp_log)==false) return false;
       if (_CheckParameters(expanded_parts, 0, command_name)==false) return false;
       _pbrtAttributeBegin();
       }
     else if (boost::iequals(command_name, "AttributeEnd"))
       {
-      std::vector<std::string> expanded_parts;
+      std::vector<PbrtImport::SubString> expanded_parts;
       if (PbrtImport::StringRoutines::ExpandBraces(parts, 1, expanded_parts, mp_log)==false) return false;
       if (_CheckParameters(expanded_parts, 0, command_name)==false) return false;
       _pbrtAttributeEnd();
@@ -355,63 +354,63 @@ bool PbrtSceneImporter::_ProcessCommand()
       }
     else if (boost::iequals(command_name, "WorldBegin"))
       {
-      std::vector<std::string> expanded_parts;
+      std::vector<PbrtImport::SubString> expanded_parts;
       if (PbrtImport::StringRoutines::ExpandBraces(parts, 1, expanded_parts, mp_log)==false) return false;
       if (_CheckParameters(expanded_parts, 0, command_name)==false) return false;
       _pbrtWorldBegin();
       }
     else if (boost::iequals(command_name, "WorldEnd"))
       {
-      std::vector<std::string> expanded_parts;
+      std::vector<PbrtImport::SubString> expanded_parts;
       if (PbrtImport::StringRoutines::ExpandBraces(parts, 1, expanded_parts, mp_log)==false) return false;
       if (_CheckParameters(expanded_parts, 0, command_name)==false) return false;
       _pbrtWorldEnd();
       }
     else if (boost::iequals(command_name, "ObjectBegin"))
       {
-      std::vector<std::string> expanded_parts;
+      std::vector<PbrtImport::SubString> expanded_parts;
       if (PbrtImport::StringRoutines::ExpandBraces(parts, 1, expanded_parts, mp_log)==false) return false;
       if (_CheckParameters(expanded_parts, 1, command_name)==false) return false;
       _pbrtObjectBegin(PbrtImport::StringRoutines::TrimQuotes(expanded_parts[0]));
       }
     else if (boost::iequals(command_name, "ObjectEnd"))
       {
-      std::vector<std::string> expanded_parts;
+      std::vector<PbrtImport::SubString> expanded_parts;
       if (PbrtImport::StringRoutines::ExpandBraces(parts, 1, expanded_parts, mp_log)==false) return false;
       if (_CheckParameters(expanded_parts, 0, command_name)==false) return false;
       _pbrtObjectEnd();
       }
     else if (boost::iequals(command_name, "ObjectInstance"))
       {
-      std::vector<std::string> expanded_parts;
+      std::vector<PbrtImport::SubString> expanded_parts;
       if (PbrtImport::StringRoutines::ExpandBraces(parts, 1, expanded_parts, mp_log)==false) return false;
       if (_CheckParameters(expanded_parts, 1, command_name)==false) return false;
       _pbrtObjectInstance(PbrtImport::StringRoutines::TrimQuotes(expanded_parts[0]));
       }
     else if (boost::iequals(command_name, "TransformTimes"))
       {
-      std::vector<std::string> expanded_parts;
+      std::vector<PbrtImport::SubString> expanded_parts;
       if (PbrtImport::StringRoutines::ExpandBraces(parts, 1, expanded_parts, mp_log)==false) return false;
       if (_CheckParameters(expanded_parts, 2, command_name)==false) return false;
       PbrtImport::Utils::LogWarning(mp_log, "\"TransformTimes\" command is not supported.");
       }
     else if (boost::iequals(command_name, "ActiveTransform"))
       {
-      std::vector<std::string> expanded_parts;
+      std::vector<PbrtImport::SubString> expanded_parts;
       if (PbrtImport::StringRoutines::ExpandBraces(parts, 1, expanded_parts, mp_log)==false) return false;
       if (_CheckParameters(expanded_parts, 1, command_name)==false) return false;
       PbrtImport::Utils::LogWarning(mp_log, "\"ActiveTransform\" command is not supported.");
       }
     else if (boost::iequals(command_name, "NamedMaterial"))
       {
-      std::vector<std::string> expanded_parts;
+      std::vector<PbrtImport::SubString> expanded_parts;
       if (PbrtImport::StringRoutines::ExpandBraces(parts, 1, expanded_parts, mp_log)==false) return false;
       if (_CheckParameters(expanded_parts, 1, command_name)==false) return false;
       _pbrtNamedMaterial(PbrtImport::StringRoutines::TrimQuotes(expanded_parts[0]));
       }
     else if (boost::iequals(command_name, "ReverseOrientation"))
       {
-      std::vector<std::string> expanded_parts;
+      std::vector<PbrtImport::SubString> expanded_parts;
       if (PbrtImport::StringRoutines::ExpandBraces(parts, 1, expanded_parts, mp_log)==false) return false;
       if (_CheckParameters(expanded_parts, 0, command_name)==false) return false;
       _pbrtReverseOrientation();
@@ -477,17 +476,14 @@ bool PbrtSceneImporter::_ProcessCommand()
       _pbrtVolume(PbrtImport::StringRoutines::TrimQuotes(parts[1]), params);
       }
     }
-  catch(boost::bad_lexical_cast &)
-    {
-    PbrtImport::Utils::LogError(mp_log, "Can not parse parameters for the command " + command_name);
-    return false;
-    }
+  catch (std::invalid_argument &) { PbrtImport::Utils::LogError(mp_log, "Can not parse parameters for the command " + command_name); return false; }
+  catch (std::out_of_range &) { PbrtImport::Utils::LogError(mp_log, "Can not parse parameters for the command " + command_name + ". Values out of range."); return false; }
 
   m_buffer.clear();
   return true;
   }
 
-bool PbrtSceneImporter::_CheckParameters(const std::vector<std::string> &i_parts, size_t i_num, const std::string &i_command_name) const
+  bool PbrtSceneImporter::_CheckParameters(const std::vector<PbrtImport::SubString> &i_parts, size_t i_num, const std::string &i_command_name) const
   {
   if (i_parts.size() < i_num)
     {
@@ -501,7 +497,7 @@ bool PbrtSceneImporter::_CheckParameters(const std::vector<std::string> &i_parts
   return true;
   }
 
-bool PbrtSceneImporter::_ParseParamSet(const std::vector<std::string> &i_parts, PbrtImport::ParamSet &o_params, size_t i_first) const
+bool PbrtSceneImporter::_ParseParamSet(const std::vector<PbrtImport::SubString> &i_parts, PbrtImport::ParamSet &o_params, size_t i_first) const
   {
   o_params.Clear();
 
@@ -509,20 +505,20 @@ bool PbrtSceneImporter::_ParseParamSet(const std::vector<std::string> &i_parts, 
   for(size_t i=i_first;i<i_parts.size();i+=2)
     {
     // First read the "type name" pair.
-    std::vector<std::string> type_and_name;
+    std::vector<PbrtImport::SubString> type_and_name;
     if (PbrtImport::StringRoutines::Split(PbrtImport::StringRoutines::TrimQuotes(i_parts[i]), type_and_name, mp_log)==false) return false;
     if (type_and_name.size()!=2) {PbrtImport::Utils::LogError(mp_log, "Invalid parameters structure.");return false;}
-    std::string type = type_and_name[0], name = type_and_name[1];
+    std::string type = type_and_name[0].to_string(), name = type_and_name[1].to_string();
 
     // Check that there is a value following the "type name" pair.
     if (i+1>=i_parts.size() || i_parts[i+1].empty())  {PbrtImport::Utils::LogError(mp_log, "Invalid parameters structure.");return false;}
 
     // Now read the values.
-    std::vector<std::string> values;
-    if (i_parts[i+1][0]=='[' && i_parts[i+1][i_parts[i+1].size()-1]==']')
+    std::vector<PbrtImport::SubString> values;
+    if (i_parts[i+1].front()=='[' && i_parts[i+1].back()==']')
       {
       // If there are enclosing square brackets we remove them and split the string into a set of values.
-      if (PbrtImport::StringRoutines::Split(i_parts[i+1].substr(1,i_parts[i+1].size()-2), values, mp_log)==false) return false;
+      if (PbrtImport::StringRoutines::Split(PbrtImport::SubString(i_parts[i+1].m_begin+1, i_parts[i+1].m_end-1), values, mp_log)==false) return false;
       }
     else
       {
@@ -587,7 +583,7 @@ bool PbrtSceneImporter::_ParseParamSet(const std::vector<std::string> &i_parts, 
       }
     else if (type=="spectrum")
       {
-      if (values[0][0]=='\"')
+      if (values[0].front()=='\"')
         {
         // Read spectrum from the file.
         std::vector<std::string> filenames;

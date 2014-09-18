@@ -33,98 +33,101 @@ void PbrtSceneImporter::_pbrtIdentity()
   m_current_transform = Transform();
   }
 
-void PbrtSceneImporter::_pbrtTranslate(float dx, float dy, float dz)
+void PbrtSceneImporter::_pbrtTranslate(float i_dx, float i_dy, float i_dz)
   {
   if (_VerifyInitialized("Translate")==false) return;
 
-  m_current_transform = m_current_transform * MakeTranslation(Vector3D_d(dx, dy, dz));
+  m_current_transform = m_current_transform * MakeTranslation(Vector3D_d(i_dx, i_dy, i_dz));
   }
 
-void PbrtSceneImporter::_pbrtTransform(float tr[16])
+void PbrtSceneImporter::_pbrtTransform(float i_tr[16])
   {
   if (_VerifyInitialized("Transform")==false) return;
 
   m_current_transform = Transform(Matrix4x4_d(
-    tr[0], tr[4], tr[8], tr[12],
-    tr[1], tr[5], tr[9], tr[13],
-    tr[2], tr[6], tr[10], tr[14],
-    tr[3], tr[7], tr[11], tr[15]));
+    i_tr[0], i_tr[4], i_tr[8], i_tr[12],
+    i_tr[1], i_tr[5], i_tr[9], i_tr[13],
+    i_tr[2], i_tr[6], i_tr[10], i_tr[14],
+    i_tr[3], i_tr[7], i_tr[11], i_tr[15]));
   }
 
-void PbrtSceneImporter::_pbrtConcatTransform(float tr[16])
+void PbrtSceneImporter::_pbrtConcatTransform(float i_tr[16])
   {
   if (_VerifyInitialized("ConcatTransform")==false) return;
 
   m_current_transform = m_current_transform * Transform(Matrix4x4_d(
-    tr[0], tr[4], tr[8], tr[12],
-    tr[1], tr[5], tr[9], tr[13],
-    tr[2], tr[6], tr[10], tr[14],
-    tr[3], tr[7], tr[11], tr[15]));
+    i_tr[0], i_tr[4], i_tr[8], i_tr[12],
+    i_tr[1], i_tr[5], i_tr[9], i_tr[13],
+    i_tr[2], i_tr[6], i_tr[10], i_tr[14],
+    i_tr[3], i_tr[7], i_tr[11], i_tr[15]));
   }
 
-void PbrtSceneImporter::_pbrtRotate(float angle, float dx, float dy, float dz)
+void PbrtSceneImporter::_pbrtRotate(float i_angle, float i_dx, float i_dy, float i_dz)
   {
   if (_VerifyInitialized("Rotate")==false) return;
 
-  m_current_transform = m_current_transform * MakeRotation(MathRoutines::DegreesToRadians(angle), Vector3D_d(dx, dy, dz));
+  m_current_transform = m_current_transform * MakeRotation(MathRoutines::DegreesToRadians(i_angle), Vector3D_d(i_dx, i_dy, i_dz));
   }
 
-void PbrtSceneImporter::_pbrtScale(float sx, float sy, float sz)
+void PbrtSceneImporter::_pbrtScale(float i_sx, float i_sy, float i_sz)
   {
   if (_VerifyInitialized("Scale")==false) return;
 
-  m_current_transform = m_current_transform * MakeScale(sx, sy, sz);
+  m_current_transform = m_current_transform * MakeScale(i_sx, i_sy, i_sz);
   }
 
-void PbrtSceneImporter::_pbrtLookAt(float ex, float ey, float ez, float lx, float ly,
-                                    float lz, float ux, float uy, float uz)
+void PbrtSceneImporter::_pbrtLookAt(float i_ex, float i_ey, float i_ez, float i_lx, float i_ly,
+                                    float i_lz, float i_ux, float i_uy, float i_uz)
   {
   if (_VerifyInitialized("LookAt")==false) return;
 
-  m_current_transform = m_current_transform * MakeLookAt(Point3D_d(ex, ey, ez),
-    Vector3D_d(lx-ex, ly-ey, lz-ez).Normalized(), Vector3D_d(ux, uy, uz));
+  m_current_transform = m_current_transform * MakeLookAt(Point3D_d(i_ex, i_ey, i_ez),
+    Vector3D_d(i_lx-i_ex, i_ly-i_ey, i_lz-i_ez).Normalized(), Vector3D_d(i_ux, i_uy, i_uz));
   }
 
-void PbrtSceneImporter::_pbrtCoordinateSystem(const std::string &name)
+void PbrtSceneImporter::_pbrtCoordinateSystem(PbrtImport::SubString i_name)
   {
   if (_VerifyInitialized("CoordinateSystem")==false) return;
 
-  m_namedCoordinateSystems[name] = m_current_transform;
+  m_namedCoordinateSystems[i_name.to_string()] = m_current_transform;
   }
 
-void PbrtSceneImporter::_pbrtCoordSysTransform(const std::string &name)
+void PbrtSceneImporter::_pbrtCoordSysTransform(PbrtImport::SubString i_name)
   {
   if (_VerifyInitialized("CoordSysTransform")==false) return;
 
+  std::string name(i_name.to_string());
   if (m_namedCoordinateSystems.find(name) != m_namedCoordinateSystems.end())
     m_current_transform = m_namedCoordinateSystems[name];
   else
     PbrtImport::Utils::LogWarning(mp_log, std::string("Couldn't find named coordinate system \"") + name + std::string("\"."));
   }
 
-void PbrtSceneImporter::_pbrtPixelFilter(const std::string &name, const PbrtImport::ParamSet &params)
+void PbrtSceneImporter::_pbrtPixelFilter(PbrtImport::SubString i_name, const PbrtImport::ParamSet &i_params)
   {
   if (_VerifyOptions("PixelFilter")==false) return;
 
-  mp_renderOptions->FilterName = name;
-  mp_renderOptions->FilterParams = params;
+  mp_renderOptions->FilterName = i_name.to_string();
+  mp_renderOptions->FilterParams = i_params;
   }
 
-void PbrtSceneImporter::_pbrtFilm(const std::string &type, const PbrtImport::ParamSet &params)
+void PbrtSceneImporter::_pbrtFilm(PbrtImport::SubString i_type, const PbrtImport::ParamSet &i_params)
   {
   if (_VerifyOptions("Film")==false) return;
 
-  mp_renderOptions->FilmParams = params;
-  mp_renderOptions->FilmName = type;
+  mp_renderOptions->FilmParams = i_params;
+  mp_renderOptions->FilmName = i_type.to_string();
   }
 
-void PbrtSceneImporter::_pbrtCamera(const std::string &name, const PbrtImport::ParamSet &params)
+void PbrtSceneImporter::_pbrtCamera(PbrtImport::SubString i_name, const PbrtImport::ParamSet &i_params)
   {
   if (_VerifyOptions("Camera")==false) return;
 
-  mp_renderOptions->CameraName = name;
-  mp_renderOptions->CameraParams = params;
-  mp_renderOptions->CameraToWorld = (m_current_transform*MakeScale(-1, 1, 1)).Inverted();
+  mp_renderOptions->CameraName = i_name.to_string();
+  mp_renderOptions->CameraParams = i_params;
+
+  // Need to reflect the camera against the X axis to account for the fact that pbrt is based on the left-handed coordinate system, while our system is right-handed
+  mp_renderOptions->CameraToWorld = (MakeScale(-1, 1, 1)*m_current_transform*MakeScale(1, 1, 1)).Inverted();
   m_namedCoordinateSystems["camera"] = mp_renderOptions->CameraToWorld;
   }
 
@@ -182,13 +185,13 @@ void PbrtSceneImporter::_pbrtTransformEnd()
   m_pushedTransforms.pop_back();
   }
 
-void PbrtSceneImporter::_pbrtTexture(const std::string &name, const std::string &type,
-                                     const std::string &texname, const PbrtImport::ParamSet &params)
+void PbrtSceneImporter::_pbrtTexture(PbrtImport::SubString i_name, PbrtImport::SubString i_type, PbrtImport::SubString i_texname, const PbrtImport::ParamSet &i_params)
   {
   if (_VerifyWorld("Texture")==false) return;
   PbrtImport::TextureFactory texture_factory(mp_log);
 
-  PbrtImport::TextureParams tp(params, params, m_graphicsState.floatTextures, m_graphicsState.spectrumTextures);
+  std::string name(i_name.to_string()), type(i_type.to_string()), texname(i_texname.to_string());
+  PbrtImport::TextureParams tp(i_params, i_params, m_graphicsState.floatTextures, m_graphicsState.spectrumTextures);
   if (type == "float")
     {
     if (m_graphicsState.floatTextures.find(name) != m_graphicsState.floatTextures.end())
@@ -209,21 +212,21 @@ void PbrtSceneImporter::_pbrtTexture(const std::string &name, const std::string 
     PbrtImport::Utils::LogError(mp_log, std::string("Texture type ") + type + std::string(" unknown."));
   }
 
-void PbrtSceneImporter::_pbrtMaterial(const std::string &name, const PbrtImport::ParamSet &params)
+void PbrtSceneImporter::_pbrtMaterial(PbrtImport::SubString i_name, const PbrtImport::ParamSet &i_params)
   {
   if (_VerifyWorld("Material")==false) return;
 
-  m_graphicsState.material = name;
-  m_graphicsState.materialParams = params;
+  m_graphicsState.material = i_name.to_string();
+  m_graphicsState.materialParams = i_params;
   m_graphicsState.currentNamedMaterial = "";
   }
 
-void PbrtSceneImporter::_pbrtMakeNamedMaterial(const std::string &name, const PbrtImport::ParamSet &params)
+void PbrtSceneImporter::_pbrtMakeNamedMaterial(PbrtImport::SubString i_name, const PbrtImport::ParamSet &i_params)
   {
   if (_VerifyWorld("MakeNamedMaterial")==false) return;
   PbrtImport::MaterialFactory material_factory(m_graphicsState.m_material_to_bump_map, mp_log);
 
-  PbrtImport::TextureParams mp(params, m_graphicsState.materialParams, m_graphicsState.floatTextures, m_graphicsState.spectrumTextures);
+  PbrtImport::TextureParams mp(i_params, m_graphicsState.materialParams, m_graphicsState.floatTextures, m_graphicsState.spectrumTextures);
   std::string matName = mp.FindString("type");
 
   if (matName == "")
@@ -231,35 +234,35 @@ void PbrtSceneImporter::_pbrtMakeNamedMaterial(const std::string &name, const Pb
   else
     {
     intrusive_ptr<const Material> mtl = material_factory.CreateMaterial(matName, mp, m_graphicsState);
-    if (mtl) m_graphicsState.namedMaterials[name] = mtl;
+    if (mtl) m_graphicsState.namedMaterials[i_name.to_string()] = mtl;
     }
   }
 
-void PbrtSceneImporter::_pbrtNamedMaterial(const std::string &name)
+void PbrtSceneImporter::_pbrtNamedMaterial(PbrtImport::SubString i_name)
   {
   if (_VerifyWorld("NamedMaterial")==false) return;
 
-  m_graphicsState.currentNamedMaterial = name;
+  m_graphicsState.currentNamedMaterial = i_name.to_string();
   }
 
-void PbrtSceneImporter::_pbrtLightSource(const std::string &name, const PbrtImport::ParamSet &params)
+void PbrtSceneImporter::_pbrtLightSource(PbrtImport::SubString i_name, const PbrtImport::ParamSet &i_params)
   {
   if (_VerifyWorld("LightSource")==false) return;
 
-  mp_renderOptions->m_delayed_light_names.push_back(name);
+  mp_renderOptions->m_delayed_light_names.push_back(i_name.to_string());
   mp_renderOptions->m_delayed_light_transforms.push_back(m_current_transform);
-  mp_renderOptions->m_delayed_light_params.push_back(params);
+  mp_renderOptions->m_delayed_light_params.push_back(i_params);
   }
 
-void PbrtSceneImporter::_pbrtAreaLightSource(const std::string &name, const PbrtImport::ParamSet &params)
+void PbrtSceneImporter::_pbrtAreaLightSource(PbrtImport::SubString i_name, const PbrtImport::ParamSet &i_params)
   {
   if (_VerifyWorld("AreaLightSource")==false) return;
 
-  m_graphicsState.areaLight = name;
-  m_graphicsState.areaLightParams = params;
+  m_graphicsState.areaLight = i_name.to_string();
+  m_graphicsState.areaLightParams = i_params;
   }
 
-void PbrtSceneImporter::_pbrtShape(const std::string &name, const PbrtImport::ParamSet &params)
+void PbrtSceneImporter::_pbrtShape(PbrtImport::SubString i_name, const PbrtImport::ParamSet &i_params)
   {
   if (_VerifyWorld("Shape")==false) return;
 
@@ -267,10 +270,10 @@ void PbrtSceneImporter::_pbrtShape(const std::string &name, const PbrtImport::Pa
 
   // Create primitive for static shape.
   PbrtImport::ShapeFactory shape_factory(mp_log);
-  intrusive_ptr<const TriangleMesh> p_mesh = shape_factory.CreateShape(name, m_current_transform, m_graphicsState, params);
+  intrusive_ptr<const TriangleMesh> p_mesh = shape_factory.CreateShape(i_name.to_string(), m_current_transform, m_graphicsState, i_params);
   if (!p_mesh) return;
 
-  intrusive_ptr<const Material> mtl = m_graphicsState.CreateMaterial(params);
+  intrusive_ptr<const Material> mtl = m_graphicsState.CreateMaterial(i_params);
 
   // Possibly create area light for shape
   if (m_graphicsState.areaLight != "")
@@ -307,16 +310,16 @@ void PbrtSceneImporter::_pbrtReverseOrientation()
   m_graphicsState.reverseOrientation = !m_graphicsState.reverseOrientation;
   }
 
-void PbrtSceneImporter::_pbrtVolume(const std::string &name, const PbrtImport::ParamSet &params)
+void PbrtSceneImporter::_pbrtVolume(PbrtImport::SubString i_name, const PbrtImport::ParamSet &i_params)
   {
   if (_VerifyWorld("Volume")==false) return;
 
   PbrtImport::VolumeRegionFactory volume_region_factory(mp_log);
-  intrusive_ptr<const VolumeRegion> p_vr = volume_region_factory.CreateVolumeRegion(name, m_current_transform, params);
+  intrusive_ptr<const VolumeRegion> p_vr = volume_region_factory.CreateVolumeRegion(i_name.to_string(), m_current_transform, i_params);
   if (p_vr) mp_renderOptions->volumeRegions.push_back(p_vr);
   }
 
-void PbrtSceneImporter::_pbrtObjectBegin(const std::string &name)
+void PbrtSceneImporter::_pbrtObjectBegin(PbrtImport::SubString i_name)
   {
   if (_VerifyWorld("ObjectBegin")==false) return;
 
@@ -327,6 +330,7 @@ void PbrtSceneImporter::_pbrtObjectBegin(const std::string &name)
     return;
     }
 
+  std::string name(i_name.to_string());
   mp_renderOptions->instances[name] = std::vector<intrusive_ptr<const Primitive> >();
   mp_renderOptions->currentInstance = &mp_renderOptions->instances[name];
   }
@@ -345,7 +349,7 @@ void PbrtSceneImporter::_pbrtObjectEnd()
   _pbrtAttributeEnd();
   }
 
-void PbrtSceneImporter::_pbrtObjectInstance(const std::string &name)
+void PbrtSceneImporter::_pbrtObjectInstance(PbrtImport::SubString i_name)
   {
   if (_VerifyWorld("ObjectInstance")==false) return;
 
@@ -356,6 +360,7 @@ void PbrtSceneImporter::_pbrtObjectInstance(const std::string &name)
     return;
     }
 
+  std::string name(i_name.to_string());
   if (mp_renderOptions->instances.find(name) == mp_renderOptions->instances.end())
     {
     PbrtImport::Utils::LogError(mp_log, "Unable to find instance named " + name);
