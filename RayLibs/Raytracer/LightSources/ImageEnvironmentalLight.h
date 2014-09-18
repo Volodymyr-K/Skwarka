@@ -201,6 +201,10 @@ class ImageEnvironmentalLight: public InfiniteLightSource
     // MIP map used to filter radiance values.
     intrusive_ptr<const MIPMap<Spectrum_f> > mp_image_map;
     size_t m_width, m_height;
+
+    // Keeps the image map supplied to the image source. Used only during construction and for serialization.
+    std::vector<std::vector<Spectrum_f> > m_image;
+
     double m_theta_coef, m_phi_coef;
 
     // Nodes of the kD-tree.
@@ -240,6 +244,7 @@ void ImageEnvironmentalLight::save(Archive &i_ar, const unsigned int i_version) 
   i_ar & m_light_to_world;
   i_ar & m_world_to_light;
   i_ar & mp_image_map;
+  i_ar & m_image;
   i_ar & m_height;
   i_ar & m_width;
   i_ar & m_scale;
@@ -252,6 +257,7 @@ void ImageEnvironmentalLight::load(Archive &i_ar, const unsigned int i_version)
   i_ar & m_light_to_world;
   i_ar & m_world_to_light;
   i_ar & mp_image_map;
+  i_ar & m_image;
   i_ar & m_height;
   i_ar & m_width;
   i_ar & m_scale;

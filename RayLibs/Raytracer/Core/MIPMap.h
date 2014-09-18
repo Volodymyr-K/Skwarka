@@ -7,6 +7,7 @@
 #include <Math/MathRoutines.h>
 #include <Math/SamplingRoutines.h>
 #include "ImageSource.h"
+#include <tbb/tbb.h>
 #include <vector>
 
 /**
@@ -271,13 +272,13 @@ BlockedArray<T> *MIPMap<T>::_ResampleImage(const std::vector<std::vector<T> > &i
   // First, we resample the image in X dimension (width). We can resample the dimensions separately because the used filter (Lanczos) is separable.
   std::vector<ResampleWeight> weights = _ComputeResampleWeights(size_x, rounded_size_x);
 
-  for (size_t y=0;y<size_y;++y)
+  // Run the outer loop in multiple threads, let the TBB parallelize it.
+  tbb::parallel_for(size_t(0), size_y, [&](size_t y)
     {
-    for (size_t x=0;x<rounded_size_x;++x)
+    for (size_t x = 0; x<rounded_size_x; ++x)
       {
-      double weigths_sum=0.0;
-      T& val = p_array->Get(y,x);
-      val = T();
+      double weigths_sum = 0.0;
+      T value_sum = (T)0;
 
       for (unsigned char j = 0; j < 4; ++j)
         {
@@ -287,27 +288,30 @@ BlockedArray<T> *MIPMap<T>::_ResampleImage(const std::vector<std::vector<T> > &i
 
         if (original_x >= 0 && original_x < (int)size_x)
           {
+          double weight = weights[x].m_weights[j];
           weigths_sum += weights[x].m_weights[j];
-          val += static_cast<T>( weights[x].m_weights[j] * i_values[y][original_x] );
+          value_sum += static_cast<T>(weight * i_values[y][original_x]);
           }
         }
 
       // Normalize filter weights for texel resampling.
       ASSERT(weigths_sum > 0.0);
-      val = static_cast<T>( val/weigths_sum );
+      p_array->Get(y, x) = static_cast<T>(value_sum/weigths_sum);
       }
-    }
-
+    });
+    
   // Now, we resample the image in Y dimension (height).
   weights = _ComputeResampleWeights(size_y, rounded_size_y);
-
-  std::vector<T> tmp(rounded_size_y);
-  for (size_t x=0;x<rounded_size_x;++x)
+  
+  // Run the outer loop in multiple threads, let the TBB parallelize it.
+  tbb::parallel_for(size_t(0), rounded_size_x, [&](size_t x)
     {
-    for (size_t y=0;y<rounded_size_y;++y)
+    std::vector<T> tmp(rounded_size_y);
+    for (size_t y = 0; y<rounded_size_y; ++y)
       {
-      double weigths_sum=0.0;
-      tmp[y] = T();
+      double weigths_sum = 0.0;
+      T value_sum = (T)0;
+
       for (unsigned char j = 0; j < 4; ++j)
         {
         int original_y = weights[y].m_first_texel + j;
@@ -316,19 +320,20 @@ BlockedArray<T> *MIPMap<T>::_ResampleImage(const std::vector<std::vector<T> > &i
 
         if (original_y >= 0 && original_y < (int)size_y)
           {
-          weigths_sum += weights[y].m_weights[j];
-          tmp[y] += static_cast<T>( weights[y].m_weights[j] * p_array->Get(original_y,x) );
+          double weight = weights[y].m_weights[j];
+          weigths_sum += weight;
+          value_sum += static_cast<T>(weight * p_array->Get(original_y, x));
           }
         }
 
       // Normalize filter weights for texel resampling.
       ASSERT(weigths_sum > 0.0);
-      tmp[y] = static_cast<T>( tmp[y]/weigths_sum );
+      tmp[y] = static_cast<T>(value_sum/weigths_sum);
       }
 
-    for (size_t y=0;y<rounded_size_y;++y)
-      p_array->Get(y,x) = tmp[y];
-    }
+    for (size_t y = 0; y<rounded_size_y; ++y)
+      p_array->Get(y, x) = tmp[y];
+    });
 
   return p_array;
   }

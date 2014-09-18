@@ -67,7 +67,7 @@ class TriangleAccelerator
     * The method tries many splits positions that are distributed uniformly over the node's extent.
     */
     std::pair<unsigned char,double> _DetermineBestSplit(const BBox3D_d &i_node_bbox, size_t i_triangles_begin, size_t i_triangles_end,
-      size_t i_instances_begin, size_t i_instances_end, unsigned char i_middle_split_mask);
+      size_t i_instances_begin, size_t i_instances_end, unsigned char i_middle_split_mask) const;
     
     /**
     * Helper method that search the nearest intersection with the specified subtree. The method recursively processes all the nested instances.

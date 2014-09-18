@@ -2,6 +2,7 @@
 #include <Raytracer/Core/SpectrumRoutines.h>
 #include <Math/CompressedDirection.h>
 #include <Math/MathRoutines.h>
+#include <tbb/tbb.h>
 
 /////////////////////////////////////// ImageEnvironmentalLight ///////////////////////////////////////////
 
@@ -10,7 +11,7 @@ BOOST_CLASS_EXPORT_IMPLEMENT(ImageEnvironmentalLight);
 
 ImageEnvironmentalLight::ImageEnvironmentalLight(const BBox3D_d &i_world_bounds, const Transform &i_light_to_world,
                                                  const std::vector<std::vector<Spectrum_f> > &i_image, SpectrumCoef_d i_scale):
-m_world_bounds(i_world_bounds), m_light_to_world(i_light_to_world), m_world_to_light(i_light_to_world.Inverted()), m_scale(i_scale)
+m_world_bounds(i_world_bounds), m_light_to_world(i_light_to_world), m_world_to_light(i_light_to_world.Inverted()), m_image(i_image), m_scale(i_scale)
   {
   ASSERT(i_image.size()>0 && i_image[0].size()>0);
 
@@ -38,6 +39,8 @@ m_world_bounds(i_world_bounds), m_light_to_world(i_light_to_world), m_world_to_l
   mp_image_map.reset(new MIPMap<Spectrum_f>(ip_image_source, true, 9.0) );
   m_height = ip_image_source->GetHeight();
   m_width = ip_image_source->GetWidth();
+  
+  ip_image_source->GetImage(m_image);
 
   _Initialize();
   }
@@ -78,7 +81,6 @@ void ImageEnvironmentalLight::_Build(size_t i_node_index, size_t i_depth, const 
 
     // Fill the CDF values for the leaf. The outer loop is by rows and the inner loop is by columns.
     // The inner loop computes CDFs for columns and the row's total radiance that is then used to compute the CDF for rows.
-    // Each pixel value is filtered by the MIP-map instead of picking it directly from the image.
     double filter_width = 1.0 / std::max(m_width, m_height);
     double d_phi = 2.0*M_PI / m_width;
     double inv_height = 1.0 / m_height, inv_width = 1.0 / m_width;
@@ -94,7 +96,7 @@ void ImageEnvironmentalLight::_Build(size_t i_node_index, size_t i_depth, const 
       for(int x=i_begin[0];x<i_end[0];++x)
         {
         double x_normalized = (x + 0.5) * inv_width;
-        Spectrum_d pixel_radiance = pixel_solid_angle*Convert<double>(mp_image_map->Evaluate(Point2D_d(x_normalized, y_normalized), filter_width));
+        Spectrum_d pixel_radiance = pixel_solid_angle*Convert<double>(m_image[y][x]);
 
         m_nodes[i_node_index].m_total_radiance += pixel_radiance;
 
@@ -119,7 +121,7 @@ void ImageEnvironmentalLight::_Build(size_t i_node_index, size_t i_depth, const 
     double inv_row_PDF_sum = m_CDF_rows.back() > 0 ? 1.0/m_CDF_rows.back() : 0.0;
     for(size_t y=m_CDF_rows.size()-(i_end[1]-i_begin[1]);y<m_CDF_rows.size();++y)
       m_CDF_rows[y] *= inv_row_PDF_sum;
-
+    
     return;
     }
 
@@ -154,14 +156,14 @@ void ImageEnvironmentalLight::_PrecomputeData()
 
   // We use CompressedDirection to discretize the sphere directions.
   // There are total of 2^16 discretized directions and when a normal is later passed to the sampling method the nearest discretized direction will be picked.
-  for(size_t i=0;i<(1<<16);++i)
+  tbb::parallel_for((size_t)0, (size_t)(1<<16), [&](size_t i)
     {
     Vector3D_d normal = CompressedDirection::FromID((unsigned short)i).ToVector3D<double>();
 
     Point2D_d normal_angles(MathRoutines::SphericalPhi(normal), MathRoutines::SphericalTheta(normal));
     m_irradiances[i] = _PrecomputeIrradiance(0, normal, normal_angles, &m_nodes_hemispherical_PDF[m_nodes_num*i]);
     m_nodes_hemispherical_PDF[m_nodes_num*i] = 1.f;
-    }
+    });
 
   // Compute PDF for sampling without normal. The PDF is simply proportional to the node total luminance.
   m_nodes_spherical_PDF.assign(m_nodes_num, 0.f);

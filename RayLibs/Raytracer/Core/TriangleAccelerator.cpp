@@ -1,5 +1,6 @@
 #include "TriangleAccelerator.h"
 #include "TriangleMesh.h"
+#include <tbb/tbb.h>
 #include <numeric>
 #include <cstring>
 #include <map>
@@ -415,20 +416,23 @@ bool TriangleAccelerator::_NodeIntersectTest(const TriangleAccelerator::Node *ip
         // Compute first barycentric coordinate.
         Vector3D_d d = Vector3D_d(ray.m_origin - v0);
         double b1 = (d*s1) * inv_divisor;
-        if(b1 < -DBL_EPS || b1 > (1.0+DBL_EPS))
-          continue;
 
-        // Compute second barycentric coordinate.
-        Vector3D_d s2 = d^e1;
-        double b2 = (ray.m_direction*s2) * inv_divisor;
-        if(b2 < -DBL_EPS || b1 + b2 > (1.0+DBL_EPS))
-          continue;
-
-        // Compute t to intersection point.
-        double t = (e2*s2) * inv_divisor;
-        if (t >= ray.m_min_t && t <= ray.m_max_t)
-          return true;
-        }
+        // The two nested if-s are structured carefully to deal with the cases when the ray is parallel to the triangle's plane.
+        // In this case the barycentric coordinates will have NaN values and the if-s will return false.
+        if (b1 > -DBL_EPS && b1 < (1.0+DBL_EPS))
+          {
+          // Compute second barycentric coordinate.
+          Vector3D_d s2 = d^e1;
+          double b2 = (ray.m_direction*s2) * inv_divisor;
+          if (b2 > -DBL_EPS && b1 + b2 < (1.0+DBL_EPS))
+            {
+            // Compute t to intersection point.
+            double t = (e2*s2) * inv_divisor;
+            if (t >= ray.m_min_t && t <= ray.m_max_t)
+              return true;
+            }
+          }
+        } // end of loop by triangles in the leaf
 
       }
 
@@ -481,19 +485,20 @@ void TriangleAccelerator::_SwapInstances(size_t i_index1, size_t i_index2)
 std::pair<unsigned char,double> TriangleAccelerator::_DetermineBestSplit(const BBox3D_d &i_node_bbox,
                                                           size_t i_triangles_begin, size_t i_triangles_end,
                                                           size_t i_instances_begin, size_t i_instances_end,
-                                                          unsigned char i_middle_split_mask)
+                                                          unsigned char i_middle_split_mask) const
   {
   ASSERT(i_middle_split_mask<(1<<3));
   size_t num_triangles = i_triangles_end-i_triangles_begin;
   size_t num_instances = i_instances_end-i_instances_begin;
   ASSERT(num_triangles+num_instances>0);
 
-  std::pair<unsigned char,double> ret;
-  double best_cost = DBL_INF;
-
-  // Try all possible split axes to find the best one.
-  for(unsigned char split_axis=0;split_axis<3;++split_axis)
-    if ((i_middle_split_mask&(1<<split_axis)) == 0)
+  double best_split_position[3], best_cost[3] = { DBL_INF, DBL_INF, DBL_INF };
+  
+  // Run it in parallel threads and let TBB parallelize it. For small numbers of triangles (plus instances) we run it in single thread by increasing the grainsize.
+  size_t tbb_grain = (num_triangles+num_instances>70) ? 1 : 6;
+  tbb::parallel_for(tbb::blocked_range<size_t>(0, 3, tbb_grain), [&](const tbb::blocked_range<size_t> &i_range)
+    {
+    for(size_t split_axis = i_range.begin(); split_axis != i_range.end(); ++split_axis) if ((i_middle_split_mask&(1<<split_axis)) == 0)
       {
       /*
       * First precompute the needed information for all split positions.
@@ -508,12 +513,12 @@ std::pair<unsigned char,double> TriangleAccelerator::_DetermineBestSplit(const B
 
       size_t num_tries = std::min(MAX_SPLIT_TRIES, 2*(i_triangles_end-i_triangles_begin) + 2*(i_instances_end-i_instances_begin));
       double coef = num_tries/(i_node_bbox.m_max[split_axis]-i_node_bbox.m_min[split_axis]);
-      for(size_t i=0;i<num_triangles+num_instances;++i)
+      for (size_t i = 0; i<num_triangles+num_instances; ++i)
         {
         const BBox3D_f &bbox = i<num_triangles ? m_triangle_bboxes[i_triangles_begin+i] : m_instance_bboxes[i_instances_begin+i-num_triangles];
 
-        size_t lefts_begin = std::min(num_tries, (size_t)( (bbox.m_max[split_axis]-i_node_bbox.m_min[split_axis]) * coef + 1.0));
-        size_t rights_end =  std::min(num_tries, (size_t)( (bbox.m_min[split_axis]-i_node_bbox.m_min[split_axis]) * coef + 1.0));
+        size_t lefts_begin = std::min(num_tries, (size_t)((bbox.m_max[split_axis]-i_node_bbox.m_min[split_axis]) * coef + 1.0));
+        size_t rights_end = std::min(num_tries, (size_t)((bbox.m_min[split_axis]-i_node_bbox.m_min[split_axis]) * coef + 1.0));
         ASSERT(lefts_begin<=num_tries && rights_end<=num_tries && rights_end<=lefts_begin);
 
         /*
@@ -521,7 +526,7 @@ std::pair<unsigned char,double> TriangleAccelerator::_DetermineBestSplit(const B
         * Each bbox affects all left_bboxes and left_num values starting from the bbox's max coordinate.
         * Each bbox affects all right_bboxes and right_num values ending with the bbox's min coordinate.
         * There's no need to iterate through the entire range of these values, we can only set the starting/ending value and then accumulate the final values after the loop by bboxes.
-        * 
+        *
         * This does not work for middle_bboxes and middle_num though, so these values need to be updated in an internal loop.
         */
 
@@ -538,7 +543,7 @@ std::pair<unsigned char,double> TriangleAccelerator::_DetermineBestSplit(const B
           left_num[lefts_begin] += triangles_count;
           }
 
-        for(size_t j=rights_end;j<lefts_begin;++j)
+        for (size_t j = rights_end; j<lefts_begin; ++j)
           {
           middle_bboxes[j].Unite(bbox);
           middle_num[j] += triangles_count;
@@ -546,43 +551,49 @@ std::pair<unsigned char,double> TriangleAccelerator::_DetermineBestSplit(const B
         }
 
       // Accumulate left_bboxes and left_num values.
-      for(size_t i=1;i<num_tries;++i)
+      for (size_t i = 1; i<num_tries; ++i)
         {
         left_bboxes[i].Unite(left_bboxes[i-1]);
-        left_num[i]+=left_num[i-1];
+        left_num[i] += left_num[i-1];
         }
 
       // Accumulate right_bboxes and right_num values.
-      for(int i=(int)num_tries-2;i>=0;--i)
+      for (int i = (int)num_tries-2; i>=0; --i)
         {
         right_bboxes[i].Unite(right_bboxes[i+1]);
-        right_num[i]+=right_num[i+1];
+        right_num[i] += right_num[i+1];
         }
 
       double inv_area = 1.0/i_node_bbox.Area();
-      for (size_t i=0;i<num_tries;++i)
+      for (size_t i = 0; i<num_tries; ++i)
         {
         // Compute probability that a random ray intersects the children given that it intersects the node.
-        double p1=std::min(1.0, left_bboxes[i].Area()*inv_area);
-        double p2=std::min(1.0, middle_bboxes[i].Area()*inv_area);
-        double p3=std::min(1.0, right_bboxes[i].Area()*inv_area);
+        double p1 = std::min(1.0, left_bboxes[i].Area()*inv_area);
+        double p2 = std::min(1.0, middle_bboxes[i].Area()*inv_area);
+        double p3 = std::min(1.0, right_bboxes[i].Area()*inv_area);
 
         // The cost function assumes that the children are all leaves.
         double cost = left_num[i]*p1+middle_num[i]*p2+right_num[i]*p3;
 
         // This is the heuristics that encourages splits resulting in empty left or right children nodes.
-        if (left_num[i]==0 || right_num[i]==0) cost*=0.8;
+        if (left_num[i]==0 || right_num[i]==0) cost *= 0.8;
 
-        if (cost<best_cost)
+        if (cost<best_cost[split_axis])
           {
-          best_cost = cost;
-          ret.first = split_axis;
-          ret.second = i_node_bbox.m_min[split_axis] + i*(i_node_bbox.m_max[split_axis]-i_node_bbox.m_min[split_axis])/num_tries;
+          best_cost[split_axis] = cost;
+          best_split_position[split_axis] = i_node_bbox.m_min[split_axis] + i*(i_node_bbox.m_max[split_axis]-i_node_bbox.m_min[split_axis])/num_tries;
           }
         }
       }
+    });
 
-  return ret;
+  // Determine the best split axis and return the result.
+  if (best_cost[0]<=best_cost[1] && best_cost[0]<=best_cost[2])
+    return std::make_pair(0, best_split_position[0]);
+  else if (best_cost[1]<=best_cost[0] && best_cost[1]<=best_cost[2])
+    return std::make_pair(1, best_split_position[1]);
+  else
+    return std::make_pair(2, best_split_position[2]);
   }
 
 //////////////////////////////////////////////////////////// NODE //////////////////////////////////////////////////////
@@ -673,7 +684,7 @@ m_bbox(i_accelerator._ConstructBBox(i_triangles_begin, i_triangles_end, i_instan
   if (i_triangles_begin<triangles_middle_begin || i_instances_begin<instances_middle_begin)
     {
     void * ptr = i_accelerator.m_pool.Alloc(sizeof(Node));
-    m_children[0] = new (ptr) Node (i_accelerator, i_triangles_begin, triangles_middle_begin, i_instances_begin, instances_middle_begin, i_middle_split_mask, i_depth+1);
+    m_children[0] = new (ptr) Node(i_accelerator, i_triangles_begin, triangles_middle_begin, i_instances_begin, instances_middle_begin, i_middle_split_mask, i_depth+1);
     }
   else
     m_children[0] = NULL;
