@@ -235,24 +235,27 @@ bool TriangleAccelerator::_NodeIntersect(const TriangleAccelerator::Node *ip_nod
         // Compute first barycentric coordinate.
         Vector3D_d d = Vector3D_d(ray.m_origin - v0);
         double b1 = (d*s1) * inv_divisor;
-        if(b1 < -DBL_EPS || b1 > (1.0+DBL_EPS))
-          continue;
 
-        // Compute second barycentric coordinate.
-        Vector3D_d s2 = d^e1;
-        double b2 = (ray.m_direction*s2) * inv_divisor;
-        if(b2 < -DBL_EPS || b1 + b2 > (1.0+DBL_EPS))
-          continue;
-
-        // Compute t to intersection point.
-        double t = (e2*s2) * inv_divisor;
-        if (t >= ray.m_min_t && t <= ray.m_max_t)
+        // The two nested if-s are structured carefully to deal with the cases when the ray is parallel to the triangle's plane.
+        // In this case the barycentric coordinates will have NaN values and the if-s will return false.
+        if (b1 > -DBL_EPS && b1 < (1.0+DBL_EPS))
           {
-          ray.m_max_t = t;
-          triangle_index = i;
-          instanced_primitive_intersected = false;
+          // Compute second barycentric coordinate.
+          Vector3D_d s2 = d^e1;
+          double b2 = (ray.m_direction*s2) * inv_divisor;
+          if (b2 > -DBL_EPS && b1 + b2 < (1.0+DBL_EPS))
+            {
+            // Compute t to intersection point.
+            double t = (e2*s2) * inv_divisor;
+            if (t >= ray.m_min_t && t <= ray.m_max_t)
+              {
+              ray.m_max_t = t;
+              triangle_index = i;
+              instanced_primitive_intersected = false;
+              }
+            }
           }
-        }
+        } // end of loop by triangles in the leaf
 
       }
 
