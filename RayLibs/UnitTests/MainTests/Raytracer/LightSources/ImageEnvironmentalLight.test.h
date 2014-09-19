@@ -329,6 +329,9 @@ class ImageEnvironmentalLightTestSuite : public CxxTest::TestSuite
           Vector3D_d dir = Vector3D_d(RandomDouble(2.0)-1.0,RandomDouble(2.0)-1.0,RandomDouble(2.0)-1.0).Normalized();
           Spectrum_d radiance = p_light->Radiance(RayDifferential(Ray(Point3D_d(), dir)));
           CustomAssertDelta(radiance, Spectrum_d(1.0), (1e-6));
+
+          Spectrum_d irradiance = p_light->Irradiance(dir);
+          CustomAssertDelta(irradiance, Spectrum_d(M_PI), 0.15);
           }
 
         Spectrum_d irradiance = p_light->Fluence();

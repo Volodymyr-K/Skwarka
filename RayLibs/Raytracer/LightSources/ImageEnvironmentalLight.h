@@ -154,8 +154,14 @@ class ImageEnvironmentalLight: public InfiniteLightSource
     // IMPORTANT! It is very important not to make this value too high because the memory requirements grow exponentially. Value of 8 is probably the best trade-off.
     static const size_t MAX_TREE_DEPTH = 8;
 
+    // Since the light subdivides the image space into smaller segments, it is important that the input image has enough size (in both dimensions).
+    // If the image is smaller than this size, it is increased by duplicating its pixels.
+    static const size_t MIN_IMAGE_SIZE = 32;
+
   private:
     void _Initialize();
+
+    void _IncreaseSize(size_t i_height_factor, size_t i_width_factor);
 
     void _Build(size_t i_node_index, size_t i_depth, const Point2D_i &i_begin, const Point2D_i &i_end, size_t &io_next_free_node_index);
 

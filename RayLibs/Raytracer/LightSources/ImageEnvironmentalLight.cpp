@@ -22,10 +22,18 @@ m_world_bounds(i_world_bounds), m_light_to_world(i_light_to_world), m_world_to_l
       ASSERT(InRange(i_image[i][j], 0.f, FLT_INF));
     }
 
-  mp_image_map.reset(new MIPMap<Spectrum_f>(i_image, true, 9.0) );
-  m_height = i_image.size();
-  m_width = i_image[0].size();
+  m_height = m_image.size();
+  m_width = m_image[0].size();
 
+  // Increase the image size if needed.
+  if (m_width<MIN_IMAGE_SIZE || m_height<MIN_IMAGE_SIZE)
+    {
+    _IncreaseSize((MIN_IMAGE_SIZE+m_width-1)/m_width, (MIN_IMAGE_SIZE+m_height-1)/m_height);
+    m_width = m_image[0].size();
+    m_height = m_image.size();
+    }
+
+  mp_image_map.reset(new MIPMap<Spectrum_f>(m_image, true, 9.0));
   _Initialize();
   }
 
@@ -36,13 +44,31 @@ m_world_bounds(i_world_bounds), m_light_to_world(i_light_to_world), m_world_to_l
   ASSERT(ip_image_source);
   ASSERT(ip_image_source->GetHeight()>0 && ip_image_source->GetWidth()>0);
 
-  mp_image_map.reset(new MIPMap<Spectrum_f>(ip_image_source, true, 9.0) );
-  m_height = ip_image_source->GetHeight();
-  m_width = ip_image_source->GetWidth();
-  
   ip_image_source->GetImage(m_image);
+  m_height = m_image.size();
+  m_width = m_image[0].size();
 
+  // Increase the image size if needed.
+  if (m_width<MIN_IMAGE_SIZE || m_height<MIN_IMAGE_SIZE)
+    {
+    _IncreaseSize((MIN_IMAGE_SIZE+m_height-1)/m_height, (MIN_IMAGE_SIZE+m_width-1)/m_width);
+    m_width = m_image[0].size();
+    m_height = m_image.size();
+    }
+
+  mp_image_map.reset(new MIPMap<Spectrum_f>(m_image, true, 9.0));
   _Initialize();
+  }
+
+void ImageEnvironmentalLight::_IncreaseSize(size_t i_height_factor, size_t i_width_factor)
+  {
+  ASSERT(i_width_factor>=1 && i_height_factor>=1);
+  std::vector<std::vector<Spectrum_f> > tmp(m_image.size()*i_height_factor, std::vector<Spectrum_f>(m_image[0].size()*i_width_factor));
+  for (size_t y=0; y<tmp.size(); ++y)
+    for (size_t x=0; x<tmp[0].size(); ++x)
+      tmp[y][x]=m_image[y/i_height_factor][x/i_width_factor];
+
+  m_image.swap(tmp);
   }
 
 void ImageEnvironmentalLight::_Initialize()
