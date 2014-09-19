@@ -125,6 +125,9 @@
     <ProjectReference>
       <UseLibraryDependencyInputs>true</UseLibraryDependencyInputs>
     </ProjectReference>
+    <CxxTest>
+      <output>%(Filename).cpp</output>
+    </CxxTest>
   </ItemDefinitionGroup>
   <ItemGroup>
     <CxxTest Include="MainTests\Math\BBox3D.test.h" />

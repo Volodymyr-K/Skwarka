@@ -146,7 +146,7 @@ SpectrumCoef_d FresnelBlend<MicrofacetDistribution>::Sample(const Vector3D_d &i_
     // Microfacet distribution implementation can sample exitant vectors in a wrong hemisphere, so we just ignore those results.
     if (i_incident[2]*o_exitant[2]<0.0)
       {
-      o_pdf = m_specular_probability*microfaced_pdf; // Diffuse PDF is zero in this case.
+      o_pdf = 0.0;
       return SpectrumCoef_d(0.0);
       }
     else
@@ -162,8 +162,9 @@ double FresnelBlend<MicrofacetDistribution>::PDF(const Vector3D_d &i_incident, c
   ASSERT(i_incident.IsNormalized());
   ASSERT(i_exitant.IsNormalized());
 
+  // Microfacet distribution implementation can sample exitant vectors in a wrong hemisphere, so we just ignore those results.
   if (i_incident[2]*i_exitant[2]<0.0)
-    return m_specular_probability*m_distribution.PDF(i_incident, i_exitant); // Diffuse PDF is zero in this case.
+    return 0.0;
   else
     return m_diffuse_probability*fabs(i_exitant[2])*INV_PI + m_specular_probability*m_distribution.PDF(i_incident, i_exitant);
   }

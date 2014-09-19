@@ -151,7 +151,7 @@ SpectrumCoef_d BSDF::Sample(const Vector3D_d &i_incident, Vector3D_d &o_exitant,
   Vector3D_d exitant_local;
   SpectrumCoef_d ret_value = bxdf->Sample(incident_local, exitant_local, i_sample, o_pdf);
   
-  ASSERT(o_pdf>0.0);
+  ASSERT(o_pdf>=0.0);
 
   o_exitant=LocalToWorld(exitant_local);
   ASSERT(o_exitant.IsNormalized());

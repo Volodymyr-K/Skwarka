@@ -106,7 +106,10 @@ SpectrumCoef_d Microfacet<Fresnel,MicrofacetDistribution>::Sample(const Vector3D
 
   // Microfacet distribution implementation can sample exitant vectors in a wrong hemisphere, so we just ignore those results.
   if (i_incident[2]*o_exitant[2]<0.0)
+    {
+    o_pdf = 0.0;
     return SpectrumCoef_d(0.0);
+    }
 
   return this->Evaluate(i_incident, o_exitant);
   }
@@ -117,7 +120,11 @@ double Microfacet<Fresnel,MicrofacetDistribution>::PDF(const Vector3D_d &i_incid
   ASSERT(i_incident.IsNormalized());
   ASSERT(i_exitant.IsNormalized());
 
-  return m_distribution.PDF(i_incident,i_exitant);
+  // Microfacet distribution implementation can sample exitant vectors in a wrong hemisphere, so we just ignore those results.
+  if (i_incident[2]*i_exitant[2]<0.0)
+    return 0.0;
+  else
+    return m_distribution.PDF(i_incident,i_exitant);
   }
 
 template<typename Fresnel, typename MicrofacetDistribution>
