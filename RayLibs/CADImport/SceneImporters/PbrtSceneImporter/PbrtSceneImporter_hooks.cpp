@@ -100,7 +100,7 @@ void PbrtSceneImporter::_pbrtCoordSysTransform(PbrtImport::SubString i_name)
   if (m_namedCoordinateSystems.find(name) != m_namedCoordinateSystems.end())
     m_current_transform = m_namedCoordinateSystems[name];
   else
-    PbrtImport::Utils::LogWarning(mp_log, std::string("Couldn't find named coordinate system \"") + name + std::string("\"."));
+    PbrtImport::Utils::LogError(mp_log, std::string("Couldn't find named coordinate system \"") + name + std::string("\"."));
   }
 
 void PbrtSceneImporter::_pbrtPixelFilter(PbrtImport::SubString i_name, const PbrtImport::ParamSet &i_params)
@@ -194,17 +194,11 @@ void PbrtSceneImporter::_pbrtTexture(PbrtImport::SubString i_name, PbrtImport::S
   PbrtImport::TextureParams tp(i_params, i_params, m_graphicsState.floatTextures, m_graphicsState.spectrumTextures);
   if (type == "float")
     {
-    if (m_graphicsState.floatTextures.find(name) != m_graphicsState.floatTextures.end())
-      PbrtImport::Utils::LogInfo(mp_log, std::string("Texture ") + name + std::string(" being redefined."));
-
     intrusive_ptr<const Texture<double> > ft = texture_factory.CreateFloatTexture(texname, m_current_transform, tp);
     if (ft) m_graphicsState.floatTextures[name] = ft;
     }
   else if (type == "color") 
     {
-    if (m_graphicsState.spectrumTextures.find(name) != m_graphicsState.spectrumTextures.end())
-      PbrtImport::Utils::LogInfo(mp_log, std::string("Texture ") + name + std::string(" being redefined."));
-
     intrusive_ptr<const Texture<SpectrumCoef_d> > st = texture_factory.CreateSpectrumCoefTexture(texname, m_current_transform, tp);
     if (st) m_graphicsState.spectrumTextures[name] = st;
     }
@@ -292,7 +286,7 @@ void PbrtSceneImporter::_pbrtShape(PbrtImport::SubString i_name, const PbrtImpor
   if (mp_renderOptions->currentInstance)
     {
     if (p_area)
-      PbrtImport::Utils::LogWarning(mp_log, "Area lights not supported with object instancing.");
+      PbrtImport::Utils::LogError(mp_log, "Area lights not supported with object instancing.");
     mp_renderOptions->currentInstance->push_back(prim);
     }
   else
@@ -386,14 +380,14 @@ void PbrtSceneImporter::_pbrtWorldEnd()
   // Ensure there are no pushed graphics states
   while (m_pushedGraphicsStates.size())
     {
-    PbrtImport::Utils::LogWarning(mp_log, "Missing end to pbrtAttributeBegin()");
+    PbrtImport::Utils::LogError(mp_log, "Missing AttributeEnd command.");
     m_pushedGraphicsStates.pop_back();
     m_pushedTransforms.pop_back();
     }
 
   while (m_pushedTransforms.size())
     {
-    PbrtImport::Utils::LogWarning(mp_log, "Missing end to pbrtTransformBegin()");
+    PbrtImport::Utils::LogError(mp_log, "Missing TransformEnd command.");
     m_pushedTransforms.pop_back();
     }
 

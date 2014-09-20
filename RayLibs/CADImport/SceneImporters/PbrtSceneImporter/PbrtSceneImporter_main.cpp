@@ -392,14 +392,14 @@ bool PbrtSceneImporter::_ProcessCommand()
       std::vector<PbrtImport::SubString> expanded_parts;
       if (PbrtImport::StringRoutines::ExpandBraces(parts, 1, expanded_parts, mp_log)==false) return false;
       if (_CheckParameters(expanded_parts, 2, command_name)==false) return false;
-      PbrtImport::Utils::LogWarning(mp_log, "\"TransformTimes\" command is not supported.");
+      PbrtImport::Utils::LogError(mp_log, "\"TransformTimes\" command is not supported.");
       }
     else if (boost::iequals(command_name, "ActiveTransform"))
       {
       std::vector<PbrtImport::SubString> expanded_parts;
       if (PbrtImport::StringRoutines::ExpandBraces(parts, 1, expanded_parts, mp_log)==false) return false;
       if (_CheckParameters(expanded_parts, 1, command_name)==false) return false;
-      PbrtImport::Utils::LogWarning(mp_log, "\"ActiveTransform\" command is not supported.");
+      PbrtImport::Utils::LogError(mp_log, "\"ActiveTransform\" command is not supported.");
       }
     else if (boost::iequals(command_name, "NamedMaterial"))
       {

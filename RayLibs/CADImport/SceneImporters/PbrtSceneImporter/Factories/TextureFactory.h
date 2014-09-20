@@ -109,7 +109,7 @@ namespace PbrtImport
         else if (type == "spherical") p_map.reset( new SphericalMapping2D(i_tex_to_world.Inverted()) );
         else
           {
-          PbrtImport::Utils::LogError(mp_log, std::string("2D texture mapping \"") + type + std::string("\" unknown or not supported."));
+          PbrtImport::Utils::LogError(mp_log, std::string("2D texture mapping \"") + type + std::string("\" unknown or not supported. Using UV mapping texture."));
           p_map.reset(new UVMapping2D);
           }
 
@@ -212,7 +212,7 @@ namespace PbrtImport
         else if (type == "spherical") p_map.reset( new SphericalMapping2D(i_tex_to_world.Inverted()) );
         else
           {
-          PbrtImport::Utils::LogError(mp_log, std::string("2D texture mapping \"") + type + std::string("\" unknown or not supported."));
+          PbrtImport::Utils::LogError(mp_log, std::string("2D texture mapping \"") + type + std::string("\" unknown or not supported. Using UV mapping texture."));
           p_map.reset(new UVMapping2D);
           }
 

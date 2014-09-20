@@ -53,9 +53,9 @@ namespace PbrtImport
         float zmax = i_params.FindOneFloat("zmax", radius);
         float phimax = i_params.FindOneFloat("phimax", 360.f);
 
-        if (zmin != -radius) PbrtImport::Utils::LogWarning(mp_log, std::string("Parameter zmin is not support for Sphere shape."));
-        if (zmax != radius) PbrtImport::Utils::LogWarning(mp_log, std::string("Parameter zmax is not support for Sphere shape."));
-        if (phimax != 360.f) PbrtImport::Utils::LogWarning(mp_log, std::string("Parameter phimax is not support for Sphere shape."));
+        if (zmin != -radius) PbrtImport::Utils::LogError(mp_log, std::string("Parameter zmin is not support for Sphere shape."));
+        if (zmax != radius) PbrtImport::Utils::LogError(mp_log, std::string("Parameter zmax is not support for Sphere shape."));
+        if (phimax != 360.f) PbrtImport::Utils::LogError(mp_log, std::string("Parameter phimax is not support for Sphere shape."));
 
         Sphere sphere;
         sphere.SetTransformation(i_obj_to_world * MakeScale(radius));
@@ -172,7 +172,7 @@ namespace PbrtImport
         std::string alphaTexName = i_params.FindTexture("alpha");
         if (alphaTexName != "")
           {
-          PbrtImport::Utils::LogWarning(mp_log, "Alpha textures are not supported. Skipping.");
+          PbrtImport::Utils::LogError(mp_log, "Alpha textures are not supported. Skipping.");
 
           if (i_float_textures.find(alphaTexName) != i_float_textures.end())
             alphaTex = i_float_textures.find(alphaTexName)->second;
@@ -181,7 +181,7 @@ namespace PbrtImport
           }
         else if (i_params.FindOneFloat("alpha", 1.f) == 0.f)
           {
-          PbrtImport::Utils::LogWarning(mp_log, "Alpha textures are not supported. Skipping.");
+          PbrtImport::Utils::LogError(mp_log, "Alpha textures are not supported. Skipping.");
           alphaTex.reset( new ConstantTexture<double>(0.0) );
           }
 

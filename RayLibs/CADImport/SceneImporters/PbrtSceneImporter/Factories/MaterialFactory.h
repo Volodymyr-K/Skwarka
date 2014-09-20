@@ -72,7 +72,7 @@ namespace PbrtImport
         else if (i_name == "measured")
           p_material = _CreateMeasuredMaterial(i_mp);
         else
-          PbrtImport::Utils::LogWarning(mp_log, std::string("Material \"") + i_name + std::string("\" unknown."));
+          PbrtImport::Utils::LogError(mp_log, std::string("Material \"") + i_name + std::string("\" unknown."));
 
         if (!p_material)
           PbrtImport::Utils::LogError(mp_log, std::string("Unable to create material \"") + i_name + std::string("\"."));
