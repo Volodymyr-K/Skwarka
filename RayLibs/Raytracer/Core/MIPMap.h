@@ -391,8 +391,15 @@ const T &MIPMap<T>::_GetTexel(size_t i_level, int i_x, int i_y) const
 
   if (m_repeat)
     {
-    i_y = MathRoutines::Mod(i_y, (int)level.GetSizeU()); // This can be optimized by using the fact that the size is always a power of 2.
-    i_x = MathRoutines::Mod(i_x, (int)level.GetSizeV());
+    // Doing the MOD operation in the smart way by utilizing the fact that the size is always a power of.
+    // Should work correctly when i_x and i_y are negative too.
+
+    // Check first, just in case...
+    ASSERT(i_y & (level.GetSizeU()-1) == MathRoutines::Mod(i_y, (int)level.GetSizeU()));
+    ASSERT(i_x & (level.GetSizeV()-1) == MathRoutines::Mod(i_x, (int)level.GetSizeV()));
+
+    i_y &= level.GetSizeU()-1;
+    i_x &= level.GetSizeV()-1;
     }
   else
     if (i_y<0 || i_y>=(int)level.GetSizeU() || i_x<0 || i_x>=(int)level.GetSizeV())

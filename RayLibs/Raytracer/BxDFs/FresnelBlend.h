@@ -105,10 +105,12 @@ SpectrumCoef_d FresnelBlend<MicrofacetDistribution>::Evaluate(const Vector3D_d &
   half_angle.Normalize();
   double cosine_half_angle = i_exitant*half_angle;
 
+  double tmp1 = 1.0 - 0.5*cos_theta_exitant, tmp2 = 1.0 - 0.5*cos_theta_incident;
   SpectrumCoef_d diffuse = (28.0/(23.0*M_PI)) * m_diffuse_reflectance * (SpectrumCoef_d(1.0) - m_specular_reflectance) *
-    (1.0 - pow(1.0 - 0.5*cos_theta_exitant, 5.0)) * (1.0 - pow(1.0 - 0.5*cos_theta_incident, 5.0));
+    (1.0 - tmp1*tmp1*tmp1*tmp1*tmp1) * (1.0 - tmp2*tmp2*tmp2*tmp2*tmp2);
 
-  SpectrumCoef_d specular = m_distribution.Evaluate(half_angle) / (4.0 * fabs(cosine_half_angle) * std::max(cos_theta_exitant, cos_theta_incident)) * _SchlickFresnel(cosine_half_angle);
+  SpectrumCoef_d specular = _SchlickFresnel(cosine_half_angle) * 
+    (m_distribution.Evaluate(half_angle) / (4.0 * fabs(cosine_half_angle) * std::max(cos_theta_exitant, cos_theta_incident)));
   return diffuse + specular;
   }
 
@@ -173,7 +175,8 @@ template<typename MicrofacetDistribution>
 SpectrumCoef_d FresnelBlend<MicrofacetDistribution>::_SchlickFresnel(double i_cos_theta) const
   {
   ASSERT(i_cos_theta>=0.0 && i_cos_theta<=1.0);
-  return m_specular_reflectance + pow(1.0-i_cos_theta, 5.0) * (SpectrumCoef_d(1.0) - m_specular_reflectance);
+  double tmp = 1.0-i_cos_theta;
+  return m_specular_reflectance + (tmp*tmp*tmp*tmp*tmp) * (SpectrumCoef_d(1.0) - m_specular_reflectance);
   }
 
 #endif // FRESNEL_BLEND_H

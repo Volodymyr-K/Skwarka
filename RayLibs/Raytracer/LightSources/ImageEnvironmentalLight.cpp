@@ -212,6 +212,7 @@ void ImageEnvironmentalLight::_PrecomputeData()
 // Precomputes irradiance and PDF values for the specified surface normal.
 Spectrum_d ImageEnvironmentalLight::_PrecomputeIrradiance(size_t i_node_index, const Vector3D_d &i_normal, const Point2D_d i_normal_angles, float *op_nodes_PDF) const
   {
+  // Compute dot products of the normal with the four corners
   double dots[4] = {
     m_nodes_directions[4*i_node_index]*i_normal,
     m_nodes_directions[4*i_node_index+1]*i_normal,
@@ -232,13 +233,16 @@ Spectrum_d ImageEnvironmentalLight::_PrecomputeIrradiance(size_t i_node_index, c
 
   if (m_nodes[i_node_index].m_leaf)
     {
-    // We approximate the integral of radiance*cosine over the rectangle by multiplying the total radiance by an averaged cosine.
+    // Compute dot products of the normal with the centers of the four quadrants, they are just weighted sums of the dot products with corners.
+    double dots2[4] = {
+      0.0625*(dots[0]*9+dots[1]*3+dots[2]*1+dots[3]*3),
+      0.0625*(dots[1]*9+dots[2]*3+dots[3]*1+dots[0]*3),
+      0.0625*(dots[2]*9+dots[3]*3+dots[0]*1+dots[1]*3),
+      0.0625*(dots[3]*9+dots[0]*3+dots[1]*1+dots[2]*3) };
 
-    // Compute average cosine by approximating dot products for the 4 corners and center of the rectangle.
-    double center_dot = MathRoutines::SphericalDirection<double>(
-      (node.m_image_begin[0]+node.m_image_end[0])*0.5*m_phi_coef,
-      (node.m_image_begin[1]+node.m_image_end[1])*0.5*m_theta_coef)*i_normal;
-    double average_cos = (std::max(dots[0],0.0)+std::max(dots[1],0.0)+std::max(dots[2],0.0)+std::max(dots[3],0.0)+std::max(center_dot,0.0)) * 0.2;
+    // We approximate the integral of radiance*cosine over the rectangle by multiplying the total radiance by an averaged cosine.
+    // Compute average cosine by averaging dot products of the normal with centers of the four quadrants.
+    double average_cos = (std::max(dots2[0],0.0)+std::max(dots2[1],0.0)+std::max(dots2[2],0.0)+std::max(dots2[3],0.0)) * 0.25;
     
     /*
     Due to the ad-hoc way we used to estimate cosine value it may differ from the correct one. Too low cosine values can lead to a big variance in certain cases.
