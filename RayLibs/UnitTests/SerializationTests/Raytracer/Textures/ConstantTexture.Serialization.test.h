@@ -20,7 +20,7 @@ class ConstantTextureSerializationTestSuite : public CxxTest::TestSuite
   public:
     void test_ConstantTexture_Serialization()
       {
-      intrusive_ptr<Texture<Spectrum_d> > p_texture1(new ConstantTexture<Spectrum_d>(Spectrum_d(1.0,2.0,3.0)) );
+      intrusive_ptr<Texture<Spectrum_d>> p_texture1(new ConstantTexture<Spectrum_d>(Spectrum_d(1.0,2.0,3.0)) );
 
         {
         boost::iostreams::stream_buffer<SinkDevice> buffer(m_data, m_buffer_size);
@@ -28,7 +28,7 @@ class ConstantTextureSerializationTestSuite : public CxxTest::TestSuite
         output_archive << p_texture1;
         } // archive and stream closed when destructors are called
 
-      intrusive_ptr<Texture<Spectrum_d> > p_texture2;
+      intrusive_ptr<Texture<Spectrum_d>> p_texture2;
 
         {
         boost::iostreams::stream_buffer<SourceDevice> buffer(m_data, m_buffer_size);

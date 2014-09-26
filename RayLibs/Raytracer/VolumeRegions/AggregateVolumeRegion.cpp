@@ -4,7 +4,7 @@
 // Register the derived class in the boost serialization framework.
 BOOST_CLASS_EXPORT_IMPLEMENT(AggregateVolumeRegion);
 
-AggregateVolumeRegion::AggregateVolumeRegion(const std::vector<intrusive_ptr<const VolumeRegion> > &i_volume_regions): m_volume_regions(i_volume_regions)
+AggregateVolumeRegion::AggregateVolumeRegion(const std::vector<intrusive_ptr<const VolumeRegion>> &i_volume_regions): m_volume_regions(i_volume_regions)
   {
   // Precompute aggregated bounding box.
   m_bounds = BBox3D_d();

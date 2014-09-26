@@ -25,11 +25,11 @@ class UberMaterialSerializationTestSuite : public CxxTest::TestSuite
 
     void test_UberMaterial_Serialization()
       {
-      intrusive_ptr<Texture<SpectrumCoef_d> > p_Kd( new ConstantTexture<SpectrumCoef_d>(SpectrumCoef_d(0.1,0.2,0.3)) );
-      intrusive_ptr<Texture<SpectrumCoef_d> > p_Ks( new ConstantTexture<SpectrumCoef_d>(SpectrumCoef_d(0.3,0.1,0.05)) );
-      intrusive_ptr<Texture<SpectrumCoef_d> > p_Kr( new ConstantTexture<SpectrumCoef_d>(SpectrumCoef_d(0.15,0.12,0.25)) );
-      intrusive_ptr<Texture<SpectrumCoef_d> > p_opacity( new ConstantTexture<SpectrumCoef_d>(SpectrumCoef_d(0.2,0.2,0.2)) );
-      intrusive_ptr<Texture<double> > p_roughness( new ConstantTexture<double>(0.1) );
+      intrusive_ptr<Texture<SpectrumCoef_d>> p_Kd( new ConstantTexture<SpectrumCoef_d>(SpectrumCoef_d(0.1,0.2,0.3)) );
+      intrusive_ptr<Texture<SpectrumCoef_d>> p_Ks( new ConstantTexture<SpectrumCoef_d>(SpectrumCoef_d(0.3,0.1,0.05)) );
+      intrusive_ptr<Texture<SpectrumCoef_d>> p_Kr( new ConstantTexture<SpectrumCoef_d>(SpectrumCoef_d(0.15,0.12,0.25)) );
+      intrusive_ptr<Texture<SpectrumCoef_d>> p_opacity( new ConstantTexture<SpectrumCoef_d>(SpectrumCoef_d(0.2,0.2,0.2)) );
+      intrusive_ptr<Texture<double>> p_roughness( new ConstantTexture<double>(0.1) );
 
       intrusive_ptr<Material> p_material1(new UberMaterial(p_Kd, p_Ks, p_Kr, p_roughness, p_opacity, 1.5));
 

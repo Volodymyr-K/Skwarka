@@ -5,10 +5,10 @@
 #include <cstring>
 #include <map>
 
-TriangleAccelerator::TriangleAccelerator(std::vector<intrusive_ptr<const Primitive> > i_primitives):
+TriangleAccelerator::TriangleAccelerator(std::vector<intrusive_ptr<const Primitive>> i_primitives):
 mp_root(NULL), m_primitives(i_primitives), m_pool(100000*sizeof(TriangleAccelerator::Node))
   {
-  typedef std::map<const TriangleMesh *, std::vector<size_t> > InstancesMap;
+  typedef std::map<const TriangleMesh *, std::vector<size_t>> InstancesMap;
   typedef InstancesMap::const_iterator InstancesIterator;
 
   /*

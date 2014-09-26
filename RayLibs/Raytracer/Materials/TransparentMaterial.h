@@ -19,7 +19,7 @@ class TransparentMaterial: public Material
     * Creates TransparentMaterial object with the specified textures defining the reflectivity and transparency of the material
     * and the specified refractive index which is assumed to be constant everywhere.
     */
-    TransparentMaterial(intrusive_ptr<const Texture<SpectrumCoef_d> > ip_reflectance, intrusive_ptr<const Texture<SpectrumCoef_d> > ip_transmittance, double i_refractive_index);
+    TransparentMaterial(intrusive_ptr<const Texture<SpectrumCoef_d>> ip_reflectance, intrusive_ptr<const Texture<SpectrumCoef_d>> ip_transmittance, double i_refractive_index);
 
     /**
     * Returns a pointer to BSDF describing local scattering properties at the specified surface point.
@@ -44,7 +44,7 @@ class TransparentMaterial: public Material
     void serialize(Archive &i_ar, const unsigned int i_version);
 
   private:
-    intrusive_ptr<const Texture<SpectrumCoef_d> > mp_reflectance, mp_transmittance;
+    intrusive_ptr<const Texture<SpectrumCoef_d>> mp_reflectance, mp_transmittance;
 
     double m_refractive_index;
   };

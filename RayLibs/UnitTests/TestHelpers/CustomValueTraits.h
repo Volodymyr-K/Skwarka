@@ -20,7 +20,7 @@ This file should be included into every test header.
 namespace CxxTest
   {
   template<class T>
-  class ValueTraits< Point3D<T> >
+  class ValueTraits< Point3D<T>>
     {
     public:
       ValueTraits(const Point3D<T> &i_point)
@@ -38,7 +38,7 @@ namespace CxxTest
     };
 
   template<class T>
-  class ValueTraits< Point2D<T> >
+  class ValueTraits< Point2D<T>>
     {
     public:
       ValueTraits(const Point2D<T> &i_point)
@@ -56,7 +56,7 @@ namespace CxxTest
     };
 
   template<class T>
-  class ValueTraits< Vector3D<T> >
+  class ValueTraits< Vector3D<T>>
     {
     public:
       ValueTraits(const Vector3D<T> &i_vector)
@@ -74,7 +74,7 @@ namespace CxxTest
     };
 
   template<class T>
-  class ValueTraits< Vector2D<T> >
+  class ValueTraits< Vector2D<T>>
     {
     public:
       ValueTraits(const Vector2D<T> &i_vector)
@@ -92,7 +92,7 @@ namespace CxxTest
     };
 
   template<class T>
-  class ValueTraits< Spectrum<T> >
+  class ValueTraits< Spectrum<T>>
     {
     public:
       ValueTraits(const Spectrum<T> &i_spectrum)
@@ -110,7 +110,7 @@ namespace CxxTest
     };
 
   template<class T>
-  class ValueTraits< SpectrumCoef<T> >
+  class ValueTraits< SpectrumCoef<T>>
     {
     public:
       ValueTraits(const SpectrumCoef<T> &i_spectrum_coef)
@@ -128,7 +128,7 @@ namespace CxxTest
     };
 
   template<class T>
-  class ValueTraits< RGBColor<T> >
+  class ValueTraits< RGBColor<T>>
     {
     public:
       ValueTraits(const RGBColor<T> &i_color)
@@ -146,7 +146,7 @@ namespace CxxTest
     };  
   
   template<class T>
-  class ValueTraits< XYZColor<T> >
+  class ValueTraits< XYZColor<T>>
     {
     public:
       ValueTraits(const XYZColor<T> &i_color)

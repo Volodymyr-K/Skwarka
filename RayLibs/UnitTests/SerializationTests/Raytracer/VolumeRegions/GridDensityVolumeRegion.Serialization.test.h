@@ -29,7 +29,7 @@ class GridDensityVolumeRegionSerializationTestSuite : public CxxTest::TestSuite
       intrusive_ptr<PhaseFunction> p_phase_function( new RayleighPhaseFunction );
 
       size_t size_x=20, size_y=30, size_z=40;
-      std::vector<std::vector<std::vector<float> > > densities(size_x, std::vector<std::vector<float> >(size_y, std::vector<float>(size_z, 0.0)));
+      std::vector<std::vector<std::vector<float>>> densities(size_x, std::vector<std::vector<float>>(size_y, std::vector<float>(size_z, 0.0)));
       for(size_t i=0;i<size_x;++i)
         for(size_t j=0;j<size_y;++j)
           for(size_t k=0;k<size_z;++k)

@@ -8,7 +8,7 @@
 BOOST_CLASS_EXPORT_IMPLEMENT(MixMaterial);
 
 MixMaterial::MixMaterial(intrusive_ptr<const Material> ip_material1, intrusive_ptr<const Material> ip_material2,
-                         intrusive_ptr<const Texture<SpectrumCoef_d> > ip_scale):
+                         intrusive_ptr<const Texture<SpectrumCoef_d>> ip_scale):
 Material(), mp_material1(ip_material1), mp_material2(ip_material2), mp_scale(ip_scale)
   {
   ASSERT(ip_material1);

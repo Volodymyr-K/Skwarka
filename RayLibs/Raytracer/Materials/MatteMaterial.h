@@ -20,7 +20,7 @@ class MatteMaterial: public Material
     * @param ip_reflectance The texture defining the total hemisphere reflectance. Each spectrum component should be in [0;1] range.
     * @param ip_sigma The texture defining the roughness of the surface. Values should be in [0;1] range.
     */
-    MatteMaterial(intrusive_ptr<const Texture<SpectrumCoef_d> > ip_reflectance, intrusive_ptr<const Texture<double> > ip_sigma);
+    MatteMaterial(intrusive_ptr<const Texture<SpectrumCoef_d>> ip_reflectance, intrusive_ptr<const Texture<double>> ip_sigma);
 
     /**
     * Returns a pointer to BSDF describing local scattering properties at the specified surface point.
@@ -45,9 +45,9 @@ class MatteMaterial: public Material
     void serialize(Archive &i_ar, const unsigned int i_version);
 
   private:
-    intrusive_ptr<const Texture<SpectrumCoef_d> > mp_reflectance;
+    intrusive_ptr<const Texture<SpectrumCoef_d>> mp_reflectance;
 
-    intrusive_ptr<const Texture<double> > mp_sigma;
+    intrusive_ptr<const Texture<double>> mp_sigma;
   };
 
 /////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////

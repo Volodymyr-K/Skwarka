@@ -57,7 +57,7 @@ namespace SpectrumRoutines
   * @return XYZ response values.
   */
   template<typename T>
-  XYZColor<T> SampledToXYZ(const std::vector<std::pair<T,T> > &i_samples);
+  XYZColor<T> SampledToXYZ(const std::vector<std::pair<T,T>> &i_samples);
 
   /**
   * Converts the sampled spectrum values to Spectrum.
@@ -66,7 +66,7 @@ namespace SpectrumRoutines
   * @return Spectrum.
   */
   template<typename T>
-  Spectrum<T> SampledToSpectrum(const std::vector<std::pair<T,T> > &i_samples);
+  Spectrum<T> SampledToSpectrum(const std::vector<std::pair<T,T>> &i_samples);
 
   /**
   * Converts the sampled spectrum values to SpectrumCoef.
@@ -75,7 +75,7 @@ namespace SpectrumRoutines
   * @return SpectrumCoef.
   */
   template<typename T>
-  SpectrumCoef<T> SampledToSpectrumCoef(const std::vector<std::pair<T,T> > &i_samples);
+  SpectrumCoef<T> SampledToSpectrumCoef(const std::vector<std::pair<T,T>> &i_samples);
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -188,7 +188,7 @@ namespace SpectrumRoutines
     }
 
   template<typename T>
-  double _InterpolateSortedSamples(const std::vector<std::pair<T,T> > &i_samples, double i_wavelength)
+  double _InterpolateSortedSamples(const std::vector<std::pair<T,T>> &i_samples, double i_wavelength)
     {
     size_t n = i_samples.size();
     ASSERT(n>0);
@@ -213,7 +213,7 @@ namespace SpectrumRoutines
     }
 
   template<typename T>
-  XYZColor<T> SampledToXYZ(const std::vector<std::pair<T,T> > &i_samples)
+  XYZColor<T> SampledToXYZ(const std::vector<std::pair<T,T>> &i_samples)
     {
     size_t n = i_samples.size();
     if (n==0)
@@ -240,7 +240,7 @@ namespace SpectrumRoutines
       }
     else
       {
-      std::vector<std::pair<T,T> > sorted_samples(i_samples.begin(), i_samples.end());
+      std::vector<std::pair<T,T>> sorted_samples(i_samples.begin(), i_samples.end());
       std::sort(sorted_samples.begin(), sorted_samples.end());
 
       for(size_t i=0;i<CIE_SAMPLES_NUM;++i)
@@ -261,13 +261,13 @@ namespace SpectrumRoutines
     }
 
   template<typename T>
-  Spectrum<T> SampledToSpectrum(const std::vector<std::pair<T,T> > &i_samples)
+  Spectrum<T> SampledToSpectrum(const std::vector<std::pair<T,T>> &i_samples)
     {
     return XYZToSpectrum(SampledToXYZ(i_samples));
     }
 
   template<typename T>
-  SpectrumCoef<T> SampledToSpectrumCoef(const std::vector<std::pair<T,T> > &i_samples)
+  SpectrumCoef<T> SampledToSpectrumCoef(const std::vector<std::pair<T,T>> &i_samples)
     {
     return XYZToSpectrumCoef(SampledToXYZ(i_samples));
     }

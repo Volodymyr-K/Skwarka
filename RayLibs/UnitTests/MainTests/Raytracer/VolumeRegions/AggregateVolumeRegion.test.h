@@ -28,7 +28,7 @@ class AggregateVolumeRegionTestSuite : public CxxTest::TestSuite
       mp_region1.reset(new VolumeRegionMock(m_bounds1, m_emission1, m_absorption1, m_scattering1));
       mp_region2.reset(new VolumeRegionMock(m_bounds2, m_emission2, m_absorption2, m_scattering2));
 
-      std::vector<intrusive_ptr<const VolumeRegion> > regions;
+      std::vector<intrusive_ptr<const VolumeRegion>> regions;
       regions.push_back(mp_region1);
       regions.push_back(mp_region2);
 

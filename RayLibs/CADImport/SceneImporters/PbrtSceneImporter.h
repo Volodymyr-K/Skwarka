@@ -20,7 +20,7 @@ class PbrtSceneImporter: public SceneImporter
     PbrtSceneImporter(std::string i_filename, intrusive_ptr<Log> ip_log = NULL);
 
     virtual intrusive_ptr<const Scene> GetScene() const;
-    virtual std::vector<intrusive_ptr<const Camera> > GetCameras() const;
+    virtual std::vector<intrusive_ptr<const Camera>> GetCameras() const;
 
   private:
     bool _VerifyInitialized(const std::string &i_method) const;

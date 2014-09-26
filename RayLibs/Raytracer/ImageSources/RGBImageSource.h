@@ -168,7 +168,7 @@ template<typename T>
 template<class Archive>
 void RGBImageSource<T>::serialize(Archive &i_ar, const unsigned int i_version)
   {
-  i_ar & boost::serialization::base_object<ImageSource<T> >(*this);
+  i_ar & boost::serialization::base_object<ImageSource<T>>(*this);
 
   i_ar & m_values;
   i_ar & m_scale;

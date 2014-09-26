@@ -258,19 +258,19 @@ class PhotonLTEIntegrator::PhotonMaps
     * Returns caustic photons map.
     * The method builds the KDTree if it is not built yet.
     */
-    shared_ptr<const KDTree<Photon> > GetCausticMap();
+    shared_ptr<const KDTree<Photon>> GetCausticMap();
 
     /**
     * Returns direct photons map.
     * The method builds the KDTree if it is not built yet.
     */
-    shared_ptr<const KDTree<Photon> > GetDirectMap();
+    shared_ptr<const KDTree<Photon>> GetDirectMap();
 
     /**
     * Returns indirect photons map.
     * The method builds the KDTree if it is not built yet.
     */
-    shared_ptr<const KDTree<Photon> > GetIndirectMap();
+    shared_ptr<const KDTree<Photon>> GetIndirectMap();
 
     size_t GetNumberOfCausticPaths() const
       {
@@ -291,7 +291,7 @@ class PhotonLTEIntegrator::PhotonMaps
     /**
     * The helper private method that adds photon's weights to th nearest photons in the KDTree.
     */
-    void _AddPhotonsToKDTree(shared_ptr<KDTree<Photon> > ip_map, const std::vector<Photon> &i_photons) const;
+    void _AddPhotonsToKDTree(shared_ptr<KDTree<Photon>> ip_map, const std::vector<Photon> &i_photons) const;
 
   private:
     /**
@@ -302,7 +302,7 @@ class PhotonLTEIntegrator::PhotonMaps
   private:
     std::vector<Photon> m_caustic_photons, m_direct_photons, m_indirect_photons;
 
-    shared_ptr<KDTree<Photon> > mp_caustic_map, mp_direct_map, mp_indirect_map;
+    shared_ptr<KDTree<Photon>> mp_caustic_map, mp_direct_map, mp_indirect_map;
 
     // Current size of the photon vectors. We use atomic variables because std::vector::size() method is not thread-safe.
     tbb::atomic<size_t> m_caustic_photons_found, m_direct_photons_found, m_indirect_photons_found;

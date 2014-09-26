@@ -39,7 +39,7 @@ class AggregateVolumeRegionSerializationTestSuite : public CxxTest::TestSuite
       intrusive_ptr<VolumeRegion> p_region1(new HomogeneousVolumeRegion(bounds1, emission1, absorption1, scattering1, p_phase_function));
       intrusive_ptr<VolumeRegion> p_region2(new HomogeneousVolumeRegion(bounds2, emission2, absorption2, scattering2, p_phase_function));
 
-      std::vector<intrusive_ptr<const VolumeRegion> > regions;
+      std::vector<intrusive_ptr<const VolumeRegion>> regions;
       regions.push_back(p_region1);
       regions.push_back(p_region2);
 

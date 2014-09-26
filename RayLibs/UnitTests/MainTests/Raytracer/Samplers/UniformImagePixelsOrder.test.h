@@ -74,7 +74,7 @@ class UniformImagePixelsOrderTestSuite: public CxxTest::TestSuite
       size_t count=0;
       Point2D_i pixel;
 
-      std::vector<std::vector<bool> > visited(size[0], std::vector<bool>(size[1],false));
+      std::vector<std::vector<bool>> visited(size[0], std::vector<bool>(size[1],false));
       while(pixels_order.GetNextPixel(pixel))
         {
         if (pixel[0]<begin[0] || pixel[1]<begin[1] || pixel[0]>=begin[0]+size[0] || pixel[1]>=begin[1]+size[1])

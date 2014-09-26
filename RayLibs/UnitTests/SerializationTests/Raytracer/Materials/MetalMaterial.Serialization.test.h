@@ -28,9 +28,9 @@ class MetalMaterialSerializationTestSuite : public CxxTest::TestSuite
     void test_MetalMaterial_Serialization_Isotropic()
       {
       SpectrumCoef_d refreactive_index(0.41,1.15,1.18), absorption(4.2,2.66,2.5);
-      intrusive_ptr<Texture<SpectrumCoef_d> > p_refreactive_index( new ConstantTexture<SpectrumCoef_d>(refreactive_index) );
-      intrusive_ptr<Texture<SpectrumCoef_d> > p_absorption( new ConstantTexture<SpectrumCoef_d>(absorption) );
-      intrusive_ptr<Texture<double> > p_roughness( new ConstantTexture<double>(1.0) );
+      intrusive_ptr<Texture<SpectrumCoef_d>> p_refreactive_index( new ConstantTexture<SpectrumCoef_d>(refreactive_index) );
+      intrusive_ptr<Texture<SpectrumCoef_d>> p_absorption( new ConstantTexture<SpectrumCoef_d>(absorption) );
+      intrusive_ptr<Texture<double>> p_roughness( new ConstantTexture<double>(1.0) );
 
       intrusive_ptr<Material> p_material1(new MetalMaterial(p_refreactive_index, p_absorption, p_roughness));
         {
@@ -59,10 +59,10 @@ class MetalMaterialSerializationTestSuite : public CxxTest::TestSuite
     void test_MetalMaterial_Serialization_Anisotropic()
       {
       SpectrumCoef_d refreactive_index(0.41,1.15,1.18), absorption(4.2,2.66,2.5);
-      intrusive_ptr<Texture<SpectrumCoef_d> > p_refreactive_index( new ConstantTexture<SpectrumCoef_d>(refreactive_index) );
-      intrusive_ptr<Texture<SpectrumCoef_d> > p_absorption( new ConstantTexture<SpectrumCoef_d>(absorption) );
-      intrusive_ptr<Texture<double> > p_u_roughness( new ConstantTexture<double>(1.0) );
-      intrusive_ptr<Texture<double> > p_v_roughness( new ConstantTexture<double>(10.0) );
+      intrusive_ptr<Texture<SpectrumCoef_d>> p_refreactive_index( new ConstantTexture<SpectrumCoef_d>(refreactive_index) );
+      intrusive_ptr<Texture<SpectrumCoef_d>> p_absorption( new ConstantTexture<SpectrumCoef_d>(absorption) );
+      intrusive_ptr<Texture<double>> p_u_roughness( new ConstantTexture<double>(1.0) );
+      intrusive_ptr<Texture<double>> p_v_roughness( new ConstantTexture<double>(10.0) );
 
       intrusive_ptr<Material> p_material1(new MetalMaterial(p_refreactive_index, p_absorption, p_u_roughness, p_v_roughness));
         {

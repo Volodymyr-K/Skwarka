@@ -26,7 +26,7 @@ class ImageEnvironmentalLightSerializationTestSuite : public CxxTest::TestSuite
     void test_ImageEnvironmentalLight_Serialization()
       {
       size_t width = 45, height = 56;
-      std::vector<std::vector<Spectrum_f> > image(height, std::vector<Spectrum_f>(width));
+      std::vector<std::vector<Spectrum_f>> image(height, std::vector<Spectrum_f>(width));
       for(size_t y=0;y<height;++y)
         for(size_t x=0;x<width;++x)
           image[y][x]=Spectrum_f((float)x,(float)y,(float)(x+y));

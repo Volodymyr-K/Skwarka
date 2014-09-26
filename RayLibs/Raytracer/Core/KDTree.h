@@ -474,7 +474,7 @@ const TPoint3D *KDTree<TPoint3D>::GetNearestPoint(const Point3D_d &i_point, doub
   ASSERT(i_max_distance>=0);
 
   DefaultPointsFilter<TPoint3D> default_filer;
-  NearestPointProc<DefaultPointsFilter<TPoint3D> > proc(default_filer);
+  NearestPointProc<DefaultPointsFilter<TPoint3D>> proc(default_filer);
   this->Lookup(i_point, proc, i_max_distance);
   return proc.GetNearestPoint();
   }
@@ -498,7 +498,7 @@ size_t KDTree<TPoint3D>::GetNearestPoints(const Point3D_d &i_point, size_t i_poi
   if (i_points_to_lookup == 0)
     return 0;
 
-  NearestPointsProc<DefaultPointsFilter<TPoint3D> > proc(i_point, i_points_to_lookup, op_nearest_points, DefaultPointsFilter<TPoint3D>());
+  NearestPointsProc<DefaultPointsFilter<TPoint3D>> proc(i_point, i_points_to_lookup, op_nearest_points, DefaultPointsFilter<TPoint3D>());
   this->Lookup(i_point, proc, i_max_distance);
 
   return proc.GetCurrentSize();

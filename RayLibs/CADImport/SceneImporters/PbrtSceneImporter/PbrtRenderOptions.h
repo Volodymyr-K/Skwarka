@@ -36,10 +36,10 @@ namespace PbrtImport
 
     LightSources lights;
 
-    std::vector<intrusive_ptr<const Primitive> > primitives;
-    std::vector<intrusive_ptr<const VolumeRegion> > volumeRegions;
-    std::map<std::string, std::vector<intrusive_ptr<const Primitive> > > instances;
-    std::vector<intrusive_ptr<const Primitive> > *currentInstance;
+    std::vector<intrusive_ptr<const Primitive>> primitives;
+    std::vector<intrusive_ptr<const VolumeRegion>> volumeRegions;
+    std::map<std::string, std::vector<intrusive_ptr<const Primitive>>> instances;
+    std::vector<intrusive_ptr<const Primitive>> *currentInstance;
 
     std::vector<std::string> m_delayed_light_names;
     std::vector<Transform> m_delayed_light_transforms;

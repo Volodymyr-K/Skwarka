@@ -16,7 +16,7 @@ class ScaleTexture: public Texture<T2>
     /**
     * Crates ScaleTexture with the given textures.
     */
-    ScaleTexture(intrusive_ptr<const Texture<T1> > ip_texture1, intrusive_ptr<const Texture<T2> > ip_texture2);
+    ScaleTexture(intrusive_ptr<const Texture<T1>> ip_texture1, intrusive_ptr<const Texture<T2>> ip_texture2);
 
     /**
     * Returns the value corresponding to the specified DifferentialGeometry and triangle index.
@@ -36,15 +36,15 @@ class ScaleTexture: public Texture<T2>
     void serialize(Archive &i_ar, const unsigned int i_version);
 
   private:
-    intrusive_ptr<const Texture<T1> > mp_texture1;
-    intrusive_ptr<const Texture<T2> > mp_texture2;
+    intrusive_ptr<const Texture<T1>> mp_texture1;
+    intrusive_ptr<const Texture<T2>> mp_texture2;
   };
 
 /////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T1, typename T2>
-ScaleTexture<T1,T2>::ScaleTexture(intrusive_ptr<const Texture<T1> > ip_texture1, intrusive_ptr<const Texture<T2> > ip_texture2):
+ScaleTexture<T1,T2>::ScaleTexture(intrusive_ptr<const Texture<T1>> ip_texture1, intrusive_ptr<const Texture<T2>> ip_texture2):
 Texture(), mp_texture1(ip_texture1), mp_texture2(ip_texture2)
   {
   ASSERT(ip_texture1);
@@ -61,7 +61,7 @@ template<typename T1, typename T2>
 template<class Archive>
 void ScaleTexture<T1,T2>::serialize(Archive &i_ar, const unsigned int i_version)
   {
-  i_ar & boost::serialization::base_object<Texture<T2> >(*this);
+  i_ar & boost::serialization::base_object<Texture<T2>>(*this);
   i_ar & mp_texture1;
   i_ar & mp_texture2;
   }

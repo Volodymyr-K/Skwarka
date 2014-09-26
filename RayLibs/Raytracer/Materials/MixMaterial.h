@@ -25,7 +25,7 @@ class MixMaterial: public Material
     * The second reference material will be scaled with weights equal to 1 minus these weights.
     */
     MixMaterial(intrusive_ptr<const Material> ip_material1, intrusive_ptr<const Material> ip_material2,
-      intrusive_ptr<const Texture<SpectrumCoef_d> > ip_scale);
+      intrusive_ptr<const Texture<SpectrumCoef_d>> ip_scale);
 
     /**
     * Returns a pointer to BSDF describing local scattering properties at the specified surface point.
@@ -52,7 +52,7 @@ class MixMaterial: public Material
   private:
     intrusive_ptr<const Material> mp_material1, mp_material2;
 
-    intrusive_ptr<const Texture<SpectrumCoef_d> > mp_scale;
+    intrusive_ptr<const Texture<SpectrumCoef_d>> mp_scale;
   };
 
 /////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////

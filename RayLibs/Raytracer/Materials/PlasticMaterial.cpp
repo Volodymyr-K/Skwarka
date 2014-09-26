@@ -10,8 +10,8 @@
 // Register the derived class in the boost serialization framework.
 BOOST_CLASS_EXPORT_IMPLEMENT(PlasticMaterial);
 
-PlasticMaterial::PlasticMaterial(intrusive_ptr<const Texture<SpectrumCoef_d> > ip_diffuse_reflectance, intrusive_ptr<const Texture<SpectrumCoef_d> > ip_glossy_reflectance, 
-                                 intrusive_ptr<const Texture<double> > ip_roughness):
+PlasticMaterial::PlasticMaterial(intrusive_ptr<const Texture<SpectrumCoef_d>> ip_diffuse_reflectance, intrusive_ptr<const Texture<SpectrumCoef_d>> ip_glossy_reflectance, 
+                                 intrusive_ptr<const Texture<double>> ip_roughness):
 Material(), mp_glossy_reflectance(ip_glossy_reflectance), mp_diffuse_reflectance(ip_diffuse_reflectance), mp_roughness(ip_roughness)
   {
   ASSERT(ip_diffuse_reflectance);

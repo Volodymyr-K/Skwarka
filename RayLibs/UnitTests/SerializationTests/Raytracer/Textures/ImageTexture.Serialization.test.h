@@ -22,11 +22,11 @@ class ImageTextureSerializationTestSuite : public CxxTest::TestSuite
 
     void test_ImageTexture_Serialization()
       {
-      std::vector<std::vector<Spectrum_f> > image;
+      std::vector<std::vector<Spectrum_f>> image;
       _CreateRedBueCheckerboardImage(100,90,image);
 
       intrusive_ptr<Mapping2D> p_mapping( new UVMapping2D() );
-      intrusive_ptr<Texture<Spectrum_d> > p_texture1(new ImageTexture<Spectrum_f,Spectrum_d>(image, p_mapping) );
+      intrusive_ptr<Texture<Spectrum_d>> p_texture1(new ImageTexture<Spectrum_f,Spectrum_d>(image, p_mapping) );
 
         {
         boost::iostreams::stream_buffer<SinkDevice> buffer(m_data, m_buffer_size);
@@ -34,7 +34,7 @@ class ImageTextureSerializationTestSuite : public CxxTest::TestSuite
         output_archive << p_texture1;
         } // archive and stream closed when destructors are called
 
-      intrusive_ptr<Texture<Spectrum_d> > p_texture2;
+      intrusive_ptr<Texture<Spectrum_d>> p_texture2;
 
         {
         boost::iostreams::stream_buffer<SourceDevice> buffer(m_data, m_buffer_size);
@@ -61,7 +61,7 @@ class ImageTextureSerializationTestSuite : public CxxTest::TestSuite
       }
 
   private:
-    void _CreateRedBueCheckerboardImage(size_t i_width, size_t i_height, std::vector<std::vector<Spectrum_f> > &o_image)
+    void _CreateRedBueCheckerboardImage(size_t i_width, size_t i_height, std::vector<std::vector<Spectrum_f>> &o_image)
       {
       o_image.assign(i_height,std::vector<Spectrum_f>(i_width,Spectrum_f()));
 

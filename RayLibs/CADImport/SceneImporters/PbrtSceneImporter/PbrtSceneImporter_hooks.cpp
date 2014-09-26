@@ -193,12 +193,12 @@ void PbrtSceneImporter::_pbrtTexture(PbrtImport::SubString i_name, PbrtImport::S
   PbrtImport::TextureParams tp(i_params, i_params, m_graphicsState.floatTextures, m_graphicsState.spectrumTextures);
   if (type == "float")
     {
-    intrusive_ptr<const Texture<double> > ft = m_texture_factory.CreateFloatTexture(texname, m_current_transform, tp);
+    intrusive_ptr<const Texture<double>> ft = m_texture_factory.CreateFloatTexture(texname, m_current_transform, tp);
     if (ft) m_graphicsState.floatTextures[name] = ft;
     }
   else if (type == "color") 
     {
-    intrusive_ptr<const Texture<SpectrumCoef_d> > st = m_texture_factory.CreateSpectrumCoefTexture(texname, m_current_transform, tp);
+    intrusive_ptr<const Texture<SpectrumCoef_d>> st = m_texture_factory.CreateSpectrumCoefTexture(texname, m_current_transform, tp);
     if (st) m_graphicsState.spectrumTextures[name] = st;
     }
   else
@@ -275,7 +275,7 @@ void PbrtSceneImporter::_pbrtShape(PbrtImport::SubString i_name, const PbrtImpor
     p_area = light_source_factory.CreateAreaLight(m_graphicsState.areaLight, m_current_transform, m_graphicsState.areaLightParams, p_mesh);
     }
 
-  intrusive_ptr<const Texture<double> > p_bump_map;
+  intrusive_ptr<const Texture<double>> p_bump_map;
   if (m_graphicsState.m_material_to_bump_map.find(mtl.get())!=m_graphicsState.m_material_to_bump_map.end())
     p_bump_map = m_graphicsState.m_material_to_bump_map.find(mtl.get())->second;
 
@@ -324,7 +324,7 @@ void PbrtSceneImporter::_pbrtObjectBegin(PbrtImport::SubString i_name)
     }
 
   std::string name(i_name.to_string());
-  mp_renderOptions->instances[name] = std::vector<intrusive_ptr<const Primitive> >();
+  mp_renderOptions->instances[name] = std::vector<intrusive_ptr<const Primitive>>();
   mp_renderOptions->currentInstance = &mp_renderOptions->instances[name];
   }
 
@@ -360,7 +360,7 @@ void PbrtSceneImporter::_pbrtObjectInstance(PbrtImport::SubString i_name)
     return;
     }
 
-  std::vector<intrusive_ptr<const Primitive> > &inst = mp_renderOptions->instances[name];
+  std::vector<intrusive_ptr<const Primitive>> &inst = mp_renderOptions->instances[name];
   if (inst.empty()) return;
 
   for(size_t i=0;i<inst.size();++i)

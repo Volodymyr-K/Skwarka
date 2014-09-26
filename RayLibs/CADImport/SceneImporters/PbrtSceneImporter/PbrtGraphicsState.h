@@ -21,18 +21,18 @@ namespace PbrtImport
 
     intrusive_ptr<const Material> CreateMaterial(const ParamSet &i_params) const;
 
-    std::map<std::string, intrusive_ptr<const Texture<double> > > floatTextures;
-    std::map<std::string, intrusive_ptr<const Texture<SpectrumCoef_d> > > spectrumTextures;
+    std::map<std::string, intrusive_ptr<const Texture<double>>> floatTextures;
+    std::map<std::string, intrusive_ptr<const Texture<SpectrumCoef_d>>> spectrumTextures;
     ParamSet materialParams;
     std::string material;
-    mutable std::map<std::string, intrusive_ptr<const Material> > namedMaterials;
+    mutable std::map<std::string, intrusive_ptr<const Material>> namedMaterials;
     std::string currentNamedMaterial;
     ParamSet areaLightParams;
     std::string areaLight;
     bool reverseOrientation;
 
     intrusive_ptr<Log> mp_log;
-    mutable std::map<const Material *, intrusive_ptr<const Texture<double> > > m_material_to_bump_map;
+    mutable std::map<const Material *, intrusive_ptr<const Texture<double>>> m_material_to_bump_map;
     };
 
   };

@@ -26,14 +26,14 @@ class MixMaterialSerializationTestSuite : public CxxTest::TestSuite
 
     void test_MixMaterial_Serialization()
       {
-      intrusive_ptr<Texture<SpectrumCoef_d> > p_reflectance1( new ConstantTexture<SpectrumCoef_d>(SpectrumCoef_d(1.0,0.5,0.1)) );
-      intrusive_ptr<Texture<SpectrumCoef_d> > p_reflectance2( new ConstantTexture<SpectrumCoef_d>(SpectrumCoef_d(0.2,0.8,0.9)) );
-      intrusive_ptr<ConstantTexture<double> > p_sigma1( new ConstantTexture<double>(0.1) );
-      intrusive_ptr<ConstantTexture<double> > p_sigma2( new ConstantTexture<double>(0.6) );
+      intrusive_ptr<Texture<SpectrumCoef_d>> p_reflectance1( new ConstantTexture<SpectrumCoef_d>(SpectrumCoef_d(1.0,0.5,0.1)) );
+      intrusive_ptr<Texture<SpectrumCoef_d>> p_reflectance2( new ConstantTexture<SpectrumCoef_d>(SpectrumCoef_d(0.2,0.8,0.9)) );
+      intrusive_ptr<ConstantTexture<double>> p_sigma1( new ConstantTexture<double>(0.1) );
+      intrusive_ptr<ConstantTexture<double>> p_sigma2( new ConstantTexture<double>(0.6) );
 
       intrusive_ptr<Material> p_material1( new MatteMaterial(p_reflectance1, p_sigma1) );
       intrusive_ptr<Material> p_material2( new MatteMaterial(p_reflectance2, p_sigma2) );
-      intrusive_ptr<Texture<SpectrumCoef_d> > p_scale( new ConstantTexture<SpectrumCoef_d>(SpectrumCoef_d((0.3,0.5,0.7))) );
+      intrusive_ptr<Texture<SpectrumCoef_d>> p_scale( new ConstantTexture<SpectrumCoef_d>(SpectrumCoef_d((0.3,0.5,0.7))) );
 
       intrusive_ptr<Material> p_mix_material1(new MixMaterial(p_material1, p_material2, p_scale) );
 

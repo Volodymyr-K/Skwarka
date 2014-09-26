@@ -75,7 +75,7 @@ namespace PbrtImport
           }
 
         size_t ind = 0;
-        std::vector<std::vector<std::vector<float> > > densities(nx, std::vector<std::vector<float> >(ny, std::vector<float>(nz)));
+        std::vector<std::vector<std::vector<float>>> densities(nx, std::vector<std::vector<float>>(ny, std::vector<float>(nz)));
         for(int z=0;z<nz;++z)
           for(int y=0;y<ny;++y)
             for(int x=0;x<nx;++x)

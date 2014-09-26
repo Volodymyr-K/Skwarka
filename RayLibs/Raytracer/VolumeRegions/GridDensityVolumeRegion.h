@@ -21,7 +21,7 @@ class GridDensityVolumeRegion: public DensityVolumeRegion
     * Creates GridDensityVolumeRegion instance with specified base emission, absorption, scattering, bounding box and the 3D array defining the density values.
     */
     GridDensityVolumeRegion(const BBox3D_d &i_bounds, Spectrum_d &i_base_emission, SpectrumCoef_d &i_base_absorption, SpectrumCoef_d &i_base_scattering,
-      intrusive_ptr<const PhaseFunction> ip_phase_function, const std::vector<std::vector<std::vector<float> > > &i_densities);
+      intrusive_ptr<const PhaseFunction> ip_phase_function, const std::vector<std::vector<std::vector<float>>> &i_densities);
 
     /**
     * Returns true if the ray intersects volume region and computes ray parametric coordinates of the intersection region.
@@ -57,7 +57,7 @@ class GridDensityVolumeRegion: public DensityVolumeRegion
 
     size_t m_size_x, m_size_y, m_size_z;
 
-    std::vector<std::vector<std::vector<float> > > m_densities;
+    std::vector<std::vector<std::vector<float>>> m_densities;
   };
 
 /////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////

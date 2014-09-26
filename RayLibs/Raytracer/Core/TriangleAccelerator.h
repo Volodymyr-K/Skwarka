@@ -24,7 +24,7 @@ class TriangleAccelerator
     /**
     * Creates TriangleAccelerator instance for the specified primitives.
     */
-    TriangleAccelerator(std::vector<intrusive_ptr<const Primitive> > i_primitives);
+    TriangleAccelerator(std::vector<intrusive_ptr<const Primitive>> i_primitives);
 
     /**
     * Finds intersection of the specified ray.
@@ -89,7 +89,7 @@ class TriangleAccelerator
     // Indices of the triangles in their meshes the corresponding triangles belong to.
     std::vector<size_t> m_triangle_indices;
 
-    std::vector<intrusive_ptr<const Primitive> > m_primitives;
+    std::vector<intrusive_ptr<const Primitive>> m_primitives;
 
     // Root node of the tree.
     Node *mp_root;

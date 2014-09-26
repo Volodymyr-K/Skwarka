@@ -65,7 +65,7 @@ class SpectrumRoutinesTestSuite : public CxxTest::TestSuite
     // Test with no samples
     void test_SpectrumRoutines_SampledToXYZ()
       {
-      std::vector<std::pair<float,float> > samples;
+      std::vector<std::pair<float,float>> samples;
       samples.push_back(std::make_pair(0.f,100.f));
       samples.push_back(std::make_pair(1000.f,200.f));
       XYZColor_f xyz = SpectrumRoutines::SampledToXYZ(samples);
@@ -77,7 +77,7 @@ class SpectrumRoutinesTestSuite : public CxxTest::TestSuite
     // Test with no samples
     void test_SpectrumRoutines_SampledToSpectrum_NoSamples()
       {
-      std::vector<std::pair<double,double> > samples;
+      std::vector<std::pair<double,double>> samples;
       Spectrum_d s = SpectrumRoutines::SampledToSpectrum(samples);
 
       // Is no samples the spectrum is black.
@@ -87,7 +87,7 @@ class SpectrumRoutinesTestSuite : public CxxTest::TestSuite
     // Test with a single sample.
     void test_SpectrumRoutines_SampledToSpectrum_SingleSample()
       {
-      std::vector<std::pair<double,double> > samples(1,std::make_pair(10.0,5.0));
+      std::vector<std::pair<double,double>> samples(1,std::make_pair(10.0,5.0));
       Spectrum_d s = SpectrumRoutines::SampledToSpectrum(samples);
 
       CustomAssertDelta(s, Spectrum_d(5.0), (1e-10));
@@ -96,7 +96,7 @@ class SpectrumRoutinesTestSuite : public CxxTest::TestSuite
     // Test with two samples.
     void test_SpectrumRoutines_SampledToSpectrum_TwoSamples()
       {
-      std::vector<std::pair<double,double> > samples;
+      std::vector<std::pair<double,double>> samples;
       samples.push_back(std::make_pair(0,100));
       samples.push_back(std::make_pair(1000,200));
       Spectrum_d s = SpectrumRoutines::SampledToSpectrum(samples);
@@ -107,7 +107,7 @@ class SpectrumRoutinesTestSuite : public CxxTest::TestSuite
 
     void test_SpectrumRoutines_SampledToSpectrumCoef()
       {
-      std::vector<std::pair<double,double> > samples;
+      std::vector<std::pair<double,double>> samples;
       samples.push_back(std::make_pair(300,100));
       samples.push_back(std::make_pair(400,300));
       samples.push_back(std::make_pair(500,150));

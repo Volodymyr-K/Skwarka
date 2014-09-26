@@ -26,7 +26,7 @@ struct TriangleMesh::ConnectivityData
   /**
   * Fills the vector with all triangles incident to both specified vertices.
   */
-  void GetIncidentTriangles(size_t i_vertex_index1, size_t i_vertex_index2, std::vector<size_t> &o_triangles) const;
+  std::vector<size_t> GetIncidentTriangles(size_t i_vertex_index1, size_t i_vertex_index2) const;
 
   /**
   * Vector of indices of triangles incident to all mesh vertices.
@@ -53,15 +53,16 @@ inline size_t TriangleMesh::ConnectivityData::GetIncidentTriangleIndex(size_t i_
   return m_incident_triangles[m_incident_triangles_index[i_vertex_index] + i_incident_triangle_index];
   }
 
-void TriangleMesh::ConnectivityData::GetIncidentTriangles(size_t i_vertex_index1, size_t i_vertex_index2, std::vector<size_t> &o_triangles) const
+std::vector<size_t> TriangleMesh::ConnectivityData::GetIncidentTriangles(size_t i_vertex_index1, size_t i_vertex_index2) const
   {
   ASSERT(i_vertex_index1 < m_incident_triangles_index.size());
   ASSERT(i_vertex_index2 < m_incident_triangles_index.size());
   ASSERT(i_vertex_index1 != i_vertex_index2);
+  std::vector<size_t> triangles;
 
   // Linear pass through both lists.
   // Here, we use fact that the triangle indices are order increasingly.
-  o_triangles.clear();
+  triangles.clear();
   size_t i1 = m_incident_triangles_index[i_vertex_index1];
   size_t i2 = m_incident_triangles_index[i_vertex_index2];
   while(i1 < m_incident_triangles_index[i_vertex_index1+1] && i2 < m_incident_triangles_index[i_vertex_index2+1])
@@ -72,10 +73,12 @@ void TriangleMesh::ConnectivityData::GetIncidentTriangles(size_t i_vertex_index1
       ++i2;
     else if (m_incident_triangles[i1] == m_incident_triangles[i2])
       {
-      o_triangles.push_back(m_incident_triangles[i1]);
+      triangles.push_back(m_incident_triangles[i1]);
       ++i1;++i2;
       }
     }
+
+  return triangles;
   }
 
 ////////////////// MeshTriangle //////////////////
@@ -327,8 +330,7 @@ TopologyInfo TriangleMesh::_ComputeTopologyInfo(const ConnectivityData &i_connec
           size_t v2 = current_triangle.m_vertices[(v+1)%3];
 
           size_t adjacent_triangles=0;
-          std::vector<size_t> triangles;
-          i_connectivity.GetIncidentTriangles(v1,v2,triangles);
+          std::vector<size_t> triangles = i_connectivity.GetIncidentTriangles(v1,v2);
 
           // Iterate by all the triangles incident to the current edge.
           for(size_t t=0;t<triangles.size();++t)

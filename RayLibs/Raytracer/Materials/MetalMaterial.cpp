@@ -10,8 +10,8 @@
 // Register the derived class in the boost serialization framework.
 BOOST_CLASS_EXPORT_IMPLEMENT(MetalMaterial);
 
-MetalMaterial::MetalMaterial(intrusive_ptr<const Texture<SpectrumCoef_d> > ip_refractive_index, intrusive_ptr<const Texture<SpectrumCoef_d> > ip_absorption,
-             intrusive_ptr<const Texture<double> > ip_roughness):
+MetalMaterial::MetalMaterial(intrusive_ptr<const Texture<SpectrumCoef_d>> ip_refractive_index, intrusive_ptr<const Texture<SpectrumCoef_d>> ip_absorption,
+             intrusive_ptr<const Texture<double>> ip_roughness):
 Material(), mp_refractive_index(ip_refractive_index), mp_absorption(ip_absorption), mp_roughness(ip_roughness)
   {
   ASSERT(ip_refractive_index);
@@ -19,8 +19,8 @@ Material(), mp_refractive_index(ip_refractive_index), mp_absorption(ip_absorptio
   ASSERT(ip_roughness);
   }
 
-MetalMaterial::MetalMaterial(intrusive_ptr<const Texture<SpectrumCoef_d> > ip_refractive_index, intrusive_ptr<const Texture<SpectrumCoef_d> > ip_absorption,
-             intrusive_ptr<const Texture<double> > ip_u_roughness, intrusive_ptr<const Texture<double> > ip_v_roughness):
+MetalMaterial::MetalMaterial(intrusive_ptr<const Texture<SpectrumCoef_d>> ip_refractive_index, intrusive_ptr<const Texture<SpectrumCoef_d>> ip_absorption,
+             intrusive_ptr<const Texture<double>> ip_u_roughness, intrusive_ptr<const Texture<double>> ip_v_roughness):
 Material(), mp_refractive_index(ip_refractive_index), mp_absorption(ip_absorption), mp_u_roughness(ip_u_roughness), mp_v_roughness(ip_v_roughness)
   {
   ASSERT(ip_refractive_index);
@@ -29,14 +29,14 @@ Material(), mp_refractive_index(ip_refractive_index), mp_absorption(ip_absorptio
   ASSERT(ip_v_roughness);
   }
 
-MetalMaterial::MetalMaterial(intrusive_ptr<const Texture<SpectrumCoef_d> > ip_reflectance, intrusive_ptr<const Texture<double> > ip_roughness):
+MetalMaterial::MetalMaterial(intrusive_ptr<const Texture<SpectrumCoef_d>> ip_reflectance, intrusive_ptr<const Texture<double>> ip_roughness):
   Material(), mp_reflectance(ip_reflectance), mp_roughness(ip_roughness)
     {
     ASSERT(ip_reflectance);
     ASSERT(ip_roughness);
     }
 
-MetalMaterial::MetalMaterial(intrusive_ptr<const Texture<SpectrumCoef_d> > ip_reflectance, intrusive_ptr<const Texture<double> > ip_u_roughness, intrusive_ptr<const Texture<double> > ip_v_roughness):
+MetalMaterial::MetalMaterial(intrusive_ptr<const Texture<SpectrumCoef_d>> ip_reflectance, intrusive_ptr<const Texture<double>> ip_u_roughness, intrusive_ptr<const Texture<double>> ip_v_roughness):
 Material(), mp_reflectance(ip_reflectance), mp_u_roughness(ip_u_roughness), mp_v_roughness(ip_v_roughness)
   {
   ASSERT(ip_reflectance);

@@ -25,11 +25,11 @@ class UberMaterial: public Material
     * @param ip_opacity The texture defining the opacity of the surface. Each spectrum component should be in [0;1] range.
     * @param i_refractive_index The texture defining the opacity of the surface. Each spectrum component should be in [0;1] range.
     */
-    UberMaterial(intrusive_ptr<const Texture<SpectrumCoef_d> > ip_Kd,
-      intrusive_ptr<const Texture<SpectrumCoef_d> > ip_Ks,
-      intrusive_ptr<const Texture<SpectrumCoef_d> > ip_Kr,
-      intrusive_ptr<const Texture<double> > ip_roughness,
-      intrusive_ptr<const Texture<SpectrumCoef_d> > ip_opacity,
+    UberMaterial(intrusive_ptr<const Texture<SpectrumCoef_d>> ip_Kd,
+      intrusive_ptr<const Texture<SpectrumCoef_d>> ip_Ks,
+      intrusive_ptr<const Texture<SpectrumCoef_d>> ip_Kr,
+      intrusive_ptr<const Texture<double>> ip_roughness,
+      intrusive_ptr<const Texture<SpectrumCoef_d>> ip_opacity,
       double i_refractive_index);
 
     /**
@@ -55,8 +55,8 @@ class UberMaterial: public Material
     void serialize(Archive &i_ar, const unsigned int i_version);
 
   private:
-    intrusive_ptr<const Texture<SpectrumCoef_d> > mp_Kd, mp_Ks, mp_Kr, mp_opacity;
-    intrusive_ptr<const Texture<double> > mp_roughness;
+    intrusive_ptr<const Texture<SpectrumCoef_d>> mp_Kd, mp_Ks, mp_Kr, mp_opacity;
+    intrusive_ptr<const Texture<double>> mp_roughness;
     double m_refractive_index;
   };
 

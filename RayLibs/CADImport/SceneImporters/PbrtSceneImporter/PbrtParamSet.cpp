@@ -144,7 +144,7 @@ namespace PbrtImport
     ASSERT(nItems % 2 == 0);
     nItems /= 2;
     float *wl = new float[nItems], *v = new float[nItems];
-    std::vector<std::pair<double, double> > samples(nItems);
+    std::vector<std::pair<double, double>> samples(nItems);
     for (int i = 0; i < nItems; ++i)
       {
       samples[i].first  = data[2*i];
@@ -160,7 +160,7 @@ namespace PbrtImport
     ASSERT(nItems % 2 == 0);
     nItems /= 2;
     float *wl = new float[nItems], *v = new float[nItems];
-    std::vector<std::pair<double, double> > samples(nItems);
+    std::vector<std::pair<double, double>> samples(nItems);
     for (int i = 0; i < nItems; ++i)
       {
       samples[i].first  = data[2*i];
@@ -196,7 +196,7 @@ namespace PbrtImport
         if ((vals.size() % 2) && ip_log)
           ip_log->LogMessage(Log::WARNING_LEVEL, std::string("Extra value found in spectrum file \"") + full_name + std::string("\".  Ignoring it."));
 
-        std::vector<std::pair<double, double> > samples(vals.size()/2);
+        std::vector<std::pair<double, double>> samples(vals.size()/2);
         for (size_t j = 0; j < vals.size()/2; ++j)
           {
           samples[j].first  = vals[2*j];
@@ -237,7 +237,7 @@ namespace PbrtImport
         if ((vals.size() % 2) && ip_log)
           ip_log->LogMessage(Log::WARNING_LEVEL, std::string("Extra value found in spectrum file \"") + full_name + std::string("\".  Ignoring it."));
 
-        std::vector<std::pair<double, double> > samples(vals.size()/2);
+        std::vector<std::pair<double, double>> samples(vals.size()/2);
         for (size_t j = 0; j < vals.size()/2; ++j)
           {
           samples[j].first  = vals[2*j];
@@ -431,7 +431,7 @@ namespace PbrtImport
     }
 
   // TextureParams Method Definitions
-  intrusive_ptr<const Texture<SpectrumCoef_d> > TextureParams::GetSpectrumCoefTexture(const std::string &n, const SpectrumCoef_d &def, intrusive_ptr<Log> ip_log) const
+  intrusive_ptr<const Texture<SpectrumCoef_d>> TextureParams::GetSpectrumCoefTexture(const std::string &n, const SpectrumCoef_d &def, intrusive_ptr<Log> ip_log) const
     {
     std::string name = geomParams.FindTexture(n);
     if (name == "") name = materialParams.FindTexture(n);
@@ -451,7 +451,7 @@ namespace PbrtImport
     return new ConstantTexture<SpectrumCoef_d>(val);
     }
 
-  intrusive_ptr<const Texture<double> > TextureParams::GetFloatTexture(const std::string &n, float def, intrusive_ptr<Log> ip_log) const
+  intrusive_ptr<const Texture<double>> TextureParams::GetFloatTexture(const std::string &n, float def, intrusive_ptr<Log> ip_log) const
     {
     std::string name = geomParams.FindTexture(n);
     if (name == "") name = materialParams.FindTexture(n);

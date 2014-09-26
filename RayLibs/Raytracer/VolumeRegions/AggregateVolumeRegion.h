@@ -18,7 +18,7 @@ class AggregateVolumeRegion: public VolumeRegion
     /**
     * Creates AggregateVolumeRegion instance with specified volume regions.
     */
-    AggregateVolumeRegion(const std::vector<intrusive_ptr<const VolumeRegion> > &i_volume_regions);
+    AggregateVolumeRegion(const std::vector<intrusive_ptr<const VolumeRegion>> &i_volume_regions);
 
     /**
     * Returns bounding box for all volume regions.
@@ -94,7 +94,7 @@ class AggregateVolumeRegion: public VolumeRegion
     void serialize(Archive &i_ar, const unsigned int i_version);
 
   private:
-    std::vector<intrusive_ptr<const VolumeRegion> > m_volume_regions;
+    std::vector<intrusive_ptr<const VolumeRegion>> m_volume_regions;
 
     BBox3D_d m_bounds;
   };

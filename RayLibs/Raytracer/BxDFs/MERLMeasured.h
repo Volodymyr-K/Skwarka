@@ -156,7 +156,7 @@ class MERLMeasuredData::Segmentation2D
     * Initializes Segmentation2D with the specified 2D array of luminance values.
     * The input array will be reduced to the necessary size by merging some adjacent rows and columns (see _Reduce() method).
     */
-    Segmentation2D(const std::vector<std::vector<float> > &i_values);
+    Segmentation2D(const std::vector<std::vector<float>> &i_values);
 
     /**
     * Samples 2D point on the [0;1]x[0;1] domain with the PDF defined by the class instance.

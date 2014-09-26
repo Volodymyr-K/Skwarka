@@ -94,7 +94,7 @@ namespace PbrtImport
         }
 
       intrusive_ptr<TriangleMesh> _CreateTriangleMeshShape(const Transform &i_obj_to_world, bool i_reverse_orientation, const ParamSet &i_params,
-        const std::map<std::string, intrusive_ptr<const Texture<double> > > &i_float_textures) const
+        const std::map<std::string, intrusive_ptr<const Texture<double>>> &i_float_textures) const
         {
         int nvi, npi, nuvi, nsi, nni;
         const int *vi = i_params.FindInt("indices", &nvi);
@@ -168,7 +168,7 @@ namespace PbrtImport
             return NULL;
             }
 
-        intrusive_ptr<const Texture<double> > alphaTex = NULL;
+        intrusive_ptr<const Texture<double>> alphaTex = NULL;
         std::string alphaTexName = i_params.FindTexture("alpha");
         if (alphaTexName != "")
           {

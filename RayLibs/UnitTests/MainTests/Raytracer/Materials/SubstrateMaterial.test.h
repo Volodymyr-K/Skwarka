@@ -21,9 +21,9 @@ class SubstrateMaterialTestSuite : public CxxTest::TestSuite
     void test_SubstrateMaterial_Isotropic()
       {
       SpectrumCoef_d diffuse_reflectance(0.4,0.5,0.6), specular_reflectance(0.5);
-      intrusive_ptr<Texture<SpectrumCoef_d> > p_diffuse_reflectance( new TextureMock<SpectrumCoef_d>(diffuse_reflectance) );
-      intrusive_ptr<Texture<SpectrumCoef_d> > p_specular_reflectance( new TextureMock<SpectrumCoef_d>(specular_reflectance) );
-      intrusive_ptr<Texture<double> > p_roughness( new TextureMock<double>(0.025) );
+      intrusive_ptr<Texture<SpectrumCoef_d>> p_diffuse_reflectance( new TextureMock<SpectrumCoef_d>(diffuse_reflectance) );
+      intrusive_ptr<Texture<SpectrumCoef_d>> p_specular_reflectance( new TextureMock<SpectrumCoef_d>(specular_reflectance) );
+      intrusive_ptr<Texture<double>> p_roughness( new TextureMock<double>(0.025) );
 
       intrusive_ptr<Material> p_material(new SubstrateMaterial(p_diffuse_reflectance, p_specular_reflectance, p_roughness));
 
@@ -48,10 +48,10 @@ class SubstrateMaterialTestSuite : public CxxTest::TestSuite
     void test_SubstrateMaterial_Anisotropic()
       {
       SpectrumCoef_d diffuse_reflectance(0.4,0.5,0.6), specular_reflectance(0.5);
-      intrusive_ptr<Texture<SpectrumCoef_d> > p_diffuse_reflectance( new TextureMock<SpectrumCoef_d>(diffuse_reflectance) );
-      intrusive_ptr<Texture<SpectrumCoef_d> > p_specular_reflectance( new TextureMock<SpectrumCoef_d>(specular_reflectance) );
-      intrusive_ptr<Texture<double> > p_u_roughness( new TextureMock<double>(0.025) );
-      intrusive_ptr<Texture<double> > p_v_roughness( new TextureMock<double>(0.125) );
+      intrusive_ptr<Texture<SpectrumCoef_d>> p_diffuse_reflectance( new TextureMock<SpectrumCoef_d>(diffuse_reflectance) );
+      intrusive_ptr<Texture<SpectrumCoef_d>> p_specular_reflectance( new TextureMock<SpectrumCoef_d>(specular_reflectance) );
+      intrusive_ptr<Texture<double>> p_u_roughness( new TextureMock<double>(0.025) );
+      intrusive_ptr<Texture<double>> p_v_roughness( new TextureMock<double>(0.125) );
 
       intrusive_ptr<Material> p_material(new SubstrateMaterial(p_diffuse_reflectance, p_specular_reflectance, p_u_roughness, p_v_roughness));
 

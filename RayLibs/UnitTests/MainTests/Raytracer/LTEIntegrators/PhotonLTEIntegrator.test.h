@@ -35,7 +35,7 @@ class PhotonLTEIntegratorTestSuite : public CxxTest::TestSuite
       SpectrumCoef_d reflectance(0.7,0.8,0.9);
       intrusive_ptr<AreaLightSource> p_light( new DiffuseAreaLightSource(light_radiance, mp_sphere) );
       intrusive_ptr<Primitive> p_primitive = _CreatePrimitive(mp_sphere, reflectance, p_light);
-      std::vector<intrusive_ptr<const Primitive> > primitives(1, p_primitive);
+      std::vector<intrusive_ptr<const Primitive>> primitives(1, p_primitive);
 
       LightSources lights;
       lights.m_area_light_sources.push_back(p_light);
@@ -74,7 +74,7 @@ class PhotonLTEIntegratorTestSuite : public CxxTest::TestSuite
       Spectrum_d light_intentsity(100,90,80);
       SpectrumCoef_d reflectance(0.7,0.8,0.9);
       intrusive_ptr<Primitive> p_primitive = _CreatePrimitive(mp_sphere, reflectance, NULL);
-      std::vector<intrusive_ptr<const Primitive> > primitives(1, p_primitive);
+      std::vector<intrusive_ptr<const Primitive>> primitives(1, p_primitive);
 
       LightSources lights;
       intrusive_ptr<DeltaLightSource> p_light( new PointLight(Point3D_d(0,0,0), light_intentsity) );
@@ -114,7 +114,7 @@ class PhotonLTEIntegratorTestSuite : public CxxTest::TestSuite
       Spectrum_d light_radiance(100,90,80);
       SpectrumCoef_d reflectance(0.7,0.8,0.9);
       intrusive_ptr<Primitive> p_primitive = _CreatePrimitive(mp_sphere, reflectance, NULL);
-      std::vector<intrusive_ptr<const Primitive> > primitives(1, p_primitive);
+      std::vector<intrusive_ptr<const Primitive>> primitives(1, p_primitive);
 
       LightSources lights;
       intrusive_ptr<DeltaLightSource> p_light( new PointLight(Point3D_d(0,0,0), light_radiance) );
@@ -152,8 +152,8 @@ class PhotonLTEIntegratorTestSuite : public CxxTest::TestSuite
   private:
     intrusive_ptr<Primitive> _CreatePrimitive(intrusive_ptr<TriangleMesh> ip_mesh, SpectrumCoef_d i_reflectance, intrusive_ptr<AreaLightSource> ip_light = NULL) const
       {
-      intrusive_ptr<Texture<SpectrumCoef_d> > p_reflectance( new ConstantTexture<SpectrumCoef_d>(i_reflectance) );
-      intrusive_ptr<Texture<double> > p_sigma( new ConstantTexture<double>(0.0) );
+      intrusive_ptr<Texture<SpectrumCoef_d>> p_reflectance( new ConstantTexture<SpectrumCoef_d>(i_reflectance) );
+      intrusive_ptr<Texture<double>> p_sigma( new ConstantTexture<double>(0.0) );
       intrusive_ptr<Material> p_material(new MatteMaterial(p_reflectance, p_sigma));
       intrusive_ptr<Primitive> p_primitive(new Primitive(ip_mesh, Transform(), p_material, ip_light));
       return p_primitive;

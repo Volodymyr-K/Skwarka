@@ -12,7 +12,7 @@ class RandomGeneratorTestSuite : public CxxTest::TestSuite
   public:
     void setUp()
       {
-      mp_gen = shared_ptr<RandomGenerator<double> > ( new RandomGenerator<double>() );
+      mp_gen = shared_ptr<RandomGenerator<double>> ( new RandomGenerator<double>() );
       }
 
     void tearDown()
@@ -59,7 +59,7 @@ class RandomGeneratorTestSuite : public CxxTest::TestSuite
     // Test that two different instances of the same generator produce the same sequence of random values.
     void test_Correlation()
       {
-      shared_ptr<RandomGenerator<double> > mp_gen2 = shared_ptr<RandomGenerator<double> > ( new RandomGenerator<double>() );
+      shared_ptr<RandomGenerator<double>> mp_gen2 = shared_ptr<RandomGenerator<double>> ( new RandomGenerator<double>() );
 
       bool match=true;
       for(size_t i=0;i<1000;++i)
@@ -73,7 +73,7 @@ class RandomGeneratorTestSuite : public CxxTest::TestSuite
 
     void test_Seed()
       {
-      shared_ptr<RandomGenerator<double> > mp_gen2 = shared_ptr<RandomGenerator<double> > ( new RandomGenerator<double>() );
+      shared_ptr<RandomGenerator<double>> mp_gen2 = shared_ptr<RandomGenerator<double>> ( new RandomGenerator<double>() );
       mp_gen2->SetSeed(123);
 
       bool match=true;
@@ -87,7 +87,7 @@ class RandomGeneratorTestSuite : public CxxTest::TestSuite
       }
 
   private:
-    shared_ptr<RandomGenerator<double> > mp_gen;
+    shared_ptr<RandomGenerator<double>> mp_gen;
   };
 
 #endif // RANDOM_GENERATOR_TEST_H

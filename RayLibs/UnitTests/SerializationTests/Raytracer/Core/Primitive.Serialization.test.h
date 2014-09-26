@@ -29,13 +29,13 @@ class PrimitiveSerializationTestSuite : public CxxTest::TestSuite
 
     void test_Primitive_Serialization()
       {
-      intrusive_ptr<Texture<SpectrumCoef_d> > p_reflectance( new ConstantTexture<SpectrumCoef_d>(SpectrumCoef_d(1.0)) );
-      intrusive_ptr<Texture<double> > p_sigma( new ConstantTexture<double>(0.1) );
+      intrusive_ptr<Texture<SpectrumCoef_d>> p_reflectance( new ConstantTexture<SpectrumCoef_d>(SpectrumCoef_d(1.0)) );
+      intrusive_ptr<Texture<double>> p_sigma( new ConstantTexture<double>(0.1) );
 
       intrusive_ptr<TriangleMesh> p_mesh = TriangleMeshHelper::ConstructSphere(Point3D_d(1,2,3), 3.14, 5);
       intrusive_ptr<Material> p_material( new MatteMaterial(p_reflectance, p_sigma) );
       intrusive_ptr<AreaLightSource> p_area_light( new DiffuseAreaLightSource(Spectrum_d(1.0), p_mesh) );
-      intrusive_ptr<Texture<double> > p_bump_map( new ConstantTexture<double>(1.0) );
+      intrusive_ptr<Texture<double>> p_bump_map( new ConstantTexture<double>(1.0) );
 
       Transform transform = MakeScale(2,3,4)*MakeRotationZ(0.1);
       intrusive_ptr<Primitive> p_primitive1( new Primitive(p_mesh, transform, p_material, p_area_light, p_bump_map) );

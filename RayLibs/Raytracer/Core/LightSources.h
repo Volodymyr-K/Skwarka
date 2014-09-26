@@ -235,11 +235,11 @@ class AreaLightSource: public ReferenceCounted
 */
 struct LightSources
   {
-  std::vector<intrusive_ptr<const DeltaLightSource> > m_delta_light_sources;
+  std::vector<intrusive_ptr<const DeltaLightSource>> m_delta_light_sources;
 
-  std::vector<intrusive_ptr<const InfiniteLightSource> > m_infinite_light_sources;
+  std::vector<intrusive_ptr<const InfiniteLightSource>> m_infinite_light_sources;
 
-  std::vector<intrusive_ptr<const AreaLightSource> > m_area_light_sources;
+  std::vector<intrusive_ptr<const AreaLightSource>> m_area_light_sources;
   };
 
 /////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////

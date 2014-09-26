@@ -7,7 +7,7 @@
 
 /////////////////////////////////// MERLMeasuredData::Segmentation2D //////////////////////////////////////
 
-MERLMeasuredData::Segmentation2D::Segmentation2D(const std::vector<std::vector<float> > &i_values)
+MERLMeasuredData::Segmentation2D::Segmentation2D(const std::vector<std::vector<float>> &i_values)
 {
   size_t size_x = SEGMENTATION_EXITANT_PHI_RES, size_y = SEGMENTATION_EXITANT_THETA_RES;
   ASSERT(i_values.size()>=size_y && i_values[0].size()>=size_x);
@@ -213,7 +213,7 @@ void MERLMeasuredData::_InitializeSegmentations()
   const size_t exitant_phi_res = SEGMENTATION_MULTIPLIER*SEGMENTATION_EXITANT_PHI_RES;
   double phi_coef = M_PI / (exitant_phi_res), theta_coef = M_PI_2 / (exitant_theta_res);
 
-  std::vector<std::vector<float> > values(exitant_theta_res, std::vector<float>(exitant_phi_res));
+  std::vector<std::vector<float>> values(exitant_theta_res, std::vector<float>(exitant_phi_res));
   for(size_t i=0;i<SEGMENTATION_INCIDENT_THETA_RES;++i)
     {
     double incident_theta = (i+0.5)*M_PI_2/SEGMENTATION_INCIDENT_THETA_RES;

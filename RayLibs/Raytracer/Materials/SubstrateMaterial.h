@@ -23,8 +23,8 @@ class SubstrateMaterial: public Material
     * @param ip_specular_reflectance The texture defining the reflectance of the glossy layer at normal incidence. Each spectrum component should be in [0;1] range.
     * @param ip_roughness The texture defining the roughness of the surface. Values should be in [0;1] range.
     */
-    SubstrateMaterial(intrusive_ptr<const Texture<SpectrumCoef_d> > ip_diffuse_reflectance, intrusive_ptr<const Texture<SpectrumCoef_d> > ip_specular_reflectance, 
-      intrusive_ptr<const Texture<double> > ip_roughness);
+    SubstrateMaterial(intrusive_ptr<const Texture<SpectrumCoef_d>> ip_diffuse_reflectance, intrusive_ptr<const Texture<SpectrumCoef_d>> ip_specular_reflectance, 
+      intrusive_ptr<const Texture<double>> ip_roughness);
 
     /**
     * Creates SubstrateMaterial instance with the specified textures defining the reflectance and roughness.
@@ -34,8 +34,8 @@ class SubstrateMaterial: public Material
     * @param ip_u_roughness The texture defining the roughness of the surface in U direction. Values should be in [0;1] range.
     * @param ip_v_roughness The texture defining the roughness of the surface in V direction. Values should be in [0;1] range.
     */
-    SubstrateMaterial(intrusive_ptr<const Texture<SpectrumCoef_d> > ip_diffuse_reflectance, intrusive_ptr<const Texture<SpectrumCoef_d> > ip_specular_reflectance, 
-      intrusive_ptr<const Texture<double> > ip_u_roughness, intrusive_ptr<const Texture<double> > ip_v_roughness);
+    SubstrateMaterial(intrusive_ptr<const Texture<SpectrumCoef_d>> ip_diffuse_reflectance, intrusive_ptr<const Texture<SpectrumCoef_d>> ip_specular_reflectance, 
+      intrusive_ptr<const Texture<double>> ip_u_roughness, intrusive_ptr<const Texture<double>> ip_v_roughness);
 
     /**
     * Returns a pointer to BSDF describing local scattering properties at the specified surface point.
@@ -60,9 +60,9 @@ class SubstrateMaterial: public Material
     void serialize(Archive &i_ar, const unsigned int i_version);
 
   private:
-    intrusive_ptr<const Texture<SpectrumCoef_d> > mp_diffuse_reflectance, mp_specular_reflectance;
+    intrusive_ptr<const Texture<SpectrumCoef_d>> mp_diffuse_reflectance, mp_specular_reflectance;
 
-    intrusive_ptr<const Texture<double> > mp_roughness, mp_u_roughness, mp_v_roughness;
+    intrusive_ptr<const Texture<double>> mp_roughness, mp_u_roughness, mp_v_roughness;
   };
 
 /////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////

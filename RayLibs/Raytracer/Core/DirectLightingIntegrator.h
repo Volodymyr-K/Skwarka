@@ -105,7 +105,7 @@ class DirectLightingIntegrator: public ReferenceCounted
     double m_media_step_size;
 
     intrusive_ptr<const LightsSamplingStrategy> mp_lights_sampling_strategy;
-    std::vector<std::pair<const AreaLightSource *,size_t> > m_area_lights_sorted;
+    std::vector<std::pair<const AreaLightSource *,size_t>> m_area_lights_sorted;
 
     // IDs of the samples sequences returned by the Sampler.
     size_t m_light_1D_samples_id, m_light_2D_samples_id, m_bsdf_1D_samples_id, m_bsdf_2D_samples_id;

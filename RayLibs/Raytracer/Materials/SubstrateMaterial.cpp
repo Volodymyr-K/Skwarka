@@ -9,8 +9,8 @@
 // Register the derived class in the boost serialization framework.
 BOOST_CLASS_EXPORT_IMPLEMENT(SubstrateMaterial);
 
-SubstrateMaterial::SubstrateMaterial(intrusive_ptr<const Texture<SpectrumCoef_d> > ip_diffuse_reflectance, intrusive_ptr<const Texture<SpectrumCoef_d> > ip_specular_reflectance, 
-                     intrusive_ptr<const Texture<double> > ip_roughness):
+SubstrateMaterial::SubstrateMaterial(intrusive_ptr<const Texture<SpectrumCoef_d>> ip_diffuse_reflectance, intrusive_ptr<const Texture<SpectrumCoef_d>> ip_specular_reflectance, 
+                     intrusive_ptr<const Texture<double>> ip_roughness):
 Material(), mp_specular_reflectance(ip_specular_reflectance), mp_diffuse_reflectance(ip_diffuse_reflectance), mp_roughness(ip_roughness)
   {
   ASSERT(ip_diffuse_reflectance);
@@ -18,8 +18,8 @@ Material(), mp_specular_reflectance(ip_specular_reflectance), mp_diffuse_reflect
   ASSERT(ip_roughness);
   }
 
-SubstrateMaterial::SubstrateMaterial(intrusive_ptr<const Texture<SpectrumCoef_d> > ip_diffuse_reflectance, intrusive_ptr<const Texture<SpectrumCoef_d> > ip_specular_reflectance, 
-                     intrusive_ptr<const Texture<double> > ip_u_roughness, intrusive_ptr<const Texture<double> > ip_v_roughness):
+SubstrateMaterial::SubstrateMaterial(intrusive_ptr<const Texture<SpectrumCoef_d>> ip_diffuse_reflectance, intrusive_ptr<const Texture<SpectrumCoef_d>> ip_specular_reflectance, 
+                     intrusive_ptr<const Texture<double>> ip_u_roughness, intrusive_ptr<const Texture<double>> ip_v_roughness):
 Material(), mp_specular_reflectance(ip_specular_reflectance), mp_diffuse_reflectance(ip_diffuse_reflectance), mp_u_roughness(ip_u_roughness), mp_v_roughness(ip_v_roughness)
   {
   ASSERT(ip_diffuse_reflectance);

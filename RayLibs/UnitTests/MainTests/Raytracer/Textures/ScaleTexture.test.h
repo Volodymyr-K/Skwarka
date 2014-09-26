@@ -16,9 +16,9 @@ class ScaleTextureTestSuite : public CxxTest::TestSuite
       {
       SpectrumCoef_d s1(1.0,2.0,3.0);
       Spectrum_d s2(0.5,2.5,3.2);
-      intrusive_ptr<Texture<SpectrumCoef_d> > p_texture1(new TextureMock<SpectrumCoef_d>(s1));
-      intrusive_ptr<Texture<Spectrum_d> > p_texture2(new TextureMock<Spectrum_d>(s2) );
-      intrusive_ptr<Texture<Spectrum_d> > p_texture(new ScaleTexture<SpectrumCoef_d, Spectrum_d>(p_texture1, p_texture2) );
+      intrusive_ptr<Texture<SpectrumCoef_d>> p_texture1(new TextureMock<SpectrumCoef_d>(s1));
+      intrusive_ptr<Texture<Spectrum_d>> p_texture2(new TextureMock<Spectrum_d>(s2) );
+      intrusive_ptr<Texture<Spectrum_d>> p_texture(new ScaleTexture<SpectrumCoef_d, Spectrum_d>(p_texture1, p_texture2) );
 
       DifferentialGeometry dg; // No need to fill with any data for the constant texture.
       Spectrum_d spectrum = p_texture->Evaluate(dg, 0);

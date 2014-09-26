@@ -23,9 +23,9 @@ class ScaleTextureSerializationTestSuite : public CxxTest::TestSuite
       {
       SpectrumCoef_d s1(1.0,2.0,3.0);
       Spectrum_d s2(0.5,2.5,3.2);
-      intrusive_ptr<Texture<SpectrumCoef_d> > p_helper_texture1(new ConstantTexture<SpectrumCoef_d>(s1));
-      intrusive_ptr<Texture<Spectrum_d> > p_helper_texture2(new ConstantTexture<Spectrum_d>(s2) );
-      intrusive_ptr<Texture<Spectrum_d> > p_texture1(new ScaleTexture<SpectrumCoef_d, Spectrum_d>(p_helper_texture1, p_helper_texture2) );
+      intrusive_ptr<Texture<SpectrumCoef_d>> p_helper_texture1(new ConstantTexture<SpectrumCoef_d>(s1));
+      intrusive_ptr<Texture<Spectrum_d>> p_helper_texture2(new ConstantTexture<Spectrum_d>(s2) );
+      intrusive_ptr<Texture<Spectrum_d>> p_texture1(new ScaleTexture<SpectrumCoef_d, Spectrum_d>(p_helper_texture1, p_helper_texture2) );
 
         {
         boost::iostreams::stream_buffer<SinkDevice> buffer(m_data, m_buffer_size);
@@ -33,7 +33,7 @@ class ScaleTextureSerializationTestSuite : public CxxTest::TestSuite
         output_archive << p_texture1;
         } // archive and stream closed when destructors are called
 
-      intrusive_ptr<Texture<Spectrum_d> > p_texture2;
+      intrusive_ptr<Texture<Spectrum_d>> p_texture2;
 
         {
         boost::iostreams::stream_buffer<SourceDevice> buffer(m_data, m_buffer_size);

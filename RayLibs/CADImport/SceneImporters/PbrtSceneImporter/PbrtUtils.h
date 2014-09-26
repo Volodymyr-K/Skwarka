@@ -98,7 +98,7 @@ namespace PbrtImport
       }
 
     template<typename T>
-    intrusive_ptr<const ImageSource<T> > CreateImageSourceFromFile(const std::string &i_filename, bool i_E_whitepoint, double i_scale, intrusive_ptr<Log> ip_log)
+    intrusive_ptr<const ImageSource<T>> CreateImageSourceFromFile(const std::string &i_filename, bool i_E_whitepoint, double i_scale, intrusive_ptr<Log> ip_log)
       {
       size_t dot_pos = i_filename.find_last_of('.');
       if (dot_pos == std::string::npos || dot_pos+1 == i_filename.size())
@@ -115,7 +115,7 @@ namespace PbrtImport
           return new OpenEXRRgbaImageSource<T>(i_filename, i_E_whitepoint, i_scale);
         else
           {
-          intrusive_ptr<const ImageSource<T> > p_image_source;
+          intrusive_ptr<const ImageSource<T>> p_image_source;
           if (i_E_whitepoint)
             p_image_source.reset(new RGBImageSource<T>(i_filename, global_sRGB_E_ColorSystem, i_scale));
           else

@@ -23,7 +23,7 @@ namespace PbrtImport
   class MaterialFactory
     {
     public:
-      MaterialFactory(std::map<const Material *, intrusive_ptr<const Texture<double> > > &i_material_to_bump_map,
+      MaterialFactory(std::map<const Material *, intrusive_ptr<const Texture<double>>> &i_material_to_bump_map,
         intrusive_ptr<Log> ip_log): m_material_to_bump_map(i_material_to_bump_map), mp_log(ip_log) {}
       
       intrusive_ptr<const Material> CreateMaterial(const std::string &i_name, const TextureParams &i_mp, const GraphicsState &i_graphics_state) const
@@ -81,7 +81,7 @@ namespace PbrtImport
         }
 
     private:
-      void _AddBumpMap(intrusive_ptr<const Material> ip_ret, intrusive_ptr<const Texture<double> > ip_bumpMap)const
+      void _AddBumpMap(intrusive_ptr<const Material> ip_ret, intrusive_ptr<const Texture<double>> ip_bumpMap)const
         {
         if (ip_bumpMap == NULL) return;
         const Texture<double> *p_bump_map = ip_bumpMap.get();
@@ -92,9 +92,9 @@ namespace PbrtImport
 
       intrusive_ptr<const Material> _CreateMatteMaterial(const TextureParams &i_params) const
         {
-        intrusive_ptr<const Texture<SpectrumCoef_d> > Kd = i_params.GetSpectrumCoefTexture("Kd", SpectrumCoef_d(0.5), mp_log);
-        intrusive_ptr<const Texture<double> > sigma = i_params.GetFloatTexture("sigma", 0.0, mp_log);
-        intrusive_ptr<const Texture<double> > bumpMap = i_params.GetFloatTexture("bumpmap", 0.0, mp_log);
+        intrusive_ptr<const Texture<SpectrumCoef_d>> Kd = i_params.GetSpectrumCoefTexture("Kd", SpectrumCoef_d(0.5), mp_log);
+        intrusive_ptr<const Texture<double>> sigma = i_params.GetFloatTexture("sigma", 0.0, mp_log);
+        intrusive_ptr<const Texture<double>> bumpMap = i_params.GetFloatTexture("bumpmap", 0.0, mp_log);
 
         intrusive_ptr<const Material> p_ret(new MatteMaterial(Kd, sigma));
         _AddBumpMap(p_ret, bumpMap);
@@ -103,10 +103,10 @@ namespace PbrtImport
 
       intrusive_ptr<const Material> _CreatePlasticMaterial(const TextureParams &i_params) const
         {
-        intrusive_ptr<const Texture<SpectrumCoef_d> > Kd = i_params.GetSpectrumCoefTexture("Kd", SpectrumCoef_d(0.25), mp_log);
-        intrusive_ptr<const Texture<SpectrumCoef_d> > Ks = i_params.GetSpectrumCoefTexture("Ks", SpectrumCoef_d(0.25), mp_log);
-        intrusive_ptr<const Texture<double> > roughness = i_params.GetFloatTexture("roughness", 0.1f, mp_log);
-        intrusive_ptr<const Texture<double> > bumpMap = i_params.GetFloatTexture("bumpmap", 0.0f, mp_log);
+        intrusive_ptr<const Texture<SpectrumCoef_d>> Kd = i_params.GetSpectrumCoefTexture("Kd", SpectrumCoef_d(0.25), mp_log);
+        intrusive_ptr<const Texture<SpectrumCoef_d>> Ks = i_params.GetSpectrumCoefTexture("Ks", SpectrumCoef_d(0.25), mp_log);
+        intrusive_ptr<const Texture<double>> roughness = i_params.GetFloatTexture("roughness", 0.1f, mp_log);
+        intrusive_ptr<const Texture<double>> bumpMap = i_params.GetFloatTexture("bumpmap", 0.0f, mp_log);
 
         intrusive_ptr<const Material> p_ret(new PlasticMaterial(Kd, Ks, roughness));
         _AddBumpMap(p_ret, bumpMap);
@@ -121,10 +121,10 @@ namespace PbrtImport
 
       intrusive_ptr<const Material> _CreateTransparentMaterial(const TextureParams &i_params) const
         {
-        intrusive_ptr<const Texture<SpectrumCoef_d> > Kr = i_params.GetSpectrumCoefTexture("Kr", SpectrumCoef_d(1.0), mp_log);
-        intrusive_ptr<const Texture<SpectrumCoef_d> > Kt = i_params.GetSpectrumCoefTexture("Kt", SpectrumCoef_d(1.0), mp_log);
-        intrusive_ptr<const Texture<double> > index = i_params.GetFloatTexture("index", 1.5, mp_log);
-        intrusive_ptr<const Texture<double> > bumpMap = i_params.GetFloatTexture("bumpmap", 0.0, mp_log);
+        intrusive_ptr<const Texture<SpectrumCoef_d>> Kr = i_params.GetSpectrumCoefTexture("Kr", SpectrumCoef_d(1.0), mp_log);
+        intrusive_ptr<const Texture<SpectrumCoef_d>> Kt = i_params.GetSpectrumCoefTexture("Kt", SpectrumCoef_d(1.0), mp_log);
+        intrusive_ptr<const Texture<double>> index = i_params.GetFloatTexture("index", 1.5, mp_log);
+        intrusive_ptr<const Texture<double>> bumpMap = i_params.GetFloatTexture("bumpmap", 0.0, mp_log);
         
         double refractive_index = 1.5;
         if (dynamic_cast<const ConstantTexture<float> *>(index.get()) != NULL)
@@ -137,10 +137,10 @@ namespace PbrtImport
 
       intrusive_ptr<const Material> _CreateMirrorMaterial(const TextureParams &i_params) const
         {
-        intrusive_ptr<const Texture<SpectrumCoef_d> > Kr = i_params.GetSpectrumCoefTexture("Kr", SpectrumCoef_d(1.0), mp_log);
-        intrusive_ptr<const Texture<double> > bumpMap = i_params.GetFloatTexture("bumpmap", 0.0, mp_log);
+        intrusive_ptr<const Texture<SpectrumCoef_d>> Kr = i_params.GetSpectrumCoefTexture("Kr", SpectrumCoef_d(1.0), mp_log);
+        intrusive_ptr<const Texture<double>> bumpMap = i_params.GetFloatTexture("bumpmap", 0.0, mp_log);
 
-        intrusive_ptr<const Texture<SpectrumCoef_d> > Kt(new ConstantTexture<SpectrumCoef_d>(SpectrumCoef_d(0.0)));
+        intrusive_ptr<const Texture<SpectrumCoef_d>> Kt(new ConstantTexture<SpectrumCoef_d>(SpectrumCoef_d(0.0)));
         intrusive_ptr<const Material> p_ret(new TransparentMaterial(Kr, Kt, 1e10));
         _AddBumpMap(p_ret, bumpMap);
         return p_ret;
@@ -148,12 +148,12 @@ namespace PbrtImport
 
       intrusive_ptr<const Material> _CreateMixMaterial(const TextureParams &i_params, intrusive_ptr<const Material> ip_mat1, intrusive_ptr<const Material> ip_mat2) const
         {
-        intrusive_ptr<const Texture<SpectrumCoef_d> > scale = i_params.GetSpectrumCoefTexture("amount", SpectrumCoef_d(0.5), mp_log);
+        intrusive_ptr<const Texture<SpectrumCoef_d>> scale = i_params.GetSpectrumCoefTexture("amount", SpectrumCoef_d(0.5), mp_log);
 
         intrusive_ptr<const Material> p_ret(new MixMaterial(ip_mat1, ip_mat2, scale));
-        intrusive_ptr<const Texture<double> > bumpMap1 = m_material_to_bump_map[ip_mat1.get()];
-        intrusive_ptr<const Texture<double> > bumpMap2 = m_material_to_bump_map[ip_mat1.get()];
-        intrusive_ptr<const Texture<double> > bumpMap;
+        intrusive_ptr<const Texture<double>> bumpMap1 = m_material_to_bump_map[ip_mat1.get()];
+        intrusive_ptr<const Texture<double>> bumpMap2 = m_material_to_bump_map[ip_mat1.get()];
+        intrusive_ptr<const Texture<double>> bumpMap;
         if (bumpMap1!=NULL && bumpMap2==NULL) bumpMap = bumpMap1;
         if (bumpMap2!=NULL && bumpMap1==NULL) bumpMap = bumpMap2;
         if (bumpMap1!=NULL && bumpMap2!=NULL)
@@ -166,13 +166,13 @@ namespace PbrtImport
       intrusive_ptr<const Material> _CreateMetalMaterial(const TextureParams &i_params) const
         {
         SpectrumCoef_d copperN(1.165312, 0.950375, 0.351250);
-        intrusive_ptr<const Texture<SpectrumCoef_d> > eta = i_params.GetSpectrumCoefTexture("eta", copperN, mp_log);
+        intrusive_ptr<const Texture<SpectrumCoef_d>> eta = i_params.GetSpectrumCoefTexture("eta", copperN, mp_log);
 
         SpectrumCoef_d copperK(2.397625, 2.576500, 3.010750);
-        intrusive_ptr<const Texture<SpectrumCoef_d> > k = i_params.GetSpectrumCoefTexture("k", copperK, mp_log);
+        intrusive_ptr<const Texture<SpectrumCoef_d>> k = i_params.GetSpectrumCoefTexture("k", copperK, mp_log);
 
-        intrusive_ptr<const Texture<double> > roughness = i_params.GetFloatTexture("roughness", 0.1f, mp_log);
-        intrusive_ptr<const Texture<double> > bumpMap = i_params.GetFloatTexture("bumpmap", 0.0f, mp_log);
+        intrusive_ptr<const Texture<double>> roughness = i_params.GetFloatTexture("roughness", 0.1f, mp_log);
+        intrusive_ptr<const Texture<double>> bumpMap = i_params.GetFloatTexture("bumpmap", 0.0f, mp_log);
 
         intrusive_ptr<const Material> p_ret(new MetalMaterial(eta, k, roughness));
         if (bumpMap) m_material_to_bump_map[p_ret.get()] = bumpMap;
@@ -182,12 +182,12 @@ namespace PbrtImport
 
       intrusive_ptr<const Material> _CreateSubstrateMaterial(const TextureParams &i_params) const
         {
-        intrusive_ptr<const Texture<SpectrumCoef_d> > Kd = i_params.GetSpectrumCoefTexture("Kd", SpectrumCoef_d(0.5), mp_log);
-        intrusive_ptr<const Texture<SpectrumCoef_d> > Ks = i_params.GetSpectrumCoefTexture("Ks", SpectrumCoef_d(0.5), mp_log);
+        intrusive_ptr<const Texture<SpectrumCoef_d>> Kd = i_params.GetSpectrumCoefTexture("Kd", SpectrumCoef_d(0.5), mp_log);
+        intrusive_ptr<const Texture<SpectrumCoef_d>> Ks = i_params.GetSpectrumCoefTexture("Ks", SpectrumCoef_d(0.5), mp_log);
 
-        intrusive_ptr<const Texture<double> > uroughness = i_params.GetFloatTexture("uroughness", 0.1f, mp_log);
-        intrusive_ptr<const Texture<double> > vroughness = i_params.GetFloatTexture("vroughness", 0.1f, mp_log);
-        intrusive_ptr<const Texture<double> > bumpMap = i_params.GetFloatTexture("bumpmap", 0.0f, mp_log);
+        intrusive_ptr<const Texture<double>> uroughness = i_params.GetFloatTexture("uroughness", 0.1f, mp_log);
+        intrusive_ptr<const Texture<double>> vroughness = i_params.GetFloatTexture("vroughness", 0.1f, mp_log);
+        intrusive_ptr<const Texture<double>> bumpMap = i_params.GetFloatTexture("bumpmap", 0.0f, mp_log);
 
         intrusive_ptr<const Material> p_ret(new SubstrateMaterial(Kd, Ks, uroughness, vroughness));
         _AddBumpMap(p_ret, bumpMap);
@@ -196,13 +196,13 @@ namespace PbrtImport
 
       intrusive_ptr<const Material> _CreateUberMaterial(const TextureParams &i_params) const
         {
-        intrusive_ptr<const Texture<SpectrumCoef_d> > Kd = i_params.GetSpectrumCoefTexture("Kd", SpectrumCoef_d(0.25), mp_log);
-        intrusive_ptr<const Texture<SpectrumCoef_d> > Ks = i_params.GetSpectrumCoefTexture("Ks", SpectrumCoef_d(0.25), mp_log);
-        intrusive_ptr<const Texture<SpectrumCoef_d> > Kr = i_params.GetSpectrumCoefTexture("Kr", SpectrumCoef_d(0.0), mp_log);
-        intrusive_ptr<const Texture<double> > roughness = i_params.GetFloatTexture("roughness", 0.1f, mp_log);
-        intrusive_ptr<const Texture<double> > eta = i_params.GetFloatTexture("index", 1.5f, mp_log);
-        intrusive_ptr<const Texture<SpectrumCoef_d> > opacity = i_params.GetSpectrumCoefTexture("opacity", SpectrumCoef_d(1.0), mp_log);
-        intrusive_ptr<const Texture<double> > bumpMap = i_params.GetFloatTexture("bumpmap", 0.f, mp_log);
+        intrusive_ptr<const Texture<SpectrumCoef_d>> Kd = i_params.GetSpectrumCoefTexture("Kd", SpectrumCoef_d(0.25), mp_log);
+        intrusive_ptr<const Texture<SpectrumCoef_d>> Ks = i_params.GetSpectrumCoefTexture("Ks", SpectrumCoef_d(0.25), mp_log);
+        intrusive_ptr<const Texture<SpectrumCoef_d>> Kr = i_params.GetSpectrumCoefTexture("Kr", SpectrumCoef_d(0.0), mp_log);
+        intrusive_ptr<const Texture<double>> roughness = i_params.GetFloatTexture("roughness", 0.1f, mp_log);
+        intrusive_ptr<const Texture<double>> eta = i_params.GetFloatTexture("index", 1.5f, mp_log);
+        intrusive_ptr<const Texture<SpectrumCoef_d>> opacity = i_params.GetSpectrumCoefTexture("opacity", SpectrumCoef_d(1.0), mp_log);
+        intrusive_ptr<const Texture<double>> bumpMap = i_params.GetFloatTexture("bumpmap", 0.f, mp_log);
 
         double refractive_index = 1.5;
         if (dynamic_cast<const ConstantTexture<float> *>(eta.get()) != NULL)
@@ -227,7 +227,7 @@ namespace PbrtImport
 
       intrusive_ptr<const Material> _CreateMeasuredMaterial(const TextureParams &i_params) const
         {
-        intrusive_ptr<const Texture<double> > bumpMap = i_params.GetFloatTexture("bumpmap", 0.f, mp_log);
+        intrusive_ptr<const Texture<double>> bumpMap = i_params.GetFloatTexture("bumpmap", 0.f, mp_log);
         std::string filename = i_params.FindFilename("filename");
         if (boost::iends_with(filename, "binary")==false)
           {
@@ -251,7 +251,7 @@ namespace PbrtImport
     private:
       intrusive_ptr<Log> mp_log;
 
-      std::map<const Material *, intrusive_ptr<const Texture<double> > > &m_material_to_bump_map;
+      std::map<const Material *, intrusive_ptr<const Texture<double>>> &m_material_to_bump_map;
     };
 
   };

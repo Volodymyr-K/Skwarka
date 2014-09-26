@@ -27,7 +27,7 @@ class BlockedArray
     * Creates BlockedArray instance from the specified 2D array.
     * @param i_values Source 2D array. All inner vectors should have the same size. Should have at least one row and at least one column.
     */
-    BlockedArray(const std::vector<std::vector<T> > &i_values);
+    BlockedArray(const std::vector<std::vector<T>> &i_values);
 
     /**
     * Returns size of the 2D array in the first dimension (U dimension).
@@ -105,7 +105,7 @@ m_size_u(i_size_u), m_size_v(i_size_v)
   }
 
 template<typename T, size_t block_size_log>
-BlockedArray<T,block_size_log>::BlockedArray(const std::vector<std::vector<T> > &i_values):
+BlockedArray<T,block_size_log>::BlockedArray(const std::vector<std::vector<T>> &i_values):
 m_size_u(i_values.size()), m_size_v(i_values[0].size())
   {
   ASSERT(i_values.size()>0 && i_values[0].size()>0);

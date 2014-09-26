@@ -91,7 +91,7 @@ class SamplerBasedRendererTestSuite : public CxxTest::TestSuite
       }
 
   private:
-    std::vector<intrusive_ptr<const Primitive> > m_primitives;
+    std::vector<intrusive_ptr<const Primitive>> m_primitives;
 
     intrusive_ptr<Scene> mp_scene;
     intrusive_ptr<Sampler> mp_sampler;

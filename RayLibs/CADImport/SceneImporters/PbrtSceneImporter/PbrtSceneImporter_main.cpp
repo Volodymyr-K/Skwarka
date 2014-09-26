@@ -94,12 +94,12 @@ intrusive_ptr<const Scene> PbrtSceneImporter::GetScene() const
   return mp_scene;
   }
 
-std::vector<intrusive_ptr<const Camera> > PbrtSceneImporter::GetCameras() const
+std::vector<intrusive_ptr<const Camera>> PbrtSceneImporter::GetCameras() const
   {
   if (mp_camera)
-    return std::vector<intrusive_ptr<const Camera> >(1, mp_camera);
+    return std::vector<intrusive_ptr<const Camera>>(1, mp_camera);
   else
-    return std::vector<intrusive_ptr<const Camera> >();
+    return std::vector<intrusive_ptr<const Camera>>();
   }
 
 void PbrtSceneImporter::_ReadScene()

@@ -149,7 +149,7 @@ class TriangleAcceleratorTestSuite : public CxxTest::TestSuite
 
     void test_TriangleAccelerator_ObjectInstancing()
       {
-      std::vector<intrusive_ptr<const Primitive> > primitives1, primitives2;
+      std::vector<intrusive_ptr<const Primitive>> primitives1, primitives2;
       RandomGenerator<double> rg;
 
       for(size_t i=0;i<10000;++i)
@@ -255,7 +255,7 @@ class TriangleAcceleratorTestSuite : public CxxTest::TestSuite
       }
 
   private:
-    std::vector<intrusive_ptr<const Primitive> > m_primitives;
+    std::vector<intrusive_ptr<const Primitive>> m_primitives;
     shared_ptr<TriangleAccelerator> mp_triangle_accelerator;
   };
 

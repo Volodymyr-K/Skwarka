@@ -17,8 +17,8 @@ class MatteMaterialTestSuite : public CxxTest::TestSuite
     // Tests for the case when sigma is zero.
     void test_MatteMaterial_EvaluateZeroSigma()
       {
-      intrusive_ptr<Texture<SpectrumCoef_d> > p_reflectance( new TextureMock<SpectrumCoef_d>(SpectrumCoef_d(1.0,0.5,0.1)) );
-      intrusive_ptr<TextureMock<double> > p_sigma( new TextureMock<double>(0.0) );
+      intrusive_ptr<Texture<SpectrumCoef_d>> p_reflectance( new TextureMock<SpectrumCoef_d>(SpectrumCoef_d(1.0,0.5,0.1)) );
+      intrusive_ptr<TextureMock<double>> p_sigma( new TextureMock<double>(0.0) );
       
       intrusive_ptr<Material> p_material(new MatteMaterial(p_reflectance, p_sigma));
 
@@ -38,8 +38,8 @@ class MatteMaterialTestSuite : public CxxTest::TestSuite
     // Tests for the case when sigma is not zero, the returned value should match OrenNayar BxDF.
     void test_MatteMaterial_EvaluateNotZeroSigma()
       {
-      intrusive_ptr<Texture<SpectrumCoef_d> > p_reflectance( new TextureMock<SpectrumCoef_d>(SpectrumCoef_d(1.0,0.5,0.1)) );
-      intrusive_ptr<TextureMock<double> > p_sigma( new TextureMock<double>(0.1) );
+      intrusive_ptr<Texture<SpectrumCoef_d>> p_reflectance( new TextureMock<SpectrumCoef_d>(SpectrumCoef_d(1.0,0.5,0.1)) );
+      intrusive_ptr<TextureMock<double>> p_sigma( new TextureMock<double>(0.1) );
 
       intrusive_ptr<Material> p_material(new MatteMaterial(p_reflectance, p_sigma));
 

@@ -18,7 +18,7 @@
 * The ReturnType template parameter corresponds to the type of the values the texture returns.
 * The Converter template parameter is a class used to convert from MemoryType to ReturnType. The default implementation is used if not specified otherwise.
 */
-template<typename MemoryType, typename ReturnType, typename Converter = DefaultConverter<MemoryType,ReturnType> >
+template<typename MemoryType, typename ReturnType, typename Converter = DefaultConverter<MemoryType,ReturnType>>
 class ImageTexture: public Texture<ReturnType>
   {
   public:
@@ -29,7 +29,7 @@ class ImageTexture: public Texture<ReturnType>
     * @param i_repeat Sets whether to wrap the texture on its edges. If false, the value is considered zero (black) beyond the image bounds.
     * @param i_max_anisotropy Maximum anisotropy allowed (ratio of the major ellipse axis to its minor axis). Should be greater or equal than 1.0.
     */
-    ImageTexture(const std::vector<std::vector<MemoryType> > &i_image, intrusive_ptr<const Mapping2D> ip_mapping, bool i_repeat = true, double i_max_anisotropy = 8.0);
+    ImageTexture(const std::vector<std::vector<MemoryType>> &i_image, intrusive_ptr<const Mapping2D> ip_mapping, bool i_repeat = true, double i_max_anisotropy = 8.0);
 
     /**
     * Crates ImageTexture from the specified image source and 2D mapping.
@@ -38,14 +38,14 @@ class ImageTexture: public Texture<ReturnType>
     * @param i_repeat Sets whether to wrap the texture on its edges. If false, the value is considered zero (black) beyond the image bounds.
     * @param i_max_anisotropy Maximum anisotropy allowed (ratio of the major ellipse axis to its minor axis). Should be greater or equal than 1.0.
     */
-    ImageTexture(intrusive_ptr<const ImageSource<MemoryType> > ip_image_source, intrusive_ptr<const Mapping2D> ip_mapping, bool i_repeat = true, double i_max_anisotropy = 8.0);
+    ImageTexture(intrusive_ptr<const ImageSource<MemoryType>> ip_image_source, intrusive_ptr<const Mapping2D> ip_mapping, bool i_repeat = true, double i_max_anisotropy = 8.0);
 
     /**
     * Crates ImageTexture from the specified MIPMap and 2D mapping.
     * @param ip_mip_map MIPMap object that defines image for the ImageTexture.
     * @param ip_mapping 2D mapping used to map DifferentialGeometry to an image point. Should not be NULL.
     */
-    ImageTexture(intrusive_ptr<const MIPMap<MemoryType> > ip_mip_map, intrusive_ptr<const Mapping2D> ip_mapping);
+    ImageTexture(intrusive_ptr<const MIPMap<MemoryType>> ip_mip_map, intrusive_ptr<const Mapping2D> ip_mapping);
 
     /**
     * Returns the value corresponding to the specified DifferentialGeometry and triangle index.
@@ -65,7 +65,7 @@ class ImageTexture: public Texture<ReturnType>
     void serialize(Archive &i_ar, const unsigned int i_version);
 
   private:
-    intrusive_ptr<const MIPMap<MemoryType> > mp_mip_map;
+    intrusive_ptr<const MIPMap<MemoryType>> mp_mip_map;
     intrusive_ptr<const Mapping2D> mp_mapping;
   };
 
@@ -73,7 +73,7 @@ class ImageTexture: public Texture<ReturnType>
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename MemoryType, typename ReturnType, typename Converter>
-ImageTexture<MemoryType,ReturnType,Converter>::ImageTexture(const std::vector<std::vector<MemoryType> > &i_image,
+ImageTexture<MemoryType,ReturnType,Converter>::ImageTexture(const std::vector<std::vector<MemoryType>> &i_image,
                                                   intrusive_ptr<const Mapping2D> ip_mapping, bool i_repeat, double i_max_anisotropy): mp_mapping(ip_mapping)
   {
   ASSERT(ip_mapping);
@@ -82,7 +82,7 @@ ImageTexture<MemoryType,ReturnType,Converter>::ImageTexture(const std::vector<st
   }
 
 template<typename MemoryType, typename ReturnType, typename Converter>
-ImageTexture<MemoryType,ReturnType,Converter>::ImageTexture(intrusive_ptr<const ImageSource<MemoryType> > ip_image_source,
+ImageTexture<MemoryType,ReturnType,Converter>::ImageTexture(intrusive_ptr<const ImageSource<MemoryType>> ip_image_source,
                                                             intrusive_ptr<const Mapping2D> ip_mapping, bool i_repeat, double i_max_anisotropy): mp_mapping(ip_mapping)
   {
   ASSERT(ip_image_source);
@@ -93,7 +93,7 @@ ImageTexture<MemoryType,ReturnType,Converter>::ImageTexture(intrusive_ptr<const 
   }
 
 template<typename MemoryType, typename ReturnType, typename Converter>
-ImageTexture<MemoryType, ReturnType, Converter>::ImageTexture(intrusive_ptr<const MIPMap<MemoryType> > ip_mip_map, intrusive_ptr<const Mapping2D> ip_mapping) :
+ImageTexture<MemoryType, ReturnType, Converter>::ImageTexture(intrusive_ptr<const MIPMap<MemoryType>> ip_mip_map, intrusive_ptr<const Mapping2D> ip_mapping) :
 mp_mapping(ip_mapping), mp_mip_map(ip_mip_map)
   {
   ASSERT(ip_mapping);
@@ -125,7 +125,7 @@ class DefaultConverter
 
 // Explicit specialization for Spectrum type. Uses native Spectrum conversion routine.
 template<typename InputSpectrumType, typename OutputSpectrumType>
-class DefaultConverter<Spectrum<InputSpectrumType>, Spectrum<OutputSpectrumType> >
+class DefaultConverter<Spectrum<InputSpectrumType>, Spectrum<OutputSpectrumType>>
   {
   public:
     static Spectrum<OutputSpectrumType> Convert(const Spectrum<InputSpectrumType> &i_input)
@@ -136,7 +136,7 @@ class DefaultConverter<Spectrum<InputSpectrumType>, Spectrum<OutputSpectrumType>
 
 // Explicit specialization for SpectrumCoef type. Uses native SpectrumCoef conversion routine.
 template<typename InputSpectrumType, typename OutputSpectrumType>
-class DefaultConverter<SpectrumCoef<InputSpectrumType>, SpectrumCoef<OutputSpectrumType> >
+class DefaultConverter<SpectrumCoef<InputSpectrumType>, SpectrumCoef<OutputSpectrumType>>
   {
   public:
     static SpectrumCoef<OutputSpectrumType> Convert(const SpectrumCoef<InputSpectrumType> &i_input)
@@ -151,7 +151,7 @@ template<typename MemoryType, typename ReturnType, typename Converter>
 template<class Archive>
 void ImageTexture<MemoryType,ReturnType,Converter>::serialize(Archive &i_ar, const unsigned int i_version)
   {
-  i_ar & boost::serialization::base_object<Texture<ReturnType> >(*this);
+  i_ar & boost::serialization::base_object<Texture<ReturnType>>(*this);
 
   i_ar & mp_mip_map;
   i_ar & mp_mapping;
@@ -159,18 +159,18 @@ void ImageTexture<MemoryType,ReturnType,Converter>::serialize(Archive &i_ar, con
 
 // The following code exports different specializations of the ImageTexture template in the boost serialization framework.
 // If you need to serialize a new specialization you have to add it here.
-typedef ImageTexture<Spectrum_f, Spectrum_f, DefaultConverter<Spectrum_f,Spectrum_f> > ImageTexture_Spectrum_f_Spectrum_f;
-typedef ImageTexture<Spectrum_f, Spectrum_d, DefaultConverter<Spectrum_f,Spectrum_d> > ImageTexture_Spectrum_f_Spectrum_d;
-typedef ImageTexture<Spectrum_d, Spectrum_d, DefaultConverter<Spectrum_d,Spectrum_d> > ImageTexture_Spectrum_d_Spectrum_d;
+typedef ImageTexture<Spectrum_f, Spectrum_f, DefaultConverter<Spectrum_f,Spectrum_f>> ImageTexture_Spectrum_f_Spectrum_f;
+typedef ImageTexture<Spectrum_f, Spectrum_d, DefaultConverter<Spectrum_f,Spectrum_d>> ImageTexture_Spectrum_f_Spectrum_d;
+typedef ImageTexture<Spectrum_d, Spectrum_d, DefaultConverter<Spectrum_d,Spectrum_d>> ImageTexture_Spectrum_d_Spectrum_d;
 
-typedef ImageTexture<SpectrumCoef_f, SpectrumCoef_f, DefaultConverter<SpectrumCoef_f,SpectrumCoef_f> > ImageTexture_SpectrumCoef_f_SpectrumCoef_f;
-typedef ImageTexture<SpectrumCoef_f, SpectrumCoef_d, DefaultConverter<SpectrumCoef_f,SpectrumCoef_d> > ImageTexture_SpectrumCoef_f_SpectrumCoef_d;
-typedef ImageTexture<SpectrumCoef_d, SpectrumCoef_d, DefaultConverter<SpectrumCoef_d,SpectrumCoef_d> > ImageTexture_SpectrumCoef_d_SpectrumCoef_d;
+typedef ImageTexture<SpectrumCoef_f, SpectrumCoef_f, DefaultConverter<SpectrumCoef_f,SpectrumCoef_f>> ImageTexture_SpectrumCoef_f_SpectrumCoef_f;
+typedef ImageTexture<SpectrumCoef_f, SpectrumCoef_d, DefaultConverter<SpectrumCoef_f,SpectrumCoef_d>> ImageTexture_SpectrumCoef_f_SpectrumCoef_d;
+typedef ImageTexture<SpectrumCoef_d, SpectrumCoef_d, DefaultConverter<SpectrumCoef_d,SpectrumCoef_d>> ImageTexture_SpectrumCoef_d_SpectrumCoef_d;
 
-typedef ImageTexture<float, float, DefaultConverter<float,float> > ImageTexture_float_float;
-typedef ImageTexture<double, double, DefaultConverter<double,double> > ImageTexture_double_double;
+typedef ImageTexture<float, float, DefaultConverter<float,float>> ImageTexture_float_float;
+typedef ImageTexture<double, double, DefaultConverter<double,double>> ImageTexture_double_double;
 
-typedef ImageTexture<float, double, DefaultConverter<float,double> > ImageTexture_float_double;
+typedef ImageTexture<float, double, DefaultConverter<float,double>> ImageTexture_float_double;
 
 BOOST_CLASS_EXPORT_KEY(ImageTexture_Spectrum_f_Spectrum_f)
 BOOST_CLASS_EXPORT_KEY(ImageTexture_Spectrum_f_Spectrum_d)

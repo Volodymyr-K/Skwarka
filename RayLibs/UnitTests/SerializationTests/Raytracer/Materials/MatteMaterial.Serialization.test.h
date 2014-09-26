@@ -26,8 +26,8 @@ class MatteMaterialSerializationTestSuite : public CxxTest::TestSuite
 
     void test_MatteMaterial_Serialization()
       {
-      intrusive_ptr<Texture<SpectrumCoef_d> > p_reflectance( new ConstantTexture<SpectrumCoef_d>(SpectrumCoef_d(1.0,0.5,0.1)) );
-      intrusive_ptr<ConstantTexture<double> > p_sigma( new ConstantTexture<double>(0.2) );
+      intrusive_ptr<Texture<SpectrumCoef_d>> p_reflectance( new ConstantTexture<SpectrumCoef_d>(SpectrumCoef_d(1.0,0.5,0.1)) );
+      intrusive_ptr<ConstantTexture<double>> p_sigma( new ConstantTexture<double>(0.2) );
 
       intrusive_ptr<Material> p_material1(new MatteMaterial(p_reflectance, p_sigma));
 

@@ -22,8 +22,8 @@ class PlasticMaterial: public Material
     * @param ip_glossy_reflectance The texture defining the reflectance of the glossy layer. Each spectrum component should be in [0;1] range.
     * @param ip_roughness The texture defining the roughness of the surface. Values should be in [0;1] range.
     */
-    PlasticMaterial(intrusive_ptr<const Texture<SpectrumCoef_d> > ip_diffuse_reflectance, intrusive_ptr<const Texture<SpectrumCoef_d> > ip_glossy_reflectance,
-      intrusive_ptr<const Texture<double> > ip_roughness);
+    PlasticMaterial(intrusive_ptr<const Texture<SpectrumCoef_d>> ip_diffuse_reflectance, intrusive_ptr<const Texture<SpectrumCoef_d>> ip_glossy_reflectance,
+      intrusive_ptr<const Texture<double>> ip_roughness);
 
     /**
     * Returns a pointer to BSDF describing local scattering properties at the specified surface point.
@@ -48,9 +48,9 @@ class PlasticMaterial: public Material
     void serialize(Archive &i_ar, const unsigned int i_version);
 
   private:
-    intrusive_ptr<const Texture<SpectrumCoef_d> > mp_diffuse_reflectance, mp_glossy_reflectance;
+    intrusive_ptr<const Texture<SpectrumCoef_d>> mp_diffuse_reflectance, mp_glossy_reflectance;
 
-    intrusive_ptr<const Texture<double> > mp_roughness;
+    intrusive_ptr<const Texture<double>> mp_roughness;
   };
 
 /////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////

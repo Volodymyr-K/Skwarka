@@ -24,7 +24,7 @@ LTEIntegrator(ip_scene), mp_scene(ip_scene), m_params(i_params)
     m_params.m_max_specular_depth = 50;
 
   m_scene_total_area = 0.0;
-  const std::vector<intrusive_ptr<const Primitive> > &primitives = ip_scene->GetPrimitives();
+  const std::vector<intrusive_ptr<const Primitive>> &primitives = ip_scene->GetPrimitives();
   for(size_t i=0;i<primitives.size();++i)
     m_scene_total_area += primitives[i]->GetTriangleMesh_RawPtr()->GetArea();
   }
@@ -100,7 +100,7 @@ void PhotonLTEIntegrator::_GetLightsPowerCDF(const LightSources &i_light_sources
   }
 
 std::pair<Spectrum_f, Spectrum_f>
-PhotonLTEIntegrator::_LookupPhotonIrradiance(const Point3D_d &i_point, const Vector3D_d &i_normal, shared_ptr<const KDTree<Photon> > ip_photon_map,
+PhotonLTEIntegrator::_LookupPhotonIrradiance(const Point3D_d &i_point, const Vector3D_d &i_normal, shared_ptr<const KDTree<Photon>> ip_photon_map,
                                              size_t i_photon_paths, size_t i_lookup_photons_num, double i_max_lookup_dist, NearestPhoton *op_nearest_photons) const
   {
   if (ip_photon_map == NULL)

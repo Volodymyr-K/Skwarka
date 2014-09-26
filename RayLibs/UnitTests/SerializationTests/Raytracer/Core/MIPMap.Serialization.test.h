@@ -21,10 +21,10 @@ class MIPMapSerializationTestSuite : public CxxTest::TestSuite
   {
   public:
 
-    // Tests serialization for MIPMap created from std::vector<std::vector<Spectrum_d> >
+    // Tests serialization for MIPMap created from std::vector<std::vector<Spectrum_d>>
     void test_MIPMap_Serialization_FromVector()
       {
-      intrusive_ptr<MIPMap<Spectrum_d> > p_map1 ( _CreateBlueRedMIPMapFromVector(123,234,true,8.0) );
+      intrusive_ptr<MIPMap<Spectrum_d>> p_map1 ( _CreateBlueRedMIPMapFromVector(123,234,true,8.0) );
 
         {
         boost::iostreams::stream_buffer<SinkDevice> buffer(m_data, m_buffer_size);
@@ -32,7 +32,7 @@ class MIPMapSerializationTestSuite : public CxxTest::TestSuite
         output_archive << p_map1;
         } // archive and stream closed when destructors are called
 
-      intrusive_ptr<MIPMap<Spectrum_d> > p_map2;
+      intrusive_ptr<MIPMap<Spectrum_d>> p_map2;
 
         {
         boost::iostreams::stream_buffer<SourceDevice> buffer(m_data, m_buffer_size);
@@ -47,7 +47,7 @@ class MIPMapSerializationTestSuite : public CxxTest::TestSuite
     // Tests serialization for MIPMap created from ImageSource
     void test_MIPMap_Serialization_FromImageSource()
       {
-      intrusive_ptr<MIPMap<Spectrum_d> > p_map1 ( _CreateMIPMapFromImageSource(true,8.0) );
+      intrusive_ptr<MIPMap<Spectrum_d>> p_map1 ( _CreateMIPMapFromImageSource(true,8.0) );
 
         {
         boost::iostreams::stream_buffer<SinkDevice> buffer(m_data, m_buffer_size);
@@ -55,7 +55,7 @@ class MIPMapSerializationTestSuite : public CxxTest::TestSuite
         output_archive << p_map1;
         } // archive and stream closed when destructors are called
 
-      intrusive_ptr<MIPMap<Spectrum_d> > p_map2;
+      intrusive_ptr<MIPMap<Spectrum_d>> p_map2;
 
         {
         boost::iostreams::stream_buffer<SourceDevice> buffer(m_data, m_buffer_size);
@@ -68,9 +68,9 @@ class MIPMapSerializationTestSuite : public CxxTest::TestSuite
       }
 
   private:
-    intrusive_ptr<MIPMap<Spectrum_d> > _CreateBlueRedMIPMapFromVector(size_t i_width, size_t i_height, bool i_repeat, double i_max_anisotropy)
+    intrusive_ptr<MIPMap<Spectrum_d>> _CreateBlueRedMIPMapFromVector(size_t i_width, size_t i_height, bool i_repeat, double i_max_anisotropy)
       {
-      std::vector<std::vector<Spectrum_d> > image(i_height,std::vector<Spectrum_d>(i_width));
+      std::vector<std::vector<Spectrum_d>> image(i_height,std::vector<Spectrum_d>(i_width));
 
       for(size_t i=0;i<i_width;++i)
         for(size_t j=0;j<i_height;++j)
@@ -79,16 +79,16 @@ class MIPMapSerializationTestSuite : public CxxTest::TestSuite
           else
             image[j][i]=Spectrum_d(0.0,0.0,1.0);
 
-      return intrusive_ptr<MIPMap<Spectrum_d> > (new MIPMap<Spectrum_d>(image,i_repeat,i_max_anisotropy));
+      return intrusive_ptr<MIPMap<Spectrum_d>> (new MIPMap<Spectrum_d>(image,i_repeat,i_max_anisotropy));
       }
 
-    intrusive_ptr<MIPMap<Spectrum_d> > _CreateMIPMapFromImageSource(bool i_repeat, double i_max_anisotropy)
+    intrusive_ptr<MIPMap<Spectrum_d>> _CreateMIPMapFromImageSource(bool i_repeat, double i_max_anisotropy)
       {
-      intrusive_ptr<ImageSource<Spectrum_d> > p_image_source(new RGBImageSource<Spectrum_d>("TestData/red_200x100.tif", global_sRGB_E_ColorSystem));
-      return intrusive_ptr<MIPMap<Spectrum_d> > (new MIPMap<Spectrum_d>(p_image_source,i_repeat,i_max_anisotropy));
+      intrusive_ptr<ImageSource<Spectrum_d>> p_image_source(new RGBImageSource<Spectrum_d>("TestData/red_200x100.tif", global_sRGB_E_ColorSystem));
+      return intrusive_ptr<MIPMap<Spectrum_d>> (new MIPMap<Spectrum_d>(p_image_source,i_repeat,i_max_anisotropy));
       }
 
-    bool _CompareMaps(intrusive_ptr<MIPMap<Spectrum_d> > ip_map1, intrusive_ptr<MIPMap<Spectrum_d> >ip_map2)
+    bool _CompareMaps(intrusive_ptr<MIPMap<Spectrum_d>> ip_map1, intrusive_ptr<MIPMap<Spectrum_d>>ip_map2)
       {
       for(double u=0;u<=1.0;u+=0.1)
         for(double v=0;v<=1.0;v+=0.1)

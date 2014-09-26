@@ -19,8 +19,8 @@ class TransparentMaterialTestSuite : public CxxTest::TestSuite
       mp_reflectance = SpectrumCoef_d(0.9,0.8,0.7);
       mp_transmittance = SpectrumCoef_d(0.5,0.6,0.7);
 
-      intrusive_ptr<Texture<SpectrumCoef_d> > p_reflectance_texture( new TextureMock<SpectrumCoef_d>(mp_reflectance) );
-      intrusive_ptr<Texture<SpectrumCoef_d> > p_transmittance_texture( new TextureMock<SpectrumCoef_d>(mp_transmittance) );
+      intrusive_ptr<Texture<SpectrumCoef_d>> p_reflectance_texture( new TextureMock<SpectrumCoef_d>(mp_reflectance) );
+      intrusive_ptr<Texture<SpectrumCoef_d>> p_transmittance_texture( new TextureMock<SpectrumCoef_d>(mp_transmittance) );
 
       m_refractive_index=1.5;
 

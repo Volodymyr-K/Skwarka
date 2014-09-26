@@ -10,7 +10,7 @@
 BOOST_CLASS_EXPORT_IMPLEMENT(ImageEnvironmentalLight);
 
 ImageEnvironmentalLight::ImageEnvironmentalLight(const BBox3D_d &i_world_bounds, const Transform &i_light_to_world,
-                                                 const std::vector<std::vector<Spectrum_f> > &i_image, SpectrumCoef_d i_scale):
+                                                 const std::vector<std::vector<Spectrum_f>> &i_image, SpectrumCoef_d i_scale):
 m_world_bounds(i_world_bounds), m_light_to_world(i_light_to_world), m_world_to_light(i_light_to_world.Inverted()), m_image(i_image), m_scale(i_scale)
   {
   ASSERT(i_image.size()>0 && i_image[0].size()>0);
@@ -38,7 +38,7 @@ m_world_bounds(i_world_bounds), m_light_to_world(i_light_to_world), m_world_to_l
   }
 
 ImageEnvironmentalLight::ImageEnvironmentalLight(const BBox3D_d &i_world_bounds, const Transform &i_light_to_world,
-                                                 intrusive_ptr<const ImageSource<Spectrum_f> > ip_image_source, SpectrumCoef_d i_scale):
+                                                 intrusive_ptr<const ImageSource<Spectrum_f>> ip_image_source, SpectrumCoef_d i_scale):
 m_world_bounds(i_world_bounds), m_light_to_world(i_light_to_world), m_world_to_light(i_light_to_world.Inverted()), m_scale(i_scale)
   {
   ASSERT(ip_image_source);
@@ -63,7 +63,7 @@ m_world_bounds(i_world_bounds), m_light_to_world(i_light_to_world), m_world_to_l
 void ImageEnvironmentalLight::_IncreaseSize(size_t i_height_factor, size_t i_width_factor)
   {
   ASSERT(i_width_factor>=1 && i_height_factor>=1);
-  std::vector<std::vector<Spectrum_f> > tmp(m_image.size()*i_height_factor, std::vector<Spectrum_f>(m_image[0].size()*i_width_factor));
+  std::vector<std::vector<Spectrum_f>> tmp(m_image.size()*i_height_factor, std::vector<Spectrum_f>(m_image[0].size()*i_width_factor));
   for (size_t y=0; y<tmp.size(); ++y)
     for (size_t x=0; x<tmp[0].size(); ++x)
       tmp[y][x]=m_image[y/i_height_factor][x/i_width_factor];

@@ -55,7 +55,7 @@ template<typename T>
 template<class Archive>
 void ConstantTexture<T>::serialize(Archive &i_ar, const unsigned int i_version)
   {
-  i_ar & boost::serialization::base_object<Texture<T> >(*this);
+  i_ar & boost::serialization::base_object<Texture<T>>(*this);
   i_ar & m_value;
   }
 

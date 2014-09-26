@@ -245,7 +245,7 @@ class KDTreeTestSuite : public CxxTest::TestSuite
       {
       std::vector<Point3D_d> points;
 
-      shared_ptr<KDTree<Point3D_d> > p_kdtree (new KDTree<Point3D_d>(points));
+      shared_ptr<KDTree<Point3D_d>> p_kdtree (new KDTree<Point3D_d>(points));
       TS_ASSERT_EQUALS(p_kdtree->GetNumberOfPoints(), 0);
 
       const Point3D_d *p_nearest = p_kdtree->GetNearestPoint(Point3D_d());
@@ -261,7 +261,7 @@ class KDTreeTestSuite : public CxxTest::TestSuite
       {
       size_t N=100;
 
-      std::vector<std::vector<double> > vectors;
+      std::vector<std::vector<double>> vectors;
       for (size_t i=0;i<N;++i)
         {
         std::vector<double> vct;
@@ -272,14 +272,14 @@ class KDTreeTestSuite : public CxxTest::TestSuite
         vectors.push_back(vct);
         }
 
-      KDTree<std::vector<double> > kdtree(vectors);
+      KDTree<std::vector<double>> kdtree(vectors);
 
       const std::vector<double> *p_vector = kdtree.GetNearestPoint(Point3D_d(0,0,0));
       TS_ASSERT(p_vector);
       }
 
   private:
-    shared_ptr<KDTree<Point3D_d> > mp_kdtree;
+    shared_ptr<KDTree<Point3D_d>> mp_kdtree;
     std::vector<Point3D_d> m_points;
 
     size_t m_number_of_points;

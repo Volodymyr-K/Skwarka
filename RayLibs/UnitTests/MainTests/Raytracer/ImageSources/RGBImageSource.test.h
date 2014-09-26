@@ -16,12 +16,12 @@ class RGBImageSourceTestSuite : public CxxTest::TestSuite
       {
       double scale = 12;
       size_t width=200, height=100;
-      intrusive_ptr<ImageSource<SpectrumCoef_f> > p_image_source(new RGBImageSource<SpectrumCoef_f>("TestData/red_200x100.tif", global_sRGB_E_ColorSystem, scale) );
+      intrusive_ptr<ImageSource<SpectrumCoef_f>> p_image_source(new RGBImageSource<SpectrumCoef_f>("TestData/red_200x100.tif", global_sRGB_E_ColorSystem, scale) );
 
       TS_ASSERT_EQUALS(p_image_source->GetHeight(), height);
       TS_ASSERT_EQUALS(p_image_source->GetWidth(), width);
 
-      std::vector<std::vector<SpectrumCoef_f> > image{ p_image_source->GetImage() };
+      std::vector<std::vector<SpectrumCoef_f>> image{ p_image_source->GetImage() };
       for(size_t i=0;i<height;++i)
         for(size_t j=0;j<width;++j)
           {

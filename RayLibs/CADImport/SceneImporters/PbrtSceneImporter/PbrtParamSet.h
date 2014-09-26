@@ -99,16 +99,16 @@ namespace PbrtImport
     private:
       std::string m_base_path;
 
-      std::vector<intrusive_ptr<ParamSetItem<bool> > > bools;
-      std::vector<intrusive_ptr<ParamSetItem<int> > > ints;
-      std::vector<intrusive_ptr<ParamSetItem<float> > > floats;
-      std::vector<intrusive_ptr<ParamSetItem<Point3D_d> > > points;
-      std::vector<intrusive_ptr<ParamSetItem<Vector3D_d> > > vectors;
-      std::vector<intrusive_ptr<ParamSetItem<Vector3D_d> > > normals;
-      std::vector<intrusive_ptr<ParamSetItem<SpectrumCoef_d> > > spectrum_coefs;
-      std::vector<intrusive_ptr<ParamSetItem<Spectrum_d> > > spectrums;
-      std::vector<intrusive_ptr<ParamSetItem<std::string> > > strings;
-      std::vector<intrusive_ptr<ParamSetItem<std::string> > > textures;
+      std::vector<intrusive_ptr<ParamSetItem<bool>>> bools;
+      std::vector<intrusive_ptr<ParamSetItem<int>>> ints;
+      std::vector<intrusive_ptr<ParamSetItem<float>>> floats;
+      std::vector<intrusive_ptr<ParamSetItem<Point3D_d>>> points;
+      std::vector<intrusive_ptr<ParamSetItem<Vector3D_d>>> vectors;
+      std::vector<intrusive_ptr<ParamSetItem<Vector3D_d>>> normals;
+      std::vector<intrusive_ptr<ParamSetItem<SpectrumCoef_d>>> spectrum_coefs;
+      std::vector<intrusive_ptr<ParamSetItem<Spectrum_d>>> spectrums;
+      std::vector<intrusive_ptr<ParamSetItem<std::string>>> strings;
+      std::vector<intrusive_ptr<ParamSetItem<std::string>>> textures;
       static std::map<std::string, Spectrum_d> cachedSpectrums;
       static std::map<std::string, SpectrumCoef_d> cachedSpectrumCoefs;
     };
@@ -120,15 +120,15 @@ namespace PbrtImport
     public:
 
       TextureParams(const ParamSet &geomp, const ParamSet &matp,
-        const std::map<std::string, intrusive_ptr<const Texture<double> > > &ft,
-        const std::map<std::string, intrusive_ptr<const Texture<SpectrumCoef_d> > > &st):
+        const std::map<std::string, intrusive_ptr<const Texture<double>>> &ft,
+        const std::map<std::string, intrusive_ptr<const Texture<SpectrumCoef_d>>> &st):
       floatTextures(ft), spectrumTextures(st), geomParams(geomp), materialParams(matp)
         {
         }
 
-      intrusive_ptr<const Texture<SpectrumCoef_d> > GetSpectrumCoefTexture(const std::string &name, const SpectrumCoef_d &def, intrusive_ptr<Log> ip_log) const;
+      intrusive_ptr<const Texture<SpectrumCoef_d>> GetSpectrumCoefTexture(const std::string &name, const SpectrumCoef_d &def, intrusive_ptr<Log> ip_log) const;
 
-      intrusive_ptr<const Texture<double> > GetFloatTexture(const std::string &name, float def, intrusive_ptr<Log> ip_log) const;
+      intrusive_ptr<const Texture<double>> GetFloatTexture(const std::string &name, float def, intrusive_ptr<Log> ip_log) const;
 
       float FindFloat(const std::string &n, float d) const
         {
@@ -185,8 +185,8 @@ namespace PbrtImport
       const ParamSet &GetMaterialParams() const { return materialParams; }
 
     private:
-      const std::map<std::string, intrusive_ptr<const Texture<double> > > &floatTextures;
-      const std::map<std::string, intrusive_ptr<const Texture<SpectrumCoef_d> > > &spectrumTextures;
+      const std::map<std::string, intrusive_ptr<const Texture<double>>> &floatTextures;
+      const std::map<std::string, intrusive_ptr<const Texture<SpectrumCoef_d>>> &spectrumTextures;
       const ParamSet &geomParams, &materialParams;
     };
 

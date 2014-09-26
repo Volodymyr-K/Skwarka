@@ -26,8 +26,8 @@ class TransparentMaterialSerializationTestSuite : public CxxTest::TestSuite
 
     void test_TransparentMaterial_Serialization()
       {
-      intrusive_ptr<Texture<SpectrumCoef_d> > p_reflectance_texture( new ConstantTexture<SpectrumCoef_d>(SpectrumCoef_d(0.9,0.8,0.7)) );
-      intrusive_ptr<Texture<SpectrumCoef_d> > p_transmittance_texture( new ConstantTexture<SpectrumCoef_d>(SpectrumCoef_d(0.5,0.6,0.7)) );
+      intrusive_ptr<Texture<SpectrumCoef_d>> p_reflectance_texture( new ConstantTexture<SpectrumCoef_d>(SpectrumCoef_d(0.9,0.8,0.7)) );
+      intrusive_ptr<Texture<SpectrumCoef_d>> p_transmittance_texture( new ConstantTexture<SpectrumCoef_d>(SpectrumCoef_d(0.5,0.6,0.7)) );
 
       intrusive_ptr<Material> p_material1(new TransparentMaterial(p_reflectance_texture, p_transmittance_texture, 1.5));
         {

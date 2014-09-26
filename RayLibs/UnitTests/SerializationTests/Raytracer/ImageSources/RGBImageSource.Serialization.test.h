@@ -23,14 +23,14 @@ class RGB24ImageSourceSerializationTestSuite : public CxxTest::TestSuite
     void test_RGB24ImageSource_Serialization()
       {
       double scale = 2.0;
-      intrusive_ptr<ImageSource<Spectrum_f> > p_image_source1(new RGBImageSource<Spectrum_f>("TestData/red_200x100.tif", global_sRGB_E_ColorSystem, scale));
+      intrusive_ptr<ImageSource<Spectrum_f>> p_image_source1(new RGBImageSource<Spectrum_f>("TestData/red_200x100.tif", global_sRGB_E_ColorSystem, scale));
         {
         boost::iostreams::stream_buffer<SinkDevice> buffer(m_data, m_buffer_size);
         boost::archive::binary_oarchive output_archive(buffer);
         output_archive << p_image_source1;
         } // archive and stream closed when destructors are called
 
-      intrusive_ptr<ImageSource<Spectrum_f> > p_image_source2;
+      intrusive_ptr<ImageSource<Spectrum_f>> p_image_source2;
         {
         boost::iostreams::stream_buffer<SourceDevice> buffer(m_data, m_buffer_size);
         boost::archive::binary_iarchive input_archive(buffer);
@@ -40,8 +40,8 @@ class RGB24ImageSourceSerializationTestSuite : public CxxTest::TestSuite
       TS_ASSERT_EQUALS(p_image_source1->GetHeight(), p_image_source2->GetHeight());
       TS_ASSERT_EQUALS(p_image_source1->GetWidth(), p_image_source2->GetWidth());
 
-      std::vector<std::vector<Spectrum_f> > image1{ p_image_source1->GetImage() };
-      std::vector<std::vector<Spectrum_f> > image2{ p_image_source2->GetImage() };
+      std::vector<std::vector<Spectrum_f>> image1{ p_image_source1->GetImage() };
+      std::vector<std::vector<Spectrum_f>> image2{ p_image_source2->GetImage() };
       if (image1 != image2)
         TS_FAIL("RGB24ImageSource serialization test failed.");
       }

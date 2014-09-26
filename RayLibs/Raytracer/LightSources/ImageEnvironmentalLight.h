@@ -28,7 +28,7 @@ class ImageEnvironmentalLight: public InfiniteLightSource
     * @param i_scale Scale factor for the image values.
     */
     ImageEnvironmentalLight(const BBox3D_d &i_world_bounds, const Transform &i_light_to_world,
-      const std::vector<std::vector<Spectrum_f> > &i_image, SpectrumCoef_d i_scale = SpectrumCoef_d(1.0));
+      const std::vector<std::vector<Spectrum_f>> &i_image, SpectrumCoef_d i_scale = SpectrumCoef_d(1.0));
 
     /**
     * Constructs ImageEnvironmentalLight from the specified image source.
@@ -38,7 +38,7 @@ class ImageEnvironmentalLight: public InfiniteLightSource
     * @param i_scale Scale factor for the image values.
     */
     ImageEnvironmentalLight(const BBox3D_d &i_world_bounds, const Transform &i_light_to_world,
-      intrusive_ptr<const ImageSource<Spectrum_f> > ip_image_source, SpectrumCoef_d i_scale = SpectrumCoef_d(1.0));
+      intrusive_ptr<const ImageSource<Spectrum_f>> ip_image_source, SpectrumCoef_d i_scale = SpectrumCoef_d(1.0));
 
     /**
     * Returns the light source radiance for the specified ray.
@@ -205,11 +205,11 @@ class ImageEnvironmentalLight: public InfiniteLightSource
     SpectrumCoef_d m_scale;
 
     // MIP map used to filter radiance values.
-    intrusive_ptr<const MIPMap<Spectrum_f> > mp_image_map;
+    intrusive_ptr<const MIPMap<Spectrum_f>> mp_image_map;
     size_t m_width, m_height;
 
     // Keeps the image map supplied to the image source. Used only during construction and for serialization.
-    std::vector<std::vector<Spectrum_f> > m_image;
+    std::vector<std::vector<Spectrum_f>> m_image;
 
     double m_theta_coef, m_phi_coef;
 
@@ -237,7 +237,7 @@ class ImageEnvironmentalLight: public InfiniteLightSource
 
     // CDFs for selection column to be sampled.
     // Has the same size that the image map has and each row contains concatenated CDFs for all leaves intersecting the row.
-    std::vector<std::vector<double> > m_CDF_cols;
+    std::vector<std::vector<double>> m_CDF_cols;
   };
 
 /////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////

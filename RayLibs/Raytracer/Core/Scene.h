@@ -20,14 +20,14 @@ class Scene: public ReferenceCounted
     /**
     * Constructs Scene instance with specified primitives, volume region and lights. Volume region can be NULL.
     */
-    Scene(const std::vector<intrusive_ptr<const Primitive> > &i_primitives, intrusive_ptr<const VolumeRegion> ip_volume_region, const LightSources &i_light_sources);
+    Scene(const std::vector<intrusive_ptr<const Primitive>> &i_primitives, intrusive_ptr<const VolumeRegion> ip_volume_region, const LightSources &i_light_sources);
 
     /**
     * Returns all primitives in the scene.
     * @warning For the sake of performance this method returns a constant reference to a member field.
     * The calling code should never utilize the reference after the Scene is destroyed.
     */
-    const std::vector<intrusive_ptr<const Primitive> > &GetPrimitives() const;
+    const std::vector<intrusive_ptr<const Primitive>> &GetPrimitives() const;
 
     /**
     * Returns a pointer to the VolumeRegion of the scene.
@@ -76,7 +76,7 @@ class Scene: public ReferenceCounted
     Scene &operator=(const Scene&);
 
   private:
-    std::vector<intrusive_ptr<const Primitive> > m_primitives;
+    std::vector<intrusive_ptr<const Primitive>> m_primitives;
     
     intrusive_ptr<const VolumeRegion> mp_volume_region;
 
@@ -90,7 +90,7 @@ class Scene: public ReferenceCounted
 /////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-inline Scene::Scene(const std::vector<intrusive_ptr<const Primitive> > &i_primitives, intrusive_ptr<const VolumeRegion> ip_volume_region, const LightSources &i_light_sources):
+inline Scene::Scene(const std::vector<intrusive_ptr<const Primitive>> &i_primitives, intrusive_ptr<const VolumeRegion> ip_volume_region, const LightSources &i_light_sources):
 m_primitives(i_primitives), mp_volume_region(ip_volume_region), m_light_sources(i_light_sources), m_triangle_accelerator(i_primitives)
   {
   m_bounds = m_triangle_accelerator.GetWorldBounds();
@@ -98,7 +98,7 @@ m_primitives(i_primitives), mp_volume_region(ip_volume_region), m_light_sources(
     m_bounds.Unite(ip_volume_region->GetBounds());
   }
 
-inline const std::vector<intrusive_ptr<const Primitive> > &Scene::GetPrimitives() const
+inline const std::vector<intrusive_ptr<const Primitive>> &Scene::GetPrimitives() const
   {
   return m_primitives;
   }
@@ -139,7 +139,7 @@ inline bool Scene::IntersectTest(const Ray &i_ray) const
 template<class Archive>
 void save_construct_data(Archive &i_ar, const Scene *ip_scene, const unsigned int i_version)
   {
-  std::vector<intrusive_ptr<const Primitive> > primitives = ip_scene->GetPrimitives();
+  std::vector<intrusive_ptr<const Primitive>> primitives = ip_scene->GetPrimitives();
   intrusive_ptr<const VolumeRegion> p_volume_region = ip_scene->GetVolumeRegion();
   LightSources light_sources = ip_scene->GetLightSources();
 
@@ -154,7 +154,7 @@ void save_construct_data(Archive &i_ar, const Scene *ip_scene, const unsigned in
 template<class Archive>
 void load_construct_data(Archive &i_ar, Scene *ip_scene, const unsigned int i_version)
   {
-  std::vector<intrusive_ptr<const Primitive> > primitives;
+  std::vector<intrusive_ptr<const Primitive>> primitives;
   intrusive_ptr<const VolumeRegion> p_volume_region;
   LightSources light_sources;
 

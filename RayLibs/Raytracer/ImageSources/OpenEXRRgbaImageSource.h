@@ -211,7 +211,7 @@ template <typename T>
 template<class Archive>
 void OpenEXRRgbaImageSource<T>::save(Archive &i_ar, const unsigned int i_version) const
   {
-  i_ar & boost::serialization::base_object<ImageSource<T> >(*this);
+  i_ar & boost::serialization::base_object<ImageSource<T>>(*this);
 
   i_ar & m_values;
   i_ar & m_width;
@@ -224,7 +224,7 @@ template <typename T>
 template<class Archive>
 void OpenEXRRgbaImageSource<T>::load(Archive &i_ar, const unsigned int i_version)
   {
-  i_ar & boost::serialization::base_object<ImageSource<T> >(*this);
+  i_ar & boost::serialization::base_object<ImageSource<T>>(*this);
 
   i_ar & m_values;
   i_ar & m_width;

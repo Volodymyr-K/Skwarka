@@ -20,7 +20,7 @@ class MixMaterialTestSuite : public CxxTest::TestSuite
       SpectrumCoef_d refl1(0.1,0.2,0.3), refl2(0.4,0.8,0.1), scale(0.3,0.5,0.7);
       intrusive_ptr<Material> p_material1( new MaterialMock(refl1) );
       intrusive_ptr<Material> p_material2( new MaterialMock(refl2) );
-      intrusive_ptr<Texture<SpectrumCoef_d> > p_scale( new ConstantTexture<SpectrumCoef_d>(scale) );
+      intrusive_ptr<Texture<SpectrumCoef_d>> p_scale( new ConstantTexture<SpectrumCoef_d>(scale) );
 
       intrusive_ptr<Material> p_material3(new MixMaterial(p_material1, p_material2, p_scale) );
 
@@ -47,7 +47,7 @@ class MixMaterialTestSuite : public CxxTest::TestSuite
       {
       SpectrumCoef_d refl1(0.1,0.2,0.3), scale(0.3,0.5,0.7);
       intrusive_ptr<Material> p_material1( new MaterialMock(refl1) );
-      intrusive_ptr<Texture<SpectrumCoef_d> > p_scale( new ConstantTexture<SpectrumCoef_d>(scale) );
+      intrusive_ptr<Texture<SpectrumCoef_d>> p_scale( new ConstantTexture<SpectrumCoef_d>(scale) );
 
       intrusive_ptr<Material> p_material3(new MixMaterial(p_material1, NULL, p_scale) );
 

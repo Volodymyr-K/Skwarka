@@ -32,7 +32,7 @@ class Primitive: public ReferenceCounted
     * @param ip_bump_map Bump map. Can be null.
     */
     Primitive(intrusive_ptr<const TriangleMesh> ip_mesh, const Transform &i_mesh_to_world, intrusive_ptr<const Material> ip_material,
-      intrusive_ptr<const AreaLightSource> ip_area_light_source = NULL, intrusive_ptr<const Texture<double> > ip_bump_map = NULL);
+      intrusive_ptr<const AreaLightSource> ip_area_light_source = NULL, intrusive_ptr<const Texture<double>> ip_bump_map = NULL);
 
     /**
     * Returns a pointer to the TriangleMesh the primitive is associated with.
@@ -75,7 +75,7 @@ class Primitive: public ReferenceCounted
     /**
     * Returns the bump map.
     */
-    intrusive_ptr<const Texture<double> > GetBumpMap() const;
+    intrusive_ptr<const Texture<double>> GetBumpMap() const;
 
     /**
     * Returns a pointer to BSDF describing local scattering properties at the specified surface point.
@@ -114,7 +114,7 @@ class Primitive: public ReferenceCounted
     Transform m_mesh_to_world;
 
     intrusive_ptr<const Material> mp_material;
-    intrusive_ptr<const Texture<double> > mp_bump_map;
+    intrusive_ptr<const Texture<double>> mp_bump_map;
     intrusive_ptr<const AreaLightSource> mp_area_light_source;
   };
 
@@ -122,7 +122,7 @@ class Primitive: public ReferenceCounted
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 inline Primitive::Primitive(intrusive_ptr<const TriangleMesh> ip_mesh, const Transform &i_mesh_to_world, intrusive_ptr<const Material> ip_material,
-                            intrusive_ptr<const AreaLightSource> ip_area_light_source, intrusive_ptr<const Texture<double> > ip_bump_map):
+                            intrusive_ptr<const AreaLightSource> ip_area_light_source, intrusive_ptr<const Texture<double>> ip_bump_map):
 mp_mesh(ip_mesh), m_mesh_to_world(i_mesh_to_world), mp_material(ip_material), mp_area_light_source(ip_area_light_source), mp_bump_map(ip_bump_map)
   {
   ASSERT(ip_mesh);
@@ -164,7 +164,7 @@ inline const AreaLightSource *Primitive::GetAreaLightSource_RawPtr() const
   return mp_area_light_source.get();
   }
 
-inline intrusive_ptr<const Texture<double> > Primitive::GetBumpMap() const
+inline intrusive_ptr<const Texture<double>> Primitive::GetBumpMap() const
   {
   return mp_bump_map;
   }
@@ -202,7 +202,7 @@ void save_construct_data(Archive &i_ar, const Primitive *ip_primitive, const uns
   {
   intrusive_ptr<const TriangleMesh> p_mesh = ip_primitive->GetTriangleMesh();
   intrusive_ptr<const Material> p_material = ip_primitive->GetMaterial();
-  intrusive_ptr<const Texture<double> > p_bump_map = ip_primitive->GetBumpMap();
+  intrusive_ptr<const Texture<double>> p_bump_map = ip_primitive->GetBumpMap();
   intrusive_ptr<const AreaLightSource> p_area_light_source = ip_primitive->GetAreaLightSource();
   Transform transform = ip_primitive->GetMeshToWorldTransform();
 
@@ -221,7 +221,7 @@ void load_construct_data(Archive &i_ar, Primitive *ip_primitive, const unsigned 
   {
   intrusive_ptr<const TriangleMesh> p_mesh;
   intrusive_ptr<const Material> p_material;
-  intrusive_ptr<const Texture<double> > p_bump_map;
+  intrusive_ptr<const Texture<double>> p_bump_map;
   intrusive_ptr<const AreaLightSource> p_area_light_source;
   Transform transform;
 

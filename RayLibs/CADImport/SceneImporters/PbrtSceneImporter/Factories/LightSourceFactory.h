@@ -109,14 +109,14 @@ namespace PbrtImport
 
         if (texmap.empty()==false)
           {
-          intrusive_ptr<const ImageSource<Spectrum_f> > p_image_source =
+          intrusive_ptr<const ImageSource<Spectrum_f>> p_image_source =
             PbrtImport::Utils::CreateImageSourceFromFile<Spectrum_f>(texmap, false, 1.0, mp_log);
 
           if (p_image_source && p_image_source->GetHeight() > 0)
             return new ImageEnvironmentalLight(i_world_bounds, i_light_to_world, p_image_source, sc);
           }
 
-        std::vector<std::vector<Spectrum_f> > values(1, std::vector<Spectrum_f>(1, Convert<float>(L)));
+        std::vector<std::vector<Spectrum_f>> values(1, std::vector<Spectrum_f>(1, Convert<float>(L)));
         return new ImageEnvironmentalLight(i_world_bounds, i_light_to_world, values, sc);
         }
 

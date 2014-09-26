@@ -28,7 +28,7 @@ namespace SamplingTestHelper
   Returns true if the test passes.
   */
   template<typename T>
-  bool TestUniformDistribution2D(const std::vector<Point2D<T> > &i_values, Point2D<T> i_low, Point2D<T> i_high);
+  bool TestUniformDistribution2D(const std::vector<Point2D<T>> &i_values, Point2D<T> i_low, Point2D<T> i_high);
 
   /*
   This method checks that the given 1D distribution of samples does not have regions of clumping samples.
@@ -44,7 +44,7 @@ namespace SamplingTestHelper
   Return true if there are no clumping regions.
   */
   template<typename T>
-  bool TestSamplesClumping2D(const std::vector<Point2D<T> > &i_values, Point2D<T> i_low, Point2D<T> i_high, size_t i_x_num_samples, size_t i_y_num_samples);
+  bool TestSamplesClumping2D(const std::vector<Point2D<T>> &i_values, Point2D<T> i_low, Point2D<T> i_high, size_t i_x_num_samples, size_t i_y_num_samples);
 
   /*
   This method checks that the given 2D distribution of samples does not have regions of clumping samples.
@@ -55,7 +55,7 @@ namespace SamplingTestHelper
   Returns true if there are no clumping regions.
   */
   template<typename T>
-  bool TestLatinHypercubeDistribution2D(const std::vector<Point2D<T> > &i_values, Point2D<T> i_low, Point2D<T> i_high);
+  bool TestLatinHypercubeDistribution2D(const std::vector<Point2D<T>> &i_values, Point2D<T> i_low, Point2D<T> i_high);
 
   /*
   This method checks that the given 2D distribution of samples conforms to the (0,2)-sequence property.
@@ -63,7 +63,7 @@ namespace SamplingTestHelper
   The input vector length should be a power of 2.
   */
   template<typename T>
-  bool TestLD02Distribution2D(const std::vector<Point2D<T> > &i_values, Point2D<T> i_low, Point2D<T> i_high);
+  bool TestLD02Distribution2D(const std::vector<Point2D<T>> &i_values, Point2D<T> i_low, Point2D<T> i_high);
 
   };
 
@@ -106,7 +106,7 @@ namespace SamplingTestHelper
     }
 
   template<typename T>
-  bool TestUniformDistribution2D(const std::vector<Point2D<T> > &i_values, Point2D<T> i_low, Point2D<T> i_high)
+  bool TestUniformDistribution2D(const std::vector<Point2D<T>> &i_values, Point2D<T> i_low, Point2D<T> i_high)
     {
     size_t N=i_values.size();
     std::vector<T> values_x, values_y;
@@ -160,14 +160,14 @@ namespace SamplingTestHelper
     };
 
   template<typename T>
-  bool TestSamplesClumping2D(const std::vector<Point2D<T> > &i_values, Point2D<T> i_low, Point2D<T> i_high, size_t i_x_num_samples, size_t i_y_num_samples)
+  bool TestSamplesClumping2D(const std::vector<Point2D<T>> &i_values, Point2D<T> i_low, Point2D<T> i_high, size_t i_x_num_samples, size_t i_y_num_samples)
     {
     const size_t N = i_x_num_samples*i_y_num_samples;
     ASSERT(i_values.size()==N);
     if (i_values.size()!=N)
       return false;
 
-    std::vector<Point2D<T> > values(i_values);
+    std::vector<Point2D<T>> values(i_values);
 
     double strata_size_x = (i_high[0]-i_low[0])/i_x_num_samples - DBL_EPS;
     double strata_size_y = (i_high[1]-i_low[1])/i_y_num_samples - DBL_EPS;
@@ -175,15 +175,15 @@ namespace SamplingTestHelper
     // Sort by X coordinate.
     std::sort(values.begin(), values.end(), Point2DComparator<T,0>());
 
-    std::vector<Point2D<T> > clumped_by_x;
+    std::vector<Point2D<T>> clumped_by_x;
     for(size_t i=0;i<N;++i)
       {
       double left=i_values[i][0];
       double right=left+strata_size_x;
 
       // Lower bound is used for both bounds to exclude the samples with the same value as "right".
-      std::vector<Point2D<T> >::iterator it1=std::lower_bound(values.begin(), values.end(), Point2D_d(left,0.0), Point2DComparator<T,0>());
-      std::vector<Point2D<T> >::iterator it2=std::lower_bound(values.begin(), values.end(), Point2D_d(right,0.0), Point2DComparator<T,0>());
+      std::vector<Point2D<T>>::iterator it1=std::lower_bound(values.begin(), values.end(), Point2D_d(left,0.0), Point2DComparator<T,0>());
+      std::vector<Point2D<T>>::iterator it2=std::lower_bound(values.begin(), values.end(), Point2D_d(right,0.0), Point2DComparator<T,0>());
 
       // No need to look for clumping by Y if there is less than 5 points.
       if (std::distance(it1,it2)<5)
@@ -203,14 +203,14 @@ namespace SamplingTestHelper
     }
 
   template<typename T>
-  bool TestLatinHypercubeDistribution2D(const std::vector<Point2D<T> > &i_values, Point2D<T> i_low, Point2D<T> i_high)
+  bool TestLatinHypercubeDistribution2D(const std::vector<Point2D<T>> &i_values, Point2D<T> i_low, Point2D<T> i_high)
     {
     size_t N=i_values.size();
     std::vector<T> values_x, values_y;
     values_x.reserve(N);
     values_y.reserve(N);
 
-    std::vector<Point2D<T> > values(i_values);
+    std::vector<Point2D<T>> values(i_values);
     for(size_t i=0;i<N;++i)
       {
       values_x.push_back(values[i][0]);
@@ -223,7 +223,7 @@ namespace SamplingTestHelper
     }
 
   template<typename T>
-  bool TestLD02Distribution2D(const std::vector<Point2D<T> > &i_values, Point2D<T> i_low, Point2D<T> i_high)
+  bool TestLD02Distribution2D(const std::vector<Point2D<T>> &i_values, Point2D<T> i_low, Point2D<T> i_high)
     {
     size_t N=i_values.size();
     ASSERT(MathRoutines::IsPowerOf2(N));
@@ -237,10 +237,10 @@ namespace SamplingTestHelper
     }
 
   template<typename T>
-  bool _CheckLD02Stratification(const std::vector<Point2D<T> > &i_values, Point2D<T> i_low, Point2D<T> i_high, size_t i_n, size_t i_m)
+  bool _CheckLD02Stratification(const std::vector<Point2D<T>> &i_values, Point2D<T> i_low, Point2D<T> i_high, size_t i_n, size_t i_m)
     {
     ASSERT(i_values.size() == i_n*i_m);
-    std::vector<std::vector<bool> > hit(i_n, std::vector<bool>(i_m, false));
+    std::vector<std::vector<bool>> hit(i_n, std::vector<bool>(i_m, false));
 
     for(size_t i=0;i<i_values.size();++i)
       {

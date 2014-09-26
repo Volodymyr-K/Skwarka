@@ -92,7 +92,7 @@ class InteractiveFilm: public Film
     Point2D_i m_crop_window_begin, m_crop_window_end;
 
     // Vector of image layers.
-    std::vector<intrusive_ptr<ImageFilm> > m_image_films;
+    std::vector<intrusive_ptr<ImageFilm>> m_image_films;
 
     // Defines the size factor between consecutive layers.
     // Smaller factor results in a better approximation but takes more processing time when adding samples.

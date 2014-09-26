@@ -317,7 +317,7 @@ class ImageEnvironmentalLightTestSuite : public CxxTest::TestSuite
       {
       for(size_t x=1;x<=3;++x) for(size_t y=1;y<=3;++y)
         {
-        std::vector<std::vector<Spectrum_f> > image(x, std::vector<Spectrum_f>(y, Spectrum_f(1.0)));
+        std::vector<std::vector<Spectrum_f>> image(x, std::vector<Spectrum_f>(y, Spectrum_f(1.0)));
 
         m_bbox = BBox3D_d(Point3D_d(0,0,0), Point3D_d(10,20,30));
         m_light_to_world = MakeRotation(1.2, Vector3D_d(-1,2,-3).Normalized());      
@@ -382,7 +382,7 @@ class ImageEnvironmentalLightTestSuite : public CxxTest::TestSuite
 
   private:
     size_t m_width, m_height;
-    std::vector<std::vector<Spectrum_f> > m_image;
+    std::vector<std::vector<Spectrum_f>> m_image;
 
     BBox3D_d m_bbox;
     SpectrumCoef_d m_scale;

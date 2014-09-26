@@ -31,7 +31,7 @@ class SceneSerializationTestSuite : public CxxTest::TestSuite
   public:
     void test_Scene_Serialization()
       {
-      std::vector<intrusive_ptr<const Primitive> > primitives;
+      std::vector<intrusive_ptr<const Primitive>> primitives;
       for(size_t i=0;i<10;++i)
         primitives.push_back(_CreateDummyPrimitive(Point3D_f(0.f,0.f,i*1.f)));
 
@@ -92,8 +92,8 @@ class SceneSerializationTestSuite : public CxxTest::TestSuite
     intrusive_ptr<Primitive> _CreateDummyPrimitive(const Point3D_f &i_origin)
       {
       intrusive_ptr<TriangleMesh> p_mesh( TriangleMeshHelper::ConstructTetrahedron(i_origin) );
-      intrusive_ptr<Texture<SpectrumCoef_d> > p_reflectance( new ConstantTexture<SpectrumCoef_d>(SpectrumCoef_d(1.0)) );
-      intrusive_ptr<Texture<double> > p_sigma( new ConstantTexture<double>(0.1) );
+      intrusive_ptr<Texture<SpectrumCoef_d>> p_reflectance( new ConstantTexture<SpectrumCoef_d>(SpectrumCoef_d(1.0)) );
+      intrusive_ptr<Texture<double>> p_sigma( new ConstantTexture<double>(0.1) );
       intrusive_ptr<Material> p_material( new MatteMaterial(p_reflectance, p_sigma) );
       intrusive_ptr<AreaLightSource> p_area_light( new DiffuseAreaLightSource(Spectrum_d(1.0), p_mesh) );
 

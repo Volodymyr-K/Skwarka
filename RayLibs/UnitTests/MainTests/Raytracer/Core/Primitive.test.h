@@ -45,7 +45,7 @@ class PrimitiveTestSuite : public CxxTest::TestSuite
       {
       intrusive_ptr<TriangleMesh> p_mesh( new TriangleMesh(std::vector<Point3D_f>(), std::vector<MeshTriangle>()) );
       intrusive_ptr<Material> p_material( new MaterialMock() );
-      intrusive_ptr<Texture<double> > p_bump_map( new TextureMock<double>(1.0) );
+      intrusive_ptr<Texture<double>> p_bump_map( new TextureMock<double>(1.0) );
 
       intrusive_ptr<Primitive> p_primitive( new Primitive(p_mesh, Transform(), p_material, NULL, p_bump_map) );
 

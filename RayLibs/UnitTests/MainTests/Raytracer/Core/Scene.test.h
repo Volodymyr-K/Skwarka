@@ -99,7 +99,7 @@ class SceneTestSuite : public CxxTest::TestSuite
       }
 
   private:
-    std::vector<intrusive_ptr<const Primitive> > m_primitives;
+    std::vector<intrusive_ptr<const Primitive>> m_primitives;
     LightSources m_light_sources;
 
     intrusive_ptr<Scene> mp_scene;

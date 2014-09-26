@@ -17,12 +17,12 @@ class OpenEXRRgbaImageSourceTestSuite : public CxxTest::TestSuite
       double scale = 2.0;
 
       size_t width = 1024, height=512; // these are dimensions of TestData/EXR/grace_latlong.exr
-      intrusive_ptr<ImageSource<Spectrum_d> > p_image_source(new OpenEXRRgbaImageSource<Spectrum_d>("TestData/EXR/grace_latlong.exr", false, scale));
+      intrusive_ptr<ImageSource<Spectrum_d>> p_image_source(new OpenEXRRgbaImageSource<Spectrum_d>("TestData/EXR/grace_latlong.exr", false, scale));
 
       TS_ASSERT_EQUALS(p_image_source->GetHeight(), height);
       TS_ASSERT_EQUALS(p_image_source->GetWidth(), width);
 
-      std::vector<std::vector<Spectrum_d> > image{ p_image_source->GetImage() };
+      std::vector<std::vector<Spectrum_d>> image{ p_image_source->GetImage() };
       for(size_t i=0;i<height;++i)
         for(size_t j=0;j<width;++j)
           {

@@ -28,7 +28,7 @@ class MIPMap: public ReferenceCounted
     * @param i_repeat Sets whether to wrap the texture on its edges. If false, the value is considered zero (black) beyond the image.
     * @param i_max_anisotropy Maximum anisotropy allowed (ratio of the major ellipse axis to its minor axis). Should be greater or equal than 1.0.
     */
-    MIPMap(const std::vector<std::vector<T> > &i_values, bool i_repeat, double i_max_anisotropy);
+    MIPMap(const std::vector<std::vector<T>> &i_values, bool i_repeat, double i_max_anisotropy);
 
     /**
     * Constructs MIPMap from the specified image source.
@@ -36,7 +36,7 @@ class MIPMap: public ReferenceCounted
     * @param i_repeat Sets whether to wrap the texture on its edges. If false, the value is considered zero (black) beyond the image.
     * @param i_max_anisotropy Maximum anisotropy allowed (ratio of the major ellipse axis to its minor axis). Should be greater or equal than 1.0.
     */
-    MIPMap(intrusive_ptr<const ImageSource<T> > ip_image_source, bool i_repeat, double i_max_anisotropy);
+    MIPMap(intrusive_ptr<const ImageSource<T>> ip_image_source, bool i_repeat, double i_max_anisotropy);
     
     /**
     * Returns filtered value of image at the specified point using trilinear filter.
@@ -69,7 +69,7 @@ class MIPMap: public ReferenceCounted
     * This method is called from constructors to initialize the class instance.
     * It resamples the input image, builds the MIPMap levels and initializes EWA weights.
     */
-    void _Initialize(const std::vector<std::vector<T> > &i_values, double i_max_anisotropy);
+    void _Initialize(const std::vector<std::vector<T>> &i_values, double i_max_anisotropy);
 
     /**
     * Private method that returns image value at the specified point at the specified level.
@@ -89,7 +89,7 @@ class MIPMap: public ReferenceCounted
     /**
     * Private method that resamples original input image so that its width and height are both powers of 2.
     */
-    BlockedArray<T> * _ResampleImage(const std::vector<std::vector<T> > &i_values) const;
+    BlockedArray<T> * _ResampleImage(const std::vector<std::vector<T>> &i_values) const;
 
     /**
     * Private method that computes EWA filter weights. This method is called once in the constructor.
@@ -137,7 +137,7 @@ class MIPMap: public ReferenceCounted
     *
     * Can be NULL, in this case MIPMap levels are serialized directly.
     */
-    intrusive_ptr<const ImageSource<T> > mp_image_source;
+    intrusive_ptr<const ImageSource<T>> mp_image_source;
 
     /**
     * Levels of the MIP-map. 0-th level corresponds to the original image and the highest level has 1x1 size.
@@ -165,14 +165,14 @@ struct MIPMap<T>::ResampleWeight
   };
 
 template <typename T>
-MIPMap<T>::MIPMap(const std::vector<std::vector<T> > &i_values, bool i_repeat, double i_max_anisotropy):
+MIPMap<T>::MIPMap(const std::vector<std::vector<T>> &i_values, bool i_repeat, double i_max_anisotropy):
 m_repeat(i_repeat), mp_image_source(NULL)
   {
   _Initialize(i_values, i_max_anisotropy);
   }
 
 template <typename T>
-MIPMap<T>::MIPMap(intrusive_ptr<const ImageSource<T> > ip_image_source, bool i_repeat, double i_max_anisotropy):
+MIPMap<T>::MIPMap(intrusive_ptr<const ImageSource<T>> ip_image_source, bool i_repeat, double i_max_anisotropy):
 m_repeat(i_repeat), mp_image_source(ip_image_source)
   {
   ASSERT(ip_image_source);
@@ -182,7 +182,7 @@ m_repeat(i_repeat), mp_image_source(ip_image_source)
   }
 
 template <typename T>
-void MIPMap<T>::_Initialize(const std::vector<std::vector<T> > &i_values, double i_max_anisotropy)
+void MIPMap<T>::_Initialize(const std::vector<std::vector<T>> &i_values, double i_max_anisotropy)
   {
   ASSERT(i_max_anisotropy>=1.0);
   m_max_anisotropy = std::max(i_max_anisotropy, 1.0);
@@ -247,7 +247,7 @@ MIPMap<T>::~MIPMap()
   }
 
 template <typename T>
-BlockedArray<T> *MIPMap<T>::_ResampleImage(const std::vector<std::vector<T> > &i_values) const
+BlockedArray<T> *MIPMap<T>::_ResampleImage(const std::vector<std::vector<T>> &i_values) const
   {
   ASSERT(i_values.size()>0 && i_values[0].size()>0);
 

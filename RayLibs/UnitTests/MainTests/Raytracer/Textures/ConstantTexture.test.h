@@ -11,7 +11,7 @@ class ConstantTextureTestSuite : public CxxTest::TestSuite
   public:
     void test_ConstantTexture_Evaluate()
       {
-      intrusive_ptr<Texture<Spectrum_d> > p_texture(new ConstantTexture<Spectrum_d>(Spectrum_d(1.0,2.0,3.0)) );
+      intrusive_ptr<Texture<Spectrum_d>> p_texture(new ConstantTexture<Spectrum_d>(Spectrum_d(1.0,2.0,3.0)) );
 
       DifferentialGeometry dg; // No need to fill with any data for the constant texture.
       Spectrum_d spectrum = p_texture->Evaluate(dg, 0);

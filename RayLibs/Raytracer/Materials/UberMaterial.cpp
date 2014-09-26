@@ -9,11 +9,11 @@
 // Register the derived class in the boost serialization framework.
 BOOST_CLASS_EXPORT_IMPLEMENT(UberMaterial);
 
-UberMaterial::UberMaterial(intrusive_ptr<const Texture<SpectrumCoef_d> > ip_Kd,
-                           intrusive_ptr<const Texture<SpectrumCoef_d> > ip_Ks,
-                           intrusive_ptr<const Texture<SpectrumCoef_d> > ip_Kr,
-                           intrusive_ptr<const Texture<double> > ip_roughness,
-                           intrusive_ptr<const Texture<SpectrumCoef_d> > ip_opacity,
+UberMaterial::UberMaterial(intrusive_ptr<const Texture<SpectrumCoef_d>> ip_Kd,
+                           intrusive_ptr<const Texture<SpectrumCoef_d>> ip_Ks,
+                           intrusive_ptr<const Texture<SpectrumCoef_d>> ip_Kr,
+                           intrusive_ptr<const Texture<double>> ip_roughness,
+                           intrusive_ptr<const Texture<SpectrumCoef_d>> ip_opacity,
                            double i_refractive_index):
 Material(), mp_Kd(ip_Kd), mp_Ks(ip_Ks), mp_Kr(ip_Kr), mp_roughness(ip_roughness), mp_opacity(ip_opacity), m_refractive_index(i_refractive_index)
   {

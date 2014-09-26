@@ -20,9 +20,9 @@ class PlasticMaterialTestSuite : public CxxTest::TestSuite
     void test_PlasticMaterial()
       {
       SpectrumCoef_d diffuse_reflectance(0.4,0.5,0.6), glossy_reflectance(0.3);
-      intrusive_ptr<Texture<SpectrumCoef_d> > p_diffuse_reflectance( new TextureMock<SpectrumCoef_d>(diffuse_reflectance) );
-      intrusive_ptr<Texture<SpectrumCoef_d> > p_glossy_reflectance( new TextureMock<SpectrumCoef_d>(glossy_reflectance) );
-      intrusive_ptr<Texture<double> > p_roughness( new TextureMock<double>(0.025) );
+      intrusive_ptr<Texture<SpectrumCoef_d>> p_diffuse_reflectance( new TextureMock<SpectrumCoef_d>(diffuse_reflectance) );
+      intrusive_ptr<Texture<SpectrumCoef_d>> p_glossy_reflectance( new TextureMock<SpectrumCoef_d>(glossy_reflectance) );
+      intrusive_ptr<Texture<double>> p_roughness( new TextureMock<double>(0.025) );
 
       intrusive_ptr<Material> p_material(new PlasticMaterial(p_diffuse_reflectance, p_glossy_reflectance, p_roughness));
 
