@@ -44,7 +44,7 @@ m_world_bounds(i_world_bounds), m_light_to_world(i_light_to_world), m_world_to_l
   ASSERT(ip_image_source);
   ASSERT(ip_image_source->GetHeight()>0 && ip_image_source->GetWidth()>0);
 
-  ip_image_source->GetImage(m_image);
+  m_image = ip_image_source->GetImage();
   m_height = m_image.size();
   m_width = m_image[0].size();
 

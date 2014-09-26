@@ -6,7 +6,7 @@
 #include <UnitTests/TestHelpers/CustomValueTraits.h>
 #include <Raytracer/Core/MIPMap.h>
 #include <Raytracer/Core/Spectrum.h>
-#include <Raytracer/ImageSources/RGB24ImageSource.h>
+#include <Raytracer/ImageSources/RGBImageSource.h>
 #include <vector>
 #include <boost/archive/binary_iarchive.hpp>
 #include <boost/archive/binary_oarchive.hpp>
@@ -47,7 +47,7 @@ class MIPMapSerializationTestSuite : public CxxTest::TestSuite
     // Tests serialization for MIPMap created from ImageSource
     void test_MIPMap_Serialization_FromImageSource()
       {
-      intrusive_ptr<MIPMap<Spectrum_d> > p_map1 ( _CreateBlueRedMIPMapFromImageSource(123,234,true,8.0) );
+      intrusive_ptr<MIPMap<Spectrum_d> > p_map1 ( _CreateMIPMapFromImageSource(true,8.0) );
 
         {
         boost::iostreams::stream_buffer<SinkDevice> buffer(m_data, m_buffer_size);
@@ -82,26 +82,9 @@ class MIPMapSerializationTestSuite : public CxxTest::TestSuite
       return intrusive_ptr<MIPMap<Spectrum_d> > (new MIPMap<Spectrum_d>(image,i_repeat,i_max_anisotropy));
       }
 
-    intrusive_ptr<MIPMap<Spectrum_d> > _CreateBlueRedMIPMapFromImageSource(size_t i_width, size_t i_height, bool i_repeat, double i_max_anisotropy)
+    intrusive_ptr<MIPMap<Spectrum_d> > _CreateMIPMapFromImageSource(bool i_repeat, double i_max_anisotropy)
       {
-      std::vector<std::vector<RGB24> > image(i_height,std::vector<RGB24>(i_width));
-
-      for(size_t i=0;i<i_width;++i)
-        for(size_t j=0;j<i_height;++j)
-          if (i<i_width/2)
-            {
-            image[j][i].m_rgb[0]=255;
-            image[j][i].m_rgb[1]=0;
-            image[j][i].m_rgb[2]=0;
-            }
-          else
-            {
-            image[j][i].m_rgb[0]=0;
-            image[j][i].m_rgb[1]=0;
-            image[j][i].m_rgb[2]=255;
-            }
-
-      intrusive_ptr<ImageSource<Spectrum_d> > p_image_source( new RGB24ImageSource<Spectrum_d>(image, global_sRGB_E_ColorSystem) );
+      intrusive_ptr<ImageSource<Spectrum_d> > p_image_source(new RGBImageSource<Spectrum_d>("TestData/red_200x100.tif", global_sRGB_E_ColorSystem));
       return intrusive_ptr<MIPMap<Spectrum_d> > (new MIPMap<Spectrum_d>(p_image_source,i_repeat,i_max_anisotropy));
       }
 

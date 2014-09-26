@@ -72,18 +72,18 @@ mp_root(NULL), m_primitives(i_primitives), m_pool(100000*sizeof(TriangleAccelera
         ASSERT( m_primitives[instanced_primitives[i]]->GetTriangleMesh_RawPtr() == p_mesh );
 
         Transform instance_to_world = m_primitives[instanced_primitives[i]]->GetMeshToWorldTransform();
-        BBox3D_d instance_bbox;
+        BBox3D_f instance_bbox;
         for(unsigned char j=0;j<8;++j)
           {
-          Point3D_d mn = p_sub_tree->m_bbox.m_min, mx = p_sub_tree->m_bbox.m_max;
-          Point3D_d bbox_vertex((j&1)?mn[0]:mx[0], (j&2)?mn[1]:mx[1], (j&4)?mn[2]:mx[2]);
+          Point3D_f mn = p_sub_tree->m_bbox.m_min, mx = p_sub_tree->m_bbox.m_max;
+          Point3D_f bbox_vertex((j&1)?mn[0]:mx[0], (j&2)?mn[1]:mx[1], (j&4)?mn[2]:mx[2]);
           instance_bbox.Unite(instance_to_world(bbox_vertex));
           }
 
         m_instance_primitive_indices.push_back(instanced_primitives[i]);
         m_instance_nodes.push_back(p_sub_tree);
         m_instance_to_world_transformations.push_back(instance_to_world);
-        m_instance_bboxes.push_back(Convert<float>(instance_bbox));
+        m_instance_bboxes.push_back(instance_bbox);
         }
       }
 
@@ -450,9 +450,9 @@ bool TriangleAccelerator::IntersectTest(const Ray &i_ray) const
   return _NodeIntersectTest(mp_root, i_ray);
   }
 
-BBox3D_d TriangleAccelerator::_ConstructBBox(size_t i_triangles_begin, size_t i_triangles_end, size_t i_instances_begin, size_t i_instances_end) const
+BBox3D_f TriangleAccelerator::_ConstructBBox(size_t i_triangles_begin, size_t i_triangles_end, size_t i_instances_begin, size_t i_instances_end) const
   {
-  BBox3D_d bbox;
+  BBox3D_f bbox;
 
   for(size_t i=i_triangles_begin;i!=i_triangles_end;++i)
     bbox.Unite(m_triangle_bboxes[i]);
@@ -485,7 +485,7 @@ void TriangleAccelerator::_SwapInstances(size_t i_index1, size_t i_index2)
   std::swap(m_instance_bboxes[i_index1], m_instance_bboxes[i_index2]);
   }
 
-std::pair<unsigned char,double> TriangleAccelerator::_DetermineBestSplit(const BBox3D_d &i_node_bbox,
+std::pair<unsigned char,double> TriangleAccelerator::_DetermineBestSplit(const BBox3D_f &i_node_bbox,
                                                           size_t i_triangles_begin, size_t i_triangles_end,
                                                           size_t i_instances_begin, size_t i_instances_end,
                                                           unsigned char i_middle_split_mask) const

@@ -188,18 +188,17 @@ void PbrtSceneImporter::_pbrtTransformEnd()
 void PbrtSceneImporter::_pbrtTexture(PbrtImport::SubString i_name, PbrtImport::SubString i_type, PbrtImport::SubString i_texname, const PbrtImport::ParamSet &i_params)
   {
   if (_VerifyWorld("Texture")==false) return;
-  PbrtImport::TextureFactory texture_factory(mp_log);
 
   std::string name(i_name.to_string()), type(i_type.to_string()), texname(i_texname.to_string());
   PbrtImport::TextureParams tp(i_params, i_params, m_graphicsState.floatTextures, m_graphicsState.spectrumTextures);
   if (type == "float")
     {
-    intrusive_ptr<const Texture<double> > ft = texture_factory.CreateFloatTexture(texname, m_current_transform, tp);
+    intrusive_ptr<const Texture<double> > ft = m_texture_factory.CreateFloatTexture(texname, m_current_transform, tp);
     if (ft) m_graphicsState.floatTextures[name] = ft;
     }
   else if (type == "color") 
     {
-    intrusive_ptr<const Texture<SpectrumCoef_d> > st = texture_factory.CreateSpectrumCoefTexture(texname, m_current_transform, tp);
+    intrusive_ptr<const Texture<SpectrumCoef_d> > st = m_texture_factory.CreateSpectrumCoefTexture(texname, m_current_transform, tp);
     if (st) m_graphicsState.spectrumTextures[name] = st;
     }
   else

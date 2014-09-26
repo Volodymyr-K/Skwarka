@@ -55,7 +55,7 @@
     <ClCompile>
       <AdditionalOptions>/MP /bigobj %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\;..\..\..\ThirdParty\;..\..\..\ThirdParty\boost\1.56\;..\..\..\ThirdParty\TBB\4.2\include;..\..\..\ThirdParty\EasyBMP\1.06;..\..\..\ThirdParty\OpenEXR\Deploy\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\;..\..\..\ThirdParty\;..\..\..\ThirdParty\boost\1.56\;..\..\..\ThirdParty\TBB\4.2\include;..\..\..\ThirdParty\EasyBMP\1.06;..\..\..\ThirdParty\OpenEXR\Deploy\include;..\..\..\ThirdParty\FreeImage\3.16\Dist;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>TBB_USE_DEBUG;WIN32;_DEBUG;_WINDOWS;NOMINMAX;OPENEXR_DLL;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -67,15 +67,16 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>tbb_debug.lib;Half.lib;Iex.lib;IlmImf.lib;IlmThread.lib;Imath.lib;zdll.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>tbb_debug.lib;Half.lib;Iex.lib;IlmImf.lib;IlmThread.lib;Imath.lib;zdll.lib;FreeImage.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName)d.exe</OutputFile>
-      <AdditionalLibraryDirectories>..\..\..\ThirdParty\TBB\4.2\lib\ia32\vc12;..\..\..\ThirdParty\OpenEXR\Deploy\lib\Debug;..\..\..\ThirdParty\boost\libs\1.56;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\ThirdParty\TBB\4.2\lib\ia32\vc12;..\..\..\ThirdParty\OpenEXR\Deploy\lib\Debug;..\..\..\ThirdParty\boost\libs\1.56;..\..\..\ThirdParty\FreeImage\3.16\Dist;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention />
       <TargetMachine>MachineX86</TargetMachine>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
+      <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <PostBuildEvent>
       <Message>Copying TBB DLLs and PDBs</Message>
@@ -96,7 +97,7 @@ copy  "..\..\..\ThirdParty\OpenEXR\Deploy\bin\Debug\zlib1.dll" "$(OutDir)"
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <AdditionalIncludeDirectories>..\;..\..\..\ThirdParty\;..\..\..\ThirdParty\boost\1.56\;..\..\..\ThirdParty\TBB\4.2\include;..\..\..\ThirdParty\EasyBMP\1.06;..\..\..\ThirdParty\OpenEXR\Deploy\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\;..\..\..\ThirdParty\;..\..\..\ThirdParty\boost\1.56\;..\..\..\ThirdParty\TBB\4.2\include;..\..\..\ThirdParty\EasyBMP\1.06;..\..\..\ThirdParty\OpenEXR\Deploy\include;..\..\..\ThirdParty\FreeImage\3.16\Dist;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;NOMINMAX;_SECURE_SCL=0;OPENEXR_DLL;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
@@ -109,8 +110,8 @@ copy  "..\..\..\ThirdParty\OpenEXR\Deploy\bin\Debug\zlib1.dll" "$(OutDir)"
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>tbb.lib;Half.lib;Iex.lib;IlmImf.lib;IlmThread.lib;Imath.lib;zdll.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\..\..\ThirdParty\TBB\4.2\lib\ia32\vc12;..\..\..\ThirdParty\OpenEXR\Deploy\lib\Release;..\..\..\ThirdParty\boost\libs\1.56;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>tbb.lib;Half.lib;Iex.lib;IlmImf.lib;IlmThread.lib;Imath.lib;zdll.lib;FreeImage.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\..\ThirdParty\TBB\4.2\lib\ia32\vc12;..\..\..\ThirdParty\OpenEXR\Deploy\lib\Release;..\..\..\ThirdParty\boost\libs\1.56;..\..\..\ThirdParty\FreeImage\3.16\Dist;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
@@ -119,6 +120,7 @@ copy  "..\..\..\ThirdParty\OpenEXR\Deploy\bin\Debug\zlib1.dll" "$(OutDir)"
       <DataExecutionPrevention />
       <TargetMachine>MachineX86</TargetMachine>
       <Profile>true</Profile>
+      <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <PostBuildEvent>
       <Message>Copying TBB DLLs and PDBs</Message>

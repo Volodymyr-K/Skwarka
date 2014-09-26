@@ -8,7 +8,7 @@
 #include <boost/iostreams/device/mapped_file.hpp>
 
 PbrtSceneImporter::PbrtSceneImporter(std::string i_filename, intrusive_ptr<Log> ip_log):
-m_filename(i_filename), mp_log(ip_log)
+m_filename(i_filename), mp_log(ip_log), m_texture_factory(ip_log)
   {
   m_currentApiState = STATE_UNINITIALIZED;
 

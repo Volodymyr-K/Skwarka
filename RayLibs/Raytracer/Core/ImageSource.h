@@ -23,7 +23,7 @@ class ImageSource: public ReferenceCounted
     /**
     * Gets 2D array of values (image).
     */
-    virtual void GetImage(std::vector<std::vector<T> > &o_image) const = 0;
+    virtual std::vector<std::vector<T>> GetImage() const = 0;
 
     /**
     * Returns height of the image, i.e. the size of the outer vector which defines the image.

@@ -52,7 +52,7 @@
     <ClCompile>
       <AdditionalOptions>/MP %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\;..\..\..\ThirdParty\;..\..\..\ThirdParty\boost\1.56\;..\..\..\ThirdParty\TBB\4.2\include;..\..\..\ThirdParty\OpenEXR\Deploy\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\;..\..\..\ThirdParty\;..\..\..\ThirdParty\boost\1.56\;..\..\..\ThirdParty\TBB\4.2\include;..\..\..\ThirdParty\OpenEXR\Deploy\include;..\..\..\ThirdParty\FreeImage\3.16\Dist;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>TBB_USE_DEBUG;_DEBUG;NOMINMAX;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;OPENEXR_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -77,7 +77,7 @@
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <AdditionalIncludeDirectories>..\;..\..\..\ThirdParty\;..\..\..\ThirdParty\boost\1.56\;..\..\..\ThirdParty\TBB\4.2\include;..\..\..\ThirdParty\OpenEXR\Deploy\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\;..\..\..\ThirdParty\;..\..\..\ThirdParty\boost\1.56\;..\..\..\ThirdParty\TBB\4.2\include;..\..\..\ThirdParty\OpenEXR\Deploy\include;..\..\..\ThirdParty\FreeImage\3.16\Dist;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NDEBUG;NOMINMAX;_SECURE_SCL=0;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;OPENEXR_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -178,7 +178,7 @@
     <ClInclude Include="PhaseFunctions\MieMurkyPhaseFunction.h" />
     <ClInclude Include="PhaseFunctions\RayleighPhaseFunction.h" />
     <ClInclude Include="ImageSources\OpenEXRRgbaImageSource.h" />
-    <ClInclude Include="ImageSources\RGB24ImageSource.h" />
+    <ClInclude Include="ImageSources\RGBImageSource.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Core\BSDF.cpp" />
@@ -208,7 +208,7 @@
     <ClCompile Include="BxDFs\ScaledBxDF.cpp" />
     <ClCompile Include="BxDFs\SpecularTransmission.cpp" />
     <ClCompile Include="ImageSources\OpenEXRRgbaImageSource.cpp" />
-    <ClCompile Include="ImageSources\RGB24ImageSource.cpp" />
+    <ClCompile Include="ImageSources\RGBImageSource.cpp" />
     <ClCompile Include="Mappings\SphericalMapping2D.cpp" />
     <ClCompile Include="Mappings\TransformMapping3D.cpp" />
     <ClCompile Include="Mappings\UVMapping2D.cpp" />

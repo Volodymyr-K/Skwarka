@@ -178,9 +178,7 @@ m_repeat(i_repeat), mp_image_source(ip_image_source)
   ASSERT(ip_image_source);
   ASSERT(ip_image_source->GetHeight()>0 && ip_image_source->GetWidth()>0);
 
-  std::vector<std::vector<T> > image;
-  ip_image_source->GetImage(image);
-  _Initialize(image, i_max_anisotropy);
+  _Initialize(ip_image_source->GetImage(), i_max_anisotropy);
   }
 
 template <typename T>
@@ -395,8 +393,8 @@ const T &MIPMap<T>::_GetTexel(size_t i_level, int i_x, int i_y) const
     // Should work correctly when i_x and i_y are negative too.
 
     // Check first, just in case...
-    ASSERT(i_y & (level.GetSizeU()-1) == MathRoutines::Mod(i_y, (int)level.GetSizeU()));
-    ASSERT(i_x & (level.GetSizeV()-1) == MathRoutines::Mod(i_x, (int)level.GetSizeV()));
+    ASSERT((i_y & (level.GetSizeU()-1)) == MathRoutines::Mod(i_y, (int)level.GetSizeU()));
+    ASSERT((i_x & (level.GetSizeV()-1)) == MathRoutines::Mod(i_x, (int)level.GetSizeV()));
 
     i_y &= level.GetSizeU()-1;
     i_x &= level.GetSizeV()-1;
@@ -624,9 +622,7 @@ void MIPMap<T>::load(Archive &i_ar, const unsigned int i_version)
   if (image_source_provided)
     {
     i_ar & mp_image_source;
-    std::vector<std::vector<T> > image;
-    mp_image_source->GetImage(image);
-    _Initialize(image, m_max_anisotropy);
+    _Initialize(mp_image_source->GetImage(), m_max_anisotropy);
     }
   else
     {

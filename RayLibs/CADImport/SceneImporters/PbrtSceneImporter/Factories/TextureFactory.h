@@ -10,8 +10,10 @@
 #include <Raytracer/Textures/ImageTexture.h>
 #include <Raytracer/Textures/ScaleTexture.h>
 #include <Raytracer/Core/SpectrumRoutines.h>
+#include <Raytracer/Core/MIPMap.h>
 #include "../PbrtUtils.h"
 #include <string>
+#include <map>
 #include <algorithm>
 
 namespace PbrtImport
@@ -113,6 +115,7 @@ namespace PbrtImport
           p_map.reset(new UVMapping2D);
           }
 
+        std::string filename = tp.FindFilename("filename");
         float maxAniso = tp.FindFloat("maxanisotropy", 8.f);
         bool trilerp = tp.FindBool("trilinear", false);
         std::string wrap = tp.FindString("wrap", "repeat");
@@ -122,12 +125,30 @@ namespace PbrtImport
         float scale = tp.FindFloat("scale", 1.f);
         float gamma = tp.FindFloat("gamma", 1.f);
 
-        // PBRT scales image values prior to applying the gamma correction so we need to account for that.
-        scale = pow(scale, gamma);
+        intrusive_ptr<const MIPMap<float> > p_mip_map;
+        std::string cache_key = filename+","+std::to_string(maxAniso)+","+wrap+","+std::to_string(scale)+","+std::to_string(gamma);
+        if (m_float_mip_map_cache.find(cache_key) != m_float_mip_map_cache.end())
+          p_mip_map = m_float_mip_map_cache[cache_key];
+        else
+          {
+          // PBRT scales image values prior to applying the gamma correction so we need to account for that.
+          scale = pow(scale, gamma);
 
-        intrusive_ptr<const ImageSource<float> > p_image_source =
-          PbrtImport::Utils::CreateImageSourceFromFile<float>(tp.FindFilename("filename"), true, scale, mp_log);
-        return intrusive_ptr<const Texture<double> > (new ImageTexture<float, double>(p_image_source, p_map, repeat, maxAniso));
+          intrusive_ptr<const ImageSource<float> > p_image_source =
+            PbrtImport::Utils::CreateImageSourceFromFile<float>(filename, true, scale, mp_log);
+
+          if (p_image_source==NULL)
+            {
+            PbrtImport::Utils::LogError(mp_log, "Cannot create float image texture.");
+            return NULL;
+            }
+
+          p_mip_map.reset(new MIPMap<float>(p_image_source, repeat, maxAniso));
+          m_float_mip_map_cache[cache_key] = p_mip_map;
+          }
+
+        ASSERT(p_mip_map);
+        return intrusive_ptr<const Texture<double> >(new ImageTexture<float, double>(p_mip_map, p_map));
         }
 
       intrusive_ptr<const Texture<double> > _CreateScaleFloatTexture(const Transform &i_tex_to_world, const TextureParams &tp) const
@@ -216,6 +237,7 @@ namespace PbrtImport
           p_map.reset(new UVMapping2D);
           }
 
+        std::string filename = tp.FindFilename("filename");
         float maxAniso = tp.FindFloat("maxanisotropy", 8.f);
         bool trilerp = tp.FindBool("trilinear", false);
         std::string wrap = tp.FindString("wrap", "repeat");
@@ -225,12 +247,30 @@ namespace PbrtImport
         float scale = tp.FindFloat("scale", 1.f);
         float gamma = tp.FindFloat("gamma", 1.f);
 
-        // PBRT scales image values prior to applying the gamma correction so we need to account for that.
-        scale = pow(scale, gamma);
+        intrusive_ptr<const MIPMap<SpectrumCoef_f> > p_mip_map;
+        std::string cache_key = filename+","+std::to_string(maxAniso)+","+wrap+","+std::to_string(scale)+","+std::to_string(gamma);
+        if (m_spectrum_mip_map_cache.find(cache_key) != m_spectrum_mip_map_cache.end())
+          p_mip_map = m_spectrum_mip_map_cache[cache_key];
+        else
+          {
+          // PBRT scales image values prior to applying the gamma correction so we need to account for that.
+          scale = pow(scale, gamma);
 
-        intrusive_ptr<const ImageSource<SpectrumCoef_f> > p_image_source =
-          PbrtImport::Utils::CreateImageSourceFromFile<SpectrumCoef_f>(tp.FindFilename("filename"), true, scale, mp_log);
-        return intrusive_ptr<const Texture<SpectrumCoef_d> > (new ImageTexture<SpectrumCoef_f, SpectrumCoef_d>(p_image_source, p_map, repeat, maxAniso));
+          intrusive_ptr<const ImageSource<SpectrumCoef_f> > p_image_source =
+            PbrtImport::Utils::CreateImageSourceFromFile<SpectrumCoef_f>(filename, true, scale, mp_log);
+
+          if (p_image_source==NULL)
+            {
+            PbrtImport::Utils::LogError(mp_log, "Cannot create spectrum image texture.");
+            return NULL;
+            }
+
+          p_mip_map.reset(new MIPMap<SpectrumCoef_f>(p_image_source, repeat, maxAniso));
+          m_spectrum_mip_map_cache[cache_key] = p_mip_map;
+          }
+
+        ASSERT(p_mip_map);
+        return intrusive_ptr<const Texture<SpectrumCoef_d> >(new ImageTexture<SpectrumCoef_f, SpectrumCoef_d>(p_mip_map, p_map));
         }
 
       intrusive_ptr<const Texture<SpectrumCoef_d> > _CreateScaleSpectrumCoefTexture(const Transform &i_tex_to_world, const TextureParams &tp) const
@@ -294,6 +334,9 @@ namespace PbrtImport
 
     private:
       intrusive_ptr<Log> mp_log;
+
+      mutable std::map<std::string, intrusive_ptr<const MIPMap<SpectrumCoef_f> > > m_spectrum_mip_map_cache;
+      mutable std::map<std::string, intrusive_ptr<const MIPMap<float> > > m_float_mip_map_cache;
     };
 
   };

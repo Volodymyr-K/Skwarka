@@ -9,6 +9,7 @@
 #include "PbrtSceneImporter/PbrtRenderOptions.h"
 #include "PbrtSceneImporter/PbrtGraphicsState.h"
 #include "PbrtSceneImporter/PbrtStringRoutines.h"
+#include "PbrtSceneImporter/Factories/TextureFactory.h"
 #include <string>
 #include <vector>
 
@@ -92,6 +93,8 @@ class PbrtSceneImporter: public SceneImporter
     std::map<std::string, Transform> m_namedCoordinateSystems;
     std::vector<PbrtImport::GraphicsState> m_pushedGraphicsStates;
     std::vector<Transform> m_pushedTransforms;
+
+    PbrtImport::TextureFactory m_texture_factory;
   };
 
 #endif // PBRT_SCENE_IMPORTER_H

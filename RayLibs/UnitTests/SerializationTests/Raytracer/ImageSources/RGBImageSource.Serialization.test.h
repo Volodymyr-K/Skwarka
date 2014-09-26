@@ -4,7 +4,7 @@
 #include <cxxtest/TestSuite.h>
 #include <Common/CommonSerialization.h>
 #include <UnitTests/TestHelpers/CustomValueTraits.h>
-#include <Raytracer/ImageSources/RGB24ImageSource.h>
+#include <Raytracer/ImageSources/RGBImageSource.h>
 #include <Math/ThreadSafeRandom.h>
 #include <vector>
 
@@ -22,19 +22,8 @@ class RGB24ImageSourceSerializationTestSuite : public CxxTest::TestSuite
   public:
     void test_RGB24ImageSource_Serialization()
       {
-      size_t width = 123, height=234;
-      std::vector<std::vector<RGB24> > values(height, std::vector<RGB24>(width));
-      double scale = 1.0/255.0;
-
-      for(size_t i=0;i<height;++i)
-        for(size_t j=0;j<width;++j)
-          {
-          values[i][j].m_rgb[0]=(unsigned char)RandomInt(256);
-          values[i][j].m_rgb[1]=(unsigned char)RandomInt(256);
-          values[i][j].m_rgb[2]=(unsigned char)RandomInt(256);
-          }
-
-      intrusive_ptr<ImageSource<Spectrum_f> > p_image_source1( new RGB24ImageSource<Spectrum_f>(values, global_sRGB_E_ColorSystem, scale) );
+      double scale = 2.0;
+      intrusive_ptr<ImageSource<Spectrum_f> > p_image_source1(new RGBImageSource<Spectrum_f>("TestData/red_200x100.tif", global_sRGB_E_ColorSystem, scale));
         {
         boost::iostreams::stream_buffer<SinkDevice> buffer(m_data, m_buffer_size);
         boost::archive::binary_oarchive output_archive(buffer);
@@ -51,9 +40,8 @@ class RGB24ImageSourceSerializationTestSuite : public CxxTest::TestSuite
       TS_ASSERT_EQUALS(p_image_source1->GetHeight(), p_image_source2->GetHeight());
       TS_ASSERT_EQUALS(p_image_source1->GetWidth(), p_image_source2->GetWidth());
 
-      std::vector<std::vector<Spectrum_f> > image1, image2;
-      p_image_source1->GetImage(image1);
-      p_image_source2->GetImage(image2);
+      std::vector<std::vector<Spectrum_f> > image1{ p_image_source1->GetImage() };
+      std::vector<std::vector<Spectrum_f> > image2{ p_image_source2->GetImage() };
       if (image1 != image2)
         TS_FAIL("RGB24ImageSource serialization test failed.");
       }

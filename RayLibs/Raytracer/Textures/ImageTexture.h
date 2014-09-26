@@ -41,6 +41,13 @@ class ImageTexture: public Texture<ReturnType>
     ImageTexture(intrusive_ptr<const ImageSource<MemoryType> > ip_image_source, intrusive_ptr<const Mapping2D> ip_mapping, bool i_repeat = true, double i_max_anisotropy = 8.0);
 
     /**
+    * Crates ImageTexture from the specified MIPMap and 2D mapping.
+    * @param ip_mip_map MIPMap object that defines image for the ImageTexture.
+    * @param ip_mapping 2D mapping used to map DifferentialGeometry to an image point. Should not be NULL.
+    */
+    ImageTexture(intrusive_ptr<const MIPMap<MemoryType> > ip_mip_map, intrusive_ptr<const Mapping2D> ip_mapping);
+
+    /**
     * Returns the value corresponding to the specified DifferentialGeometry and triangle index.
     */
     ReturnType Evaluate(const DifferentialGeometry &i_dg, size_t i_triangle_index) const;
@@ -83,6 +90,14 @@ ImageTexture<MemoryType,ReturnType,Converter>::ImageTexture(intrusive_ptr<const 
   ASSERT(ip_mapping);
 
   mp_mip_map.reset(new MIPMap<MemoryType>(ip_image_source, i_repeat, i_max_anisotropy) );
+  }
+
+template<typename MemoryType, typename ReturnType, typename Converter>
+ImageTexture<MemoryType, ReturnType, Converter>::ImageTexture(intrusive_ptr<const MIPMap<MemoryType> > ip_mip_map, intrusive_ptr<const Mapping2D> ip_mapping) :
+mp_mapping(ip_mapping), mp_mip_map(ip_mip_map)
+  {
+  ASSERT(ip_mapping);
+  ASSERT(ip_mip_map);
   }
 
 template<typename MemoryType, typename ReturnType, typename Converter>

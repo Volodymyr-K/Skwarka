@@ -65,7 +65,7 @@
     <ClCompile>
       <AdditionalOptions>/MP %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\;..\..\..\ThirdParty\;..\..\..\ThirdParty\boost\1.56\;..\..\..\ThirdParty\TBB\4.2\include;..\..\..\ThirdParty\cxxtest\3.10.1\;..\..\..\ThirdParty\OpenEXR\Deploy\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\;..\..\..\ThirdParty\;..\..\..\ThirdParty\boost\1.56\;..\..\..\ThirdParty\TBB\4.2\include;..\..\..\ThirdParty\cxxtest\3.10.1\;..\..\..\ThirdParty\OpenEXR\Deploy\include;..\..\..\ThirdParty\FreeImage\3.16\Dist;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>TBB_USE_DEBUG;WIN32;_DEBUG;_WINDOWS;NOMINMAX;OPENEXR_DLL;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -78,9 +78,9 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>tbb_debug.lib;Half.lib;Iex.lib;IlmImf.lib;IlmThread.lib;Imath.lib;zdll.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>tbb_debug.lib;Half.lib;Iex.lib;IlmImf.lib;IlmThread.lib;Imath.lib;zdll.lib;FreeImage.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName)d.exe</OutputFile>
-      <AdditionalLibraryDirectories>..\..\..\ThirdParty\TBB\4.2\lib\ia32\vc9;..\..\..\ThirdParty\OpenEXR\Deploy\lib\Debug;..\..\..\ThirdParty\boost\libs\1.56;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\ThirdParty\TBB\4.2\lib\ia32\vc9;..\..\..\ThirdParty\OpenEXR\Deploy\lib\Debug;..\..\..\ThirdParty\boost\libs\1.56;..\..\..\ThirdParty\FreeImage\3.16\Dist;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
@@ -102,7 +102,7 @@
       <AdditionalOptions>/MP %(AdditionalOptions)</AdditionalOptions>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>..\;..\..\..\ThirdParty\;..\..\..\ThirdParty\boost\1.56\;..\..\..\ThirdParty\TBB\4.2\include;..\..\..\ThirdParty\cxxtest\3.10.1\;..\..\..\ThirdParty\OpenEXR\Deploy\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\;..\..\..\ThirdParty\;..\..\..\ThirdParty\boost\1.56\;..\..\..\ThirdParty\TBB\4.2\include;..\..\..\ThirdParty\cxxtest\3.10.1\;..\..\..\ThirdParty\OpenEXR\Deploy\include;..\..\..\ThirdParty\FreeImage\3.16\Dist;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;NOMINMAX;_SECURE_SCL=0;OPENEXR_DLL;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -114,8 +114,8 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>tbb.lib;Half.lib;Iex.lib;IlmImf.lib;IlmThread.lib;Imath.lib;zdll.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\..\..\ThirdParty\TBB\4.2\lib\ia32\vc12;..\..\..\ThirdParty\OpenEXR\Deploy\lib\Release;..\..\..\ThirdParty\boost\libs\1.56;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>tbb.lib;Half.lib;Iex.lib;IlmImf.lib;IlmThread.lib;Imath.lib;zdll.lib;FreeImage.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\..\ThirdParty\TBB\4.2\lib\ia32\vc12;..\..\..\ThirdParty\OpenEXR\Deploy\lib\Release;..\..\..\ThirdParty\boost\libs\1.56;..\..\..\ThirdParty\FreeImage\3.16\Dist;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
@@ -215,7 +215,7 @@
     <CxxTest Include="MainTests\Raytracer\VolumeRegions\HomogeneousVolumeRegion.test.h" />
     <CxxTest Include="MainTests\Raytracer\Cameras\PerspectiveCamera.test.h" />
     <CxxTest Include="MainTests\Raytracer\ImageSources\OpenEXRRgbaImageSource.test.h" />
-    <CxxTest Include="MainTests\Raytracer\ImageSources\RGB24ImageSource.test.h" />
+    <CxxTest Include="MainTests\Raytracer\ImageSources\RGBImageSource.test.h" />
     <CxxTest Include="MainTests\Raytracer\PhaseFunctions\HGPhaseFunction.test.h" />
     <CxxTest Include="MainTests\Shapes\Cylinder.test.h" />
     <CxxTest Include="MainTests\Shapes\Disk.test.h" />
@@ -286,7 +286,7 @@
     <CxxTest Include="SerializationTests\Raytracer\VolumeRegions\GridDensityVolumeRegion.Serialization.test.h" />
     <CxxTest Include="SerializationTests\Raytracer\VolumeRegions\HomogeneousVolumeRegion.Serialization.test.h" />
     <CxxTest Include="SerializationTests\Raytracer\ImageSources\OpenEXRRgbaImageSource.Serialization.test.h" />
-    <CxxTest Include="SerializationTests\Raytracer\ImageSources\RGB24ImageSource.Serialization.test.h" />
+    <CxxTest Include="SerializationTests\Raytracer\ImageSources\RGBImageSource.Serialization.test.h" />
     <CxxTest Include="SerializationTests\Raytracer\BxDFs\MERLMeasuredData.Serialization.test.h" />
     <CxxTest Include="SerializationTests\Raytracer\PhaseFunctions\HGPhaseFunction.Serialization.test.h" />
     <CxxTest Include="Runner.test.h">
@@ -406,8 +406,8 @@
     <ClCompile Include="RandomSampler.test.cpp" />
     <ClCompile Include="Ray.Serialization.test.cpp" />
     <ClCompile Include="Ray.test.cpp" />
-    <ClCompile Include="RGB24ImageSource.Serialization.test.cpp" />
-    <ClCompile Include="RGB24ImageSource.test.cpp" />
+    <ClCompile Include="RGBImageSource.Serialization.test.cpp" />
+    <ClCompile Include="RGBImageSource.test.cpp" />
     <ClCompile Include="Runner.test.cpp" />
     <ClCompile Include="Sample.test.cpp" />
     <ClCompile Include="Sampler.test.cpp" />

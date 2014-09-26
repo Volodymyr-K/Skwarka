@@ -425,7 +425,7 @@
     <ClInclude Include="ImageSources\OpenEXRRgbaImageSource.h">
       <Filter>ImageSources\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ImageSources\RGB24ImageSource.h">
+    <ClInclude Include="ImageSources\RGBImageSource.h">
       <Filter>ImageSources\Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -595,7 +595,7 @@
     <ClCompile Include="ImageSources\OpenEXRRgbaImageSource.cpp">
       <Filter>ImageSources\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ImageSources\RGB24ImageSource.cpp">
+    <ClCompile Include="ImageSources\RGBImageSource.cpp">
       <Filter>ImageSources\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Mappings\SphericalMapping2D.cpp">

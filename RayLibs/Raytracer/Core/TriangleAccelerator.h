@@ -56,7 +56,7 @@ class TriangleAccelerator
     TriangleAccelerator(TriangleAccelerator &);
     TriangleAccelerator &operator=(TriangleAccelerator &);
 
-    BBox3D_d _ConstructBBox(size_t i_triangles_begin, size_t i_triangles_end, size_t i_instances_begin, size_t i_instances_end) const;
+    BBox3D_f _ConstructBBox(size_t i_triangles_begin, size_t i_triangles_end, size_t i_instances_begin, size_t i_instances_end) const;
 
     void _SwapTriangles(size_t i_index1, size_t i_index2);
     void _SwapInstances(size_t i_index1, size_t i_index2);
@@ -66,7 +66,7 @@ class TriangleAccelerator
     * The best split axis and split position are the ones that have the minimum cost function. The cost function is the cost of node traversal assuming its children are all leaves.
     * The method tries many splits positions that are distributed uniformly over the node's extent.
     */
-    std::pair<unsigned char,double> _DetermineBestSplit(const BBox3D_d &i_node_bbox, size_t i_triangles_begin, size_t i_triangles_end,
+    std::pair<unsigned char,double> _DetermineBestSplit(const BBox3D_f &i_node_bbox, size_t i_triangles_begin, size_t i_triangles_end,
       size_t i_instances_begin, size_t i_instances_end, unsigned char i_middle_split_mask) const;
     
     /**
@@ -132,7 +132,7 @@ class TriangleAccelerator
 struct TriangleAccelerator::Node
   {
   // Bounding box of the triangles associated with the node.
-  BBox3D_d m_bbox;
+  BBox3D_f m_bbox;
 
   // Pointers to children (NULL if not present).
   Node *m_children[3];

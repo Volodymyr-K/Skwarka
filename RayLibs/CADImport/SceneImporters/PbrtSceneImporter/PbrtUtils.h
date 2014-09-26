@@ -6,7 +6,10 @@
 #include <ctype.h>
 #include <cstdlib>
 #include <string>
+#include <boost/algorithm/string.hpp>
+#include <Raytracer/Core/ImageSource.h>
 #include <Raytracer/ImageSources/OpenEXRRgbaImageSource.h>
+#include <Raytracer/ImageSources/RGBImageSource.h>
 
 namespace PbrtImport
   {
@@ -87,8 +90,15 @@ namespace PbrtImport
       return true;
       }
 
+    inline bool IsAbsolutePath(const std::string &i_filename)
+      {
+      if (i_filename.size() == 0)
+        return false;
+      return (i_filename[0] == '\\' || i_filename[0] == '/' || i_filename.find(':') != std::string::npos);
+      }
+
     template<typename T>
-    intrusive_ptr<const ImageSource<T> > CreateImageSourceFromFile(const std::string &i_filename, bool i_E_whitepoint, double i_scale = 1.0, intrusive_ptr<Log> ip_log = NULL)
+    intrusive_ptr<const ImageSource<T> > CreateImageSourceFromFile(const std::string &i_filename, bool i_E_whitepoint, double i_scale, intrusive_ptr<Log> ip_log)
       {
       size_t dot_pos = i_filename.find_last_of('.');
       if (dot_pos == std::string::npos || dot_pos+1 == i_filename.size())
@@ -99,18 +109,29 @@ namespace PbrtImport
 
       std::string ext = i_filename.substr(dot_pos+1);
 
-      if (ext == "exr")
-        return new OpenEXRRgbaImageSource<T>(i_filename, i_E_whitepoint, i_scale);
+      try
+        {
+        if (boost::iequals(ext, "exr"))
+          return new OpenEXRRgbaImageSource<T>(i_filename, i_E_whitepoint, i_scale);
+        else
+          {
+          intrusive_ptr<const ImageSource<T> > p_image_source;
+          if (i_E_whitepoint)
+            p_image_source.reset(new RGBImageSource<T>(i_filename, global_sRGB_E_ColorSystem, i_scale));
+          else
+            p_image_source.reset(new RGBImageSource<T>(i_filename, global_sRGB_D65_ColorSystem, i_scale));
 
-      LogError(ip_log, "Unsupported image type.");
+          return p_image_source;
+          }
+        }
+      catch (const std::exception &)
+        {
+        LogError(ip_log, "Exception occurred when reading image file: " + i_filename );
+        return NULL;
+        }
+
+      LogError(ip_log, "Unsupported image type : " + ext);
       return NULL;
-      }
-
-    inline bool IsAbsolutePath(const std::string &i_filename)
-      {
-      if (i_filename.size() == 0)
-        return false;
-      return (i_filename[0] == '\\' || i_filename[0] == '/' || i_filename.find(':') != std::string::npos);
       }
 
     };
