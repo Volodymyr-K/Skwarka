@@ -5,11 +5,19 @@ void Primitive::_Bump(const DifferentialGeometry &i_dg, size_t i_triangle_index,
   ASSERT(mp_bump_map);
 
   DifferentialGeometry dg_eval = i_dg;
+  Vector3D_d dp_dx(i_dg.m_point_dx-i_dg.m_point);
+  Vector3D_d dp_dy(i_dg.m_point_dy-i_dg.m_point);
 
+  // shift in x screen direction
+  dg_eval.m_point_dx = i_dg.m_point_dx+dp_dx;
+  dg_eval.m_point_dy = i_dg.m_point_dy+dp_dx;
   dg_eval.m_point = i_dg.m_point_dx;
   dg_eval.m_uv = i_dg.m_uv+i_dg.m_duv_dx;
   Point3D_d displaced_x = dg_eval.m_point + i_dg.m_shading_normal*mp_bump_map->Evaluate(dg_eval, i_triangle_index);
 
+  // shift in y screen direction
+  dg_eval.m_point_dx = i_dg.m_point_dx+dp_dy;
+  dg_eval.m_point_dy = i_dg.m_point_dy+dp_dy;
   dg_eval.m_point = i_dg.m_point_dy;
   dg_eval.m_uv = i_dg.m_uv+i_dg.m_duv_dy;
   Point3D_d displaced_y = dg_eval.m_point + i_dg.m_shading_normal*mp_bump_map->Evaluate(dg_eval, i_triangle_index);

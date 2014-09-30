@@ -206,6 +206,13 @@ namespace PbrtImport
             triangle.m_uvs[1] = Point2D_f(uvs[2*vi[i+1]], uvs[2*vi[i+1]+1]);
             triangle.m_uvs[2] = Point2D_f(uvs[2*vi[i+2]], uvs[2*vi[i+2]+1]);
             }
+          else
+            {
+            // this is what pbrt does when UVs are not provided
+            triangle.m_uvs[0] = Point2D_f(0.f, 0.f);
+            triangle.m_uvs[1] = Point2D_f(1.f, 0.f);
+            triangle.m_uvs[2] = Point2D_f(1.f, 1.f);
+            }
           triangles.push_back(triangle);
           }
 

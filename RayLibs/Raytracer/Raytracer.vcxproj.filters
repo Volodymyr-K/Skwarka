@@ -428,6 +428,9 @@
     <ClInclude Include="ImageSources\RGBImageSource.h">
       <Filter>ImageSources\Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Textures\WindyTexture.h">
+      <Filter>Textures\Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Core\BSDF.cpp">
@@ -629,6 +632,9 @@
       <Filter>Textures\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Textures\ScaleTexture.cpp">
+      <Filter>Textures\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Textures\WindyTexture.cpp">
       <Filter>Textures\Source Files</Filter>
     </ClCompile>
   </ItemGroup>

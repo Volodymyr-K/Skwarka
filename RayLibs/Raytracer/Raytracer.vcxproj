@@ -169,6 +169,7 @@
     <ClInclude Include="Mappings\SphericalMapping2D.h" />
     <ClInclude Include="Mappings\TransformMapping3D.h" />
     <ClInclude Include="Mappings\UVMapping2D.h" />
+    <ClInclude Include="Textures\WindyTexture.h" />
     <ClInclude Include="VolumeRegions\AggregateVolumeRegion.h" />
     <ClInclude Include="VolumeRegions\GridDensityVolumeRegion.h" />
     <ClInclude Include="VolumeRegions\HomogeneousVolumeRegion.h" />
@@ -247,6 +248,7 @@
     <ClCompile Include="Textures\ConstantTexture.cpp" />
     <ClCompile Include="Textures\ImageTexture.cpp" />
     <ClCompile Include="Textures\ScaleTexture.cpp" />
+    <ClCompile Include="Textures\WindyTexture.cpp" />
     <ClCompile Include="VolumeRegions\AggregateVolumeRegion.cpp" />
     <ClCompile Include="VolumeRegions\GridDensityVolumeRegion.cpp" />
     <ClCompile Include="VolumeRegions\HomogeneousVolumeRegion.cpp" />

@@ -15,9 +15,6 @@
 #include "MeshLoader.h"
 #include <Math/Geometry.h>
 #include <Raytracer/Core/TriangleMesh.h>
-#include <Shapes/Sphere.h>
-#include <Shapes/Cylinder.h>
-#include <Shapes/Disk.h>
 #include <Raytracer/Core/Spectrum.h>
 #include <Math/MathRoutines.h>
 #include <Raytracer/Core/Camera.h>
@@ -34,43 +31,11 @@
 #include <Raytracer/Samplers/RandomBlockedImagePixelsOrder.h>
 #include <Raytracer/Films/ImageFilm.h>
 #include <Raytracer/Films/InteractiveFilm.h>
-#include <Raytracer/Materials/MatteMaterial.h>
-#include <Raytracer/Textures/ConstantTexture.h>
 #include <Raytracer/Renderers/SamplerBasedRenderer.h>
-#include <Raytracer/LightSources/PointLight.h>
-#include <Raytracer/LightSources/SpotPointLight.h>
-#include <Raytracer/LightSources/ParallelLight.h>
-#include <Raytracer/LightSources/DiffuseAreaLightSource.h>
 #include <Raytracer/LTEIntegrators/DirectLightingLTEIntegrator.h>
 #include <Raytracer/LTEIntegrators/PhotonLTEIntegrator.h>
-#include <UnitTests/Mocks/InfiniteLightSourceMock.h>
-#include <Raytracer/LightsSamplingStrategies/IrradianceLightsSamplingStrategy.h>
-#include <Raytracer/LightsSamplingStrategies/PowerLightsSamplingStrategy.h>
 #include <Raytracer/Core/MIPMap.h>
-#include <Raytracer/Textures/ImageTexture.h>
-#include <Raytracer/Mappings/SphericalMapping2D.h>
-#include <Raytracer/Mappings/UVMapping2D.h>
-#include <Raytracer/Materials/TransparentMaterial.h>
-#include <Raytracer/Materials/MetalMaterial.h>
-#include <Raytracer/Core/Fresnel.h>
-#include <Math/CompressedDirection.h>
-#include <Raytracer/Materials/SubstrateMaterial.h>
-#include <Raytracer/Materials/PlasticMaterial.h>
-#include <Raytracer/Materials/MixMaterial.h>
-#include <Raytracer/Materials/MERLMeasuredMaterial.h>
-#include <Raytracer/BxDFs/FresnelBlend.h>
-#include <Raytracer/MicrofacetDistributions/AnisotropicDistribution.h>
-#include <Raytracer/MicrofacetDistributions/BlinnDistribution.h>
 #include "EasyBMP.h"
-#include <Raytracer/LightSources/ImageEnvironmentalLight.h>
-#include <Raytracer/VolumeRegions/HomogeneousVolumeRegion.h>
-#include <Raytracer/VolumeRegions/GridDensityVolumeRegion.h>
-#include <Raytracer/PhaseFunctions/IsotropicPhaseFunction.h>
-#include <Raytracer/PhaseFunctions/MieHazyPhaseFunction.h>
-#include <Raytracer/PhaseFunctions/MieMurkyPhaseFunction.h>
-#include <Raytracer/PhaseFunctions/RayleighPhaseFunction.h>
-#include <Raytracer/ImageSources/RGB24ImageSource.h>
-#include <Raytracer/ImageSources/OpenEXRRgbaImageSource.h>
 
 // Disable compiler warning raised in the OpenEXR's code.
 #pragma warning( push )
@@ -117,27 +82,39 @@ class TestTracer
 
 inline void TestTracer::LoadMesh()
 {
-  intrusive_ptr<Log> p_log( new StreamLog );
-  //PbrtSceneImporter importer("E:\\pbrt\\v2.0\\pbrt-scenes\\pbrt-scenes\\plants-modified.pbrt", p_log);
-  //PbrtSceneImporter importer("E:\\pbrt\\v2.0\\pbrt-scenes\\pbrt-scenes\\tt.pbrt", p_log);
-  //PbrtSceneImporter importer("E:\\pbrt\\v2.0\\pbrt-scenes\\pbrt-scenes\\yeahright.pbrt", p_log);
-  //PbrtSceneImporter importer("E:\\pbrt\\v2.0\\pbrt-scenes\\pbrt-scenes\\sponza-phomap.pbrt", p_log);
-  //PbrtSceneImporter importer("E:\\pbrt\\v2.0\\pbrt-source\\scenes\\prt-teapot.pbrt", p_log);
-  //PbrtSceneImporter importer("E:\\pbrt\\v2.0\\pbrt-scenes\\pbrt-scenes\\geometry\\sanmiguel\\plantas.pbrt", p_log);
 
-  PbrtSceneImporter importer("D:\\Development\\scenes\\sponza-phomap.pbrt", p_log);
-  //PbrtSceneImporter importer("D:\\Development\\scenes\\arcsphere.pbrt", p_log);
+  intrusive_ptr<Log> p_log( new StreamLog(std::cerr, Log::ERROR_LEVEL) );
+
+  tbb::tick_count t0 = tbb::tick_count::now();
+  //PbrtSceneImporter importer("D:\\Development\\scenes\\sponza-phomap.pbrt", p_log);
+  //PbrtSceneImporter importer("D:\\Development\\scenes\\plants-godrays.pbrt", p_log);
+  PbrtSceneImporter importer("D:\\Development\\scenes\\plants-dusk.pbrt", p_log);
+  //PbrtSceneImporter importer("D:\\Development\\scenes\\yeahright.pbrt", p_log);
+  //PbrtSceneImporter importer("D:\\Development\\scenes\\tt.pbrt", p_log);
+  //PbrtSceneImporter importer("D:\\Development\\scenes\\tt2.pbrt", p_log);
+  //PbrtSceneImporter importer("D:\\Development\\scenes\\teapot-metal.pbrt", p_log);
+  //PbrtSceneImporter importer("D:\\Development\\scenes\\spheres-differentials-texfilt.pbrt", p_log);
+  //PbrtSceneImporter importer("D:\\Development\\scenes\\spheres.pbrt", p_log);
+  //PbrtSceneImporter importer("D:\\Development\\scenes\\buddhamesh.pbrt", p_log);
+  //PbrtSceneImporter importer("D:\\Development\\scenes\\sanmiguel.pbrt", p_log);
+  //PbrtSceneImporter importer("D:\\Development\\scenes\\sanmiguel_cam14.pbrt", p_log);
+  //PbrtSceneImporter importer("D:\\Development\\scenes\\sanmiguel_cam25.pbrt", p_log);
+
   importer.GetScene();
 
   mp_scene = importer.GetScene();
   mp_pbrt_camera = importer.GetCameras()[0];
   m_imageWidth = (int)mp_pbrt_camera->GetFilm()->GetXResolution();
   m_imageHeight = (int)mp_pbrt_camera->GetFilm()->GetYResolution();
+
+  tbb::tick_count t1 = tbb::tick_count::now();
+  printf("Importing: %lf\n", (t1-t0).seconds());
   return;
   }
 
 inline void TestTracer::RenderImage()
   {
+  //return;
   tbb::tick_count t0, t1;
   /*
   FilmFilter *filter = new MitchellFilter(2.0,2.0);
@@ -145,7 +122,7 @@ inline void TestTracer::RenderImage()
   //intrusive_ptr<InteractiveFilm> p_film(new InteractiveFilm(GetImageWidth(), GetImageHeight(), intrusive_ptr<FilmFilter>(filter)));
   intrusive_ptr<ImageFilm> p_film(new ImageFilm(GetImageWidth(), GetImageHeight(), intrusive_ptr<FilmFilter>(filter)));
   //p_film->SetCropWindow(Point2D_i(400,500),Point2D_i(500,600));
-
+  
   Point3D_d camera_pos(12,-1,7);
   Point3D_d look_at(-4,0.2,1.5);
   Vector3D_d direction = Vector3D_d(look_at-camera_pos).Normalized();
@@ -153,6 +130,7 @@ inline void TestTracer::RenderImage()
   */
 
   intrusive_ptr<const Camera> p_camera = mp_pbrt_camera;
+  //dynamic_cast<ImageFilm*>(const_cast<Film*>(p_camera->GetFilm().get()))->SetCropWindow(Point2D_i(400,250),Point2D_i(700,450));
 
   intrusive_ptr<ImagePixelsOrder> pixel_order(new ConsecutiveImagePixelsOrder);
   //intrusive_ptr<ImagePixelsOrder> pixel_order(new RandomBlockedImagePixelsOrder);
@@ -162,14 +140,14 @@ inline void TestTracer::RenderImage()
   p_camera->GetFilm()->GetSamplingExtent(window_begin, window_end);
   intrusive_ptr<Sampler> p_sampler( new LDSampler(window_begin, window_end, 8, pixel_order) );
 
-  /*
+ 
   DirectLightingLTEIntegratorParams params;
   params.m_direct_light_samples_num=8;
   params.m_max_specular_depth=6;
   params.m_media_step_size=0.1;
   intrusive_ptr<DirectLightingLTEIntegrator> p_lte_int( new DirectLightingLTEIntegrator(mp_scene, params) );
-*/
-
+  
+ /*
   PhotonLTEIntegratorParams params;
   params.m_direct_light_samples_num=8;
   params.m_gather_samples_num=8;
@@ -178,15 +156,15 @@ inline void TestTracer::RenderImage()
   params.m_max_specular_depth=10;
   params.m_media_step_size=0.01;
   intrusive_ptr<PhotonLTEIntegrator> p_lte_int( new PhotonLTEIntegrator(mp_scene, params) );
-
+  
 
   t0 = tbb::tick_count::now();
-  p_lte_int->ShootPhotons(0, 100000, 100000, true);
+  p_lte_int->ShootPhotons(0, 2000000, 2000000, true);
   t1 = tbb::tick_count::now();
   printf("Shooting: %lf\n", (t1-t0).seconds());
-
+  */
   intrusive_ptr<SamplerBasedRenderer> p_renderer( new SamplerBasedRenderer(p_lte_int, p_sampler) );
-  p_renderer->SetDisplayUpdateCallback(mp_callback, 20.0);
+  p_renderer->SetDisplayUpdateCallback(mp_callback, 10.0);
  
   tbb::task_scheduler_init init;
   t0 = tbb::tick_count::now();

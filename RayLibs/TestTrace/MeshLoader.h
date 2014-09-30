@@ -20,7 +20,7 @@ intrusive_ptr<TriangleMesh> LoadMeshFromStl(std::string i_filename, bool i_smoot
   std::vector<MeshTriangle> triangles;
   std::vector<float> uv_parameterization;
 
-  std::map< std::pair<float,std::pair<float,float> >, size_t > vertices_tmp;
+  std::map< std::pair<float,std::pair<float,float>>, size_t > vertices_tmp;
 #pragma warning(disable : 4996)
   FILE *fp=fopen(i_filename.c_str(),"r");
 
@@ -61,9 +61,9 @@ intrusive_ptr<TriangleMesh> LoadMeshFromStl(std::string i_filename, bool i_smoot
     if (num_ver==3)
       {
       num_ver=0;
-      std::pair<float,std::pair<float,float> > vertex1=std::make_pair(v1[0],std::make_pair(v1[1],v1[2]));
-      std::pair<float,std::pair<float,float> > vertex2=std::make_pair(v2[0],std::make_pair(v2[1],v2[2]));
-      std::pair<float,std::pair<float,float> > vertex3=std::make_pair(v3[0],std::make_pair(v3[1],v3[2]));
+      std::pair<float,std::pair<float,float>> vertex1=std::make_pair(v1[0],std::make_pair(v1[1],v1[2]));
+      std::pair<float,std::pair<float,float>> vertex2=std::make_pair(v2[0],std::make_pair(v2[1],v2[2]));
+      std::pair<float,std::pair<float,float>> vertex3=std::make_pair(v3[0],std::make_pair(v3[1],v3[2]));
       if (vertices_tmp.find(vertex1)==vertices_tmp.end()) {vertices.push_back(v1);vertices_tmp[vertex1]=ind1=ind++;} else ind1=vertices_tmp[vertex1];
       if (vertices_tmp.find(vertex2)==vertices_tmp.end()) {vertices.push_back(v2);vertices_tmp[vertex2]=ind2=ind++;} else ind2=vertices_tmp[vertex2];
       if (vertices_tmp.find(vertex3)==vertices_tmp.end()) {vertices.push_back(v3);vertices_tmp[vertex3]=ind3=ind++;} else ind3=vertices_tmp[vertex3];
@@ -215,13 +215,13 @@ intrusive_ptr<TriangleMesh> LoadMeshFromPbrt(std::string i_vertices_filename, st
   return intrusive_ptr<TriangleMesh>( new TriangleMesh(vertices, triangles, true) );
   }
 
-void LoadDensities(std::vector<std::vector<std::vector<double> > > &o_densities, std::string i_filename)
+void LoadDensities(std::vector<std::vector<std::vector<double>>> &o_densities, std::string i_filename)
   {
   FILE *fp=fopen(i_filename.c_str(),"r");
 
   size_t x,y,z;
   fscanf(fp, "%d %d %d ", &x, &y, &z);
-  o_densities.assign(x, std::vector<std::vector<double> > (y, std::vector<double>(z,0.0)));
+  o_densities.assign(x, std::vector<std::vector<double>> (y, std::vector<double>(z,0.0)));
   for(size_t i=0;i<z;++i)
     for(size_t j=0;j<y;++j)
       for(size_t k=0;k<x;++k)

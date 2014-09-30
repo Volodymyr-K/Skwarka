@@ -9,6 +9,7 @@
 #include <Raytracer/Textures/ConstantTexture.h>
 #include <Raytracer/Textures/ImageTexture.h>
 #include <Raytracer/Textures/ScaleTexture.h>
+#include <Raytracer/Textures/WindyTexture.h>
 #include <Raytracer/Core/SpectrumRoutines.h>
 #include <Raytracer/Core/MIPMap.h>
 #include "../PbrtUtils.h"
@@ -206,8 +207,8 @@ namespace PbrtImport
 
       intrusive_ptr<const Texture<double>> _CreateWindyFloatTexture(const Transform &i_tex_to_world, const TextureParams &tp) const
         {
-        PbrtImport::Utils::LogError(mp_log, "Windy texture is not supported");
-        return NULL;
+        intrusive_ptr<const Mapping3D> p_map(new TransformMapping3D(i_tex_to_world));
+        return new WindyTexture<double>(p_map);
         }
 
       ///////////////////////////////////////// Spectrum Textures //////////////////////////////////////////////
@@ -328,8 +329,8 @@ namespace PbrtImport
 
       intrusive_ptr<const Texture<SpectrumCoef_d>> _CreateWindySpectrumCoefTexture(const Transform &i_tex_to_world, const TextureParams &tp) const
         {
-        PbrtImport::Utils::LogError(mp_log, "Windy texture is not supported");
-        return NULL;
+        intrusive_ptr<const Mapping3D> p_map(new TransformMapping3D(i_tex_to_world));
+        return new WindyTexture<SpectrumCoef_d>(p_map);
         }
 
     private:

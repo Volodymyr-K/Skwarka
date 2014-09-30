@@ -174,7 +174,7 @@ inline const BSDF *Primitive::GetBSDF(const DifferentialGeometry &i_dg, size_t i
   ASSERT(mp_mesh);
   ASSERT(mp_material);
 
-  if (mp_bump_map && i_dg.m_duv_dx != Vector2D_d(0,0) && i_dg.m_duv_dy != Vector2D_d(0,0))
+  if (mp_bump_map)
     {
     DifferentialGeometry bumped_dg;
     _Bump(i_dg, i_triangle_index, bumped_dg);

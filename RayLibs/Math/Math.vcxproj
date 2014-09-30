@@ -87,6 +87,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CompressedDirection.cpp" />
+    <ClCompile Include="NoiseRoutines.cpp" />
     <ClCompile Include="ThreadSafeRandom.cpp" />
     <ClCompile Include="Transform.cpp" />
   </ItemGroup>
@@ -100,6 +101,7 @@
     <ClInclude Include="MathRoutines.h" />
     <ClInclude Include="Matrix3x3.h" />
     <ClInclude Include="Matrix4x4.h" />
+    <ClInclude Include="NoiseRoutines.h" />
     <ClInclude Include="Point2D.h" />
     <ClInclude Include="Point3D.h" />
     <ClInclude Include="RandomGenerator.h" />

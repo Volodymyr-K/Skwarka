@@ -146,6 +146,7 @@
     <CxxTest Include="MainTests\Math\Triangle3D.test.h" />
     <CxxTest Include="MainTests\Math\Vector2D.test.h" />
     <CxxTest Include="MainTests\Math\Vector3D.test.h" />
+    <CxxTest Include="MainTests\Math\NoiseRoutines.test.h" />
     <CxxTest Include="MainTests\Raytracer\Core\BSDF.test.h" />
     <CxxTest Include="MainTests\Raytracer\Core\BxDF.test.h" />
     <CxxTest Include="MainTests\Raytracer\Core\Camera.test.h" />
@@ -188,6 +189,7 @@
     <CxxTest Include="MainTests\Raytracer\Textures\ConstantTexture.test.h" />
     <CxxTest Include="MainTests\Raytracer\Textures\ImageTexture.test.h" />
     <CxxTest Include="MainTests\Raytracer\Textures\ScaleTexture.test.h" />
+    <CxxTest Include="MainTests\Raytracer\Textures\WindyTexture.test.h" />
     <CxxTest Include="MainTests\Raytracer\Materials\MatteMaterial.test.h" />
     <CxxTest Include="MainTests\Raytracer\Materials\MERLMeasuredMaterial.test.h" />
     <CxxTest Include="MainTests\Raytracer\Materials\MetalMaterial.test.h" />
@@ -269,6 +271,7 @@
     <CxxTest Include="SerializationTests\Raytracer\Textures\ConstantTexture.Serialization.test.h" />
     <CxxTest Include="SerializationTests\Raytracer\Textures\ImageTexture.Serialization.test.h" />
     <CxxTest Include="SerializationTests\Raytracer\Textures\ScaleTexture.Serialization.test.h" />
+    <CxxTest Include="SerializationTests\Raytracer\Textures\WindyTexture.Serialization.test.h" />
     <CxxTest Include="SerializationTests\Raytracer\Materials\MatteMaterial.Serialization.test.h" />
     <CxxTest Include="SerializationTests\Raytracer\Materials\MERLMeasuredMaterial.Serialization.test.h" />
     <CxxTest Include="SerializationTests\Raytracer\Materials\MetalMaterial.Serialization.test.h" />
@@ -381,6 +384,7 @@
     <ClCompile Include="MitchellFilter.test.cpp" />
     <ClCompile Include="MixMaterial.Serialization.test.cpp" />
     <ClCompile Include="MixMaterial.test.cpp" />
+    <ClCompile Include="NoiseRoutines.test.cpp" />
     <ClCompile Include="Numerics.test.cpp" />
     <ClCompile Include="OpenEXRRgbaImageSource.Serialization.test.cpp" />
     <ClCompile Include="OpenEXRRgbaImageSource.test.cpp" />
@@ -454,6 +458,8 @@
     <ClCompile Include="Vector2D.test.cpp" />
     <ClCompile Include="Vector3D.Serialization.test.cpp" />
     <ClCompile Include="Vector3D.test.cpp" />
+    <ClCompile Include="WindyTexture.Serialization.test.cpp" />
+    <ClCompile Include="WindyTexture.test.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
