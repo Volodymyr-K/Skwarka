@@ -201,6 +201,9 @@
     <CxxTest Include="MainTests\Math\Matrix4x4.test.h">
       <Filter>MainTests\Math</Filter>
     </CxxTest>
+    <CxxTest Include="MainTests\Math\NoiseRoutines.test.h">
+      <Filter>MainTests\Math</Filter>
+    </CxxTest>
     <CxxTest Include="MainTests\Math\Point2D.test.h">
       <Filter>MainTests\Math</Filter>
     </CxxTest>
@@ -435,6 +438,9 @@
     <CxxTest Include="MainTests\Raytracer\Textures\ScaleTexture.test.h">
       <Filter>MainTests\Raytracer\Textures</Filter>
     </CxxTest>
+    <CxxTest Include="MainTests\Raytracer\Textures\WindyTexture.test.h">
+      <Filter>MainTests\Raytracer\Textures</Filter>
+    </CxxTest>
     <CxxTest Include="MainTests\Raytracer\VolumeRegions\AggregateVolumeRegion.test.h">
       <Filter>MainTests\Raytracer\VolumeRegions</Filter>
     </CxxTest>
@@ -598,6 +604,9 @@
       <Filter>SerializationTests\Raytracer\Textures</Filter>
     </CxxTest>
     <CxxTest Include="SerializationTests\Raytracer\Textures\ScaleTexture.Serialization.test.h">
+      <Filter>SerializationTests\Raytracer\Textures</Filter>
+    </CxxTest>
+    <CxxTest Include="SerializationTests\Raytracer\Textures\WindyTexture.Serialization.test.h">
       <Filter>SerializationTests\Raytracer\Textures</Filter>
     </CxxTest>
     <CxxTest Include="SerializationTests\Raytracer\VolumeRegions\AggregateVolumeRegion.Serialization.test.h">

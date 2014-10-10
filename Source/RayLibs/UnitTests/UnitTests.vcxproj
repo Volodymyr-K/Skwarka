@@ -91,6 +91,18 @@
     <ProjectReference>
       <UseLibraryDependencyInputs>true</UseLibraryDependencyInputs>
     </ProjectReference>
+    <PostBuildEvent>
+      <Message>Copying 3rd party binaries</Message>
+      <Command>copy "..\..\..\ThirdParty\TBB\4.2\bin\ia32\vc12\tbb_debug.dll" "$(OutDir)"
+copy  "..\..\..\ThirdParty\TBB\4.2\bin\ia32\vc12\tbb_debug.pdb" "$(OutDir)"
+copy  "..\..\..\ThirdParty\OpenEXR\Deploy\bin\Debug\IlmImf.dll" "$(OutDir)"
+copy  "..\..\..\ThirdParty\OpenEXR\Deploy\bin\Debug\Half.dll" "$(OutDir)"
+copy  "..\..\..\ThirdParty\OpenEXR\Deploy\bin\Debug\Iex.dll" "$(OutDir)"
+copy  "..\..\..\ThirdParty\OpenEXR\Deploy\bin\Debug\IlmThread.dll" "$(OutDir)"
+copy  "..\..\..\ThirdParty\OpenEXR\Deploy\bin\Debug\zlib1.dll" "$(OutDir)"
+copy  "..\..\..\ThirdParty\FreeImage\3.16\Dist\FreeImage.dll" "$(OutDir)"
+</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <CustomBuildStep>
@@ -128,6 +140,18 @@
     <CxxTest>
       <output>%(Filename).cpp</output>
     </CxxTest>
+    <PostBuildEvent>
+      <Message>Copying 3rd party binaries</Message>
+      <Command>copy "..\..\..\ThirdParty\TBB\4.2\bin\ia32\vc12\tbb.dll" "$(OutDir)"
+copy  "..\..\..\ThirdParty\TBB\4.2\bin\ia32\vc12\tbb.pdb" "$(OutDir)"
+copy  "..\..\..\ThirdParty\OpenEXR\Deploy\bin\Release\IlmImf.dll" "$(OutDir)"
+copy  "..\..\..\ThirdParty\OpenEXR\Deploy\bin\Release\Half.dll" "$(OutDir)"
+copy  "..\..\..\ThirdParty\OpenEXR\Deploy\bin\Release\Iex.dll" "$(OutDir)"
+copy  "..\..\..\ThirdParty\OpenEXR\Deploy\bin\Release\IlmThread.dll" "$(OutDir)"
+copy  "..\..\..\ThirdParty\OpenEXR\Deploy\bin\Release\zlib1.dll" "$(OutDir)"
+copy  "..\..\..\ThirdParty\FreeImage\3.16\Dist\FreeImage.dll" "$(OutDir)"
+</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <CxxTest Include="MainTests\Math\BBox3D.test.h" />

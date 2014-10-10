@@ -1,0 +1,4 @@
+#ignore everything here except the libs directory
+*
+!libs/
+!libs/**
