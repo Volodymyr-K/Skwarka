@@ -1,3 +1,17 @@
+/*
+* Copyright (C) 2014 by Volodymyr Kachurovskyi <Volodymyr.Kachurovskyi@gmail.com>
+*
+* This file is part of Skwarka.
+*
+* Skwarka is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+*
+* Skwarka is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License along with Skwarka.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 #ifndef TESTTRACER_H
 #define TESTTRACER_H
 
@@ -86,19 +100,19 @@ inline void TestTracer::LoadMesh()
   intrusive_ptr<Log> p_log( new StreamLog(std::cerr, Log::ERROR_LEVEL) );
 
   tbb::tick_count t0 = tbb::tick_count::now();
-  //PbrtSceneImporter importer("D:\\Development\\scenes\\sponza-phomap.pbrt", p_log);
-  //PbrtSceneImporter importer("D:\\Development\\scenes\\plants-godrays.pbrt", p_log);
-  PbrtSceneImporter importer("D:\\Development\\scenes\\plants-dusk.pbrt", p_log);
-  //PbrtSceneImporter importer("D:\\Development\\scenes\\yeahright.pbrt", p_log);
-  //PbrtSceneImporter importer("D:\\Development\\scenes\\tt.pbrt", p_log);
-  //PbrtSceneImporter importer("D:\\Development\\scenes\\tt2.pbrt", p_log);
-  //PbrtSceneImporter importer("D:\\Development\\scenes\\teapot-metal.pbrt", p_log);
-  //PbrtSceneImporter importer("D:\\Development\\scenes\\spheres-differentials-texfilt.pbrt", p_log);
-  //PbrtSceneImporter importer("D:\\Development\\scenes\\spheres.pbrt", p_log);
-  //PbrtSceneImporter importer("D:\\Development\\scenes\\buddhamesh.pbrt", p_log);
-  //PbrtSceneImporter importer("D:\\Development\\scenes\\sanmiguel.pbrt", p_log);
-  //PbrtSceneImporter importer("D:\\Development\\scenes\\sanmiguel_cam14.pbrt", p_log);
-  //PbrtSceneImporter importer("D:\\Development\\scenes\\sanmiguel_cam25.pbrt", p_log);
+  //PbrtSceneImporter importer("D:\\raytracing\\pbrt_scenes\\sponza-phomap.pbrt", p_log);
+  //PbrtSceneImporter importer("D:\\raytracing\\pbrt_scenes\\plants-godrays.pbrt", p_log);
+  PbrtSceneImporter importer("D:\\raytracing\\pbrt_scenes\\plants-dusk.pbrt", p_log);
+  //PbrtSceneImporter importer("D:\\raytracing\\pbrt_scenes\\yeahright.pbrt", p_log);
+  //PbrtSceneImporter importer("D:\\raytracing\\pbrt_scenes\\tt.pbrt", p_log);
+  //PbrtSceneImporter importer("D:\\raytracing\\pbrt_scenes\\tt2.pbrt", p_log);
+  //PbrtSceneImporter importer("D:\\raytracing\\pbrt_scenes\\teapot-metal.pbrt", p_log);
+  //PbrtSceneImporter importer("D:\\raytracing\\pbrt_scenes\\spheres-differentials-texfilt.pbrt", p_log);
+  //PbrtSceneImporter importer("D:\\raytracing\\pbrt_scenes\\spheres.pbrt", p_log);
+  //PbrtSceneImporter importer("D:\\raytracing\\pbrt_scenes\\buddhamesh.pbrt", p_log);
+  //PbrtSceneImporter importer("D:\\raytracing\\pbrt_scenes\\sanmiguel.pbrt", p_log);
+  //PbrtSceneImporter importer("D:\\raytracing\\pbrt_scenes\\sanmiguel_cam14.pbrt", p_log);
+  //PbrtSceneImporter importer("D:\\raytracing\\pbrt_scenes\\sanmiguel_cam25.pbrt", p_log);
 
   importer.GetScene();
 
