@@ -52,16 +52,6 @@ bool AggregateVolumeRegion::Intersect(Ray i_ray, double *op_t_begin, double *op_
   return t_begin < t_end;
   }
 
-Spectrum_d AggregateVolumeRegion::Emission(const Point3D_d &i_point) const
-  {
-  Spectrum_d ret;
-
-  for (size_t i=0;i<m_volume_regions.size();++i)
-    ret += m_volume_regions[i]->Emission(i_point);
-
-  return ret;
-  }
-
 SpectrumCoef_d AggregateVolumeRegion::Absorption(const Point3D_d &i_point) const
   {
   SpectrumCoef_d ret;

@@ -22,7 +22,7 @@
 
 /**
 * Base abstract class for participating media.
-* The class defines interface for the volume regions with emission, absorption and scattering properties.
+* The class defines interface for the volume regions with absorption and scattering properties.
 * The participating media is assumed to be isotropic in the sense that it's properties do not depend on the ray direction.
 */
 class VolumeRegion: public ReferenceCounted
@@ -41,11 +41,6 @@ class VolumeRegion: public ReferenceCounted
     * @return true if the ray intersects the volume region.
     */
     virtual bool Intersect(Ray i_ray, double *op_t_begin, double *op_t_end) const = 0;
-
-    /**
-    * Returns emission density of the volume region at the specified point.
-    */
-    virtual Spectrum_d Emission(const Point3D_d &i_point) const = 0;
 
     /**
     * Returns absorption density of the volume region at the specified point.
@@ -95,7 +90,7 @@ class VolumeRegion: public ReferenceCounted
   };
 
 /**
-* Abstract implementation of the VolumeRegion with emission, absorption and scattering being proportional to the density of the media particles.
+* Abstract implementation of the VolumeRegion with absorption and scattering being proportional to the density of the media particles.
 * The phase function does not depend on the point coordinates and is defined by the PhaseFunction implementation.
 * The class declares new virtual method _Density() that sub-classes must implement.
 */
@@ -106,12 +101,6 @@ class DensityVolumeRegion: public VolumeRegion
     * Returns bounding box of the volume region.
     */
     BBox3D_d GetBounds() const;
-
-    /**
-    * Returns emission density of the volume region at the specified point.
-    * The method multiplies the base value by the density of the media particles.
-    */
-    Spectrum_d Emission(const Point3D_d &i_point) const;
 
     /**
     * Returns absorption density of the volume region at the specified point.
@@ -155,10 +144,10 @@ class DensityVolumeRegion: public VolumeRegion
 
   protected:
     /**
-    * Creates DensityVolumeRegion instance with specified base emission, absorption and scattering. The real properties are evaluated by multiplying the base values by the density.
+    * Creates DensityVolumeRegion instance with specified base absorption and scattering. The real properties are evaluated by multiplying the base values by the density.
     * The constructor also takes ans instance of the phase function.
     */
-    DensityVolumeRegion(const BBox3D_d &i_bounds, Spectrum_d &i_base_emission, SpectrumCoef_d &i_base_absorption,
+    DensityVolumeRegion(const BBox3D_d &i_bounds, SpectrumCoef_d &i_base_absorption,
       SpectrumCoef_d &i_base_scattering, intrusive_ptr<const PhaseFunction> ip_phase_function);
 
     DensityVolumeRegion() {}; // Empty default constructor for the boost serialization framework.
@@ -181,7 +170,6 @@ class DensityVolumeRegion: public VolumeRegion
 
   private:
     BBox3D_d m_bounds;
-    Spectrum_d m_base_emission;
     SpectrumCoef_d m_base_absorption, m_base_scattering, m_base_attenuation;
 
     intrusive_ptr<const PhaseFunction> mp_phase_function;
@@ -207,7 +195,6 @@ void DensityVolumeRegion::serialize(Archive &i_ar, const unsigned int i_version)
   {
   i_ar & boost::serialization::base_object<VolumeRegion>(*this);
   i_ar & m_bounds;
-  i_ar & m_base_emission;
   i_ar & m_base_absorption;
   i_ar & m_base_scattering;
   i_ar & m_base_attenuation;

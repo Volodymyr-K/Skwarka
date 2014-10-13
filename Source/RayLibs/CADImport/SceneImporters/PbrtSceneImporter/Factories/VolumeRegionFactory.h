@@ -55,8 +55,11 @@ namespace PbrtImport
         Point3D_d p0 = i_params.FindOnePoint("p0", Point3D_d(0,0,0));
         Point3D_d p1 = i_params.FindOnePoint("p1", Point3D_d(1,1,1));
 
+        if (!Le.IsBlack())
+          PbrtImport::Utils::LogError(mp_log, "Volume emission is not supported.");
+
         intrusive_ptr<PhaseFunction> p_phase_function(new HGPhaseFunction(g));
-        return new HomogeneousVolumeRegion(BBox3D_d(i_volume_to_world(p0),i_volume_to_world(p1)), Le, sigma_a, sigma_s, p_phase_function);
+        return new HomogeneousVolumeRegion(BBox3D_d(i_volume_to_world(p0),i_volume_to_world(p1)), sigma_a, sigma_s, p_phase_function);
         }
 
       intrusive_ptr<const VolumeRegion> _CreateGridVolumeRegion( const Transform &i_volume_to_world, const ParamSet &i_params) const
@@ -68,6 +71,9 @@ namespace PbrtImport
         Spectrum_d Le = i_params.FindOneSpectrum("Le", Spectrum_d(0.0));
         Point3D_d p0 = i_params.FindOnePoint("p0", Point3D_d(0,0,0));
         Point3D_d p1 = i_params.FindOnePoint("p1", Point3D_d(1,1,1));
+
+        if (!Le.IsBlack())
+          PbrtImport::Utils::LogError(mp_log, "Volume emission is not supported.");
 
         int nitems;
         const float *data = i_params.FindFloat("density", &nitems);
@@ -96,7 +102,7 @@ namespace PbrtImport
               densities[x][y][z] = data[ind++];
 
         intrusive_ptr<PhaseFunction> p_phase_function(new HGPhaseFunction(g));
-        return new GridDensityVolumeRegion(BBox3D_d(i_volume_to_world(p0),i_volume_to_world(p1)), Le, sigma_a, sigma_s, p_phase_function, densities);
+        return new GridDensityVolumeRegion(BBox3D_d(i_volume_to_world(p0),i_volume_to_world(p1)), sigma_a, sigma_s, p_phase_function, densities);
         }
 
       intrusive_ptr<const VolumeRegion> _CreateExponentialVolumeRegion( const Transform &i_volume_to_world, const ParamSet &i_params) const

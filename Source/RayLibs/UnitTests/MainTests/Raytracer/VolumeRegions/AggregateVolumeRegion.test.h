@@ -30,17 +30,15 @@ class AggregateVolumeRegionTestSuite : public CxxTest::TestSuite
     AggregateVolumeRegionTestSuite()
       {
       m_bounds1 = BBox3D_d(Point3D_d(0,0,0), Point3D_d(2,2,2));
-      m_emission1 = Spectrum_d(1,1.5,2);
       m_absorption1 = SpectrumCoef_d(5,7,9);
       m_scattering1 = SpectrumCoef_d(0.1,0.0,0.9);
 
       m_bounds2 = BBox3D_d(Point3D_d(1,1,1), Point3D_d(3,3,3));
-      m_emission2 = Spectrum_d(2,0.5,1);
       m_absorption2 = SpectrumCoef_d(2,1,4);
       m_scattering2 = SpectrumCoef_d(5.1,0.3,3.9);
 
-      mp_region1.reset(new VolumeRegionMock(m_bounds1, m_emission1, m_absorption1, m_scattering1));
-      mp_region2.reset(new VolumeRegionMock(m_bounds2, m_emission2, m_absorption2, m_scattering2));
+      mp_region1.reset(new VolumeRegionMock(m_bounds1, m_absorption1, m_scattering1));
+      mp_region2.reset(new VolumeRegionMock(m_bounds2, m_absorption2, m_scattering2));
 
       std::vector<intrusive_ptr<const VolumeRegion>> regions;
       regions.push_back(mp_region1);
@@ -82,18 +80,6 @@ class AggregateVolumeRegionTestSuite : public CxxTest::TestSuite
           TS_ASSERT_EQUALS(mn, k0);
           TS_ASSERT_EQUALS(mx, k1);
           }
-        }
-      }
-
-    void test_AggregateVolumeRegion_Emission()
-      {
-      size_t N=100;
-      for (size_t t=0;t<N;++t)
-        {
-        Point3D_d point(RandomDouble(10)-5, RandomDouble(10)-5, RandomDouble(10)-5);
-        Spectrum_d tmp = mp_aggregate->Emission(point);
-        Spectrum_d correct = (m_bounds1.Inside(point) ? m_emission1 : Spectrum_d(0.0)) + (m_bounds2.Inside(point) ? m_emission2 : Spectrum_d(0.0));
-        TS_ASSERT_EQUALS(tmp, correct);
         }
       }
 
@@ -170,11 +156,9 @@ class AggregateVolumeRegionTestSuite : public CxxTest::TestSuite
 
   private:
     BBox3D_d m_bounds1;
-    Spectrum_d m_emission1;
     SpectrumCoef_d m_absorption1, m_scattering1;
 
     BBox3D_d m_bounds2;
-    Spectrum_d m_emission2;
     SpectrumCoef_d m_absorption2, m_scattering2;
 
     intrusive_ptr<VolumeRegion> mp_aggregate, mp_region1, mp_region2;

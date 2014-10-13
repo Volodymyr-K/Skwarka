@@ -30,12 +30,11 @@ class HomogeneousVolumeRegionTestSuite : public CxxTest::TestSuite
     HomogeneousVolumeRegionTestSuite()
       {
       m_bounds = BBox3D_d(Point3D_d(1,2,3), Point3D_d(10,20,30));
-      m_emission = Spectrum_d(1,1.5,2);
       m_absorption = SpectrumCoef_d(5,7,9);
       m_scattering = SpectrumCoef_d(0.1,0.0,0.9);
       intrusive_ptr<PhaseFunction> p_phase_function( new PhaseFunctionMock );
 
-      mp_volume.reset(new HomogeneousVolumeRegion(m_bounds, m_emission, m_absorption, m_scattering, p_phase_function));
+      mp_volume.reset(new HomogeneousVolumeRegion(m_bounds, m_absorption, m_scattering, p_phase_function));
       }
   
     void test_HomogeneousVolumeRegion_GetBounds()
@@ -66,18 +65,6 @@ class HomogeneousVolumeRegionTestSuite : public CxxTest::TestSuite
           TS_ASSERT_EQUALS(t0, u0);
           TS_ASSERT_EQUALS(t1, u1);
           }
-        }
-      }
-
-    void test_HomogeneousVolumeRegion_Emission()
-      {
-      size_t N=100;
-      for (size_t t=0;t<N;++t)
-        {
-        Point3D_d point(RandomDouble(60)-30, RandomDouble(60)-30, RandomDouble(60)-30);
-        Spectrum_d tmp = mp_volume->Emission(point);
-        Spectrum_d correct = m_bounds.Inside(point) ? m_emission : Spectrum_d(0.0);
-        TS_ASSERT_EQUALS(tmp, correct);
         }
       }
 
@@ -153,7 +140,6 @@ class HomogeneousVolumeRegionTestSuite : public CxxTest::TestSuite
 
   private:
     BBox3D_d m_bounds;
-    Spectrum_d m_emission;
     SpectrumCoef_d m_absorption, m_scattering;
 
     intrusive_ptr<VolumeRegion> mp_volume;

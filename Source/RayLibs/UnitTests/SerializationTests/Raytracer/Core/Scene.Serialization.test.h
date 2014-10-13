@@ -62,7 +62,7 @@ class SceneSerializationTestSuite : public CxxTest::TestSuite
         bounds=Union(bounds, Convert<double>(primitives[i]->GetTriangleMesh()->GetBounds()) );
 
       intrusive_ptr<PhaseFunction> p_phase_function( new RayleighPhaseFunction );
-      intrusive_ptr<VolumeRegion> p_volume( new HomogeneousVolumeRegion(bounds, Spectrum_d(1.0), SpectrumCoef_d(0.1), SpectrumCoef_d(0.1), p_phase_function) );
+      intrusive_ptr<VolumeRegion> p_volume( new HomogeneousVolumeRegion(bounds, SpectrumCoef_d(0.1), SpectrumCoef_d(0.1), p_phase_function) );
       intrusive_ptr<Scene> p_scene1(new Scene(primitives, p_volume, light_sources));
 
         {

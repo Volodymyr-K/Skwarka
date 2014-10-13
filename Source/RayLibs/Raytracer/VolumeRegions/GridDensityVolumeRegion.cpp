@@ -17,9 +17,9 @@
 // Register the derived class in the boost serialization framework.
 BOOST_CLASS_EXPORT_IMPLEMENT(GridDensityVolumeRegion);
 
-GridDensityVolumeRegion::GridDensityVolumeRegion(const BBox3D_d &i_bounds, Spectrum_d &i_base_emission, SpectrumCoef_d &i_base_absorption, SpectrumCoef_d &i_base_scattering,
+GridDensityVolumeRegion::GridDensityVolumeRegion(const BBox3D_d &i_bounds, SpectrumCoef_d &i_base_absorption, SpectrumCoef_d &i_base_scattering,
                                                  intrusive_ptr<const PhaseFunction> ip_phase_function, const std::vector<std::vector<std::vector<float>>> &i_densities):
-DensityVolumeRegion(i_bounds, i_base_emission, i_base_absorption, i_base_scattering, ip_phase_function), m_bounds(i_bounds), m_densities(i_densities)
+DensityVolumeRegion(i_bounds, i_base_absorption, i_base_scattering, ip_phase_function), m_bounds(i_bounds), m_densities(i_densities)
   {
   ASSERT(i_densities.empty()==false && i_densities[0].empty()==false && i_densities[0][0].empty() == false);
 

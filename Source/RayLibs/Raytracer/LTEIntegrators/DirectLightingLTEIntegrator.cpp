@@ -135,7 +135,6 @@ Spectrum_d DirectLightingLTEIntegrator::_MediaRadianceAndTranmsittance(const Ray
     transmittance[2] *= exp(-opt_thickness[2]);
 
     // Compute single-scattering source term.
-    radiance += transmittance * p_volume->Emission(point);
     SpectrumCoef_d scattering = p_volume->Scattering(point);
     if (scattering.IsBlack()==false && num_lights > 0)
       {

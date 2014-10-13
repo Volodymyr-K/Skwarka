@@ -14,12 +14,11 @@
 
 #include "VolumeRegion.h"
 
-DensityVolumeRegion::DensityVolumeRegion(const BBox3D_d &i_bounds, Spectrum_d &i_base_emission, SpectrumCoef_d &i_base_absorption,
+DensityVolumeRegion::DensityVolumeRegion(const BBox3D_d &i_bounds, SpectrumCoef_d &i_base_absorption,
                                          SpectrumCoef_d &i_base_scattering, intrusive_ptr<const PhaseFunction> ip_phase_function):
-m_bounds(i_bounds), m_base_emission(i_base_emission), m_base_absorption(i_base_absorption), m_base_scattering(i_base_scattering), mp_phase_function(ip_phase_function)
+m_bounds(i_bounds), m_base_absorption(i_base_absorption), m_base_scattering(i_base_scattering), mp_phase_function(ip_phase_function)
   {
   ASSERT(ip_phase_function);
-  ASSERT(InRange(i_base_emission, 0.0, DBL_INF));
   ASSERT(InRange(i_base_absorption, 0.0, DBL_INF));
   ASSERT(InRange(i_base_scattering, 0.0, DBL_INF));
 
@@ -34,11 +33,6 @@ m_bounds(i_bounds), m_base_emission(i_base_emission), m_base_absorption(i_base_a
 BBox3D_d DensityVolumeRegion::GetBounds() const
   {
   return m_bounds;
-  }
-
-Spectrum_d DensityVolumeRegion::Emission(const Point3D_d &i_point) const
-  {
-  return _Density(i_point) * m_base_emission;
   }
 
 SpectrumCoef_d DensityVolumeRegion::Absorption(const Point3D_d &i_point) const

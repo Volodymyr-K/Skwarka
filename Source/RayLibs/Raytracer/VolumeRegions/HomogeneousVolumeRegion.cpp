@@ -17,11 +17,10 @@
 // Register the derived class in the boost serialization framework.
 BOOST_CLASS_EXPORT_IMPLEMENT(HomogeneousVolumeRegion);
 
-HomogeneousVolumeRegion::HomogeneousVolumeRegion(const BBox3D_d &i_bounds, Spectrum_d &i_emission, SpectrumCoef_d &i_absorption,
+HomogeneousVolumeRegion::HomogeneousVolumeRegion(const BBox3D_d &i_bounds, SpectrumCoef_d &i_absorption,
                                                  SpectrumCoef_d &i_scattering, intrusive_ptr<const PhaseFunction> ip_phase_function):
-m_bounds(i_bounds), m_emission(i_emission), m_absorption(i_absorption), m_scattering(i_scattering), mp_phase_function(ip_phase_function)
+m_bounds(i_bounds), m_absorption(i_absorption), m_scattering(i_scattering), mp_phase_function(ip_phase_function)
   {
-  ASSERT(InRange(i_emission, 0.0, DBL_INF));
   ASSERT(InRange(i_absorption, 0.0, DBL_INF));
   ASSERT(InRange(i_scattering, 0.0, DBL_INF));
 
@@ -36,11 +35,6 @@ BBox3D_d HomogeneousVolumeRegion::GetBounds() const
 bool HomogeneousVolumeRegion::Intersect(Ray i_ray, double *op_t_begin, double *op_t_end) const
   {
   return m_bounds.Intersect(i_ray, op_t_begin, op_t_end);
-  }
-
-Spectrum_d HomogeneousVolumeRegion::Emission(const Point3D_d &i_point) const
-  {
-  return m_bounds.Inside(i_point) ? m_emission : Spectrum_d(0.0);
   }
 
 SpectrumCoef_d HomogeneousVolumeRegion::Absorption(const Point3D_d &i_point) const

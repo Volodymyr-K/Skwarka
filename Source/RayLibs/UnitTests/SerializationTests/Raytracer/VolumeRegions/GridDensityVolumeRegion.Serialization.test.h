@@ -38,7 +38,6 @@ class GridDensityVolumeRegionSerializationTestSuite : public CxxTest::TestSuite
     void test_GridDensityVolumeRegion_Serialization()
       {
       BBox3D_d bounds(Point3D_d(1,2,3), Point3D_d(10,20,30));
-      Spectrum_d emission(1,1.5,2);
       SpectrumCoef_d absorption(5,7,9), scattering(0.1,0.0,0.9);
       intrusive_ptr<PhaseFunction> p_phase_function( new RayleighPhaseFunction );
 
@@ -49,7 +48,7 @@ class GridDensityVolumeRegionSerializationTestSuite : public CxxTest::TestSuite
           for(size_t k=0;k<size_z;++k)
             densities[i][j][k]=(float)(i+j+k);
 
-      intrusive_ptr<VolumeRegion> p_volume1( new GridDensityVolumeRegion(bounds, emission, absorption, scattering, p_phase_function, densities) );
+      intrusive_ptr<VolumeRegion> p_volume1( new GridDensityVolumeRegion(bounds, absorption, scattering, p_phase_function, densities) );
 
         {
         boost::iostreams::stream_buffer<SinkDevice> buffer(m_data, m_buffer_size);
@@ -68,7 +67,6 @@ class GridDensityVolumeRegionSerializationTestSuite : public CxxTest::TestSuite
       Vector3D_d d1=Vector3D_d(1,2,3).Normalized(), d2=Vector3D_d(-2,1,-3).Normalized();
       TS_ASSERT_EQUALS(p_volume1->GetBounds().m_min, p_volume2->GetBounds().m_min);
       TS_ASSERT_EQUALS(p_volume1->GetBounds().m_max, p_volume2->GetBounds().m_max);
-      TS_ASSERT_EQUALS(p_volume1->Emission(point), p_volume2->Emission(point));
       TS_ASSERT_EQUALS(p_volume1->Absorption(point), p_volume2->Absorption(point));
       TS_ASSERT_EQUALS(p_volume1->Scattering(point), p_volume2->Scattering(point));
       TS_ASSERT_EQUALS(p_volume1->Phase(point,d1,d2), p_volume2->Phase(point,d1,d2));

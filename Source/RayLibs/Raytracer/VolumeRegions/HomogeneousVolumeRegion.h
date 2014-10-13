@@ -22,17 +22,17 @@
 #include <Raytracer/Core/PhaseFunction.h>
 
 /**
-* Implementation of the VolumeRegion with constant emission, absorption and scattering.
+* Implementation of the VolumeRegion with constant absorption and scattering.
 * The phase function does not depend on the point coordinates and is defined by the PhaseFunction implementation.
 */
 class HomogeneousVolumeRegion: public VolumeRegion
   {
   public:
     /**
-    * Creates HomogeneousVolumeRegion instance with specified bounding box, emission, absorption and scattering.
+    * Creates HomogeneousVolumeRegion instance with specified bounding box, absorption and scattering.
     * The constructor also takes an instance of the phase function.
     */
-    HomogeneousVolumeRegion(const BBox3D_d &i_bounds, Spectrum_d &i_emission, SpectrumCoef_d &i_absorption, SpectrumCoef_d &i_scattering, intrusive_ptr<const PhaseFunction> ip_phase_function);
+    HomogeneousVolumeRegion(const BBox3D_d &i_bounds, SpectrumCoef_d &i_absorption, SpectrumCoef_d &i_scattering, intrusive_ptr<const PhaseFunction> ip_phase_function);
 
     /**
     * Returns bounding box of the volume region.
@@ -47,11 +47,6 @@ class HomogeneousVolumeRegion: public VolumeRegion
     * @return true if the ray intersects the volume region.
     */
     bool Intersect(Ray i_ray, double *op_t_begin, double *op_t_end) const;
-
-    /**
-    * Returns emission density of the volume region at the specified point.
-    */
-    Spectrum_d Emission(const Point3D_d &i_point) const;
 
     /**
     * Returns absorption density of the volume region at the specified point.
@@ -105,7 +100,6 @@ class HomogeneousVolumeRegion: public VolumeRegion
   private:
     BBox3D_d m_bounds;
 
-    Spectrum_d m_emission;
     SpectrumCoef_d m_absorption, m_scattering, m_attenuation;
 
     intrusive_ptr<const PhaseFunction> mp_phase_function;
@@ -119,7 +113,6 @@ void HomogeneousVolumeRegion::serialize(Archive &i_ar,  const unsigned int i_ver
   {
   i_ar & boost::serialization::base_object<VolumeRegion>(*this);
   i_ar & m_bounds;
-  i_ar & m_emission;
   i_ar & m_absorption;
   i_ar & m_scattering;
   i_ar & m_attenuation;

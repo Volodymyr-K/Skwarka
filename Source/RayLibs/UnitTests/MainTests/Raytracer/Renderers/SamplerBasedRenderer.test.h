@@ -54,7 +54,7 @@ class SamplerBasedRendererTestSuite : public CxxTest::TestSuite
       lights.m_infinite_light_sources.push_back(p_infinite_light);
       //////////////////////
 
-      intrusive_ptr<const VolumeRegion> p_volume( new VolumeRegionMock(BBox3D_d(Point3D_d(-1,-1,-1),Point3D_d(1,1,1)), Spectrum_d(0), SpectrumCoef_d(0.5), SpectrumCoef_d(0.5)) );
+      intrusive_ptr<const VolumeRegion> p_volume( new VolumeRegionMock(BBox3D_d(Point3D_d(-1,-1,-1),Point3D_d(1,1,1)), SpectrumCoef_d(0.5), SpectrumCoef_d(0.5)) );
 
       mp_scene.reset( new Scene(m_primitives, p_volume, lights) );
 

@@ -24,7 +24,7 @@
 #include <vector>
 
 /**
-* Implementation of the VolumeRegion with emission, absorption and scattering being proportional to the density of the media particles.
+* Implementation of the VolumeRegion with absorption and scattering being proportional to the density of the media particles.
 * The density of the media particles is defined by a regular 3D grid.
 * The phase function does not depend on the point coordinates and is defined by the PhaseFunction implementation.
 */
@@ -32,9 +32,9 @@ class GridDensityVolumeRegion: public DensityVolumeRegion
   {
   public:
     /**
-    * Creates GridDensityVolumeRegion instance with specified base emission, absorption, scattering, bounding box and the 3D array defining the density values.
+    * Creates GridDensityVolumeRegion instance with specified base absorption, scattering, bounding box and the 3D array defining the density values.
     */
-    GridDensityVolumeRegion(const BBox3D_d &i_bounds, Spectrum_d &i_base_emission, SpectrumCoef_d &i_base_absorption, SpectrumCoef_d &i_base_scattering,
+    GridDensityVolumeRegion(const BBox3D_d &i_bounds, SpectrumCoef_d &i_base_absorption, SpectrumCoef_d &i_base_scattering,
       intrusive_ptr<const PhaseFunction> ip_phase_function, const std::vector<std::vector<std::vector<float>>> &i_densities);
 
     /**

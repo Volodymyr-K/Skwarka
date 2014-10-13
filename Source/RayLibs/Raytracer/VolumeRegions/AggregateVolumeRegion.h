@@ -49,12 +49,6 @@ class AggregateVolumeRegion: public VolumeRegion
     bool Intersect(Ray i_ray, double *op_t_begin, double *op_t_end) const;
 
     /**
-    * Returns aggregated emission density of the volume region at the specified point.
-    * The aggregated value is a sum of corresponding values of the underlying volume regions.
-    */
-    Spectrum_d Emission(const Point3D_d &i_point) const;
-
-    /**
     * Returns aggregated absorption density of the volume region at the specified point.
     * The aggregated value is a sum of corresponding values of the underlying volume regions.
     */

@@ -27,10 +27,9 @@ Always returns the same value everywhere (pretty much as HomogeneousVolumeRegion
 class VolumeRegionMock: public VolumeRegion
   {
   public:
-    VolumeRegionMock(BBox3D_d i_bounds, Spectrum_d &i_emission, SpectrumCoef_d &i_absorption, SpectrumCoef_d &i_scattering):
-    m_bounds(i_bounds), m_emission(i_emission), m_absorption(i_absorption), m_scattering(i_scattering)
+    VolumeRegionMock(BBox3D_d i_bounds, SpectrumCoef_d &i_absorption, SpectrumCoef_d &i_scattering):
+    m_bounds(i_bounds),m_absorption(i_absorption), m_scattering(i_scattering)
       {
-      ASSERT(InRange(i_emission, 0.0, DBL_INF));
       ASSERT(InRange(i_absorption, 0.0, DBL_INF));
       ASSERT(InRange(i_scattering, 0.0, DBL_INF));
 
@@ -45,11 +44,6 @@ class VolumeRegionMock: public VolumeRegion
     bool Intersect(Ray i_ray, double *op_t_begin, double *op_t_end) const
       {
       return m_bounds.Intersect(i_ray, op_t_begin, op_t_end);
-      }
-
-    Spectrum_d Emission(const Point3D_d &i_point) const
-      {
-      return m_bounds.Inside(i_point) ? m_emission : Spectrum_d(0.0);
       }
 
     SpectrumCoef_d Absorption(const Point3D_d &i_point) const
@@ -88,7 +82,6 @@ class VolumeRegionMock: public VolumeRegion
   private:
     BBox3D_d m_bounds;
 
-    Spectrum_d m_emission;
     SpectrumCoef_d m_absorption, m_scattering, m_attenuation;
   };
 

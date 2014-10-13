@@ -87,6 +87,7 @@
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
       <OptimizeReferences>
       </OptimizeReferences>
+      <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <ProjectReference>
       <UseLibraryDependencyInputs>true</UseLibraryDependencyInputs>
