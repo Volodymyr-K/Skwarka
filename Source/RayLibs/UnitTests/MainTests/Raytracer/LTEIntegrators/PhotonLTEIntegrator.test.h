@@ -65,7 +65,7 @@ class PhotonLTEIntegratorTestSuite : public CxxTest::TestSuite
       params.m_media_step_size=0.01;
       params.m_max_specular_depth=6; // no need since there's no specular objects actually
       intrusive_ptr<PhotonLTEIntegrator> p_photon_lte_integrator( new PhotonLTEIntegrator(p_scene, params) );
-      p_photon_lte_integrator->ShootPhotons(0,20000,100000);
+      p_photon_lte_integrator->ShootPhotons(20000);
 
       p_photon_lte_integrator->RequestSamples(p_sampler);
 
@@ -105,7 +105,7 @@ class PhotonLTEIntegratorTestSuite : public CxxTest::TestSuite
       params.m_media_step_size=0.01;
       params.m_max_specular_depth=6; // no need since there's no specular objects actually
       intrusive_ptr<PhotonLTEIntegrator> p_photon_lte_integrator( new PhotonLTEIntegrator(p_scene, params) );
-      p_photon_lte_integrator->ShootPhotons(0,20000,100000);
+      p_photon_lte_integrator->ShootPhotons(20000);
 
       p_photon_lte_integrator->RequestSamples(p_sampler);
 
@@ -148,7 +148,7 @@ class PhotonLTEIntegratorTestSuite : public CxxTest::TestSuite
       params.m_media_step_size=0.01;
       params.m_max_specular_depth=6; // no need since there's no specular objects actually
       intrusive_ptr<PhotonLTEIntegrator> p_photon_lte_integrator( new PhotonLTEIntegrator(p_scene, params) );
-      p_photon_lte_integrator->ShootPhotons(0,20000,20000);
+      p_photon_lte_integrator->ShootPhotons(40000);
 
       p_photon_lte_integrator->RequestSamples(p_sampler);
 

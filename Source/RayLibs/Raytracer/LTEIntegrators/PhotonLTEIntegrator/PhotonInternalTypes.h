@@ -172,6 +172,72 @@ class PhotonLTEIntegrator::IrradiancePhotonFilter
     double m_cos_threshold, m_sin_threshold;
   };
 
+///////////////////////////////////////////// PhotonMaps //////////////////////////////////////////////////
+
+/**
+* The class contains caustic, direct and indirect photon maps.
+* It is used by the photon shooting TBB pipeline as the storage for all found photons.
+* The class provides methods to merge a vector of photons into a specific photon map.
+* 
+* For each photon map the merged photons are added to an internal vector of photons until the vector reaches the size threshold (see MAX_PHOTONS_IN_MAP constant).
+* After that the KDTree is built from that vector of photons. For all future photons to be merged the nearest photon from the tree is found and the photon's
+* weight is simply added to the photon from the tree.
+* That allows us to keep the size of the photon maps reasonable while still being able to shoot as many photon paths as needed.
+*/
+class PhotonLTEIntegrator::PhotonMaps
+  {
+  public:
+    PhotonMaps(size_t i_max_caustic_photons, size_t i_max_direct_photons, size_t i_max_indirect_photons);
+
+    void AddPhotons(const std::vector<Photon> &i_caustic_photons, const std::vector<Photon> &i_direct_photons,
+                    const std::vector<Photon> &i_indirect_photons, size_t i_paths);
+
+    /**
+    * Returns caustic photons map.
+    * The method builds the KDTree if it is not built yet.
+    */
+    shared_ptr<const KDTree<Photon>> GetCausticMap();
+
+    /**
+    * Returns direct photons map.
+    * The method builds the KDTree if it is not built yet.
+    */
+    shared_ptr<const KDTree<Photon>> GetDirectMap();
+
+    /**
+    * Returns indirect photons map.
+    * The method builds the KDTree if it is not built yet.
+    */
+    shared_ptr<const KDTree<Photon>> GetIndirectMap();
+
+    size_t GetNumberOfPhotonPaths() const
+      {
+      return m_photon_paths;
+      }
+
+  private:
+    /**
+    * The helper private method that adds photon's weights to th nearest photons in the KDTree.
+    */
+    void _AddPhotonsToKDTree(shared_ptr<KDTree<Photon>> ip_map, const std::vector<Photon> &i_photons) const;
+
+  private:
+    /**
+    * Defines the maximum number of photons in the map (the value 6*10^6 was driven by the maximum size std::vector can allocate).
+    * For the future - consider switching to std::deque
+    */
+    static const size_t MAX_PHOTONS_IN_MAP = 6000000;
+
+  private:
+    std::vector<Photon> m_caustic_photons, m_direct_photons, m_indirect_photons;
+
+    shared_ptr<KDTree<Photon>> mp_caustic_map, mp_direct_map, mp_indirect_map;
+
+    size_t m_max_caustic_photons, m_max_direct_photons, m_max_indirect_photons;
+
+    size_t m_photon_paths;
+  };
+
 /////////////////////////////////////// IrradiancePhotonProcess ///////////////////////////////////////////
 
 /**
@@ -182,9 +248,9 @@ class PhotonLTEIntegrator::IrradiancePhotonProcess
   public:
     IrradiancePhotonProcess(
       const PhotonLTEIntegrator *ip_integrator, std::vector<IrradiancePhoton> &i_irradiance_photons,
-      double i_max_caustic_lookup_dist, double i_max_direct_lookup_dist, double i_max_indirect_lookup_dist):
-    mp_integrator(ip_integrator), m_irradiance_photons(i_irradiance_photons),
-    m_max_caustic_lookup_dist(i_max_caustic_lookup_dist), m_max_direct_lookup_dist(i_max_direct_lookup_dist), m_max_indirect_lookup_dist(i_max_indirect_lookup_dist)
+      double i_max_caustic_lookup_dist, double i_max_direct_lookup_dist, double i_max_indirect_lookup_dist) :
+      mp_integrator(ip_integrator), m_irradiance_photons(i_irradiance_photons),
+      m_max_caustic_lookup_dist(i_max_caustic_lookup_dist), m_max_direct_lookup_dist(i_max_direct_lookup_dist), m_max_indirect_lookup_dist(i_max_indirect_lookup_dist)
       {
       ASSERT(ip_integrator);
 
@@ -195,28 +261,28 @@ class PhotonLTEIntegrator::IrradiancePhotonProcess
     * Copy constructor.
     * Each copy should have its own mp_nearest_photons array since it can't be shared by multiple threads.
     */
-    IrradiancePhotonProcess(const IrradiancePhotonProcess &i_process):
-    mp_integrator(i_process.mp_integrator), m_irradiance_photons(i_process.m_irradiance_photons),
-    m_max_caustic_lookup_dist(i_process.m_max_caustic_lookup_dist), m_max_direct_lookup_dist(i_process.m_max_direct_lookup_dist), m_max_indirect_lookup_dist(i_process.m_max_indirect_lookup_dist)
+    IrradiancePhotonProcess(const IrradiancePhotonProcess &i_process) :
+      mp_integrator(i_process.mp_integrator), m_irradiance_photons(i_process.m_irradiance_photons),
+      m_max_caustic_lookup_dist(i_process.m_max_caustic_lookup_dist), m_max_direct_lookup_dist(i_process.m_max_direct_lookup_dist), m_max_indirect_lookup_dist(i_process.m_max_indirect_lookup_dist)
       {
       mp_nearest_photons = new NearestPhoton[PhotonLTEIntegrator::LOOKUP_PHOTONS_NUM_FOR_IRRADIANCE];
       }
 
     void operator()(const tbb::blocked_range<size_t> &i_range) const
       {
-      for(size_t i=i_range.begin();i!=i_range.end();++i)
+      for (size_t i=i_range.begin(); i!=i_range.end(); ++i)
         {
         Point3D_d point = Convert<double>(m_irradiance_photons[i].m_point);
         Vector3D_d normal = m_irradiance_photons[i].m_normal.ToVector3D<double>();
 
         std::pair<Spectrum_f, Spectrum_f> caustic_irradiance  =
-          mp_integrator->_LookupPhotonIrradiance(point, normal, mp_integrator->mp_caustic_map, mp_integrator->m_caustic_paths, LOOKUP_PHOTONS_NUM_FOR_IRRADIANCE, m_max_caustic_lookup_dist, mp_nearest_photons);
+          mp_integrator->_LookupPhotonIrradiance(point, normal, mp_integrator->mp_photon_maps->GetCausticMap(), m_max_caustic_lookup_dist, mp_nearest_photons);
 
         std::pair<Spectrum_f, Spectrum_f> direct_irradiance   =
-          mp_integrator->_LookupPhotonIrradiance(point, normal, mp_integrator->mp_direct_map, mp_integrator->m_direct_paths, LOOKUP_PHOTONS_NUM_FOR_IRRADIANCE, m_max_direct_lookup_dist, mp_nearest_photons);
+          mp_integrator->_LookupPhotonIrradiance(point, normal, mp_integrator->mp_photon_maps->GetDirectMap(), m_max_direct_lookup_dist, mp_nearest_photons);
 
         std::pair<Spectrum_f, Spectrum_f> indirect_irradiance =
-          mp_integrator->_LookupPhotonIrradiance(point, normal, mp_integrator->mp_indirect_map, mp_integrator->m_indirect_paths, LOOKUP_PHOTONS_NUM_FOR_IRRADIANCE, m_max_indirect_lookup_dist, mp_nearest_photons);
+          mp_integrator->_LookupPhotonIrradiance(point, normal, mp_integrator->mp_photon_maps->GetIndirectMap(), m_max_indirect_lookup_dist, mp_nearest_photons);
 
         m_irradiance_photons[i].m_external_irradiance = caustic_irradiance.first+direct_irradiance.first+indirect_irradiance.first;
         m_irradiance_photons[i].m_internal_irradiance = caustic_irradiance.second+direct_irradiance.second+indirect_irradiance.second;
@@ -239,91 +305,6 @@ class PhotonLTEIntegrator::IrradiancePhotonProcess
     double m_max_caustic_lookup_dist, m_max_direct_lookup_dist, m_max_indirect_lookup_dist;
   };
 
-///////////////////////////////////////////// PhotonMaps //////////////////////////////////////////////////
-
-/**
-* The class contains caustic, direct and indirect photon maps.
-* It is used by the photon shooting TBB pipeline as the storage for all found photons.
-* The class provides methods to merge a vector of photons into a specific photon map and get current numbers of photons of each type.
-* 
-* For each photon map the merged photons are added to an internal vector of photons until the vector reaches the size threshold (see MAX_PHOTONS_IN_MAP constant).
-* After that the KDTree is built from that vector of photons. For all future photons to be merged the nearest photon from the tree is found and the photon's
-* weight is simply added to the photon from the tree.
-* That allows us to keep the size of the photon maps reasonable while still being able to shoot as many photon paths as needed.
-*/
-class PhotonLTEIntegrator::PhotonMaps
-  {
-  public:
-    PhotonMaps();
-
-    size_t GetNumberOfCausticPhotons() const;
-
-    size_t GetNumberOfDirectPhotons() const;
-
-    size_t GetNumberOfIndirectPhotons() const;
-
-    void AddCausticPhotons(const std::vector<Photon> &i_photons, size_t i_paths);
-
-    void AddDirectPhotons(const std::vector<Photon> &i_photons, size_t i_paths);
-
-    void AddIndirectPhotons(const std::vector<Photon> &i_photons, size_t i_paths);
-
-    /**
-    * Returns caustic photons map.
-    * The method builds the KDTree if it is not built yet.
-    */
-    shared_ptr<const KDTree<Photon>> GetCausticMap();
-
-    /**
-    * Returns direct photons map.
-    * The method builds the KDTree if it is not built yet.
-    */
-    shared_ptr<const KDTree<Photon>> GetDirectMap();
-
-    /**
-    * Returns indirect photons map.
-    * The method builds the KDTree if it is not built yet.
-    */
-    shared_ptr<const KDTree<Photon>> GetIndirectMap();
-
-    size_t GetNumberOfCausticPaths() const
-      {
-      return m_caustic_paths;
-      }
-
-    size_t GetNumberOfDirectPaths() const
-      {
-      return m_direct_paths;
-      }
-
-    size_t GetNumberOfIndirectPaths() const
-      {
-      return m_indirect_paths;
-      }
-
-  private:
-    /**
-    * The helper private method that adds photon's weights to th nearest photons in the KDTree.
-    */
-    void _AddPhotonsToKDTree(shared_ptr<KDTree<Photon>> ip_map, const std::vector<Photon> &i_photons) const;
-
-  private:
-    /**
-    * Defines the maximum number of photons in the map (the value 6*10^6 was driven by the maximum size of vector being able to allocate).
-    */
-    static const size_t MAX_PHOTONS_IN_MAP = 6000000;
-
-  private:
-    std::vector<Photon> m_caustic_photons, m_direct_photons, m_indirect_photons;
-
-    shared_ptr<KDTree<Photon>> mp_caustic_map, mp_direct_map, mp_indirect_map;
-
-    // Current size of the photon vectors. We use atomic variables because std::vector::size() method is not thread-safe.
-    tbb::atomic<size_t> m_caustic_photons_found, m_direct_photons_found, m_indirect_photons_found;
-
-    size_t m_caustic_paths, m_direct_paths, m_indirect_paths;
-  };
-
 //////////////////////////////////////////// PhotonsChunk /////////////////////////////////////////////////
 
 /**
@@ -343,7 +324,7 @@ struct PhotonLTEIntegrator::PhotonsChunk
   * Creates PhotonsChunk instance.
   * @param i_rng_seed Seed number for the random generator.
   */
-  PhotonsChunk(size_t i_rng_seed): m_caustic_done(true), m_direct_done(true), m_indirect_done(true),  m_available(true)
+  PhotonsChunk(size_t i_rng_seed): m_available(true)
     {
     mp_rng = new RandomGenerator<double>(i_rng_seed);
     mp_memory_pool = new MemoryPool();
@@ -360,9 +341,6 @@ struct PhotonLTEIntegrator::PhotonsChunk
   * These photons will be merged to a shared repository by PhotonsMergingFilter. 
   */
   std::vector<Photon> m_caustic_photons, m_direct_photons, m_indirect_photons;
-
-  // Hold true if required number of photons of the corresponding type have been already gathered.
-  bool m_caustic_done, m_direct_done, m_indirect_done;
 
   /*
   * Index of the first photon path defined by the chunk.
@@ -391,20 +369,17 @@ struct PhotonLTEIntegrator::PhotonsChunk
 class PhotonLTEIntegrator::PhotonsInputFilter: public tbb::filter
   {
   public:
-    PhotonsInputFilter(PhotonMaps *ip_photon_maps, size_t i_caustic_photons_required, size_t i_direct_photons_required, size_t i_indirect_photons_required,
-      size_t i_number_of_chunks, size_t i_paths_per_chunk);
+    PhotonsInputFilter(size_t i_photon_paths, size_t i_number_of_chunks, size_t i_paths_per_chunk);
 
     ~PhotonsInputFilter();
 
     void* operator()(void*);
 
   private:
-    PhotonMaps *mp_photon_maps;
     std::vector<PhotonsChunk*> m_chunks;
 
-    size_t m_caustic_photons_required, m_direct_photons_required, m_indirect_photons_required;
+    size_t m_paths_required, m_paths_completed;
     size_t m_next_chunk_index, m_paths_per_chunk;
-    size_t m_total_paths;
   };
 
 //////////////////////////////////////// PhotonsShootingFilter /////////////////////////////////////////////
@@ -438,12 +413,12 @@ class PhotonLTEIntegrator::PhotonsShootingFilter: public tbb::filter
 class PhotonLTEIntegrator::PhotonsMergingFilter: public tbb::filter
   {
   public:
-    PhotonsMergingFilter(PhotonMaps *ip_photon_maps);
+    PhotonsMergingFilter(shared_ptr<PhotonMaps> ip_photon_maps);
 
     void* operator()(void* ip_chunk);
 
   private:
-    PhotonMaps *mp_photon_maps;
+    shared_ptr<PhotonMaps> mp_photon_maps;
   };
 
 #endif // PHOTON_LTE_INTEGRATOR_H

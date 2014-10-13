@@ -58,6 +58,24 @@ struct PhotonLTEIntegratorParams
   * Step size to be used for participating media integration. Should be greater than 0.0
   */
   double m_media_step_size;
+
+  /**
+  * Max number of photons in the caustic photon map.
+  * This is optional parameter - if the value is 0 (default), no restriction will be applied.
+  */
+  size_t m_max_caustic_photons = 0;
+
+  /**
+  * Max number of photons in the direct photon map.
+  * This is optional parameter - if the value is 0 (default), no restriction will be applied.
+  */
+  size_t m_max_direct_photons = 0;
+
+  /**
+  * Max number of photons in the indirect photon map.
+  * This is optional parameter - if the value is 0 (default), no restriction will be applied.
+  */
+  size_t m_max_indirect_photons = 0;
   };
 
 /**
@@ -82,17 +100,14 @@ class PhotonLTEIntegrator: public LTEIntegrator
     PhotonLTEIntegrator(intrusive_ptr<const Scene> ip_scene, PhotonLTEIntegratorParams i_params);
 
     /**
-    * Shoots photons and construct photon maps.
-    * The method takes number of photons of each type and traces photons until specified number of photons of each type is store.
+    * Shoots photons and construct photon maps (direct, indirect and caustic maps).
     * The method also constructs irradiance photon map. The old maps are cleared.
-    * There is no upper bound on the number of photons. After certain number of photons of each type is found no new photons are added to the map,
-    * instead the existing photon's weights are getting updated. The maximum number of unique photons in the map is 6 000 000.
-    * @param i_caustic_photons Minimum number of caustic photons to be stored.
-    * @param i_direct_photons Minimum number of direct photons to be stored.
-    * @param i_indirect_photons Minimum number of indirect photons to be stored.
+    * The maximum number of photons in each map is controlled by the integrator's configuration (see PhotonLTEIntegratorParams class).
+    * After the maximum number of photons in each map is found, no new photons will be added to that map, instead existing photon's weights will be updated.
+    * @param i_photons Number of photon paths to be shot.
     * @param i_low_thread_priority Specifies OS scheduling priority for tbb threads that perform photons shooting. Use true to set low priority and false for normal priority.
     */
-    void ShootPhotons(size_t i_caustic_photons, size_t i_direct_photons, size_t i_indirect_photons, bool i_low_thread_priority = false);
+    void ShootPhotons(size_t i_photons, bool i_low_thread_priority = false);
 
   private:
     struct Photon;
@@ -174,7 +189,7 @@ class PhotonLTEIntegrator: public LTEIntegrator
     * The method returns pair of irradiance values for two sides of the surface.
     */
     std::pair<Spectrum_f, Spectrum_f> _LookupPhotonIrradiance(const Point3D_d &i_point, const Vector3D_d &i_normal,
-      shared_ptr<const KDTree<Photon>> ip_photon_map, size_t i_photon_paths, size_t i_lookup_photons_num, double i_max_lookup_dist, NearestPhoton *op_nearest_photons) const;
+      shared_ptr<const KDTree<Photon>> ip_photon_map, double i_max_lookup_dist, NearestPhoton *op_nearest_photons) const;
 
     /**
     * Creates irradiance photons and constructs KDTree for them.
@@ -221,11 +236,7 @@ class PhotonLTEIntegrator: public LTEIntegrator
     // IDs of the samples sequences used for final gathering.
     size_t m_bsdf_1D_samples_id, m_bsdf_2D_samples_id, m_direction_1D_samples_id, m_direction_2D_samples_id;
 
-    // Photon maps.
-    shared_ptr<const KDTree<Photon>> mp_caustic_map, mp_direct_map, mp_indirect_map;
-    
-    // Number of photon paths used to gather photons of the corresponding type.
-    size_t m_caustic_paths, m_direct_paths, m_indirect_paths;
+    shared_ptr<PhotonMaps> mp_photon_maps;
 
     // Irradiance photon map.
     shared_ptr<const KDTree<IrradiancePhoton>> mp_irradiance_map;

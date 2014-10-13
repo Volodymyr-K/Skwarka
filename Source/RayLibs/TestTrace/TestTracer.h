@@ -100,9 +100,9 @@ inline void TestTracer::LoadMesh()
   intrusive_ptr<Log> p_log( new StreamLog(std::cerr, Log::ERROR_LEVEL) );
 
   tbb::tick_count t0 = tbb::tick_count::now();
-  //PbrtSceneImporter importer("D:\\raytracing\\pbrt_scenes\\sponza-phomap.pbrt", p_log);
+  PbrtSceneImporter importer("D:\\raytracing\\pbrt_scenes\\sponza-phomap.pbrt", p_log);
   //PbrtSceneImporter importer("D:\\raytracing\\pbrt_scenes\\plants-godrays.pbrt", p_log);
-  PbrtSceneImporter importer("D:\\raytracing\\pbrt_scenes\\plants-dusk.pbrt", p_log);
+  //PbrtSceneImporter importer("D:\\raytracing\\pbrt_scenes\\plants-dusk.pbrt", p_log);
   //PbrtSceneImporter importer("D:\\raytracing\\pbrt_scenes\\yeahright.pbrt", p_log);
   //PbrtSceneImporter importer("D:\\raytracing\\pbrt_scenes\\tt.pbrt", p_log);
   //PbrtSceneImporter importer("D:\\raytracing\\pbrt_scenes\\tt2.pbrt", p_log);
@@ -154,14 +154,14 @@ inline void TestTracer::RenderImage()
   p_camera->GetFilm()->GetSamplingExtent(window_begin, window_end);
   intrusive_ptr<Sampler> p_sampler( new LDSampler(window_begin, window_end, 8, pixel_order) );
 
- 
+ /*
   DirectLightingLTEIntegratorParams params;
   params.m_direct_light_samples_num=8;
   params.m_max_specular_depth=6;
   params.m_media_step_size=0.1;
   intrusive_ptr<DirectLightingLTEIntegrator> p_lte_int( new DirectLightingLTEIntegrator(mp_scene, params) );
-  
- /*
+ */ 
+ 
   PhotonLTEIntegratorParams params;
   params.m_direct_light_samples_num=8;
   params.m_gather_samples_num=8;
@@ -169,14 +169,17 @@ inline void TestTracer::RenderImage()
   params.m_max_caustic_lookup_dist=0.05;
   params.m_max_specular_depth=10;
   params.m_media_step_size=0.01;
+  //params.m_max_caustic_photons=1000;
+  //params.m_max_direct_photons=2000;
+  //params.m_max_indirect_photons=3000;
   intrusive_ptr<PhotonLTEIntegrator> p_lte_int( new PhotonLTEIntegrator(mp_scene, params) );
   
 
   t0 = tbb::tick_count::now();
-  p_lte_int->ShootPhotons(0, 2000000, 2000000, true);
+  p_lte_int->ShootPhotons(100*1000000, true);
   t1 = tbb::tick_count::now();
   printf("Shooting: %lf\n", (t1-t0).seconds());
-  */
+  
   intrusive_ptr<SamplerBasedRenderer> p_renderer( new SamplerBasedRenderer(p_lte_int, p_sampler) );
   p_renderer->SetDisplayUpdateCallback(mp_callback, 10.0);
  

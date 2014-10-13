@@ -115,13 +115,13 @@ void PhotonLTEIntegrator::_GetLightsPowerCDF(const LightSources &i_light_sources
 
 std::pair<Spectrum_f, Spectrum_f>
 PhotonLTEIntegrator::_LookupPhotonIrradiance(const Point3D_d &i_point, const Vector3D_d &i_normal, shared_ptr<const KDTree<Photon>> ip_photon_map,
-                                             size_t i_photon_paths, size_t i_lookup_photons_num, double i_max_lookup_dist, NearestPhoton *op_nearest_photons) const
+                                             double i_max_lookup_dist, NearestPhoton *op_nearest_photons) const
   {
   if (ip_photon_map == NULL)
     return std::make_pair(Spectrum_f(), Spectrum_f());
 
   PhotonFilter filter(i_point, i_normal, MAX_NORMAL_DEVIATION_COS);
-  size_t photons_found = ip_photon_map->GetNearestPoints(i_point, i_lookup_photons_num, op_nearest_photons, filter, i_max_lookup_dist);
+  size_t photons_found = ip_photon_map->GetNearestPoints(i_point, LOOKUP_PHOTONS_NUM_FOR_IRRADIANCE, op_nearest_photons, filter, i_max_lookup_dist);
   if (photons_found == 0)
     return std::make_pair(Spectrum_f(), Spectrum_f());
 
@@ -142,7 +142,7 @@ PhotonLTEIntegrator::_LookupPhotonIrradiance(const Point3D_d &i_point, const Vec
       internal_irradiance += photon_weight;
     }
 
-  if (photons_found<i_lookup_photons_num || max_dist_sqr==0.0)
+  if (photons_found<LOOKUP_PHOTONS_NUM_FOR_IRRADIANCE || max_dist_sqr==0.0)
     max_dist_sqr = i_max_lookup_dist * i_max_lookup_dist;
   else
     /*
@@ -153,17 +153,17 @@ PhotonLTEIntegrator::_LookupPhotonIrradiance(const Point3D_d &i_point, const Vec
     */
     max_dist_sqr *= (photons_found) / (photons_found-0.5);
 
-  double inv = 1.0 / (M_PI * i_photon_paths * max_dist_sqr);
+  double inv = 1.0 / (M_PI * mp_photon_maps->GetNumberOfPhotonPaths() * max_dist_sqr);
   return std::make_pair(Convert<float>(external_irradiance * inv), Convert<float>(internal_irradiance * inv) );
   }
 
 void PhotonLTEIntegrator::_ConstructIrradiancePhotonMap()
   {
-  ASSERT(mp_direct_map && mp_indirect_map && mp_caustic_map);
+  ASSERT(mp_photon_maps->GetCausticMap() && mp_photon_maps->GetDirectMap() && mp_photon_maps->GetIndirectMap());
   mp_irradiance_map.reset((KDTree<IrradiancePhoton>*)NULL);
 
-  const std::vector<Photon> &direct_photons = mp_direct_map->GetAllPoints();
-  const std::vector<Photon> &indirect_photons = mp_indirect_map->GetAllPoints();
+  const std::vector<Photon> &direct_photons = mp_photon_maps->GetDirectMap()->GetAllPoints();
+  const std::vector<Photon> &indirect_photons = mp_photon_maps->GetIndirectMap()->GetAllPoints();
 
   //The method selects 10% of indirect photons as positions for irradiance photons.  
   std::vector<IrradiancePhoton> irradiance_photons;
@@ -236,24 +236,20 @@ void PhotonLTEIntegrator::_ConstructIrradiancePhotonMap()
     m_max_irradiance_lookup_dist = sqrt(heap[0]);
   }
 
-void PhotonLTEIntegrator::ShootPhotons(size_t i_caustic_photons, size_t i_direct_photons, size_t i_indirect_photons, bool i_low_thread_priority)
+void PhotonLTEIntegrator::ShootPhotons(size_t i_photons, bool i_low_thread_priority)
   {
-  mp_caustic_map.reset((KDTree<Photon>*)NULL);
-  mp_direct_map.reset((KDTree<Photon>*)NULL);
-  mp_indirect_map.reset((KDTree<Photon>*)NULL);
+  mp_photon_maps.reset(new PhotonMaps(m_params.m_max_caustic_photons, m_params.m_max_direct_photons, m_params.m_max_indirect_photons));
 
   const LightSources &lights = mp_scene->GetLightSources();
-  if (lights.m_delta_light_sources.size() + lights.m_area_light_sources.size() + lights.m_infinite_light_sources.size() == 0)
+  if (lights.m_delta_light_sources.size() + lights.m_area_light_sources.size() + lights.m_infinite_light_sources.size() == 0 || i_photons == 0)
     return;
 
   std::vector<double> lights_CDF;
   _GetLightsPowerCDF(lights, lights_CDF);
 
-  PhotonMaps photon_maps;
-
-  PhotonsInputFilter input_filter(&photon_maps, i_caustic_photons, i_direct_photons, i_indirect_photons, MAX_PIPELINE_TOKENS_NUM, 4096);
+  PhotonsInputFilter input_filter(i_photons, MAX_PIPELINE_TOKENS_NUM, 4096);
   PhotonsShootingFilter shooting_filter(this, mp_scene, lights_CDF, i_low_thread_priority);
-  PhotonsMergingFilter merging_filter(&photon_maps);
+  PhotonsMergingFilter merging_filter(mp_photon_maps);
 
   tbb::pipeline pipeline;
   pipeline.add_filter(input_filter);
@@ -262,14 +258,6 @@ void PhotonLTEIntegrator::ShootPhotons(size_t i_caustic_photons, size_t i_direct
 
   pipeline.run(MAX_PIPELINE_TOKENS_NUM);
   pipeline.clear();
-
-  mp_caustic_map = photon_maps.GetCausticMap();
-  mp_direct_map = photon_maps.GetDirectMap();
-  mp_indirect_map = photon_maps.GetIndirectMap();
-
-  m_caustic_paths = photon_maps.GetNumberOfCausticPaths();
-  m_direct_paths = photon_maps.GetNumberOfDirectPaths();
-  m_indirect_paths = photon_maps.GetNumberOfIndirectPaths();
 
   _ConstructIrradiancePhotonMap();
   }
@@ -405,12 +393,12 @@ Spectrum_d PhotonLTEIntegrator::_FinalGather(const Intersection &i_intersection,
   NearestPhoton *p_nearest_photons = (NearestPhoton*)p_pool->Alloc(32 * sizeof(NearestPhoton));
 
   // Search for nearest indirect photons.
-  if (mp_indirect_map && mp_indirect_map->GetNumberOfPoints()>0)
+  if (mp_photon_maps->GetIndirectMap() && mp_photon_maps->GetIndirectMap()->GetNumberOfPoints()>0)
     {
-    double indirect_photon_area = m_scene_total_area / mp_indirect_map->GetNumberOfPoints();
+    double indirect_photon_area = m_scene_total_area / mp_photon_maps->GetIndirectMap()->GetNumberOfPoints();
     double max_lookup_dist = sqrt(indirect_photon_area*32*INV_PI);
     PhotonFilter filter(i_intersection.m_dg.m_point, ip_bsdf->GetGeometricNormal(), MAX_NORMAL_DEVIATION_COS);
-    photons_found = mp_indirect_map->GetNearestPoints(i_intersection.m_dg.m_point, 32, p_nearest_photons, filter, max_lookup_dist);
+    photons_found = mp_photon_maps->GetIndirectMap()->GetNearestPoints(i_intersection.m_dg.m_point, 32, p_nearest_photons, filter, max_lookup_dist);
     }
   double inv_photons_found = (photons_found>0) ? 1.0/photons_found : 0.0;
 
@@ -539,7 +527,7 @@ Spectrum_d PhotonLTEIntegrator::_LookupCausticRadiance(const BSDF *ip_bsdf, cons
   ASSERT(i_direction.IsNormalized());
   MemoryPool *p_pool = i_ts.mp_pool;
 
-  if (mp_caustic_map == NULL)
+  if (mp_photon_maps->GetCausticMap() == NULL)
     return Spectrum_d();
 
   BxDFType non_specular = BxDFType(BSDF_REFLECTION | BSDF_TRANSMISSION | BSDF_DIFFUSE | BSDF_GLOSSY);
@@ -550,7 +538,7 @@ Spectrum_d PhotonLTEIntegrator::_LookupCausticRadiance(const BSDF *ip_bsdf, cons
   NearestPhoton *p_nearest_photons = (NearestPhoton*)p_pool->Alloc(m_params.m_caustic_lookup_photons_num * sizeof(NearestPhoton));
 
   PhotonFilter filter(i_dg.m_point, i_dg.m_geometric_normal, MAX_NORMAL_DEVIATION_COS);
-  size_t photons_found = mp_caustic_map->GetNearestPoints(i_dg.m_point, m_params.m_caustic_lookup_photons_num, p_nearest_photons, filter, m_params.m_max_caustic_lookup_dist);
+  size_t photons_found = mp_photon_maps->GetCausticMap()->GetNearestPoints(i_dg.m_point, m_params.m_caustic_lookup_photons_num, p_nearest_photons, filter, m_params.m_max_caustic_lookup_dist);
   if (photons_found == 0)
     return Spectrum_d();
 
@@ -580,7 +568,7 @@ Spectrum_d PhotonLTEIntegrator::_LookupCausticRadiance(const BSDF *ip_bsdf, cons
     */
     max_dist_sqr *= (photons_found) / (photons_found-0.5);
 
-  return radiance / (m_caustic_paths * max_dist_sqr);
+  return radiance / (mp_photon_maps->GetNumberOfPhotonPaths() * max_dist_sqr);
   }
 
 double PhotonLTEIntegrator::_PhotonKernel(double i_dist_sqr, double i_max_dist_sqr) const
