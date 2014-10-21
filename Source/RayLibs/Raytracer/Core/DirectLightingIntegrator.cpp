@@ -394,5 +394,5 @@ SpectrumCoef_d DirectLightingIntegrator::_MediaTransmittance(const Ray &i_ray, T
     return SpectrumCoef_d(1.0);
 
   SpectrumCoef_d opt_thickness = p_volume->OpticalThickness(i_ray, m_media_step_size, (*i_ts.mp_random_generator)(1.0));
-  return SpectrumCoef_d(exp(-opt_thickness[0]), exp(-opt_thickness[1]), exp(-opt_thickness[2]));
+  return Exp(-1.0*opt_thickness);
   }

@@ -33,10 +33,11 @@ namespace PbrtImport
   */
   struct SubString
     {
-    std::string::const_iterator m_begin, m_end;
+    // Using pointers instead of iterators to improve performance in DEBUG mode (MSVC iterators in DEBUG are awfully slow).
+    std::string::const_pointer m_begin, m_end;
 
-    SubString(std::string::const_iterator i_begin, std::string::const_iterator i_end) : m_begin(i_begin), m_end(i_end) { ASSERT(i_begin<=i_end); }
-    SubString(const std::string &i_str) : m_begin(i_str.begin()), m_end(i_str.end()) {}
+    SubString(std::string::const_pointer i_begin, std::string::const_pointer i_end) : m_begin(i_begin), m_end(i_end) { ASSERT(i_begin<=i_end); }
+    SubString(const std::string &i_str) : m_begin(&i_str[0]), m_end((&i_str[0])+i_str.size()) {}
 
     size_t size() const
       {
@@ -144,9 +145,9 @@ namespace PbrtImport
       o_parts.clear();
       o_parts.reserve(i_str.size()/10);
 
-      std::string::const_iterator cur_begin = i_str.m_begin;
+      std::string::const_pointer cur_begin = i_str.m_begin;
       int quotes = 0, braces = 0;
-      for (std::string::const_iterator it = i_str.m_begin; it != i_str.m_end; ++it)
+      for (std::string::const_pointer it = i_str.m_begin; it != i_str.m_end; ++it)
         {
         if (*it==' ' || *it=='\t')
           {

@@ -259,6 +259,11 @@ void PhotonLTEIntegrator::ShootPhotons(size_t i_photons, bool i_low_thread_prior
   pipeline.run(MAX_PIPELINE_TOKENS_NUM);
   pipeline.clear();
 
+  // Construct the KD trees. We explicitly do this now till we are still in a single thread to avoid concurrency issues later.
+  mp_photon_maps->GetCausticMap();
+  mp_photon_maps->GetDirectMap();
+  mp_photon_maps->GetIndirectMap();
+
   _ConstructIrradiancePhotonMap();
   }
 

@@ -57,14 +57,14 @@ void* PhotonLTEIntegrator::PhotonsInputFilter::operator()(void*)
   m_next_chunk_index = (m_next_chunk_index+1) % m_chunks.size();
 
   p_chunk->m_available = false;
-  p_chunk->m_paths_num = m_paths_per_chunk;
+  p_chunk->m_paths_num = std::min(m_paths_per_chunk, m_paths_required-m_paths_completed);
   p_chunk->m_first_path_index = m_paths_completed;
 
   p_chunk->m_caustic_photons.clear();
   p_chunk->m_direct_photons.clear();
   p_chunk->m_indirect_photons.clear();
 
-  m_paths_completed += m_paths_per_chunk;
+  m_paths_completed += p_chunk->m_paths_num;
 
   return p_chunk;
   }

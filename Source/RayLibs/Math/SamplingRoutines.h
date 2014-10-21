@@ -82,7 +82,7 @@ namespace SamplingRoutines
   * Maps 2D sample in [0;1)x[0;1) to a direction lying inside of the cone with specified spread angle.
   * The axis of the cone is equal to Z axis.
   * @param i_sample Input 2D sample in [0;1)x[0;1).
-  * @param i_cos_theta_max Cosine of the cone spread angle. Should be in [0;1) range.
+  * @param i_cos_theta_max Cosine of the cone spread angle. Should be in [-1;1) range.
   * @return Resulting 3D vector inside the cone. Should be normalized.
   */
   Vector3D_d UniformConeSampling(const Point2D_d &i_sample, double i_cos_theta_max);
@@ -300,7 +300,7 @@ namespace SamplingRoutines
   inline Vector3D_d UniformConeSampling(const Point2D_d &i_sample, double i_cos_theta_max)
     {
     ASSERT(i_sample[0]>=0.0 && i_sample[0]<1.0 && i_sample[1]>=0.0 && i_sample[1]<1.0);
-    ASSERT(i_cos_theta_max >= 0.0 && i_cos_theta_max < 1.0);
+    ASSERT(i_cos_theta_max >= -1.0 && i_cos_theta_max < 1.0);
 
     double cos_theta = (1.0 - i_sample[0]) + i_sample[0] * i_cos_theta_max;
     double sin_theta = sqrt(1.0 - cos_theta*cos_theta);

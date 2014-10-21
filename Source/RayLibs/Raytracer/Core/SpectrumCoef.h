@@ -85,6 +85,12 @@ template<typename T1, typename T2>
 SpectrumCoef<T2> operator*(T1 i_value, const SpectrumCoef<T2> &i_spectrum);
 
 /**
+* Computes exponent of the SpectrumCoef.
+*/
+template<typename T>
+SpectrumCoef<T> Exp(const SpectrumCoef<T> &i_exp);
+
+/**
 * Reads SpectrumCoef from the input stream.
 */
 template <class charT, class traits, typename T>
@@ -326,6 +332,12 @@ SpectrumCoef<T2> operator*(T1 i_value, const SpectrumCoef<T2> &i_spectrum)
   {
   ASSERT(IsNaN(i_value)==false);
   return i_spectrum*i_value;
+  }
+
+template<typename T>
+SpectrumCoef<T> Exp(const SpectrumCoef<T> &i_exp)
+  {
+  return SpectrumCoef<T>(std::exp(i_exp[0]), std::exp(i_exp[1]), std::exp(i_exp[2]));
   }
 
 template <class charT, class traits, typename T>

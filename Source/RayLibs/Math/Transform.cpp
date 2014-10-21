@@ -137,7 +137,7 @@ Transform MakeMatchDirections(const Vector3D_d &i_source, const Vector3D_d &i_ta
 
 Transform MakeLookAt(const Point3D_d &i_origin, Vector3D_d i_direction, const Vector3D_d &i_up)
   {
-	double m[4][4];
+  double m[4][4];
 
   // Initialize fourth column of viewing matrix
   m[0][3] = i_origin[0];

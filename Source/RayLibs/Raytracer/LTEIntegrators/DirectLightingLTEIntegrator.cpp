@@ -130,9 +130,7 @@ Spectrum_d DirectLightingLTEIntegrator::_MediaRadianceAndTranmsittance(const Ray
     // Note that we still use constant step size for the optical thickness calculation.
     SpectrumCoef_d opt_thickness = p_volume->OpticalThickness(delta_ray, base_step, offset2);
 
-    transmittance[0] *= exp(-opt_thickness[0]);
-    transmittance[1] *= exp(-opt_thickness[1]);
-    transmittance[2] *= exp(-opt_thickness[2]);
+    transmittance *= Exp(-1.0*opt_thickness);
 
     // Compute single-scattering source term.
     radiance += transmittance * p_volume->Emission(point);
