@@ -31,8 +31,8 @@ class GridDensityVolumeRegionTestSuite : public CxxTest::TestSuite
     GridDensityVolumeRegionTestSuite()
       {
       m_bounds = BBox3D_d(Point3D_d(1,2,3), Point3D_d(10,20,30));
-      m_absorption = SpectrumCoef_d(5,7,9);
-      m_scattering = SpectrumCoef_d(0.1,0.0,0.9);
+      m_absorption = SpectrumCoef_d(0.3,0.2,0.1);
+      m_scattering = SpectrumCoef_d(0.2,0.1,0.3);
       intrusive_ptr<PhaseFunction> p_phase_function( new PhaseFunctionMock );
 
       m_size_x=100;
@@ -42,7 +42,7 @@ class GridDensityVolumeRegionTestSuite : public CxxTest::TestSuite
       for(size_t i=0;i<m_size_x;++i)
         for(size_t j=0;j<m_size_y;++j)
           for(size_t k=0;k<m_size_z;++k)
-            m_densities[i][j][k]=(float)(i+j+k);
+            m_densities[i][j][k] = 0.01f*(i+j+k);
 
       mp_volume.reset(new GridDensityVolumeRegion(m_bounds, m_absorption, m_scattering, p_phase_function, m_densities));
       }
@@ -162,6 +162,77 @@ class GridDensityVolumeRegionTestSuite : public CxxTest::TestSuite
         }
       }
 
+    // Tests scattering sampling when ray doesn't intersect the volume
+    void test_GridDensityVolumeRegion_SampleScattering_NoIntersection()
+      {
+      size_t N=100;
+      for (size_t test=0; test<N; ++test)
+        {
+        // The ray starts at the boundary but points in an opposite direction
+        Point3D_d point(1, 2, 3);
+        Vector3D_d direction = Vector3D_d(-1, -1, -1).Normalized();
+        Ray ray(point, direction);
+
+        double sample = RandomDouble(1.0), offset = RandomDouble(1.0), pdf, t;
+        SpectrumCoef_d transmittance;
+        bool scattered = mp_volume->SampleScattering(ray, sample, 0.1, offset, t, pdf, transmittance);
+        TS_ASSERT(!scattered);
+        CustomAssertDelta(transmittance, SpectrumCoef_d(1.0), DBL_EPS);
+        TS_ASSERT_DELTA(pdf, 1.0, DBL_EPS);
+        }
+      }
+
+    // Tests scattering sampling when ray intersects the volume
+    void test_GridDensityVolumeRegion_SampleScattering_Intersection()
+      {
+      size_t N=100;
+      for (size_t test=0; test<N; ++test)
+        {
+        Point3D_d point(1, 8, 8);
+        Vector3D_d direction = Vector3D_d(1, 0, 0).Normalized();
+        Ray ray(point, direction);
+
+        double sample = RandomDouble(1.0), offset = RandomDouble(1.0), pdf, t;
+        SpectrumCoef_d transmittance, optical_thickness;
+        bool scattered = mp_volume->SampleScattering(ray, sample, 0.01, offset, t, pdf, transmittance);
+        if (scattered)
+          {
+          TS_ASSERT(t>=0 && t<9.0); // 9.0 is the dimension of the volume region in X dimension
+          optical_thickness = mp_volume->OpticalThickness(Ray(ray.m_origin, ray.m_direction, 0.0, t), 0.01, offset);
+          }
+        else
+          optical_thickness = mp_volume->OpticalThickness(ray, 0.01, offset);
+
+        SpectrumCoef_d transmittance2 = Exp(-1.0*optical_thickness);
+        CustomAssertDelta(transmittance, transmittance2, (1e-4));
+        }
+      }
+
+    // Tests that the PDF sums up to 1.0
+    void test_GridDensityVolumeRegion_SampleScattering_PDF()
+      {
+      Point3D_d point(1, 8, 8);
+      Vector3D_d direction = Vector3D_d(1, 0, 0).Normalized();
+      Ray ray(point, direction);
+
+      double offset = RandomDouble(1.0), pdf, t, prev_t=0;
+      double scatter_probability=0.0, non_scatter_probability=0.0;
+      for (double sample=1.0; sample>=0.0; sample-=0.001)
+        {
+        SpectrumCoef_d transmittance;
+        bool scattered = mp_volume->SampleScattering(ray, sample, 0.01, offset, t, pdf, transmittance);
+        if (scattered)
+          scatter_probability += pdf * (t-prev_t); // The integration domain is the distance along the ray, so we multiply pdf by the delta t.
+        else
+          non_scatter_probability = pdf;
+
+        prev_t=t;
+        }
+
+      double total_probability = scatter_probability+non_scatter_probability;
+      TS_ASSERT_DELTA(total_probability, 1.0, 0.01);
+      }
+
   private:
     double _GetDensity(const Point3D_d &i_point) const
       {
@@ -172,7 +243,7 @@ class GridDensityVolumeRegionTestSuite : public CxxTest::TestSuite
       double x=m_size_x*point[0]/(m_bounds.m_max[0]-m_bounds.m_min[0])-0.5;
       double y=m_size_y*point[1]/(m_bounds.m_max[1]-m_bounds.m_min[1])-0.5;
       double z=m_size_z*point[2]/(m_bounds.m_max[2]-m_bounds.m_min[2])-0.5;
-      return std::max(0.0,x)+std::max(0.0,y)+std::max(0.0,z);
+      return 0.01 * (std::max(0.0,x)+std::max(0.0,y)+std::max(0.0,z));
       }
 
   private:

@@ -65,7 +65,7 @@ inline HGPhaseFunction::HGPhaseFunction(double i_g): m_g(i_g)
 inline double HGPhaseFunction::ScatteringPDF(const Vector3D_d &i_incoming, const Vector3D_d &i_outgoing) const
   {
   double costheta = i_incoming*i_outgoing;
-  return 1.0 / (4.0 * M_PI) * (1.0 - m_g*m_g) / pow(1.0 + m_g*m_g - 2.0 * m_g * costheta, 1.5);
+  return 1.0 / (4.0 * M_PI) * (1.0 - m_g*m_g) * pow(1.0 + m_g*m_g - 2.0 * m_g * costheta, -1.5);
   }
 
 /**

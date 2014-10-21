@@ -300,7 +300,7 @@ namespace SamplingRoutines
   inline Vector3D_d UniformConeSampling(const Point2D_d &i_sample, double i_cos_theta_max)
     {
     ASSERT(i_sample[0]>=0.0 && i_sample[0]<1.0 && i_sample[1]>=0.0 && i_sample[1]<1.0);
-    ASSERT(i_cos_theta_max >= 0.0 && i_cos_theta_max < 1.0);
+    ASSERT(i_cos_theta_max >= -1.0 && i_cos_theta_max < 1.0);
 
     double cos_theta = (1.0 - i_sample[0]) + i_sample[0] * i_cos_theta_max;
     double sin_theta = sqrt(1.0 - cos_theta*cos_theta);

@@ -64,14 +64,28 @@ Spectrum_d SpotPointLight::Lighting(const Point3D_d &i_point, Ray &o_lighting_ra
   return m_intensity * (inv_distance*inv_distance) * _Falloff(lighting_vector.Normalized()*m_direction * (-1.0) );
   }
 
-Spectrum_d SpotPointLight::SamplePhoton(const Point2D_d &i_sample, Ray &o_photon_ray, double &o_pdf) const
+Spectrum_d SpotPointLight::SamplePhoton(const Point2D_d &i_sample, size_t i_total_samples, RayDifferential &o_photon_ray, double &o_pdf) const
   {
-  o_photon_ray.m_origin = m_position;
-  o_photon_ray.m_min_t = 0.0;
-  o_photon_ray.m_max_t = DBL_INF;
-
+  ASSERT(i_total_samples>=1);
   Vector3D_d local = SamplingRoutines::UniformConeSampling(i_sample, m_outer_angle_cos);
-  o_photon_ray.m_direction = m_e2*local[0]+m_e3*local[1]+m_direction*local[2];
+  Vector3D_d base_direction = m_e2*local[0]+m_e3*local[1]+m_direction*local[2];
+
+  o_photon_ray.m_base_ray.m_origin = m_position;
+  o_photon_ray.m_base_ray.m_direction = base_direction;
+  o_photon_ray.m_base_ray.m_min_t = 0.0;
+  o_photon_ray.m_base_ray.m_max_t = DBL_INF;
+
+  // Set the differential rays so that all i_total_samples would cover the entire outer cone spread
+  Vector3D_d e2, e3;
+  MathRoutines::CoordinateSystem(base_direction, e2, e3);
+  double cos_theta = 1.0 - (1.0-m_outer_angle_cos)/i_total_samples;
+  double sin_theta = sqrt(1.0-cos_theta*cos_theta);
+
+  o_photon_ray.m_has_differentials = true;
+  o_photon_ray.m_origin_dx = m_position;
+  o_photon_ray.m_direction_dx = base_direction*cos_theta + e2*sin_theta;
+  o_photon_ray.m_origin_dy = m_position;
+  o_photon_ray.m_direction_dy = base_direction*cos_theta + e3*sin_theta;
 
   o_pdf = SamplingRoutines::UniformConePDF(m_outer_angle_cos);
 

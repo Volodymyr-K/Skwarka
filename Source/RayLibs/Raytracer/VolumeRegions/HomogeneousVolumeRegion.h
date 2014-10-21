@@ -85,6 +85,8 @@ class HomogeneousVolumeRegion: public VolumeRegion
     */
     SpectrumCoef_d OpticalThickness(const Ray &i_ray, double i_step, double i_offset_sample) const;
 
+    bool SampleScattering(const Ray &i_ray, double i_sample, double i_step, double i_offset_sample, double &o_t, double &o_pdf, SpectrumCoef_d &o_transmittance) const;
+
   private:
     HomogeneousVolumeRegion() {}; // Empty default constructor for the boost serialization framework.
 

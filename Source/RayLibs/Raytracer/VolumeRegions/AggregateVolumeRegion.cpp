@@ -108,3 +108,26 @@ SpectrumCoef_d AggregateVolumeRegion::OpticalThickness(const Ray &i_ray, double 
 
   return ret;
   }
+
+bool AggregateVolumeRegion::SampleScattering(const Ray &i_ray, double i_sample, double i_step, double i_offset_sample, double &o_t, double &o_pdf, SpectrumCoef_d &o_transmittance) const
+  {
+  // If only one volume region intersects the ray we call its method directly, otherwise we fall back to the generic implementation.
+  size_t count=0, index=0;
+  for (size_t i=0; i<m_volume_regions.size(); ++i)
+    if (m_volume_regions[i]->Intersect(i_ray, NULL, NULL))
+      {
+      ++count;
+      index = i;
+      }
+
+  if (count==0)
+    {
+    o_pdf=1.0;
+    o_transmittance=SpectrumCoef_d(1.0);
+    return false;
+    }
+  else if (count==1)
+    return m_volume_regions[index]->SampleScattering(i_ray, i_sample, i_step, i_offset_sample, o_t, o_pdf, o_transmittance);
+  else
+    return VolumeRegion::SampleScattering(i_ray, i_sample, i_step, i_offset_sample, o_t, o_pdf, o_transmittance);
+  }

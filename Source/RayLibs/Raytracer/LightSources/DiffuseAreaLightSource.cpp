@@ -118,15 +118,16 @@ double DiffuseAreaLightSource::LightingPDF(const Ray &i_lighting_ray, size_t i_t
   return pdf;
   }
 
-Spectrum_d DiffuseAreaLightSource::SamplePhoton(double i_triangle_sample, const Point2D_d &i_position_sample, const Point2D_d &i_direction_sample, Ray &o_photon_ray, double &o_pdf) const
+Spectrum_d DiffuseAreaLightSource::SamplePhoton(double i_triangle_sample, size_t i_total_samples, const Point2D_d &i_position_sample,
+                                                const Point2D_d &i_direction_sample, RayDifferential &o_photon_ray, double &o_pdf) const
   {
-  ASSERT(i_direction_sample[0]>=0.0 && i_direction_sample[0]<1.0 && i_direction_sample[1]>=0.0 && i_direction_sample[1]<1.0);
+  ASSERT(i_total_samples>=1 && i_direction_sample[0]>=0.0 && i_direction_sample[0]<1.0 && i_direction_sample[1]>=0.0 && i_direction_sample[1]<1.0);
 
   // Check for an empty mesh.
   if (m_area_CDF.empty())
     {
     o_pdf=0.0;
-    o_photon_ray=Ray();
+    o_photon_ray=RayDifferential();
     return Spectrum_d(0.0);
     }
 
@@ -142,10 +143,24 @@ Spectrum_d DiffuseAreaLightSource::SamplePhoton(double i_triangle_sample, const 
   ASSERT(light_direction.IsNormalized());
 
   // Epsilon is used to avoid intersection with the area light at the same point.
-  o_photon_ray = Ray(sampled_point, light_direction, (1e-4));
+  o_photon_ray.m_base_ray = Ray(sampled_point, light_direction, (1e-4));
   o_pdf = SamplingRoutines::CosineHemispherePDF(local_direction[2]) * m_inv_area;
 
-  double dot = o_photon_ray.m_direction * light_normal;
+  // Set the differential rays so that all i_total_samples would cover the entire 4*M_PI range and the entire mesh surface area
+  // The tricky point is that we do not sample differential points on the mesh surface, but on the plane perpendicular to the light direction
+  Vector3D_d light_e2, light_e3;
+  MathRoutines::CoordinateSystem(light_direction, light_e2, light_e3);
+  double cos_theta = 1.0 - 2.0/i_total_samples;
+  double sin_theta = sqrt(1.0-cos_theta*cos_theta);
+  double r = sqrt(m_area/(M_PI*i_total_samples));
+
+  o_photon_ray.m_has_differentials = true;
+  o_photon_ray.m_origin_dx = sampled_point + light_e2*r;
+  o_photon_ray.m_direction_dx = light_direction*cos_theta + light_e2*sin_theta;
+  o_photon_ray.m_origin_dy = sampled_point + light_e3*r;
+  o_photon_ray.m_direction_dy = light_direction*cos_theta + light_e3*sin_theta;
+
+  double dot = o_photon_ray.m_base_ray.m_direction * light_normal;
   ASSERT(dot >= 0.0);
 
   // We multiply radiance value by cosine because what we actually need to return is irradiance, not radiance.

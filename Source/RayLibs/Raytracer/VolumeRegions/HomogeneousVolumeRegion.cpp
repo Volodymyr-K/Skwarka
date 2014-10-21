@@ -13,6 +13,7 @@
 */
 
 #include "HomogeneousVolumeRegion.h"
+#include <Raytracer/Core/SpectrumRoutines.h>
 
 // Register the derived class in the boost serialization framework.
 BOOST_CLASS_EXPORT_IMPLEMENT(HomogeneousVolumeRegion);
@@ -67,4 +68,35 @@ SpectrumCoef_d HomogeneousVolumeRegion::OpticalThickness(const Ray &i_ray, doubl
     return fabs(t_end-t_begin) * m_attenuation;
   else
     return SpectrumCoef_d(0.0);
+  }
+
+bool HomogeneousVolumeRegion::SampleScattering(const Ray &i_ray, double i_sample, double i_step, double i_offset_sample, double &o_t, double &o_pdf, SpectrumCoef_d &o_transmittance) const
+  {
+  ASSERT(i_ray.m_direction.IsNormalized());
+  ASSERT(i_step > 0.0 && i_offset_sample >= 0.0 && i_offset_sample < 1.0);
+
+  double t_begin, t_end;
+  if (m_attenuation.IsBlack() || this->Intersect(i_ray, &t_begin, &t_end)==false)
+    {
+    o_pdf=1.0;
+    o_transmittance=SpectrumCoef_d(1.0);
+    return false;
+    }
+
+  double attenuation_luminance = SpectrumRoutines::Luminance(m_attenuation);
+  double t = -std::log(i_sample) / attenuation_luminance;
+  if (t<t_end-t_begin)
+    {
+    o_t = t_begin+t;
+    o_pdf = attenuation_luminance*i_sample; // i_sample equals the transmittance at this point, because that is what we sampled.
+    o_transmittance = Exp(-1.0*m_attenuation*t);
+    return true;
+    }
+  else
+    {
+    // No scattering
+    o_pdf = std::exp(-attenuation_luminance*(t_end-t_begin));
+    o_transmittance = Exp(-1.0*m_attenuation*(t_end-t_begin));
+    return false;
+    }
   }

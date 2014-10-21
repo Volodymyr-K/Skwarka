@@ -78,6 +78,8 @@ class VolumeRegion: public ReferenceCounted
     */
     virtual SpectrumCoef_d OpticalThickness(const Ray &i_ray, double i_step, double i_offset_sample) const = 0;
 
+    virtual bool SampleScattering(const Ray &i_ray, double i_sample, double i_step, double i_offset_sample, double &o_t, double &o_pdf, SpectrumCoef_d &o_transmittance) const;
+
     virtual ~VolumeRegion() {};
 
   protected:
@@ -140,7 +142,6 @@ class DensityVolumeRegion: public VolumeRegion
     * @return Optical thickness.
     */
     virtual SpectrumCoef_d OpticalThickness(const Ray &i_ray, double i_step, double i_offset_sample) const;
-
 
   protected:
     /**

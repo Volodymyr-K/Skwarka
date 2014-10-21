@@ -59,17 +59,16 @@ Spectrum_d DirectLightingLTEIntegrator::_SurfaceRadiance(const RayDifferential &
   return radiance;
   }
 
-Spectrum_d DirectLightingLTEIntegrator::_MediaRadianceAndTranmsittance(const RayDifferential &i_ray, const Sample *ip_sample, SpectrumCoef_d &o_transmittance, ThreadSpecifics i_ts) const
+Spectrum_d DirectLightingLTEIntegrator::_MediaRadianceAndTranmsittance(const Ray &i_ray, const Sample *ip_sample, SpectrumCoef_d &o_transmittance, ThreadSpecifics i_ts) const
   {
   ASSERT(i_ts.mp_pool && i_ts.mp_random_generator);
   MemoryPool *p_pool = i_ts.mp_pool;
   RandomGenerator<double> *p_rng = i_ts.mp_random_generator;
 
-  Ray ray(i_ray.m_base_ray);
   const VolumeRegion *p_volume = mp_scene->GetVolumeRegion_RawPtr();
 
   double t0, t1;
-  if (p_volume==NULL || p_volume->Intersect(ray, &t0, &t1)==false || fabs(t0-t1)<DBL_EPS)
+  if (p_volume==NULL || p_volume->Intersect(i_ray, &t0, &t1)==false || fabs(t0-t1)<DBL_EPS)
     {
     o_transmittance = SpectrumCoef_d(1.0);
     return Spectrum_d();
@@ -102,8 +101,8 @@ Spectrum_d DirectLightingLTEIntegrator::_MediaRadianceAndTranmsittance(const Ray
   size_t num_lights = delta_lights+area_lights+infinite_lights;
 
   SpectrumCoef_d transmittance(1.0);
-  Point3D_d point = ray(t0), prev_point;
-  Vector3D_d direction = ray.m_direction * (-1.0);
+  Point3D_d point = i_ray(t0), prev_point;
+  Vector3D_d direction = i_ray.m_direction * (-1.0);
 
   /*
   The step used for ray marching is not constant.
@@ -122,17 +121,15 @@ Spectrum_d DirectLightingLTEIntegrator::_MediaRadianceAndTranmsittance(const Ray
     Point2D_d sample2D(SamplingRoutines::RadicalInverse((unsigned int)i+1, 3), SamplingRoutines::RadicalInverse((unsigned int)i+1, 5));
 
     prev_point = point;
-    point = ray(t0+offset1*step);
+    point = i_ray(t0+offset1*step);
     t0 += step;
 
-    Ray delta_ray(prev_point, ray.m_direction, 0.0, Vector3D_d(point-prev_point).Length());
+    Ray delta_ray(prev_point, i_ray.m_direction, 0.0, Vector3D_d(point-prev_point).Length());
 
     // Note that we still use constant step size for the optical thickness calculation.
     SpectrumCoef_d opt_thickness = p_volume->OpticalThickness(delta_ray, base_step, offset2);
 
-    transmittance[0] *= exp(-opt_thickness[0]);
-    transmittance[1] *= exp(-opt_thickness[1]);
-    transmittance[2] *= exp(-opt_thickness[2]);
+    transmittance *= Exp(-1.0*opt_thickness);
 
     // Compute single-scattering source term.
     SpectrumCoef_d scattering = p_volume->Scattering(point);
@@ -185,7 +182,7 @@ SpectrumCoef_d DirectLightingLTEIntegrator::_MediaTransmittance(const Ray &i_ray
 
   // Increase step size for secondary rays to reduce computation time.
   SpectrumCoef_d opt_thickness = p_volume->OpticalThickness(i_ray, 2.0*m_params.m_media_step_size, (*i_ts.mp_random_generator)(1.0));
-  return SpectrumCoef_d(exp(-opt_thickness[0]), exp(-opt_thickness[1]), exp(-opt_thickness[2]));
+  return Exp(-1.0*opt_thickness);
   }
 
 void DirectLightingLTEIntegrator::_RequestSamples(intrusive_ptr<Sampler> ip_sampler)

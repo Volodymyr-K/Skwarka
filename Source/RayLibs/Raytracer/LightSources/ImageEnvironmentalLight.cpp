@@ -497,8 +497,10 @@ double ImageEnvironmentalLight::_LightingPDF(const Vector3D_d &i_lighting_direct
   return leaf_pdf*row_pdf*col_pdf / pixel_solid_angle;
   }
 
-Spectrum_d ImageEnvironmentalLight::SamplePhoton(const Point2D_d &i_position_sample, const Point2D_d &i_direction_sample, Ray &o_photon_ray, double &o_pdf) const
+Spectrum_d ImageEnvironmentalLight::SamplePhoton(const Point2D_d &i_position_sample, size_t i_total_samples,
+                                                 const Point2D_d &i_direction_sample, RayDifferential &o_photon_ray, double &o_pdf) const
   {
+  ASSERT(i_total_samples>=1);
   double direction_pdf;
   Vector3D_d direction;
   Spectrum_d irradiance = _LightingSample(i_direction_sample, &m_nodes_spherical_PDF[0], direction, direction_pdf);
@@ -516,10 +518,19 @@ Spectrum_d ImageEnvironmentalLight::SamplePhoton(const Point2D_d &i_position_sam
   MathRoutines::CoordinateSystem(direction, e2, e3);
 
   Point2D_d local = SamplingRoutines::ConcentricDiskSampling(i_position_sample);
-  o_photon_ray.m_origin = center + radius * (local[0] * e2 + local[1] * e3) - radius*direction;
-  o_photon_ray.m_direction = direction;
-  o_photon_ray.m_min_t = 0.0;
-  o_photon_ray.m_max_t = DBL_INF;
+  o_photon_ray.m_base_ray.m_origin = center + radius * (local[0] * e2 + local[1] * e3) - radius*direction;
+  o_photon_ray.m_base_ray.m_direction = direction;
+  o_photon_ray.m_base_ray.m_min_t = 0.0;
+  o_photon_ray.m_base_ray.m_max_t = DBL_INF;
+
+  // Set the differential rays so that all i_total_samples would cover the entire projected disk
+  double r = radius * sqrt(1.0/i_total_samples);
+
+  o_photon_ray.m_has_differentials = true;
+  o_photon_ray.m_origin_dx = o_photon_ray.m_base_ray.m_origin + e2*r;
+  o_photon_ray.m_direction_dx = direction;
+  o_photon_ray.m_origin_dy = o_photon_ray.m_base_ray.m_origin + e3*r;
+  o_photon_ray.m_direction_dy = direction;
 
   o_pdf = direction_pdf/(M_PI * radius * radius);
 

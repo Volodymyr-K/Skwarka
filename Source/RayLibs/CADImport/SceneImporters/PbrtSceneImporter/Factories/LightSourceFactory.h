@@ -87,7 +87,8 @@ namespace PbrtImport
         Point3D_d to = i_params.FindOnePoint("to", Point3D_d(0,0,1));
         Vector3D_d dir = Vector3D_d(to - from).Normalized();
 
-        return new SpotPointLight(i_light_to_world(from), i_light_to_world(dir), I * sc, coneangle-conedelta, coneangle);
+        return new SpotPointLight(i_light_to_world(from), i_light_to_world(dir), I * sc,
+                                  MathRoutines::DegreesToRadians(coneangle-conedelta), MathRoutines::DegreesToRadians(coneangle));
         }
 
       intrusive_ptr<const DeltaLightSource> _CreateGoniometricLight(const Transform &i_light_to_world,  const ParamSet &i_params) const

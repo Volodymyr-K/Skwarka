@@ -84,8 +84,9 @@ Spectrum_d ParallelLight::Lighting(const Point3D_d &i_point, Ray &o_lighting_ray
   return m_radiance;
   }
 
-Spectrum_d ParallelLight::SamplePhoton(const Point2D_d &i_sample, Ray &o_photon_ray, double &o_pdf) const
+Spectrum_d ParallelLight::SamplePhoton(const Point2D_d &i_sample, size_t i_total_samples, RayDifferential &o_photon_ray, double &o_pdf) const
   {
+  ASSERT(i_total_samples>=1);
   Point2D_d sample = i_sample;
 
   double pdf;
@@ -105,10 +106,21 @@ Spectrum_d ParallelLight::SamplePhoton(const Point2D_d &i_sample, Ray &o_photon_
 
   Point3D_d sampled_point = m_bbox_emitting_triangles[index][0]*b0 + m_bbox_emitting_triangles[index][1]*b1 + m_bbox_emitting_triangles[index][2]*b2;
 
-  o_photon_ray.m_origin = sampled_point - m_direction*1.0;
-  o_photon_ray.m_direction = m_direction;
-  o_photon_ray.m_min_t = 0.0;
-  o_photon_ray.m_max_t = DBL_INF;
+  o_photon_ray.m_base_ray.m_origin = sampled_point - m_direction*1.0;
+  o_photon_ray.m_base_ray.m_direction = m_direction;
+  o_photon_ray.m_base_ray.m_min_t = 0.0;
+  o_photon_ray.m_base_ray.m_max_t = DBL_INF;
+
+  // Set the differential rays so that all i_total_samples would cover the entire projected area
+  Vector3D_d e2, e3;
+  MathRoutines::CoordinateSystem(m_direction, e2, e3);
+  double r = sqrt(m_bbox_projected_area/(M_PI*i_total_samples));
+
+  o_photon_ray.m_has_differentials = true;
+  o_photon_ray.m_origin_dx = o_photon_ray.m_base_ray.m_origin + e2*r;
+  o_photon_ray.m_direction_dx = m_direction;
+  o_photon_ray.m_origin_dy = o_photon_ray.m_base_ray.m_origin + e3*r;
+  o_photon_ray.m_direction_dy = m_direction;
 
   o_pdf = m_inv_bbox_projected_area;
 

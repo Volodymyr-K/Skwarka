@@ -58,7 +58,7 @@ class MyDisplayUpdateCallback: public DisplayUpdateCallback
           {
           Spectrum_d sp;
           p_film->GetPixel(Point2D_i(x,y),sp);
-          sp *= 300;
+          sp *= 200;
 
           RGBColor_d color = global_sRGB_D65_ColorSystem.XYZ_To_RGB(SpectrumRoutines::SpectrumToXYZ(sp),true);
           color.Clamp(0.0,256.0);

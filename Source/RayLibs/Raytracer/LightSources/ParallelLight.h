@@ -37,7 +37,7 @@ class ParallelLight: public DeltaLightSource
     * Returns the total power of the light source, i.e. the light flux.
     * The power is estimated by computing the flux for the scene bounding box.
     */
-    virtual Spectrum_d Power() const;
+    Spectrum_d Power() const;
 
     /**
     * Returns the light source radiance at the specified point.
@@ -45,7 +45,7 @@ class ParallelLight: public DeltaLightSource
     * @param[out] o_lighting_ray Ray to the light source from the specified point. The direction component of the ray is normalized. The ray is unbounded.
     * @return Radiance value.
     */
-    virtual Spectrum_d Lighting(const Point3D_d &i_point, Ray &o_lighting_ray) const;
+    Spectrum_d Lighting(const Point3D_d &i_point, Ray &o_lighting_ray) const;
 
     /**
     * Samples outgoing light ray.
@@ -54,7 +54,7 @@ class ParallelLight: public DeltaLightSource
     * @param[out] o_pdf PDF value for the sampled light ray. The returned value should be greater or equal than zero.
     * @return Irradiance value.
     */
-    virtual Spectrum_d SamplePhoton(const Point2D_d &i_sample, Ray &o_photon_ray, double &o_pdf) const;
+    Spectrum_d SamplePhoton(const Point2D_d &i_sample, size_t i_total_samples, RayDifferential &o_photon_ray, double &o_pdf) const;
 
   private:
     ParallelLight() {}; // Empty default constructor for the boost serialization framework.

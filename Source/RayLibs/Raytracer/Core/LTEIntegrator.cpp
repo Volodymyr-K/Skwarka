@@ -50,7 +50,7 @@ Spectrum_d LTEIntegrator::Radiance(const RayDifferential &i_ray, const Sample *i
       }
 
   SpectrumCoef_d transmittance(1.0);
-  Spectrum_d volume_radiance = _MediaRadianceAndTranmsittance(intersection_ray, ip_sample, transmittance, i_ts);
+  Spectrum_d volume_radiance = _MediaRadianceAndTranmsittance(intersection_ray.m_base_ray, ip_sample, transmittance, i_ts);
 
   return radiance * transmittance + volume_radiance;
   }

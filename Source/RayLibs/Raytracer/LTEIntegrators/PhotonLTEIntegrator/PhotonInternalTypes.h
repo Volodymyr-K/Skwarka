@@ -58,6 +58,14 @@ struct PhotonLTEIntegrator::Photon
   CompressedDirection m_incident_direction, m_normal;
   };
 
+struct PhotonLTEIntegrator::PhotonBeam
+  {
+  Point3D_f m_origin;
+  Vector3D_f m_direction;
+  float m_distance, m_radius_begin, m_radius_end;
+  Spectrum_f m_power_begin, m_power_end;
+  };
+
 ///////////////////////////////////////// IrradiancePhoton //////////////////////////////////////////////
 
 /**
@@ -187,10 +195,12 @@ class PhotonLTEIntegrator::IrradiancePhotonFilter
 class PhotonLTEIntegrator::PhotonMaps
   {
   public:
-    PhotonMaps(size_t i_max_caustic_photons, size_t i_max_direct_photons, size_t i_max_indirect_photons);
+    PhotonMaps(intrusive_ptr<const Scene> ip_scene, size_t i_max_caustic_photons, size_t i_max_direct_photons, size_t i_max_indirect_photons);
 
     void AddPhotons(const std::vector<Photon> &i_caustic_photons, const std::vector<Photon> &i_direct_photons,
                     const std::vector<Photon> &i_indirect_photons, size_t i_paths);
+
+    void AddPhotonBeams(const std::vector<PhotonBeam> &i_photon_beams);
 
     /**
     * Returns caustic photons map.
@@ -210,6 +220,8 @@ class PhotonLTEIntegrator::PhotonMaps
     */
     shared_ptr<const KDTree<Photon>> GetIndirectMap();
 
+    shared_ptr<const PhotonBeamAccelerator> GetBeamsMap();
+
     size_t GetNumberOfPhotonPaths() const
       {
       return m_photon_paths;
@@ -224,14 +236,20 @@ class PhotonLTEIntegrator::PhotonMaps
   private:
     /**
     * Defines the maximum number of photons in the map (the value 6*10^6 was driven by the maximum size std::vector can allocate).
-    * For the future - consider switching to std::deque
+    * For the future - consider switching to std::deque (but be aware of the awful deque implementation in MSVC!)
     */
     static const size_t MAX_PHOTONS_IN_MAP = 6000000;
 
   private:
+    intrusive_ptr<const Scene> mp_scene;
+
     std::vector<Photon> m_caustic_photons, m_direct_photons, m_indirect_photons;
 
     shared_ptr<KDTree<Photon>> mp_caustic_map, mp_direct_map, mp_indirect_map;
+
+    std::vector<PhotonBeam> m_photon_beams;
+
+    std::shared_ptr<PhotonBeamAccelerator> mp_beam_map;
 
     size_t m_max_caustic_photons, m_max_direct_photons, m_max_indirect_photons;
 
@@ -342,6 +360,8 @@ struct PhotonLTEIntegrator::PhotonsChunk
   */
   std::vector<Photon> m_caustic_photons, m_direct_photons, m_indirect_photons;
 
+  std::vector<PhotonBeam> m_photon_beams;
+
   /*
   * Index of the first photon path defined by the chunk.
   * All photon paths traced by the integrator have unique indices because these indices are used to generate well-distributed paths.
@@ -392,14 +412,22 @@ class PhotonLTEIntegrator::PhotonsInputFilter: public tbb::filter
 class PhotonLTEIntegrator::PhotonsShootingFilter: public tbb::filter
   {
   public:
-    PhotonsShootingFilter(const PhotonLTEIntegrator *ip_integrator, intrusive_ptr<const Scene> ip_scene, const std::vector<double> &i_lights_CDF, bool i_low_thread_priority);
+    PhotonsShootingFilter(const PhotonLTEIntegrator *ip_integrator, intrusive_ptr<const Scene> ip_scene, size_t i_photon_paths, const std::vector<double> &i_lights_CDF, bool i_low_thread_priority);
 
     void* operator()(void* ip_chunk);
+
+  private:
+    void _SplitAndAddPhotonBeam(const RayDifferential &i_ray, const Spectrum_d &i_weight, PhotonsChunk *ip_chunk) const;
+
+    void _TracePhoton(PhotonsChunk *ip_chunk, size_t i_path_index, const Spectrum_d &i_weight, const RayDifferential &i_photon_ray) const;
+
+    RayDifferential _ScatterRayDiffusely(const RayDifferential &i_ray, double i_t, const Vector3D_d &i_directon) const;
 
   private:
     const PhotonLTEIntegrator *mp_integrator;
     intrusive_ptr<const Scene> mp_scene;
     std::vector<double> m_lights_CDF;
+    size_t m_photon_paths;
     bool m_low_thread_priority;
   };
 

@@ -40,7 +40,7 @@ namespace MathRoutines
   * i_weight can be less than 0.0 or greater than 1.0, the method will still interpolate the values accordingly.
   */
   template<typename T>
-  T LinearInterpolate(T i_weight, T i_low, T i_high);
+  T LinearInterpolate(double i_weight, T i_low, T i_high);
 
   /**
   * Given the CDF and a sample value the method finds the sampled item.
@@ -183,7 +183,7 @@ namespace MathRoutines
     }
 
   template<typename T>
-  T LinearInterpolate(T i_weight, T i_low, T i_high)
+  T LinearInterpolate(double i_weight, T i_low, T i_high)
     {
     return (T) ( (1.0 - i_weight) * i_low + i_weight * i_high );
     }

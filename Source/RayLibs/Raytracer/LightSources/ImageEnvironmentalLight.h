@@ -114,7 +114,8 @@ class ImageEnvironmentalLight: public InfiniteLightSource
     * @param[out] o_pdf PDF value for the sampled light ray. The returned value should be greater or equal than zero.
     * @return Irradiance value.
     */
-    Spectrum_d SamplePhoton(const Point2D_d &i_position_sample, const Point2D_d &i_direction_sample, Ray &o_photon_ray, double &o_pdf) const;
+     Spectrum_d SamplePhoton(const Point2D_d &i_position_sample, size_t i_total_samples,
+                             const Point2D_d &i_direction_sample, RayDifferential &o_photon_ray, double &o_pdf) const;
 
     /**
     * Returns irradiance value at a surface point with the specified normal assuming there's no objects in the scene blocking the light.

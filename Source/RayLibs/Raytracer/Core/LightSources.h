@@ -50,7 +50,7 @@ class DeltaLightSource: public ReferenceCounted
     * @param[out] o_pdf PDF value for the sampled light ray. The returned value should be greater or equal than zero.
     * @return Irradiance value.
     */
-    virtual Spectrum_d SamplePhoton(const Point2D_d &i_sample, Ray &o_photon_ray, double &o_pdf) const = 0;
+    virtual Spectrum_d SamplePhoton(const Point2D_d &i_sample, size_t i_total_samples, RayDifferential &o_photon_ray, double &o_pdf) const = 0;
 
     virtual ~DeltaLightSource();
 
@@ -131,7 +131,8 @@ class InfiniteLightSource: public ReferenceCounted
     * @param[out] o_pdf PDF value for the sampled light ray. The returned value should be greater or equal than zero.
     * @return Irradiance value.
     */
-    virtual Spectrum_d SamplePhoton(const Point2D_d &i_position_sample, const Point2D_d &i_direction_sample, Ray &o_photon_ray, double &o_pdf) const = 0;
+    virtual Spectrum_d SamplePhoton(const Point2D_d &i_position_sample, size_t i_total_samples,
+                                    const Point2D_d &i_direction_sample, RayDifferential &o_photon_ray, double &o_pdf) const = 0;
 
     /**
     * Returns irradiance value at a surface point with the specified normal assuming there's no objects in the scene blocking the light.
@@ -223,7 +224,8 @@ class AreaLightSource: public ReferenceCounted
     * @param[out] o_pdf PDF value for the sampled light ray. The returned value should be greater or equal than zero.
     * @return Irradiance value.
     */
-    virtual Spectrum_d SamplePhoton(double i_triangle_sample, const Point2D_d &i_position_sample, const Point2D_d &i_direction_sample, Ray &o_photon_ray, double &o_pdf) const = 0;
+    virtual Spectrum_d SamplePhoton(double i_triangle_sample, size_t i_total_samples, const Point2D_d &i_position_sample,
+                                    const Point2D_d &i_direction_sample, RayDifferential &o_photon_ray, double &o_pdf) const = 0;
 
     virtual ~AreaLightSource();
 

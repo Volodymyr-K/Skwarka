@@ -13,6 +13,64 @@
 */
 
 #include "VolumeRegion.h"
+#include <Raytracer/Core/SpectrumRoutines.h>
+
+bool VolumeRegion::SampleScattering(const Ray &i_ray, double i_sample, double i_step, double i_offset_sample, double &o_t, double &o_pdf, SpectrumCoef_d &o_transmittance) const
+  {
+  ASSERT(i_ray.m_direction.IsNormalized());
+  ASSERT(i_step > 0.0 && i_offset_sample >= 0.0 && i_offset_sample < 1.0);
+
+  double t_begin, t_end;
+  if (this->Intersect(i_ray, &t_begin, &t_end)==false)
+    {
+    o_pdf=1.0;
+    o_transmittance=SpectrumCoef_d(1.0);
+    return false;
+    }
+
+  double sampled_thickness = -std::log(i_sample);
+
+  SpectrumCoef_d thickness(0.0);
+  double thickness_luminance = 0.0;
+  double t = t_begin, step = i_step;
+  while (t<t_end-DBL_EPS)
+    {
+    step = std::min(step, t_end-t);
+
+    SpectrumCoef_d attenuation = this->Attenuation(i_ray(t+i_offset_sample * step));
+    double attenuation_luminance = SpectrumRoutines::Luminance(attenuation);
+
+    if (thickness_luminance+attenuation_luminance*step > sampled_thickness)
+      {
+      // We need to be careful since the attenuation at the sampled point can differ from the attenuation_luminance variable,
+      // which might result in inaccurate PDF value begin returned. This can lead to visual artifacts during Monte Carlo integration.
+      // To address this issue, we decrease the step by half if the attenuation at the sampled point differs by more than 10%
+      double rescaled_step = (sampled_thickness-thickness_luminance)/attenuation_luminance;
+      double att2 = SpectrumRoutines::Luminance(this->Attenuation(i_ray(t + rescaled_step)));
+      if (fabs(att2-attenuation_luminance) > 0.1*attenuation_luminance)
+        {
+        step *= 0.5;
+        continue;
+        }
+
+      o_t = t + rescaled_step;
+      thickness += attenuation * rescaled_step;
+
+      o_pdf = att2 * i_sample; // i_sample equals the transmittance at this point, because that is what we sampled.
+      o_transmittance = Exp(-1.0*thickness);
+      return true;
+      }
+
+    thickness += attenuation * step;
+    thickness_luminance += attenuation_luminance * step;
+    t += step;
+    }
+
+  // No scattering
+  o_pdf = std::exp(-thickness_luminance);
+  o_transmittance = Exp(-1.0*thickness);
+  return false;
+  }
 
 DensityVolumeRegion::DensityVolumeRegion(const BBox3D_d &i_bounds, SpectrumCoef_d &i_base_absorption,
                                          SpectrumCoef_d &i_base_scattering, intrusive_ptr<const PhaseFunction> ip_phase_function):
@@ -37,16 +95,25 @@ BBox3D_d DensityVolumeRegion::GetBounds() const
 
 SpectrumCoef_d DensityVolumeRegion::Absorption(const Point3D_d &i_point) const
   {
+  if (m_bounds.Inside(i_point)==false)
+    return SpectrumCoef_d(0.0);
+
   return _Density(i_point) * m_base_absorption;
   }
 
 SpectrumCoef_d DensityVolumeRegion::Scattering(const Point3D_d &i_point) const
   {
+  if (m_bounds.Inside(i_point)==false)
+    return SpectrumCoef_d(0.0);
+
   return _Density(i_point) * m_base_scattering;
   }
 
 SpectrumCoef_d DensityVolumeRegion::Attenuation(const Point3D_d &i_point) const
   {
+  if (m_bounds.Inside(i_point)==false)
+    return SpectrumCoef_d(0.0);
+
   return _Density(i_point) * m_base_attenuation;
   }
 
@@ -64,14 +131,14 @@ SpectrumCoef_d DensityVolumeRegion::OpticalThickness(const Ray &i_ray, double i_
   if (this->Intersect(i_ray, &t_begin, &t_end)==false)
     return SpectrumCoef_d(0.0);
 
-  double optical_thickness = 0.0;
+  double density = 0.0;
   double t = t_begin, step = i_step;
   while (t<t_end-DBL_EPS)
     {
     step = std::min(step, t_end-t);
-    optical_thickness += _Density( i_ray(t+i_offset_sample * step) ) * step;
+    density += _Density(i_ray(t+i_offset_sample * step)) * step;
     t += step;
     }
 
-  return optical_thickness * m_base_attenuation;
+  return density * m_base_attenuation;
   }

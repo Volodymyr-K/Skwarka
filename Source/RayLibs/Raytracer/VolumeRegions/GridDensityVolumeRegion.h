@@ -23,6 +23,8 @@
 #include <Raytracer/Core/PhaseFunction.h>
 #include <vector>
 
+struct DensityCell;
+
 /**
 * Implementation of the VolumeRegion with absorption and scattering being proportional to the density of the media particles.
 * The density of the media particles is defined by a regular 3D grid.
@@ -50,14 +52,15 @@ class GridDensityVolumeRegion: public DensityVolumeRegion
     /**
     * Private virtual function for that returns density of the media particles at the specified point.
     * The density value is computed by interpolating the values of the densities 3D grid.
+    * IMPORTANT - this method doesn't check that the point is inside the bounding box, so it must be checked by the calling code before calling this method.
     */
     double _Density(const Point3D_d &i_point) const;
 
   private:
-    GridDensityVolumeRegion() {}; // Empty default constructor for the boost serialization framework.
-
     // Needed for the boost serialization framework.  
     friend class boost::serialization::access;
+
+    GridDensityVolumeRegion() {}; // Empty default constructor for the boost serialization framework.
 
     /**
     * Serializes to/from the specified Archive. This method is used by the boost serialization framework.
@@ -71,11 +74,16 @@ class GridDensityVolumeRegion: public DensityVolumeRegion
 
     size_t m_size_x, m_size_y, m_size_z;
 
-    std::vector<std::vector<std::vector<float>>> m_densities;
+    std::vector<DensityCell> m_densities;
   };
 
 /////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+struct DensityCell
+  {
+  float m_density[2][2][2];
+  };
 
 template<class Archive>
 void GridDensityVolumeRegion::serialize(Archive &i_ar, const unsigned int i_version)
@@ -93,5 +101,17 @@ void GridDensityVolumeRegion::serialize(Archive &i_ar, const unsigned int i_vers
 
 // Register the derived class in the boost serialization framework.
 BOOST_CLASS_EXPORT_KEY(GridDensityVolumeRegion)
+
+/**
+* Serializes DensityCell to/from the specified Archive. This method is used by the boost serialization framework.
+*/
+template<class Archive>
+void serialize(Archive &i_ar, DensityCell &i_cell, const unsigned int i_version)
+  {
+  i_ar & i_cell.m_density;
+  }
+
+// Don't store class info for DensityCell.
+BOOST_CLASS_IMPLEMENTATION(DensityCell, boost::serialization::object_serializable)
 
 #endif // GRID_DENSITY_VOLUME_REGION_H

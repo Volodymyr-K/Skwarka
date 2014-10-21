@@ -39,12 +39,12 @@ class DiffuseAreaLightSource: public AreaLightSource
     * @param i_light_direction Direction of the light. Should be normalized.
     * @return Light radiance.
     */
-    virtual Spectrum_d Radiance(const DifferentialGeometry &i_dg, size_t i_triangle_index, const Vector3D_d &i_light_direction) const;
+    Spectrum_d Radiance(const DifferentialGeometry &i_dg, size_t i_triangle_index, const Vector3D_d &i_light_direction) const;
 
     /**
     * Returns the total power of the light source, i.e. the light flux.
     */
-    virtual Spectrum_d Power() const;
+    Spectrum_d Power() const;
 
     /**
     * Samples direct lighting at the specified point.
@@ -57,7 +57,7 @@ class DiffuseAreaLightSource: public AreaLightSource
     * @param[out] o_pdf PDF value with respect to the solid angle. The returned value should be greater or equal than zero.
     * @return Radiance value.
     */
-    virtual Spectrum_d SampleLighting(const Point3D_d &i_point, double i_triangle_sample, const Point2D_d &i_sample, Ray &o_lighting_ray, double &o_pdf) const;
+    Spectrum_d SampleLighting(const Point3D_d &i_point, double i_triangle_sample, const Point2D_d &i_sample, Ray &o_lighting_ray, double &o_pdf) const;
 
     /**
     * Returns PDF value for the lighting ray.
@@ -66,7 +66,7 @@ class DiffuseAreaLightSource: public AreaLightSource
     * @param i_triangle_index The index of the light source triangle.
     * @return PDF value. The returned value should be greater or equal than zero.
     */
-    virtual double LightingPDF(const Ray &i_lighting_ray, size_t i_triangle_index) const;
+    double LightingPDF(const Ray &i_lighting_ray, size_t i_triangle_index) const;
 
     /**
     * Samples outgoing light ray.
@@ -78,7 +78,8 @@ class DiffuseAreaLightSource: public AreaLightSource
     * @param[out] o_pdf PDF value for the sampled light ray. The returned value should be greater or equal than zero.
     * @return Irradiance value.
     */
-    virtual Spectrum_d SamplePhoton(double i_triangle_sample, const Point2D_d &i_position_sample, const Point2D_d &i_direction_sample, Ray &o_photon_ray, double &o_pdf) const;
+    Spectrum_d SamplePhoton(double i_triangle_sample, size_t i_total_samples, const Point2D_d &i_position_sample,
+                            const Point2D_d &i_direction_sample, RayDifferential &o_photon_ray, double &o_pdf) const;
 
   private:
     /**

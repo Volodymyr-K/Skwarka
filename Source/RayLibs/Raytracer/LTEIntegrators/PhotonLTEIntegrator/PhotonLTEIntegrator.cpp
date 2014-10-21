@@ -14,6 +14,7 @@
 
 #include "../PhotonLTEIntegrator.h"
 #include "PhotonInternalTypes.h"
+#include "PhotonBeamAccelerator.h"
 #include <Common/MemoryPool.h>
 #include <Math/SamplingRoutines.h>
 #include <Math/ThreadSafeRandom.h>
@@ -36,6 +37,12 @@ LTEIntegrator(ip_scene), mp_scene(ip_scene), m_params(i_params)
 
   if (m_params.m_max_specular_depth > 50)
     m_params.m_max_specular_depth = 50;
+
+  if (m_params.m_media_step_size < DBL_EPS && ip_scene->GetVolumeRegion())
+    {
+    BBox3D_d bounds = ip_scene->GetVolumeRegion()->GetBounds();
+    m_params.m_media_step_size = 0.01 * std::min(bounds.m_max[0]-bounds.m_min[0], std::min(bounds.m_max[1]-bounds.m_min[1], bounds.m_max[2]-bounds.m_min[2]));
+    }
 
   m_scene_total_area = 0.0;
   const std::vector<intrusive_ptr<const Primitive>> &primitives = ip_scene->GetPrimitives();
@@ -62,8 +69,7 @@ void PhotonLTEIntegrator::_RequestSamples(intrusive_ptr<Sampler> ip_sampler)
     m_params.m_gather_samples_num = gather_samples_num;
     }
 
-  m_media_offset1_id = ip_sampler->AddSamplesSequence1D(1);
-  m_media_offset2_id = ip_sampler->AddSamplesSequence1D(1);
+  m_media_offset_id = ip_sampler->AddSamplesSequence1D(1);
   }
 
 void PhotonLTEIntegrator::_GetLightsPowerCDF(const LightSources &i_light_sources, std::vector<double> &o_lights_CDF)
@@ -238,7 +244,7 @@ void PhotonLTEIntegrator::_ConstructIrradiancePhotonMap()
 
 void PhotonLTEIntegrator::ShootPhotons(size_t i_photons, bool i_low_thread_priority)
   {
-  mp_photon_maps.reset(new PhotonMaps(m_params.m_max_caustic_photons, m_params.m_max_direct_photons, m_params.m_max_indirect_photons));
+  mp_photon_maps.reset(new PhotonMaps(mp_scene, m_params.m_max_caustic_photons, m_params.m_max_direct_photons, m_params.m_max_indirect_photons));
 
   const LightSources &lights = mp_scene->GetLightSources();
   if (lights.m_delta_light_sources.size() + lights.m_area_light_sources.size() + lights.m_infinite_light_sources.size() == 0 || i_photons == 0)
@@ -248,7 +254,7 @@ void PhotonLTEIntegrator::ShootPhotons(size_t i_photons, bool i_low_thread_prior
   _GetLightsPowerCDF(lights, lights_CDF);
 
   PhotonsInputFilter input_filter(i_photons, MAX_PIPELINE_TOKENS_NUM, 4096);
-  PhotonsShootingFilter shooting_filter(this, mp_scene, lights_CDF, i_low_thread_priority);
+  PhotonsShootingFilter shooting_filter(this, mp_scene, i_photons, lights_CDF, i_low_thread_priority);
   PhotonsMergingFilter merging_filter(mp_photon_maps);
 
   tbb::pipeline pipeline;
@@ -258,6 +264,12 @@ void PhotonLTEIntegrator::ShootPhotons(size_t i_photons, bool i_low_thread_prior
 
   pipeline.run(MAX_PIPELINE_TOKENS_NUM);
   pipeline.clear();
+
+  // Construct the KD trees. We explicitly do this now till we are still in a single thread to avoid concurrency issues later.
+  mp_photon_maps->GetCausticMap();
+  mp_photon_maps->GetDirectMap();
+  mp_photon_maps->GetIndirectMap();
+  mp_photon_maps->GetBeamsMap();
 
   _ConstructIrradiancePhotonMap();
   }
@@ -489,6 +501,7 @@ Spectrum_d PhotonLTEIntegrator::_FinalGather(const Intersection &i_intersection,
     bounce_ray.m_min_t = CoreUtils::GetNextMinT(i_intersection, p_gather_directions[i]);
   
     Intersection gather_isect;
+    Spectrum_d surface_radiance;
     if (mp_scene->Intersect(RayDifferential(bounce_ray), gather_isect, &bounce_ray.m_max_t))
       {
       // Compute exitant radiance at the final gather intersection.
@@ -501,21 +514,23 @@ Spectrum_d PhotonLTEIntegrator::_FinalGather(const Intersection &i_intersection,
       if (p_irradiance_photon == NULL)
         continue;
 
-      Spectrum_d tmp;
       if (gather_direction*gather_geometric_normal > 0.0)
         {
-        tmp += p_gather_BSDF->TotalScattering(gather_direction, bsdf_scattering_sequence, BxDFType(BSDF_ALL_REFLECTION))  *Convert<double>(p_irradiance_photon->m_external_irradiance);
-        tmp += p_gather_BSDF->TotalScattering(gather_direction, bsdf_scattering_sequence, BxDFType(BSDF_ALL_TRANSMISSION))*Convert<double>(p_irradiance_photon->m_internal_irradiance);
+        surface_radiance += p_gather_BSDF->TotalScattering(gather_direction, bsdf_scattering_sequence, BxDFType(BSDF_ALL_REFLECTION))  *Convert<double>(p_irradiance_photon->m_external_irradiance);
+        surface_radiance += p_gather_BSDF->TotalScattering(gather_direction, bsdf_scattering_sequence, BxDFType(BSDF_ALL_TRANSMISSION))*Convert<double>(p_irradiance_photon->m_internal_irradiance);
         }
       else
         {
-        tmp += p_gather_BSDF->TotalScattering(gather_direction, bsdf_scattering_sequence, BxDFType(BSDF_ALL_REFLECTION))  *Convert<double>(p_irradiance_photon->m_internal_irradiance);
-        tmp += p_gather_BSDF->TotalScattering(gather_direction, bsdf_scattering_sequence, BxDFType(BSDF_ALL_TRANSMISSION))*Convert<double>(p_irradiance_photon->m_external_irradiance);
+        surface_radiance += p_gather_BSDF->TotalScattering(gather_direction, bsdf_scattering_sequence, BxDFType(BSDF_ALL_REFLECTION))  *Convert<double>(p_irradiance_photon->m_internal_irradiance);
+        surface_radiance += p_gather_BSDF->TotalScattering(gather_direction, bsdf_scattering_sequence, BxDFType(BSDF_ALL_TRANSMISSION))*Convert<double>(p_irradiance_photon->m_external_irradiance);
         }
 
-      tmp *= INV_PI;
-      radiance += tmp * _MediaTransmittance(bounce_ray, i_ts) * p_gather_weights[i];
+      surface_radiance *= INV_PI;
       }
+
+    SpectrumCoef_d transmittance;
+    Spectrum_d volume_radiance = _MediaRadianceAndTranmsittance(bounce_ray, NULL, transmittance, i_ts);
+    radiance += (surface_radiance * transmittance + volume_radiance) * p_gather_weights[i];
     }
 
   return radiance / gather_samples;
@@ -580,15 +595,58 @@ double PhotonLTEIntegrator::_PhotonKernel(double i_dist_sqr, double i_max_dist_s
   return 3.0 * INV_PI * tmp * tmp;
   }
 
-Spectrum_d PhotonLTEIntegrator::_MediaRadianceAndTranmsittance(const RayDifferential &i_ray, const Sample *ip_sample, SpectrumCoef_d &o_transmittance, ThreadSpecifics i_ts) const
+Spectrum_d PhotonLTEIntegrator::_MediaRadianceAndTranmsittance(const Ray &i_ray, const Sample *ip_sample, SpectrumCoef_d &o_transmittance, ThreadSpecifics i_ts) const
   {
-  // TBD
-  o_transmittance = SpectrumCoef_d(1.0);
-  return Spectrum_d(0.0);
+  ASSERT(i_ts.mp_pool && i_ts.mp_random_generator);
+  MemoryPool *p_pool = i_ts.mp_pool;
+  RandomGenerator<double> *p_rng = i_ts.mp_random_generator;
+
+  const VolumeRegion *p_volume = mp_scene->GetVolumeRegion_RawPtr();
+  mp_scene->GetVolumeRegion();
+
+  double t0, t1;
+  if (p_volume==NULL || p_volume->Intersect(i_ray, &t0, &t1)==false || fabs(t0-t1)<DBL_EPS)
+    {
+    o_transmittance = SpectrumCoef_d(1.0);
+    return Spectrum_d();
+    }
+
+  // offset is used for computing optical thickness for the camera ray
+  double offset, step;
+  if (ip_sample)
+    {
+    offset = *ip_sample->GetSamplesSequence1D(m_media_offset_id).m_begin;
+    step = m_params.m_media_step_size;
+    }
+  else
+    {
+    offset = (*p_rng)(1.0);
+
+    // Increase step size for secondary rays to reduce computation time (accuracy is less important here).
+    step = 4.0*m_params.m_media_step_size;
+    }
+
+  Spectrum_d radiance(0.0);
+  shared_ptr<const PhotonLTEIntegrator::PhotonBeamAccelerator> p_beams_map = mp_photon_maps->GetBeamsMap();
+
+  MemoryPoolAllocator<PhotonBeam> alloc(*i_ts.mp_pool);
+  std::vector<PhotonBeam, MemoryPoolAllocator<PhotonBeam>> beams(alloc);
+  radiance = p_beams_map->Intersect(i_ray, step, offset, p_pool);
+  radiance /= mp_photon_maps->GetNumberOfPhotonPaths();
+
+  o_transmittance = _MediaTransmittance(i_ray, i_ts);
+  return radiance;
   }
 
 SpectrumCoef_d PhotonLTEIntegrator::_MediaTransmittance(const Ray &i_ray, ThreadSpecifics i_ts) const
   {
-  // TBD
-  return SpectrumCoef_d(1.0);
+  ASSERT(i_ts.mp_pool && i_ts.mp_random_generator);
+
+  const VolumeRegion *p_volume = mp_scene->GetVolumeRegion_RawPtr();
+  if (p_volume==NULL)
+    return SpectrumCoef_d(1.0);
+
+  // Increase step size for secondary rays to reduce computation time.
+  SpectrumCoef_d opt_thickness = p_volume->OpticalThickness(i_ray, 2.0*m_params.m_media_step_size, (*i_ts.mp_random_generator)(1.0));
+  return Exp(-1.0*opt_thickness);
   }

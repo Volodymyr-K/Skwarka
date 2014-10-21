@@ -100,7 +100,9 @@ inline void TestTracer::LoadMesh()
   intrusive_ptr<Log> p_log( new StreamLog(std::cerr, Log::ERROR_LEVEL) );
 
   tbb::tick_count t0 = tbb::tick_count::now();
-  PbrtSceneImporter importer("D:\\raytracing\\pbrt_scenes\\sponza-phomap.pbrt", p_log);
+  PbrtSceneImporter importer("D:\\raytracing\\pbrt_scenes\\spotfog.pbrt", p_log);
+  //PbrtSceneImporter importer("D:\\raytracing\\pbrt_scenes\\smoke-2.pbrt", p_log);
+  //PbrtSceneImporter importer("D:\\raytracing\\pbrt_scenes\\sponza-phomap.pbrt", p_log);
   //PbrtSceneImporter importer("D:\\raytracing\\pbrt_scenes\\plants-godrays.pbrt", p_log);
   //PbrtSceneImporter importer("D:\\raytracing\\pbrt_scenes\\plants-dusk.pbrt", p_log);
   //PbrtSceneImporter importer("D:\\raytracing\\pbrt_scenes\\yeahright.pbrt", p_log);
@@ -144,7 +146,7 @@ inline void TestTracer::RenderImage()
   */
 
   intrusive_ptr<const Camera> p_camera = mp_pbrt_camera;
-  //dynamic_cast<ImageFilm*>(const_cast<Film*>(p_camera->GetFilm().get()))->SetCropWindow(Point2D_i(400,250),Point2D_i(700,450));
+  //dynamic_cast<ImageFilm*>(const_cast<Film*>(p_camera->GetFilm().get()))->SetCropWindow(Point2D_i(300,300),Point2D_i(500,500));
 
   intrusive_ptr<ImagePixelsOrder> pixel_order(new ConsecutiveImagePixelsOrder);
   //intrusive_ptr<ImagePixelsOrder> pixel_order(new RandomBlockedImagePixelsOrder);
@@ -152,15 +154,15 @@ inline void TestTracer::RenderImage()
 
   Point2D_i window_begin, window_end;
   p_camera->GetFilm()->GetSamplingExtent(window_begin, window_end);
-  intrusive_ptr<Sampler> p_sampler( new LDSampler(window_begin, window_end, 8, pixel_order) );
+  intrusive_ptr<Sampler> p_sampler( new LDSampler(window_begin, window_end, 1, pixel_order) );
 
- /*
+  /*
   DirectLightingLTEIntegratorParams params;
   params.m_direct_light_samples_num=8;
   params.m_max_specular_depth=6;
-  params.m_media_step_size=0.1;
+  params.m_media_step_size=0.003;
   intrusive_ptr<DirectLightingLTEIntegrator> p_lte_int( new DirectLightingLTEIntegrator(mp_scene, params) );
- */ 
+ */
  
   PhotonLTEIntegratorParams params;
   params.m_direct_light_samples_num=8;
@@ -168,20 +170,20 @@ inline void TestTracer::RenderImage()
   params.m_caustic_lookup_photons_num=100;
   params.m_max_caustic_lookup_dist=0.05;
   params.m_max_specular_depth=10;
-  params.m_media_step_size=0.01;
+  params.m_media_step_size=0.03;
   //params.m_max_caustic_photons=1000;
   //params.m_max_direct_photons=2000;
   //params.m_max_indirect_photons=3000;
-  intrusive_ptr<PhotonLTEIntegrator> p_lte_int( new PhotonLTEIntegrator(mp_scene, params) );
+  intrusive_ptr<PhotonLTEIntegrator> p_lte_int( new PhotonLTEIntegrator(mp_scene, params) );  
   
-
   t0 = tbb::tick_count::now();
-  p_lte_int->ShootPhotons(100*1000000, true);
+  p_lte_int->ShootPhotons(0.1*1000000, true);
   t1 = tbb::tick_count::now();
   printf("Shooting: %lf\n", (t1-t0).seconds());
   
+
   intrusive_ptr<SamplerBasedRenderer> p_renderer( new SamplerBasedRenderer(p_lte_int, p_sampler) );
-  p_renderer->SetDisplayUpdateCallback(mp_callback, 10.0);
+  p_renderer->SetDisplayUpdateCallback(mp_callback, 20.0);
  
   tbb::task_scheduler_init init;
   t0 = tbb::tick_count::now();
