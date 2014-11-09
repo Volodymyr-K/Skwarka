@@ -29,6 +29,7 @@
 * The MIP-map (multum in parvo, meaning "much in a small space") is basically a collection of copies of an original image
 * with each copy being two times smaller than the previous one (in each dimension).
 * The MIP-map supports trilinear filtering which is an isotropic filter and anisotropic filtering (EWA filter).
+* The implementation supports non-power-of-two image size.
 *
 * The template parameter corresponds to the values type.
 */
@@ -101,19 +102,9 @@ class MIPMap: public ReferenceCounted
     T _EWA(size_t i_level, Point2D_d i_point, Vector2D_d i_dxy_1, Vector2D_d i_dxy_2) const;
 
     /**
-    * Private method that resamples original input image so that its width and height are both powers of 2.
-    */
-    BlockedArray<T> * _ResampleImage(const std::vector<std::vector<T>> &i_values) const;
-
-    /**
     * Private method that computes EWA filter weights. This method is called once in the constructor.
     */
     void _InitializeEWA();
-
-    /**
-    * Private method that computes resampling weights used for image resampling.
-    */
-    std::vector<ResampleWeight> _ComputeResampleWeights(size_t i_old_size, size_t i_new_size) const;
 
   private:
     size_t m_width, m_height, m_num_levels;
@@ -133,17 +124,6 @@ class MIPMap: public ReferenceCounted
 
 /////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-/**
-* A private inner structure that contains resampling weights.
-* Each new sample is computed as a weighted sum of four consecutive original samples.
-*/
-template <typename T>
-struct MIPMap<T>::ResampleWeight
-  {
-  int m_first_texel;
-  double m_weights[4];
-  };
 
 template <typename T>
 MIPMap<T>::MIPMap(const std::vector<std::vector<T>> &i_values, bool i_repeat, double i_max_anisotropy):
@@ -168,55 +148,69 @@ void MIPMap<T>::_Initialize(const std::vector<std::vector<T>> &i_values, double 
   ASSERT(i_max_anisotropy>=1.0);
   m_max_anisotropy = std::max(i_max_anisotropy, 1.0);
 
-  // Resample original image so that its width and height are both powers of 2.
-  BlockedArray<T> *p_resampled_image = _ResampleImage(i_values);
+  size_t size_x = i_values[0].size(), size_y = i_values.size();
+  m_height = size_y;
+  m_width = size_x;
 
-  m_height = p_resampled_image->GetSizeU();
-  m_width = p_resampled_image->GetSizeV();
+  BlockedArray<T> *p_image = new BlockedArray<T>(size_y, size_x);
+  for (size_t y=0; y<size_y; ++y)
+    for (size_t x=0; x<size_x; ++x)
+      p_image->Get(y, x) = i_values[y][x];
 
-  m_num_levels = MathRoutines::FloorLog2( (unsigned int)std::max(m_width,m_height) )+1;
-  ASSERT(m_num_levels>0);
-
-  m_levels.push_back(p_resampled_image);
-  for(size_t level=1;level<m_num_levels;++level)
+  m_levels.push_back(p_image);
+  for(size_t level=1;size_y>1 || size_x>1;++level)
     {
-    size_t size_y = std::max(m_levels.back()->GetSizeU()/2, (size_t)1);
-    size_t size_x = std::max(m_levels.back()->GetSizeV()/2, (size_t)1);
+    size_t prev_size_x = size_x, prev_size_y = size_y;
+    double inv_prev_size_x = 1.0/prev_size_x, inv_prev_size_y = 1.0/prev_size_y;
 
-    // Each sample for a layer is computed as an average of four samples from the previous layer.
+    // The size of the new level is the ceiling of the half-size of the previous layer
+    size_y = (prev_size_y+1)/2;
+    size_x = (prev_size_x+1)/2;
+
+    // Each sample for a layer is computed as a weighted average of nine samples from the previous layer.
     const BlockedArray<T> *p_previous_level = m_levels[level-1];
     BlockedArray<T> *p_level = new BlockedArray<T>(size_y, size_x);
-    for (size_t y=0;y<size_y;++y)
-      for (size_t x=0;x<size_x;++x)
+
+    // Set default weights for the case when the old size is even.
+    double y_weights[3] = { 0.0, 0.5, 0.5 }, x_weights[3] = { 0.0, 0.5, 0.5 };
+    for (size_t y=0; y<size_y; ++y)
+      {
+      // If the old size is odd, use polyphase filter weights (as described by Stefan Guthe and Paul Heckbert 2003).
+      if (prev_size_y&1)
         {
-        T sum = p_previous_level->Get(2*y, 2*x);
-        size_t texels = 1;
-
-        // We need to be careful when either width or height of a previous layer is equal to one.
-        if (2*x+1<p_previous_level->GetSizeV())
-          {
-          sum += p_previous_level->Get(2*y, 2*x+1);
-          ++texels;
-          }
-
-        if (2*y+1<p_previous_level->GetSizeU())
-          {
-          sum += p_previous_level->Get(2*y+1, 2*x);
-          ++texels;
-          }
-
-        if (2*x+1<p_previous_level->GetSizeV() && 2*y+1<p_previous_level->GetSizeU())
-          {
-          sum += p_previous_level->Get(2*y+1, 2*x+1);
-          ++texels;
-          }
-
-        p_level->Get(y,x) = sum / texels;
+        y_weights[0] = y * inv_prev_size_y;
+        y_weights[1] = size_y * inv_prev_size_y;
+        y_weights[2] = (size_y-y-1) * inv_prev_size_y;
         }
+
+      for (size_t x=0; x<size_x; ++x)
+        {
+        if (prev_size_x&1)
+          {
+          x_weights[0] = x * inv_prev_size_x;
+          x_weights[1] = size_x * inv_prev_size_x;
+          x_weights[2] = (size_x-x-1) * inv_prev_size_x;
+          }
+
+        T sum = T();
+        double weights_sum = 0.0; // used only for verification in debug mode
+        for (int dy = -1; dy <= 1; ++dy) if (2*y+dy>=0 && 2*y+dy<prev_size_y)
+          for (int dx = -1; dx <= 1; ++dx) if (2*x+dx>=0 && 2*x+dx<prev_size_x)
+            {
+            double weight = y_weights[1+dy]*x_weights[1+dx];
+            sum += static_cast<T>(p_previous_level->Get(2*y+dy, 2*x+dx) * weight);
+            weights_sum += weight;
+            }
+
+        ASSERT(fabs(weights_sum-1.0) < (1e-10));
+        p_level->Get(y, x) = sum;
+        }
+      }
 
     m_levels.push_back(p_level);
     }
 
+  m_num_levels = m_levels.size();
   _InitializeEWA();
   }
 
@@ -225,96 +219,6 @@ MIPMap<T>::~MIPMap()
   {
   for(size_t i=0;i<m_levels.size();++i)
     delete m_levels[i];
-  }
-
-template <typename T>
-BlockedArray<T> *MIPMap<T>::_ResampleImage(const std::vector<std::vector<T>> &i_values) const
-  {
-  ASSERT(i_values.size()>0 && i_values[0].size()>0);
-
-  size_t size_x = i_values[0].size(), size_y = i_values.size();
-  for(size_t i=1;i<size_y;++i) ASSERT(i_values[i].size() == i_values[0].size());
-
-  // Compute new width and height.
-  size_t rounded_size_x = MathRoutines::RoundUpPow2((unsigned int)size_x), rounded_size_y = MathRoutines::RoundUpPow2((unsigned int)size_y);
-  BlockedArray<T> *p_array = new BlockedArray<T>(rounded_size_y, rounded_size_x);
-
-  if (size_x==rounded_size_x && size_y==rounded_size_y)
-    {
-    for (size_t y=0;y<size_y;++y)
-      for (size_t x=0;x<size_x;++x)
-        p_array->Get(y,x) = i_values[y][x];
-
-    return p_array;
-    }
-
-  // First, we resample the image in X dimension (width). We can resample the dimensions separately because the used filter (Lanczos) is separable.
-  std::vector<ResampleWeight> weights = _ComputeResampleWeights(size_x, rounded_size_x);
-
-  // Run the outer loop in multiple threads, let the TBB parallelize it.
-  tbb::parallel_for(size_t(0), size_y, [&](size_t y)
-    {
-    for (size_t x = 0; x<rounded_size_x; ++x)
-      {
-      double weigths_sum = 0.0;
-      T value_sum = (T)0;
-
-      for (unsigned char j = 0; j < 4; ++j)
-        {
-        int original_x = weights[x].m_first_texel + j;
-        if (m_repeat)
-          original_x = MathRoutines::Mod<int>(original_x, (int)size_x);
-
-        if (original_x >= 0 && original_x < (int)size_x)
-          {
-          double weight = weights[x].m_weights[j];
-          weigths_sum += weights[x].m_weights[j];
-          value_sum += static_cast<T>(weight * i_values[y][original_x]);
-          }
-        }
-
-      // Normalize filter weights for texel resampling.
-      ASSERT(weigths_sum > 0.0);
-      p_array->Get(y, x) = static_cast<T>(value_sum/weigths_sum);
-      }
-    });
-    
-  // Now, we resample the image in Y dimension (height).
-  weights = _ComputeResampleWeights(size_y, rounded_size_y);
-  
-  // Run the outer loop in multiple threads, let the TBB parallelize it.
-  tbb::parallel_for(size_t(0), rounded_size_x, [&](size_t x)
-    {
-    std::vector<T> tmp(rounded_size_y);
-    for (size_t y = 0; y<rounded_size_y; ++y)
-      {
-      double weigths_sum = 0.0;
-      T value_sum = (T)0;
-
-      for (unsigned char j = 0; j < 4; ++j)
-        {
-        int original_y = weights[y].m_first_texel + j;
-        if (m_repeat)
-          original_y = MathRoutines::Mod<int>(original_y, (int)size_y);
-
-        if (original_y >= 0 && original_y < (int)size_y)
-          {
-          double weight = weights[y].m_weights[j];
-          weigths_sum += weight;
-          value_sum += static_cast<T>(weight * p_array->Get(original_y, x));
-          }
-        }
-
-      // Normalize filter weights for texel resampling.
-      ASSERT(weigths_sum > 0.0);
-      tmp[y] = static_cast<T>(value_sum/weigths_sum);
-      }
-
-    for (size_t y = 0; y<rounded_size_y; ++y)
-      p_array->Get(y, x) = tmp[y];
-    });
-
-  return p_array;
   }
 
 template <typename T>
@@ -331,37 +235,6 @@ void MIPMap<T>::_InitializeEWA()
   }
 
 template <typename T>
-std::vector<typename MIPMap<T>::ResampleWeight> MIPMap<T>::_ComputeResampleWeights(size_t i_old_size, size_t i_new_size) const
-  {
-  ASSERT(i_new_size >= i_old_size);
-
-  double filter_width = 2.0;
-  std::vector<ResampleWeight> weights(i_new_size);
-
-  if (i_old_size==i_new_size)
-    for (size_t i=0;i<i_new_size;++i)
-      {
-      weights[i].m_first_texel = (int)i;
-      weights[i].m_weights[0] = 1.0;
-      weights[i].m_weights[1] = weights[i].m_weights[2] = weights[i].m_weights[3] = 0.0;
-      }
-  else
-    for (size_t i=0;i<i_new_size;++i)
-      {
-      // Compute image resampling weights for i-th texel.
-      double center = (i + 0.5) * i_old_size / i_new_size;
-      weights[i].m_first_texel = (int)floor((center - filter_width) + 0.5);
-      for (unsigned char j=0;j<4;++j)
-        {
-        double pos = weights[i].m_first_texel + j + 0.5;
-        weights[i].m_weights[j] = SamplingRoutines::Lanczos((pos - center) / filter_width, 2.0);
-        }
-      }
-
-  return weights;
-  }
-
-template <typename T>
 const T &MIPMap<T>::_GetTexel(size_t i_level, int i_x, int i_y) const
   {
   ASSERT(i_level < m_num_levels);
@@ -370,15 +243,8 @@ const T &MIPMap<T>::_GetTexel(size_t i_level, int i_x, int i_y) const
 
   if (m_repeat)
     {
-    // Doing the MOD operation in the smart way by utilizing the fact that the size is always a power of.
-    // Should work correctly when i_x and i_y are negative too.
-
-    // Check first, just in case...
-    ASSERT((i_y & (level.GetSizeU()-1)) == MathRoutines::Mod(i_y, (int)level.GetSizeU()));
-    ASSERT((i_x & (level.GetSizeV()-1)) == MathRoutines::Mod(i_x, (int)level.GetSizeV()));
-
-    i_y &= level.GetSizeU()-1;
-    i_x &= level.GetSizeV()-1;
+    i_y = MathRoutines::Mod(i_y, (int)level.GetSizeU());
+    i_x = MathRoutines::Mod(i_x, (int)level.GetSizeV());
     }
   else
     if (i_y<0 || i_y>=(int)level.GetSizeU() || i_x<0 || i_x>=(int)level.GetSizeV())
