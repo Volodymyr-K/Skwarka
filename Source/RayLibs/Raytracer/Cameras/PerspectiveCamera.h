@@ -54,18 +54,6 @@ class PerspectiveCamera: public Camera
     double GetXViewAngle() const;
 
   private:
-    PerspectiveCamera() {}; // Empty default constructor for the boost serialization framework.
-
-    // Needed for the boost serialization framework.  
-    friend class boost::serialization::access;
-
-    /**
-    * Serializes to/from the specified Archive. This method is used by the boost serialization framework.
-    */
-    template<class Archive>
-    void serialize(Archive &i_ar, const unsigned int i_version);
-
-  private:
     double m_lens_radius;
     double m_focal_distance;
     double m_x_view_angle;
@@ -74,24 +62,5 @@ class PerspectiveCamera: public Camera
 
     size_t m_film_x_resolution, m_film_y_resolution;
   };
-
-/////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-template<class Archive>
-void PerspectiveCamera::serialize(Archive &i_ar, const unsigned int i_version)
-  {
-  i_ar & boost::serialization::base_object<Camera>(*this);
-  i_ar & m_lens_radius;
-  i_ar & m_focal_distance;
-  i_ar & m_x_view_angle;
-  i_ar & m_x_tan;
-  i_ar & m_y_tan;
-  i_ar & m_film_x_resolution;
-  i_ar & m_film_y_resolution;
-  }
-
-// Register the derived class in the boost serialization framework.
-BOOST_CLASS_EXPORT_KEY(PerspectiveCamera)
 
 #endif // PERSPECTIVE_CAMERA_H

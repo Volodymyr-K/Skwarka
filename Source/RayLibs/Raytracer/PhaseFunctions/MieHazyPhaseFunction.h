@@ -42,16 +42,4 @@ inline double MieHazyPhaseFunction::ScatteringPDF(const Vector3D_d &i_incoming, 
   return (0.50 + 4.50 * pow(0.5 * (1.0 + costheta), 8.0)) / (4.0*M_PI);
   }
 
-/**
-* Serializes MieHazyPhaseFunction to/from the specified Archive. This method is used by the boost serialization framework.
-*/
-template<class Archive>
-void serialize(Archive &i_ar, MieHazyPhaseFunction &i_phase_function, const unsigned int i_version)
-  {
-  i_ar & boost::serialization::base_object<PhaseFunction>(i_phase_function);
-  }
-
-// Register the derived class in the boost serialization framework.
-BOOST_CLASS_EXPORT_KEY(MieHazyPhaseFunction)
-
 #endif // MIE_HAZY_PHASE_FUNCTION_H

@@ -19,6 +19,7 @@
 #include "DifferentialGeometry.h"
 #include "Intersection.h"
 #include <windows.h>
+#include <algorithm>
 
 /**
 * This namespace contains helper routines for the raytracer core.

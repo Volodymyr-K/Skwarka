@@ -68,19 +68,7 @@ class MERLMeasuredData: public ReferenceCounted
     class Segmentation2D;
 
   private:
-    MERLMeasuredData() {}; // Empty default constructor for the boost serialization framework.
-
     void _InitializeSegmentations();
-
-  private:
-    // Needed for the boost serialization framework.  
-    friend class boost::serialization::access;
-
-    /**
-    * Serializes MERLMeasuredData to/from the specified Archive. This method is used by the boost serialization framework.
-    */
-    template<class Archive>
-    void serialize(Archive &i_ar, const unsigned int i_version);
 
   private:
     // The three values below define the resolution of the MERL BRDF data and are defined by the format. Don't change them.
@@ -204,18 +192,6 @@ class MERLMeasuredData::Segmentation2D
     std::vector<size_t> _Reduce(std::vector<float> i_values, size_t i_size) const;
 
   private:
-    Segmentation2D() {}; // Empty default constructor for the boost serialization framework.
-
-    // Needed for the boost serialization framework.  
-    friend class boost::serialization::access;
-
-    /**
-    * Serializes Segmentation2D to/from the specified Archive. This method is used by the boost serialization framework.
-    */
-    template<class Archive>
-    void serialize(Archive &i_ar, const unsigned int i_version);
-
-  private:
     // Define grid of the domain subdivision.
     std::vector<float> m_grid_X, m_grid_Y;
 
@@ -225,24 +201,5 @@ class MERLMeasuredData::Segmentation2D
     // Array of CDF functions for sampling the columns (phi values).
     float m_CDF_cols[SEGMENTATION_EXITANT_THETA_RES][SEGMENTATION_EXITANT_PHI_RES];
   };
-
-template<class Archive>
-void MERLMeasuredData::Segmentation2D::serialize(Archive &i_ar, const unsigned int i_version)
-  {
-  i_ar & m_grid_X;
-  i_ar & m_grid_Y;
-  i_ar & m_CDF_rows;
-  i_ar & m_CDF_cols;
-  }
-
-////////////////////////////////////////// MERLMeasuredData ///////////////////////////////////////////////
-
-template<class Archive>
-void MERLMeasuredData::serialize(Archive &i_ar, const unsigned int i_version)
-  {
-  i_ar & boost::serialization::base_object<ReferenceCounted>(*this);
-  i_ar & m_brdf_data;
-  i_ar & m_segmentations;
-  }
 
 #endif // MERL_MEASURED_H

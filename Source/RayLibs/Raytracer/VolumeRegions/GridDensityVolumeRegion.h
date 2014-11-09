@@ -54,18 +54,6 @@ class GridDensityVolumeRegion: public DensityVolumeRegion
     double _Density(const Point3D_d &i_point) const;
 
   private:
-    GridDensityVolumeRegion() {}; // Empty default constructor for the boost serialization framework.
-
-    // Needed for the boost serialization framework.  
-    friend class boost::serialization::access;
-
-    /**
-    * Serializes to/from the specified Archive. This method is used by the boost serialization framework.
-    */
-    template<class Archive>
-    void serialize(Archive &i_ar, const unsigned int i_version);
-
-  private:
     BBox3D_d m_bounds;
     double m_inv_extent_x, m_inv_extent_y, m_inv_extent_z;
 
@@ -73,25 +61,5 @@ class GridDensityVolumeRegion: public DensityVolumeRegion
 
     std::vector<std::vector<std::vector<float>>> m_densities;
   };
-
-/////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-template<class Archive>
-void GridDensityVolumeRegion::serialize(Archive &i_ar, const unsigned int i_version)
-  {
-  i_ar & boost::serialization::base_object<DensityVolumeRegion>(*this);
-  i_ar & m_bounds;
-  i_ar & m_inv_extent_x;
-  i_ar & m_inv_extent_y;
-  i_ar & m_inv_extent_z;
-  i_ar & m_size_x;
-  i_ar & m_size_y;
-  i_ar & m_size_z;
-  i_ar & m_densities;
-  }
-
-// Register the derived class in the boost serialization framework.
-BOOST_CLASS_EXPORT_KEY(GridDensityVolumeRegion)
 
 #endif // GRID_DENSITY_VOLUME_REGION_H

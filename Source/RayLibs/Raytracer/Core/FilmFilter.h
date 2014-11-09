@@ -46,18 +46,6 @@ class FilmFilter: public ReferenceCounted
   protected:
     FilmFilter(double i_x_width, double i_y_width);
 
-    FilmFilter() {} // Empty default constructor for the boost serialization framework.
-
-  private:
-    // Needed for the boost serialization framework.  
-    friend class boost::serialization::access;
-
-    /**
-    * Serializes to/from the specified Archive. This method is used by the boost serialization framework.
-    */
-    template<class Archive>
-    void serialize(Archive &i_ar, const unsigned int i_version);
-
   private:
     // Not implemented, not a value type.
     FilmFilter(const FilmFilter&);
@@ -66,16 +54,5 @@ class FilmFilter: public ReferenceCounted
   private:
     double m_x_width, m_y_width;
   };
-
-/////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-template<class Archive>
-void FilmFilter::serialize(Archive &i_ar, const unsigned int i_version)
-  {
-  i_ar & boost::serialization::base_object<ReferenceCounted>(*this);
-  i_ar & m_x_width;
-  i_ar & m_y_width;
-  }
 
 #endif // FILM_FILTER_H

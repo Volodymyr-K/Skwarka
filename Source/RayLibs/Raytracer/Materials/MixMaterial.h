@@ -52,36 +52,9 @@ class MixMaterial: public Material
     virtual const BSDF *GetBSDF(const DifferentialGeometry &i_dg, size_t i_triangle_index, MemoryPool &i_pool) const;
 
   private:
-    MixMaterial() {}; // Empty default constructor for the boost serialization framework.
-
-    // Needed for the boost serialization framework.  
-    friend class boost::serialization::access;
-
-    /**
-    * Serializes to/from the specified Archive. This method is used by the boost serialization framework.
-    */
-    template<class Archive>
-    void serialize(Archive &i_ar, const unsigned int i_version);
-
-  private:
     intrusive_ptr<const Material> mp_material1, mp_material2;
 
     intrusive_ptr<const Texture<SpectrumCoef_d>> mp_scale;
   };
-
-/////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-template<class Archive>
-void MixMaterial::serialize(Archive &i_ar, const unsigned int i_version)
-  {
-  i_ar & boost::serialization::base_object<Material>(*this);
-  i_ar & mp_material1;
-  i_ar & mp_material2;
-  i_ar & mp_scale;
-  }
-
-// Register the derived class in the boost serialization framework.
-BOOST_CLASS_EXPORT_KEY(MixMaterial)
 
 #endif // MIX_MATERIAL_H

@@ -68,18 +68,6 @@ class RGBImageSource: public ImageSource<T>
     T _XYZ_To_T(const XYZColor_d &i_color) const;
 
   private:
-    RGBImageSource() {}; // Empty default constructor for the boost serialization framework.
-
-    // Needed for the boost serialization framework.  
-    friend class boost::serialization::access;
-
-    /**
-    * Serializes to/from the specified Archive. This method is used by the boost serialization framework.
-    */
-    template<class Archive>
-    void serialize(Archive &i_ar, const unsigned int i_version);
-
-  private:
     std::vector<std::vector<RGBColor_f>> m_values;
 
     ColorSystem m_color_system;
@@ -177,34 +165,5 @@ inline SpectrumCoef_d RGBImageSource<SpectrumCoef_d>::_XYZ_To_T(const XYZColor_d
   {
   return SpectrumRoutines::XYZToSpectrumCoef(i_color);
   }
-
-template<typename T>
-template<class Archive>
-void RGBImageSource<T>::serialize(Archive &i_ar, const unsigned int i_version)
-  {
-  i_ar & boost::serialization::base_object<ImageSource<T>>(*this);
-
-  i_ar & m_values;
-  i_ar & m_scale;
-  i_ar & m_color_system;
-  }
-
-// The following code exports different specializations of the RGBImageSource template in the boost serialization framework.
-// If you need to serialize a new specialization you have to add it here.
-typedef RGBImageSource<float> RGBImageSource_float;
-typedef RGBImageSource<double> RGBImageSource_double;
-
-typedef RGBImageSource<Spectrum_f> RGBImageSource_Spectrum_float;
-typedef RGBImageSource<Spectrum_d> RGBImageSource_Spectrum_double;
-
-typedef RGBImageSource<SpectrumCoef_f> RGBImageSource_SpectrumCoef_float;
-typedef RGBImageSource<SpectrumCoef_d> RGBImageSource_SpectrumCoef_double;
-
-BOOST_CLASS_EXPORT_KEY(RGBImageSource_float)
-BOOST_CLASS_EXPORT_KEY(RGBImageSource_double)
-BOOST_CLASS_EXPORT_KEY(RGBImageSource_Spectrum_float)
-BOOST_CLASS_EXPORT_KEY(RGBImageSource_Spectrum_double)
-BOOST_CLASS_EXPORT_KEY(RGBImageSource_SpectrumCoef_float)
-BOOST_CLASS_EXPORT_KEY(RGBImageSource_SpectrumCoef_double)
 
 #endif // RGB_SPECTRUM_IMAGE_SOURCE_H

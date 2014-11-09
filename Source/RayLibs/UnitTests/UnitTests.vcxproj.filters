@@ -76,54 +76,6 @@
     <Filter Include="TestHelpers">
       <UniqueIdentifier>{831aaad1-960f-46bd-9924-4089247203ea}</UniqueIdentifier>
     </Filter>
-    <Filter Include="SerializationTests">
-      <UniqueIdentifier>{f0fce75f-594b-4b29-98e8-72cb22c54c5f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="SerializationTests\Common">
-      <UniqueIdentifier>{6e2537ad-4f15-4ac2-b328-e4305f56e64f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="SerializationTests\Math">
-      <UniqueIdentifier>{ec686d2e-1166-4e08-924d-4007d596d4d4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="SerializationTests\Raytracer">
-      <UniqueIdentifier>{4df4bc9d-40d4-417a-b57e-26a015286a8d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="SerializationTests\Raytracer\FilmFilters">
-      <UniqueIdentifier>{63cb0009-c883-4a36-815a-e355bfd4f1ff}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="SerializationTests\Raytracer\Films">
-      <UniqueIdentifier>{e8413ae5-4192-470c-959a-c2b70ef28db1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="SerializationTests\Raytracer\Core">
-      <UniqueIdentifier>{b264110d-2e7a-43b7-bfaa-f05c5fcde53d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="SerializationTests\Raytracer\Cameras">
-      <UniqueIdentifier>{4fc0f4b9-786e-43be-ad7e-d8d1284617f0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="SerializationTests\Raytracer\Mappings">
-      <UniqueIdentifier>{3cb6a2a7-9d1e-4433-86c3-6bdfe0680478}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="SerializationTests\Raytracer\Textures">
-      <UniqueIdentifier>{797e88c8-4436-4332-8e01-5cbdcdb9a81a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="SerializationTests\Raytracer\Materials">
-      <UniqueIdentifier>{c3049b32-80fb-4206-b299-c46955816fef}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="SerializationTests\Raytracer\LightSources">
-      <UniqueIdentifier>{e3056e7b-c9ec-44f9-8602-f3adbb3e6d25}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="SerializationTests\Raytracer\VolumeRegions">
-      <UniqueIdentifier>{7dbca713-7126-4547-99a0-bb1f35e4567f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="SerializationTests\Raytracer\ImageSources">
-      <UniqueIdentifier>{f498e2cf-2fb7-430e-82e0-a8c2c9c6bf4e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="SerializationTests\Raytracer\BxDFs">
-      <UniqueIdentifier>{364d169f-544b-47b6-9079-a016413a2523}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="SerializationTests\Raytracer\PhaseFunctions">
-      <UniqueIdentifier>{5f4287bb-a45d-4f89-b057-06caf2d2d91b}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="Mocks\BxDFMock.h">
@@ -459,177 +411,12 @@
     <CxxTest Include="MainTests\Shapes\Disk.test.h">
       <Filter>MainTests\Shapes</Filter>
     </CxxTest>
-    <CxxTest Include="SerializationTests\Raytracer\VolumeRegions\HomogeneousVolumeRegion.Serialization.test.h">
-      <Filter>SerializationTests\Raytracer\VolumeRegions</Filter>
-    </CxxTest>
-    <CxxTest Include="SerializationTests\Common\IntrusiveSmartPointer.Serialization.test.h">
-      <Filter>SerializationTests\Common</Filter>
-    </CxxTest>
-    <CxxTest Include="SerializationTests\Math\BBox3D.Serialization.test.h">
-      <Filter>SerializationTests\Math</Filter>
-    </CxxTest>
-    <CxxTest Include="SerializationTests\Math\BlockedArray.Serialization.test.h">
-      <Filter>SerializationTests\Math</Filter>
-    </CxxTest>
-    <CxxTest Include="SerializationTests\Math\CompressedDirection.Serialization.test.h">
-      <Filter>SerializationTests\Math</Filter>
-    </CxxTest>
-    <CxxTest Include="SerializationTests\Math\Matrix3x3.Serialization.test.h">
-      <Filter>SerializationTests\Math</Filter>
-    </CxxTest>
-    <CxxTest Include="SerializationTests\Math\Matrix4x4.Serialization.test.h">
-      <Filter>SerializationTests\Math</Filter>
-    </CxxTest>
-    <CxxTest Include="SerializationTests\Math\Point2D.Serialization.test.h">
-      <Filter>SerializationTests\Math</Filter>
-    </CxxTest>
-    <CxxTest Include="SerializationTests\Math\Point3D.Serialization.test.h">
-      <Filter>SerializationTests\Math</Filter>
-    </CxxTest>
-    <CxxTest Include="SerializationTests\Math\Ray.Serialization.test.h">
-      <Filter>SerializationTests\Math</Filter>
-    </CxxTest>
-    <CxxTest Include="SerializationTests\Math\Transform.Serialization.test.h">
-      <Filter>SerializationTests\Math</Filter>
-    </CxxTest>
-    <CxxTest Include="SerializationTests\Math\Triangle3D.Serialization.test.h">
-      <Filter>SerializationTests\Math</Filter>
-    </CxxTest>
-    <CxxTest Include="SerializationTests\Math\Vector2D.Serialization.test.h">
-      <Filter>SerializationTests\Math</Filter>
-    </CxxTest>
-    <CxxTest Include="SerializationTests\Math\Vector3D.Serialization.test.h">
-      <Filter>SerializationTests\Math</Filter>
-    </CxxTest>
-    <CxxTest Include="SerializationTests\Raytracer\BxDFs\MERLMeasuredData.Serialization.test.h">
-      <Filter>SerializationTests\Raytracer\BxDFs</Filter>
-    </CxxTest>
-    <CxxTest Include="SerializationTests\Raytracer\Cameras\PerspectiveCamera.Serialization.test.h">
-      <Filter>SerializationTests\Raytracer\Cameras</Filter>
-    </CxxTest>
-    <CxxTest Include="SerializationTests\Raytracer\Core\Color.Serialization.test.h">
-      <Filter>SerializationTests\Raytracer\Core</Filter>
-    </CxxTest>
-    <CxxTest Include="SerializationTests\Raytracer\Core\MIPMap.Serialization.test.h">
-      <Filter>SerializationTests\Raytracer\Core</Filter>
-    </CxxTest>
-    <CxxTest Include="SerializationTests\Raytracer\Core\Primitive.Serialization.test.h">
-      <Filter>SerializationTests\Raytracer\Core</Filter>
-    </CxxTest>
-    <CxxTest Include="SerializationTests\Raytracer\Core\Scene.Serialization.test.h">
-      <Filter>SerializationTests\Raytracer\Core</Filter>
-    </CxxTest>
-    <CxxTest Include="SerializationTests\Raytracer\Core\Spectrum.Serialization.test.h">
-      <Filter>SerializationTests\Raytracer\Core</Filter>
-    </CxxTest>
-    <CxxTest Include="SerializationTests\Raytracer\Core\SpectrumCoef.Serialization.test.h">
-      <Filter>SerializationTests\Raytracer\Core</Filter>
-    </CxxTest>
-    <CxxTest Include="SerializationTests\Raytracer\Core\TriangleMesh.Serialization.test.h">
-      <Filter>SerializationTests\Raytracer\Core</Filter>
-    </CxxTest>
-    <CxxTest Include="SerializationTests\Raytracer\FilmFilters\BoxFilter.Serialization.test.h">
-      <Filter>SerializationTests\Raytracer\FilmFilters</Filter>
-    </CxxTest>
-    <CxxTest Include="SerializationTests\Raytracer\FilmFilters\MitchellFilter.Serialization.test.h">
-      <Filter>SerializationTests\Raytracer\FilmFilters</Filter>
-    </CxxTest>
-    <CxxTest Include="SerializationTests\Raytracer\Films\ImageFilm.Serialization.test.h">
-      <Filter>SerializationTests\Raytracer\Films</Filter>
-    </CxxTest>
-    <CxxTest Include="SerializationTests\Raytracer\Films\InteractiveFilm.Serialization.test.h">
-      <Filter>SerializationTests\Raytracer\Films</Filter>
-    </CxxTest>
-    <CxxTest Include="SerializationTests\Raytracer\ImageSources\OpenEXRRgbaImageSource.Serialization.test.h">
-      <Filter>SerializationTests\Raytracer\ImageSources</Filter>
-    </CxxTest>
-    <CxxTest Include="SerializationTests\Raytracer\ImageSources\RGBImageSource.Serialization.test.h">
-      <Filter>SerializationTests\Raytracer\ImageSources</Filter>
-    </CxxTest>
-    <CxxTest Include="SerializationTests\Raytracer\LightSources\DiffuseAreaLightSource.Serialization.test.h">
-      <Filter>SerializationTests\Raytracer\LightSources</Filter>
-    </CxxTest>
-    <CxxTest Include="SerializationTests\Raytracer\LightSources\ImageEnvironmentalLight.Serialization.test.h">
-      <Filter>SerializationTests\Raytracer\LightSources</Filter>
-    </CxxTest>
-    <CxxTest Include="SerializationTests\Raytracer\LightSources\ParallelLight.Serialization.test.h">
-      <Filter>SerializationTests\Raytracer\LightSources</Filter>
-    </CxxTest>
-    <CxxTest Include="SerializationTests\Raytracer\LightSources\PointLight.Serialization.test.h">
-      <Filter>SerializationTests\Raytracer\LightSources</Filter>
-    </CxxTest>
-    <CxxTest Include="SerializationTests\Raytracer\LightSources\SpotPointLight.Serialization.test.h">
-      <Filter>SerializationTests\Raytracer\LightSources</Filter>
-    </CxxTest>
-    <CxxTest Include="SerializationTests\Raytracer\Mappings\SphericalMapping2D.Serialization.test.h">
-      <Filter>SerializationTests\Raytracer\Mappings</Filter>
-    </CxxTest>
-    <CxxTest Include="SerializationTests\Raytracer\Mappings\TransformMapping3D.Serialization.test.h">
-      <Filter>SerializationTests\Raytracer\Mappings</Filter>
-    </CxxTest>
-    <CxxTest Include="SerializationTests\Raytracer\Mappings\UVMapping2D.Serialization.test.h">
-      <Filter>SerializationTests\Raytracer\Mappings</Filter>
-    </CxxTest>
-    <CxxTest Include="SerializationTests\Raytracer\Materials\MatteMaterial.Serialization.test.h">
-      <Filter>SerializationTests\Raytracer\Materials</Filter>
-    </CxxTest>
-    <CxxTest Include="SerializationTests\Raytracer\Materials\MERLMeasuredMaterial.Serialization.test.h">
-      <Filter>SerializationTests\Raytracer\Materials</Filter>
-    </CxxTest>
-    <CxxTest Include="SerializationTests\Raytracer\Materials\MetalMaterial.Serialization.test.h">
-      <Filter>SerializationTests\Raytracer\Materials</Filter>
-    </CxxTest>
-    <CxxTest Include="SerializationTests\Raytracer\Materials\MixMaterial.Serialization.test.h">
-      <Filter>SerializationTests\Raytracer\Materials</Filter>
-    </CxxTest>
-    <CxxTest Include="SerializationTests\Raytracer\Materials\PlasticMaterial.Serialization.test.h">
-      <Filter>SerializationTests\Raytracer\Materials</Filter>
-    </CxxTest>
-    <CxxTest Include="SerializationTests\Raytracer\Materials\SubstrateMaterial.Serialization.test.h">
-      <Filter>SerializationTests\Raytracer\Materials</Filter>
-    </CxxTest>
-    <CxxTest Include="SerializationTests\Raytracer\Materials\TransparentMaterial.Serialization.test.h">
-      <Filter>SerializationTests\Raytracer\Materials</Filter>
-    </CxxTest>
-    <CxxTest Include="SerializationTests\Raytracer\Materials\UberMaterial.Serialization.test.h">
-      <Filter>SerializationTests\Raytracer\Materials</Filter>
-    </CxxTest>
-    <CxxTest Include="SerializationTests\Raytracer\PhaseFunctions\HGPhaseFunction.Serialization.test.h">
-      <Filter>SerializationTests\Raytracer\PhaseFunctions</Filter>
-    </CxxTest>
-    <CxxTest Include="SerializationTests\Raytracer\Textures\ConstantTexture.Serialization.test.h">
-      <Filter>SerializationTests\Raytracer\Textures</Filter>
-    </CxxTest>
-    <CxxTest Include="SerializationTests\Raytracer\Textures\ImageTexture.Serialization.test.h">
-      <Filter>SerializationTests\Raytracer\Textures</Filter>
-    </CxxTest>
-    <CxxTest Include="SerializationTests\Raytracer\Textures\ScaleTexture.Serialization.test.h">
-      <Filter>SerializationTests\Raytracer\Textures</Filter>
-    </CxxTest>
-    <CxxTest Include="SerializationTests\Raytracer\Textures\WindyTexture.Serialization.test.h">
-      <Filter>SerializationTests\Raytracer\Textures</Filter>
-    </CxxTest>
-    <CxxTest Include="SerializationTests\Raytracer\VolumeRegions\AggregateVolumeRegion.Serialization.test.h">
-      <Filter>SerializationTests\Raytracer\VolumeRegions</Filter>
-    </CxxTest>
-    <CxxTest Include="SerializationTests\Raytracer\VolumeRegions\GridDensityVolumeRegion.Serialization.test.h">
-      <Filter>SerializationTests\Raytracer\VolumeRegions</Filter>
-    </CxxTest>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Runner.test.cpp">
-      <Filter>AutoGeneratedCode</Filter>
-    </ClCompile>
-    <ClCompile Include="AggregateVolumeRegion.Serialization.test.cpp">
-      <Filter>AutoGeneratedCode</Filter>
-    </ClCompile>
     <ClCompile Include="AggregateVolumeRegion.test.cpp">
       <Filter>AutoGeneratedCode</Filter>
     </ClCompile>
     <ClCompile Include="AnisotropicDistribution.test.cpp">
-      <Filter>AutoGeneratedCode</Filter>
-    </ClCompile>
-    <ClCompile Include="BBox3D.Serialization.test.cpp">
       <Filter>AutoGeneratedCode</Filter>
     </ClCompile>
     <ClCompile Include="BBox3D.test.cpp">
@@ -638,13 +425,7 @@
     <ClCompile Include="BlinnDistribution.test.cpp">
       <Filter>AutoGeneratedCode</Filter>
     </ClCompile>
-    <ClCompile Include="BlockedArray.Serialization.test.cpp">
-      <Filter>AutoGeneratedCode</Filter>
-    </ClCompile>
     <ClCompile Include="BlockedArray.test.cpp">
-      <Filter>AutoGeneratedCode</Filter>
-    </ClCompile>
-    <ClCompile Include="BoxFilter.Serialization.test.cpp">
       <Filter>AutoGeneratedCode</Filter>
     </ClCompile>
     <ClCompile Include="BoxFilter.test.cpp">
@@ -659,22 +440,13 @@
     <ClCompile Include="Camera.test.cpp">
       <Filter>AutoGeneratedCode</Filter>
     </ClCompile>
-    <ClCompile Include="Color.Serialization.test.cpp">
-      <Filter>AutoGeneratedCode</Filter>
-    </ClCompile>
     <ClCompile Include="Color.test.cpp">
-      <Filter>AutoGeneratedCode</Filter>
-    </ClCompile>
-    <ClCompile Include="CompressedDirection.Serialization.test.cpp">
       <Filter>AutoGeneratedCode</Filter>
     </ClCompile>
     <ClCompile Include="CompressedDirection.test.cpp">
       <Filter>AutoGeneratedCode</Filter>
     </ClCompile>
     <ClCompile Include="ConsecutiveImagePixelsOrder.test.cpp">
-      <Filter>AutoGeneratedCode</Filter>
-    </ClCompile>
-    <ClCompile Include="ConstantTexture.Serialization.test.cpp">
       <Filter>AutoGeneratedCode</Filter>
     </ClCompile>
     <ClCompile Include="ConstantTexture.test.cpp">
@@ -684,9 +456,6 @@
       <Filter>AutoGeneratedCode</Filter>
     </ClCompile>
     <ClCompile Include="Cylinder.test.cpp">
-      <Filter>AutoGeneratedCode</Filter>
-    </ClCompile>
-    <ClCompile Include="DiffuseAreaLightSource.Serialization.test.cpp">
       <Filter>AutoGeneratedCode</Filter>
     </ClCompile>
     <ClCompile Include="DiffuseAreaLightSource.test.cpp">
@@ -710,49 +479,25 @@
     <ClCompile Include="FresnelBlend.test.cpp">
       <Filter>AutoGeneratedCode</Filter>
     </ClCompile>
-    <ClCompile Include="GridDensityVolumeRegion.Serialization.test.cpp">
-      <Filter>AutoGeneratedCode</Filter>
-    </ClCompile>
     <ClCompile Include="GridDensityVolumeRegion.test.cpp">
-      <Filter>AutoGeneratedCode</Filter>
-    </ClCompile>
-    <ClCompile Include="HGPhaseFunction.Serialization.test.cpp">
       <Filter>AutoGeneratedCode</Filter>
     </ClCompile>
     <ClCompile Include="HGPhaseFunction.test.cpp">
       <Filter>AutoGeneratedCode</Filter>
     </ClCompile>
-    <ClCompile Include="HomogeneousVolumeRegion.Serialization.test.cpp">
-      <Filter>AutoGeneratedCode</Filter>
-    </ClCompile>
     <ClCompile Include="HomogeneousVolumeRegion.test.cpp">
-      <Filter>AutoGeneratedCode</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageEnvironmentalLight.Serialization.test.cpp">
       <Filter>AutoGeneratedCode</Filter>
     </ClCompile>
     <ClCompile Include="ImageEnvironmentalLight.test.cpp">
       <Filter>AutoGeneratedCode</Filter>
     </ClCompile>
-    <ClCompile Include="ImageFilm.Serialization.test.cpp">
-      <Filter>AutoGeneratedCode</Filter>
-    </ClCompile>
     <ClCompile Include="ImageFilm.test.cpp">
-      <Filter>AutoGeneratedCode</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageTexture.Serialization.test.cpp">
       <Filter>AutoGeneratedCode</Filter>
     </ClCompile>
     <ClCompile Include="ImageTexture.test.cpp">
       <Filter>AutoGeneratedCode</Filter>
     </ClCompile>
-    <ClCompile Include="InteractiveFilm.Serialization.test.cpp">
-      <Filter>AutoGeneratedCode</Filter>
-    </ClCompile>
     <ClCompile Include="InteractiveFilm.test.cpp">
-      <Filter>AutoGeneratedCode</Filter>
-    </ClCompile>
-    <ClCompile Include="IntrusiveSmartPointer.Serialization.test.cpp">
       <Filter>AutoGeneratedCode</Filter>
     </ClCompile>
     <ClCompile Include="IrradianceLightsSamplingStrategy.test.cpp">
@@ -776,19 +521,10 @@
     <ClCompile Include="MathRoutines.test.cpp">
       <Filter>AutoGeneratedCode</Filter>
     </ClCompile>
-    <ClCompile Include="Matrix3x3.Serialization.test.cpp">
-      <Filter>AutoGeneratedCode</Filter>
-    </ClCompile>
     <ClCompile Include="Matrix3x3.test.cpp">
       <Filter>AutoGeneratedCode</Filter>
     </ClCompile>
-    <ClCompile Include="Matrix4x4.Serialization.test.cpp">
-      <Filter>AutoGeneratedCode</Filter>
-    </ClCompile>
     <ClCompile Include="Matrix4x4.test.cpp">
-      <Filter>AutoGeneratedCode</Filter>
-    </ClCompile>
-    <ClCompile Include="MatteMaterial.Serialization.test.cpp">
       <Filter>AutoGeneratedCode</Filter>
     </ClCompile>
     <ClCompile Include="MatteMaterial.test.cpp">
@@ -800,16 +536,7 @@
     <ClCompile Include="MERLMeasured.test.cpp">
       <Filter>AutoGeneratedCode</Filter>
     </ClCompile>
-    <ClCompile Include="MERLMeasuredData.Serialization.test.cpp">
-      <Filter>AutoGeneratedCode</Filter>
-    </ClCompile>
-    <ClCompile Include="MERLMeasuredMaterial.Serialization.test.cpp">
-      <Filter>AutoGeneratedCode</Filter>
-    </ClCompile>
     <ClCompile Include="MERLMeasuredMaterial.test.cpp">
-      <Filter>AutoGeneratedCode</Filter>
-    </ClCompile>
-    <ClCompile Include="MetalMaterial.Serialization.test.cpp">
       <Filter>AutoGeneratedCode</Filter>
     </ClCompile>
     <ClCompile Include="MetalMaterial.test.cpp">
@@ -818,19 +545,10 @@
     <ClCompile Include="Microfacet.test.cpp">
       <Filter>AutoGeneratedCode</Filter>
     </ClCompile>
-    <ClCompile Include="MIPMap.Serialization.test.cpp">
-      <Filter>AutoGeneratedCode</Filter>
-    </ClCompile>
     <ClCompile Include="MIPMap.test.cpp">
       <Filter>AutoGeneratedCode</Filter>
     </ClCompile>
-    <ClCompile Include="MitchellFilter.Serialization.test.cpp">
-      <Filter>AutoGeneratedCode</Filter>
-    </ClCompile>
     <ClCompile Include="MitchellFilter.test.cpp">
-      <Filter>AutoGeneratedCode</Filter>
-    </ClCompile>
-    <ClCompile Include="MixMaterial.Serialization.test.cpp">
       <Filter>AutoGeneratedCode</Filter>
     </ClCompile>
     <ClCompile Include="MixMaterial.test.cpp">
@@ -842,22 +560,13 @@
     <ClCompile Include="Numerics.test.cpp">
       <Filter>AutoGeneratedCode</Filter>
     </ClCompile>
-    <ClCompile Include="OpenEXRRgbaImageSource.Serialization.test.cpp">
-      <Filter>AutoGeneratedCode</Filter>
-    </ClCompile>
     <ClCompile Include="OpenEXRRgbaImageSource.test.cpp">
       <Filter>AutoGeneratedCode</Filter>
     </ClCompile>
     <ClCompile Include="OrenNayar.test.cpp">
       <Filter>AutoGeneratedCode</Filter>
     </ClCompile>
-    <ClCompile Include="ParallelLight.Serialization.test.cpp">
-      <Filter>AutoGeneratedCode</Filter>
-    </ClCompile>
     <ClCompile Include="ParallelLight.test.cpp">
-      <Filter>AutoGeneratedCode</Filter>
-    </ClCompile>
-    <ClCompile Include="PerspectiveCamera.Serialization.test.cpp">
       <Filter>AutoGeneratedCode</Filter>
     </ClCompile>
     <ClCompile Include="PerspectiveCamera.test.cpp">
@@ -866,34 +575,19 @@
     <ClCompile Include="PhotonLTEIntegrator.test.cpp">
       <Filter>AutoGeneratedCode</Filter>
     </ClCompile>
-    <ClCompile Include="PlasticMaterial.Serialization.test.cpp">
-      <Filter>AutoGeneratedCode</Filter>
-    </ClCompile>
     <ClCompile Include="PlasticMaterial.test.cpp">
-      <Filter>AutoGeneratedCode</Filter>
-    </ClCompile>
-    <ClCompile Include="Point2D.Serialization.test.cpp">
       <Filter>AutoGeneratedCode</Filter>
     </ClCompile>
     <ClCompile Include="Point2D.test.cpp">
       <Filter>AutoGeneratedCode</Filter>
     </ClCompile>
-    <ClCompile Include="Point3D.Serialization.test.cpp">
-      <Filter>AutoGeneratedCode</Filter>
-    </ClCompile>
     <ClCompile Include="Point3D.test.cpp">
-      <Filter>AutoGeneratedCode</Filter>
-    </ClCompile>
-    <ClCompile Include="PointLight.Serialization.test.cpp">
       <Filter>AutoGeneratedCode</Filter>
     </ClCompile>
     <ClCompile Include="PointLight.test.cpp">
       <Filter>AutoGeneratedCode</Filter>
     </ClCompile>
     <ClCompile Include="PowerLightsSamplingStrategy.test.cpp">
-      <Filter>AutoGeneratedCode</Filter>
-    </ClCompile>
-    <ClCompile Include="Primitive.Serialization.test.cpp">
       <Filter>AutoGeneratedCode</Filter>
     </ClCompile>
     <ClCompile Include="Primitive.test.cpp">
@@ -908,16 +602,13 @@
     <ClCompile Include="RandomSampler.test.cpp">
       <Filter>AutoGeneratedCode</Filter>
     </ClCompile>
-    <ClCompile Include="Ray.Serialization.test.cpp">
-      <Filter>AutoGeneratedCode</Filter>
-    </ClCompile>
     <ClCompile Include="Ray.test.cpp">
       <Filter>AutoGeneratedCode</Filter>
     </ClCompile>
-    <ClCompile Include="RGBImageSource.Serialization.test.cpp">
+    <ClCompile Include="RGBImageSource.test.cpp">
       <Filter>AutoGeneratedCode</Filter>
     </ClCompile>
-    <ClCompile Include="RGBImageSource.test.cpp">
+    <ClCompile Include="Runner.test.cpp">
       <Filter>AutoGeneratedCode</Filter>
     </ClCompile>
     <ClCompile Include="Sample.test.cpp">
@@ -935,25 +626,13 @@
     <ClCompile Include="ScaledBxDF.test.cpp">
       <Filter>AutoGeneratedCode</Filter>
     </ClCompile>
-    <ClCompile Include="ScaleTexture.Serialization.test.cpp">
-      <Filter>AutoGeneratedCode</Filter>
-    </ClCompile>
     <ClCompile Include="ScaleTexture.test.cpp">
-      <Filter>AutoGeneratedCode</Filter>
-    </ClCompile>
-    <ClCompile Include="Scene.Serialization.test.cpp">
       <Filter>AutoGeneratedCode</Filter>
     </ClCompile>
     <ClCompile Include="Scene.test.cpp">
       <Filter>AutoGeneratedCode</Filter>
     </ClCompile>
-    <ClCompile Include="Spectrum.Serialization.test.cpp">
-      <Filter>AutoGeneratedCode</Filter>
-    </ClCompile>
     <ClCompile Include="Spectrum.test.cpp">
-      <Filter>AutoGeneratedCode</Filter>
-    </ClCompile>
-    <ClCompile Include="SpectrumCoef.Serialization.test.cpp">
       <Filter>AutoGeneratedCode</Filter>
     </ClCompile>
     <ClCompile Include="SpectrumCoef.test.cpp">
@@ -971,13 +650,7 @@
     <ClCompile Include="Sphere.test.cpp">
       <Filter>AutoGeneratedCode</Filter>
     </ClCompile>
-    <ClCompile Include="SphericalMapping2D.Serialization.test.cpp">
-      <Filter>AutoGeneratedCode</Filter>
-    </ClCompile>
     <ClCompile Include="SphericalMapping2D.test.cpp">
-      <Filter>AutoGeneratedCode</Filter>
-    </ClCompile>
-    <ClCompile Include="SpotPointLight.Serialization.test.cpp">
       <Filter>AutoGeneratedCode</Filter>
     </ClCompile>
     <ClCompile Include="SpotPointLight.test.cpp">
@@ -986,34 +659,19 @@
     <ClCompile Include="StratifiedSampler.test.cpp">
       <Filter>AutoGeneratedCode</Filter>
     </ClCompile>
-    <ClCompile Include="SubstrateMaterial.Serialization.test.cpp">
-      <Filter>AutoGeneratedCode</Filter>
-    </ClCompile>
     <ClCompile Include="SubstrateMaterial.test.cpp">
       <Filter>AutoGeneratedCode</Filter>
     </ClCompile>
     <ClCompile Include="ThreadSafeRandom.Test.cpp">
       <Filter>AutoGeneratedCode</Filter>
     </ClCompile>
-    <ClCompile Include="Transform.Serialization.test.cpp">
-      <Filter>AutoGeneratedCode</Filter>
-    </ClCompile>
     <ClCompile Include="Transform.test.cpp">
-      <Filter>AutoGeneratedCode</Filter>
-    </ClCompile>
-    <ClCompile Include="TransformMapping3D.Serialization.test.cpp">
       <Filter>AutoGeneratedCode</Filter>
     </ClCompile>
     <ClCompile Include="TransformMapping3D.test.cpp">
       <Filter>AutoGeneratedCode</Filter>
     </ClCompile>
-    <ClCompile Include="TransparentMaterial.Serialization.test.cpp">
-      <Filter>AutoGeneratedCode</Filter>
-    </ClCompile>
     <ClCompile Include="TransparentMaterial.test.cpp">
-      <Filter>AutoGeneratedCode</Filter>
-    </ClCompile>
-    <ClCompile Include="Triangle3D.Serialization.test.cpp">
       <Filter>AutoGeneratedCode</Filter>
     </ClCompile>
     <ClCompile Include="Triangle3D.test.cpp">
@@ -1022,13 +680,7 @@
     <ClCompile Include="TriangleAccelerator.test.cpp">
       <Filter>AutoGeneratedCode</Filter>
     </ClCompile>
-    <ClCompile Include="TriangleMesh.Serialization.test.cpp">
-      <Filter>AutoGeneratedCode</Filter>
-    </ClCompile>
     <ClCompile Include="TriangleMesh.test.cpp">
-      <Filter>AutoGeneratedCode</Filter>
-    </ClCompile>
-    <ClCompile Include="UberMaterial.Serialization.test.cpp">
       <Filter>AutoGeneratedCode</Filter>
     </ClCompile>
     <ClCompile Include="UberMaterial.test.cpp">
@@ -1037,25 +689,13 @@
     <ClCompile Include="UniformImagePixelsOrder.test.cpp">
       <Filter>AutoGeneratedCode</Filter>
     </ClCompile>
-    <ClCompile Include="UVMapping2D.Serialization.test.cpp">
-      <Filter>AutoGeneratedCode</Filter>
-    </ClCompile>
     <ClCompile Include="UVMapping2D.test.cpp">
-      <Filter>AutoGeneratedCode</Filter>
-    </ClCompile>
-    <ClCompile Include="Vector2D.Serialization.test.cpp">
       <Filter>AutoGeneratedCode</Filter>
     </ClCompile>
     <ClCompile Include="Vector2D.test.cpp">
       <Filter>AutoGeneratedCode</Filter>
     </ClCompile>
-    <ClCompile Include="Vector3D.Serialization.test.cpp">
-      <Filter>AutoGeneratedCode</Filter>
-    </ClCompile>
     <ClCompile Include="Vector3D.test.cpp">
-      <Filter>AutoGeneratedCode</Filter>
-    </ClCompile>
-    <ClCompile Include="WindyTexture.Serialization.test.cpp">
       <Filter>AutoGeneratedCode</Filter>
     </ClCompile>
     <ClCompile Include="WindyTexture.test.cpp">

@@ -17,9 +17,6 @@
     <ClInclude Include="Common.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CommonSerialization.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="IntrusiveSmartPointer.h">
       <Filter>Header Files</Filter>
     </ClInclude>

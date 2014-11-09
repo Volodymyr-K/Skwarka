@@ -85,18 +85,6 @@ class BlockedArray
     size_t _ElementIndex(size_t i_u, size_t i_v) const;
 
   private:
-    BlockedArray() {} // Empty default constructor for the boost serialization framework.
-
-    // Needed for the boost serialization framework.  
-    friend class boost::serialization::access;
-
-    /**
-    * Serializes BlockedArray to/from the specified Archive. This method is used by the boost serialization framework.
-    */
-    template<class Archive>
-    void serialize(Archive &i_ar, const unsigned int i_version);
-
-  private:
     size_t m_size_u, m_size_v, m_u_blocks;
     std::vector<T> m_data;
   };
@@ -193,16 +181,6 @@ template<typename T, size_t block_size_log>
 void BlockedArray<T,block_size_log>::Fill(const T &i_value)
   {
   std::fill(m_data.begin(), m_data.end(), i_value);
-  }
-
-template<typename T, size_t block_size_log>
-template<class Archive>
-void BlockedArray<T,block_size_log>::serialize(Archive &i_ar, const unsigned int i_version)
-  {
-  i_ar & m_size_u;
-  i_ar & m_size_v;
-  i_ar & m_u_blocks;
-  i_ar & m_data;
   }
 
 #endif // BLOCKED_ARRAY_H

@@ -20,6 +20,7 @@
 #include <Math/MathRoutines.h>
 #include <Math/Geometry.h>
 #include <cmath>
+#include <algorithm>
 
 /**
 * An anisotropic microfacet normal distribution implementation (Ashikhmin and Shirley's model)

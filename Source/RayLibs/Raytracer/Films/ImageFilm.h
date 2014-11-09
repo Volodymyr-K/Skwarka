@@ -15,7 +15,7 @@
 #ifndef IMAGE_FILM_H
 #define IMAGE_FILM_H
 
-#include <Common\Common.h>
+#include <Common/Common.h>
 #include <Raytracer/Core/Film.h>
 #include <Raytracer/Core/FilmFilter.h>
 #include <Raytracer/Core/Spectrum.h>
@@ -86,18 +86,6 @@ class ImageFilm: public Film
     struct ImageFilmPixel;
 
   private:
-    ImageFilm(); // Empty default constructor for the boost serialization framework.
-
-    // Needed for the boost serialization framework.  
-    friend class boost::serialization::access;
-
-    /**
-    * Serializes to/from the specified Archive. This method is used by the boost serialization framework.
-    */
-    template<class Archive>
-    void serialize(Archive &i_ar, const unsigned int i_version);
-
-  private:
     size_t m_x_resolution, m_y_resolution;
     double m_filter_x_width, m_filter_y_width;
 
@@ -113,43 +101,12 @@ class ImageFilm: public Film
 
 struct ImageFilm::ImageFilmPixel
   {
-  ImageFilmPixel(): m_spectrum()
+  ImageFilmPixel() : m_spectrum(), m_weight_sum(0.0)
     {
-    m_weight_sum = 0.0;
-    }
-
-  /**
-  * Serializes ImageFilm::ImageFilmPixel to/from the specified Archive. This method is used by the boost serialization framework.
-  */
-  template<class Archive>
-  void serialize(Archive &i_ar, const unsigned int i_version)
-    {
-    i_ar & m_spectrum;
-    i_ar & m_weight_sum;
     }
 
   Spectrum_d m_spectrum;
   double m_weight_sum;
   };
-
-// Don't store class info for ImageFilm::ImageFilmPixel.
-BOOST_CLASS_IMPLEMENTATION(ImageFilm::ImageFilmPixel, boost::serialization::object_serializable)
-
-template<class Archive>
-void ImageFilm::serialize(Archive &i_ar, const unsigned int i_version)
-  {
-  i_ar & boost::serialization::base_object<Film>(*this);
-  i_ar & m_x_resolution;
-  i_ar & m_y_resolution;
-  i_ar & m_filter_x_width;
-  i_ar & m_filter_y_width;
-  i_ar & mp_filter;
-  i_ar & m_pixels;
-  i_ar & m_crop_window_begin;
-  i_ar & m_crop_window_end;
-  }
-
-// Register the derived class in the boost serialization framework.
-BOOST_CLASS_EXPORT_KEY(ImageFilm)
 
 #endif // IMAGE_FILM_H

@@ -96,35 +96,9 @@ class AggregateVolumeRegion: public VolumeRegion
     SpectrumCoef_d OpticalThickness(const Ray &i_ray, double i_step, double i_offset_sample) const;
 
   private:
-    AggregateVolumeRegion() {}; // Empty default constructor for the boost serialization framework.
-
-    // Needed for the boost serialization framework.  
-    friend class boost::serialization::access;
-
-    /**
-    * Serializes to/from the specified Archive. This method is used by the boost serialization framework.
-    */
-    template<class Archive>
-    void serialize(Archive &i_ar, const unsigned int i_version);
-
-  private:
     std::vector<intrusive_ptr<const VolumeRegion>> m_volume_regions;
 
     BBox3D_d m_bounds;
   };
-
-/////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-template<class Archive>
-void AggregateVolumeRegion::serialize(Archive &i_ar, const unsigned int i_version)
-  {
-  i_ar & boost::serialization::base_object<VolumeRegion>(*this);
-  i_ar & m_volume_regions;
-  i_ar & m_bounds;
-  }
-
-// Register the derived class in the boost serialization framework.
-BOOST_CLASS_EXPORT_KEY(AggregateVolumeRegion)
 
 #endif // VOLUME_REGION_H

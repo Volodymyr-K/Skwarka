@@ -136,27 +136,4 @@ inline CompressedDirection CompressedDirection::FromID(unsigned short i_id)
   return ret;
   }
 
-template<class Archive>
-void save(Archive &i_ar, const CompressedDirection &i_direction, const unsigned int i_version)
-  {
-  const unsigned short val(i_direction.GetID());
-  i_ar << val;
-  }
-
-template<class Archive>
-void load(Archive &i_ar, CompressedDirection &io_direction, const unsigned int i_version)
-  {
-  unsigned short val;
-  i_ar >> val;
-  io_direction = CompressedDirection::FromID(val);
-  }
-
-template<class Archive>
-void serialize(Archive &i_ar, CompressedDirection &io_direction, const unsigned int i_version)
-  {
-  boost::serialization::split_free(i_ar, io_direction, i_version);
-  }
-  
-BOOST_CLASS_IMPLEMENTATION(CompressedDirection, boost::serialization::object_serializable)
-
 #endif // COMPRESSED_DIRECTION_H

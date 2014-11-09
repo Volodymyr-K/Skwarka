@@ -42,16 +42,6 @@ class TransformMapping3D: public Mapping3D
     virtual void Map(const DifferentialGeometry &i_dg, size_t i_triangle_index, Point3D_d &o_point, Vector3D_d &o_dp_dx, Vector3D_d &o_dp_dy) const;
 
   private:
-    // Needed for the boost serialization framework.  
-    friend class boost::serialization::access;
-
-    /**
-    * Serializes to/from the specified Archive. This method is used by the boost serialization framework.
-    */
-    template<class Archive>
-    void serialize(Archive &i_ar, const unsigned int i_version);
-
-  private:
     Transform m_transform;
   };
 
@@ -68,15 +58,5 @@ inline void TransformMapping3D::Map(const DifferentialGeometry &i_dg, size_t i_t
   o_dp_dx = Vector3D_d(m_transform(i_dg.m_point_dx)-o_point);
   o_dp_dy = Vector3D_d(m_transform(i_dg.m_point_dy)-o_point);
   }
-
-template<class Archive>
-void TransformMapping3D::serialize(Archive &i_ar, const unsigned int i_version)
-  {
-  i_ar & boost::serialization::base_object<Mapping3D>(*this);
-  i_ar & m_transform;
-  }
-
-// Register the derived class in the boost serialization framework.
-BOOST_CLASS_EXPORT_KEY(TransformMapping3D)
 
 #endif // TRANSFORM_MAPPING_3D_H

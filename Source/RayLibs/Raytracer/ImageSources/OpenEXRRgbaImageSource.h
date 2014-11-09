@@ -77,24 +77,6 @@ class OpenEXRRgbaImageSource: public ImageSource<T>
     T _XYZ_To_T(const XYZColor_d &i_color) const;
 
   private:
-    OpenEXRRgbaImageSource() {}; // Empty default constructor for the boost serialization framework.
-
-    // Needed for the boost serialization framework.  
-    friend class boost::serialization::access;
-
-    /**   
-    * Serializes to/from the specified Archive. This method is used by the boost serialization framework.
-    */
-    template<class Archive>
-    void serialize(Archive &i_ar, const unsigned int i_version);
-
-    template<class Archive>
-    void save(Archive &i_ar, const unsigned int i_version) const;
-
-    template<class Archive>
-    void load(Archive &i_ar, const unsigned int i_version);
-
-  private:
     std::vector<Imf::Rgba> m_values;
     size_t m_width, m_height;
 
@@ -210,79 +192,5 @@ inline SpectrumCoef_d OpenEXRRgbaImageSource<SpectrumCoef_d>::_XYZ_To_T(const XY
   {
   return SpectrumRoutines::XYZToSpectrumCoef(i_color);
   }
-
-/**
-* Serializes OpenEXRRgbaImageSource to/from the specified Archive. This method is used by the boost serialization framework.
-*/
-template <typename T>
-template<class Archive>
-void OpenEXRRgbaImageSource<T>::serialize(Archive &i_ar, const unsigned int i_version)
-  {
-  boost::serialization::split_member(i_ar, *this, i_version);
-  }
-
-template <typename T>
-template<class Archive>
-void OpenEXRRgbaImageSource<T>::save(Archive &i_ar, const unsigned int i_version) const
-  {
-  i_ar & boost::serialization::base_object<ImageSource<T>>(*this);
-
-  i_ar & m_values;
-  i_ar & m_width;
-  i_ar & m_height;
-  i_ar & m_color_system;
-  i_ar & m_scale;
-  }
-
-template <typename T>
-template<class Archive>
-void OpenEXRRgbaImageSource<T>::load(Archive &i_ar, const unsigned int i_version)
-  {
-  i_ar & boost::serialization::base_object<ImageSource<T>>(*this);
-
-  i_ar & m_values;
-  i_ar & m_width;
-  i_ar & m_height;
-  i_ar & m_color_system;
-  i_ar & m_scale;
-  }
-
-// The following code exports different specializations of the OpenEXRRgbaImageSource template in the boost serialization framework.
-// If you need to serialize a new specialization you have to add it here.
-typedef OpenEXRRgbaImageSource<float> OpenEXRRgbaImageSource_float;
-typedef OpenEXRRgbaImageSource<double> OpenEXRRgbaImageSource_double;
-
-typedef OpenEXRRgbaImageSource<Spectrum_f> OpenEXRRgbaImageSource_Spectrum_float;
-typedef OpenEXRRgbaImageSource<Spectrum_d> OpenEXRRgbaImageSource_Spectrum_double;
-
-typedef OpenEXRRgbaImageSource<SpectrumCoef_f> OpenEXRRgbaImageSource_SpectrumCoef_float;
-typedef OpenEXRRgbaImageSource<SpectrumCoef_d> OpenEXRRgbaImageSource_SpectrumCoef_double;
-
-BOOST_CLASS_EXPORT_KEY(OpenEXRRgbaImageSource_float)
-BOOST_CLASS_EXPORT_KEY(OpenEXRRgbaImageSource_double)
-BOOST_CLASS_EXPORT_KEY(OpenEXRRgbaImageSource_Spectrum_float)
-BOOST_CLASS_EXPORT_KEY(OpenEXRRgbaImageSource_Spectrum_double)
-BOOST_CLASS_EXPORT_KEY(OpenEXRRgbaImageSource_SpectrumCoef_float)
-BOOST_CLASS_EXPORT_KEY(OpenEXRRgbaImageSource_SpectrumCoef_double)
-
-/////////////////////////////////// Serialization for Open EXR classes ////////////////////////////////////////
-
-/**
-* Serializes Imf::Rgba to/from the specified Archive. This method is used by the boost serialization framework.
-*/
-namespace Imf
-  {
-  template<class Archive>
-  void serialize(Archive &i_ar, Imf::Rgba &i_rgba, const unsigned int i_version)
-    {
-    i_ar & i_rgba.r;
-    i_ar & i_rgba.g;
-    i_ar & i_rgba.b;
-    i_ar & i_rgba.a;
-    }
-  }
-
-// Don't store class info for Imf::Rgba.
-BOOST_CLASS_IMPLEMENTATION(Imf::Rgba, boost::serialization::object_serializable)
 
 #endif // OPENEXR_RGBA_SPECTRUM_IMAGE_SOURCE_H

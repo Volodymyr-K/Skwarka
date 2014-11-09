@@ -144,16 +144,6 @@ class ColorSystem
     double _Dot(const double i_a[3], const double i_b[3]) const;
 
   private:
-    // Needed for the boost serialization framework.
-    friend class boost::serialization::access;
-
-    /**
-    * Serializes ColorSystem to/from the specified Archive. This method is used by the boost serialization framework.
-    */
-    template<typename Archive>
-    void serialize(Archive &i_ar, const unsigned int i_version);
-
-  private:
     Point2D_d m_red, m_green, m_blue, m_white;
     Matrix3x3_d m_XYZ_To_RGB, m_RGB_To_XYZ;
     double m_gamma, m_inv_gamma;
@@ -222,21 +212,6 @@ bool InRange(const RGBColor<T> &i_color, T i_low, T i_high)
     i_color[2]>=i_low && i_color[2]<=i_high;
   }
 
-/**
-* Serializes RGBColor to/from the specified Archive. This method is used by the boost serialization framework.
-*/
-template<typename T, class Archive>
-void serialize(Archive &i_ar, RGBColor<T> &i_color, const unsigned int i_version)
-  {
-  i_ar & i_color[0];
-  i_ar & i_color[1];
-  i_ar & i_color[2];
-  }
-
-// Don't store class info for RGBColor.
-BOOST_CLASS_IMPLEMENTATION(RGBColor_f, boost::serialization::object_serializable)
-BOOST_CLASS_IMPLEMENTATION(RGBColor_d, boost::serialization::object_serializable)
-
 ////////////////////////////////////////////// XYZColor ///////////////////////////////////////////////////
 
 template<typename T>
@@ -288,22 +263,6 @@ bool InRange(const XYZColor<T> &i_color, T i_low, T i_high)
     i_color[1]>=i_low && i_color[1]<=i_high &&
     i_color[2]>=i_low && i_color[2]<=i_high;
   }
-
-/**
-* Serializes XYZColor to/from the specified Archive. This method is used by the boost serialization framework.
-*/
-template<typename T, class Archive>
-void serialize(Archive &i_ar, XYZColor<T> &i_color, const unsigned int i_version)
-  {
-  i_ar & i_color[0];
-  i_ar & i_color[1];
-  i_ar & i_color[2];
-  }
-
-// Don't store class info for XYZColor.
-BOOST_CLASS_IMPLEMENTATION(XYZColor_f, boost::serialization::object_serializable)
-BOOST_CLASS_IMPLEMENTATION(XYZColor_d, boost::serialization::object_serializable)
-
 
 ///////////////////////////////////////////// ColorSystem //////////////////////////////////////////////////
 
@@ -458,24 +417,6 @@ RGBColor<T> ColorSystem::GammaDecode(const RGBColor<T> &i_rgb_color) const
   ret.m_rgb[1] = (T)pow((double)ret.m_rgb[1], m_gamma);
   ret.m_rgb[2] = (T)pow((double)ret.m_rgb[2], m_gamma);
   return ret;
-  }
-
-/**
-* Serializes ColorSystem to/from the specified Archive. This method is used by the boost serialization framework.
-*/
-template<class Archive>
-void ColorSystem::serialize(Archive &i_ar, const unsigned int i_version)
-  {
-  i_ar & m_red;
-  i_ar & m_green;
-  i_ar & m_blue;
-  i_ar & m_white;
-
-  i_ar & m_XYZ_To_RGB;
-  i_ar & m_RGB_To_XYZ;
-
-  i_ar & m_gamma;
-  i_ar & m_inv_gamma;
   }
 
 #endif // COLOR_H

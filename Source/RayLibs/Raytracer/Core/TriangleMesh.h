@@ -178,18 +178,6 @@ class TriangleMesh: public ReferenceCounted
     TopologyInfo _ComputeTopologyInfo(const ConnectivityData &i_connectivity) const;
 
   private:
-    TriangleMesh() {}; // Empty default constructor for the boost serialization framework.
-
-    // Needed for the boost serialization framework.  
-    friend class boost::serialization::access;
-
-    /**
-    * Serializes TriangleMesh to/from the specified Archive. This method is used by the boost serialization framework.
-    */
-    template<class Archive>
-    void serialize(Archive &i_ar, const unsigned int i_version);
-
-  private:
     std::vector<Point3D_f> m_vertices;
     std::vector<MeshTriangle> m_triangles;
     std::vector<Vector3D_f> m_shading_normals, m_tangents;
@@ -258,44 +246,5 @@ inline float TriangleMesh::GetArea() const
   {
   return m_area;
   }
-
-/**
-* Serializes TriangleMesh to/from the specified Archive. This method is used by the boost serialization framework.
-*/
-template<class Archive>
-void TriangleMesh::serialize(Archive &i_ar, const unsigned int i_version)
-  {
-  i_ar & boost::serialization::base_object<ReferenceCounted>(*this);
-
-  i_ar & m_vertices;
-  i_ar & m_triangles;
-  i_ar & m_shading_normals;
-  i_ar & m_tangents;
-
-  i_ar & m_use_shading_normals;
-  i_ar & m_invert_normals;
-
-  i_ar & m_bbox;
-  i_ar & m_area;
-
-  i_ar & m_topology_info.m_manifold;
-  i_ar & m_topology_info.m_number_of_patches;
-  i_ar & m_topology_info.m_solid;
-
-  i_ar & m_topology_info_computed;
-  }
-
-/**
-* Serializes MeshTriangle to/from the specified Archive. This method is used by the boost serialization framework.
-*/
-template<class Archive>
-void serialize(Archive &i_ar, MeshTriangle &i_triangle, const unsigned int i_version)
-  {
-  i_ar & i_triangle.m_uvs;
-  i_ar & i_triangle.m_vertices;
-  }
-
-// Don't store class info for MeshTriangle.
-BOOST_CLASS_IMPLEMENTATION(MeshTriangle, boost::serialization::object_serializable)
 
 #endif // TRIANGLE_MESH_H

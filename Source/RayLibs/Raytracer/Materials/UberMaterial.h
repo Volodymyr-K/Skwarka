@@ -57,39 +57,9 @@ class UberMaterial: public Material
     virtual const BSDF *GetBSDF(const DifferentialGeometry &i_dg, size_t i_triangle_index, MemoryPool &i_pool) const;
 
   private:
-    UberMaterial() {}; // Empty default constructor for the boost serialization framework.
-
-    // Needed for the boost serialization framework.  
-    friend class boost::serialization::access;
-
-    /**
-    * Serializes to/from the specified Archive. This method is used by the boost serialization framework.
-    */
-    template<class Archive>
-    void serialize(Archive &i_ar, const unsigned int i_version);
-
-  private:
     intrusive_ptr<const Texture<SpectrumCoef_d>> mp_Kd, mp_Ks, mp_Kr, mp_opacity;
     intrusive_ptr<const Texture<double>> mp_roughness;
     double m_refractive_index;
   };
-
-/////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-template<class Archive>
-void UberMaterial::serialize(Archive &i_ar, const unsigned int i_version)
-  {
-  i_ar & boost::serialization::base_object<Material>(*this);
-  i_ar & mp_Kd;
-  i_ar & mp_Ks;
-  i_ar & mp_Kr;
-  i_ar & mp_opacity;
-  i_ar & mp_roughness;
-  i_ar & m_refractive_index;
-  }
-
-// Register the derived class in the boost serialization framework.
-BOOST_CLASS_EXPORT_KEY(UberMaterial)
 
 #endif // UBER_MATERIAL_H

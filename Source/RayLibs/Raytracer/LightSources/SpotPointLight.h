@@ -64,18 +64,6 @@ class SpotPointLight: public DeltaLightSource
     double _Falloff(double i_cos) const;
 
   private:
-    SpotPointLight() {}; // Empty default constructor for the boost serialization framework.
-
-    // Needed for the boost serialization framework.  
-    friend class boost::serialization::access;
-
-    /**
-    * Serializes to/from the specified Archive. This method is used by the boost serialization framework.
-    */
-    template<class Archive>
-    void serialize(Archive &i_ar, const unsigned int i_version);
-
-  private:
     Point3D_d m_position;
     Vector3D_d m_direction, m_e2, m_e3;
 
@@ -85,28 +73,5 @@ class SpotPointLight: public DeltaLightSource
     double m_inner_angle_cos, m_outer_angle_cos;
     double m_inv_cos_difference;
   };
-
-/////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-template<class Archive>
-void SpotPointLight::serialize(Archive &i_ar, const unsigned int i_version)
-  {
-  i_ar & boost::serialization::base_object<DeltaLightSource>(*this);
-  i_ar & m_position;
-  i_ar & m_direction;
-  i_ar & m_e2;
-  i_ar & m_e3;
-  i_ar & m_intensity;
-  i_ar & m_power;
-  i_ar & m_internal_cone_angle;
-  i_ar & m_outer_cone_angle;
-  i_ar & m_inner_angle_cos;
-  i_ar & m_outer_angle_cos;
-  i_ar & m_inv_cos_difference;
-  }
-
-// Register the derived class in the boost serialization framework.
-BOOST_CLASS_EXPORT_KEY(SpotPointLight)
 
 #endif // SPOT_POINT_LIGHT_H

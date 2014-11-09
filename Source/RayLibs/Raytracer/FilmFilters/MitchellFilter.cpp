@@ -14,9 +14,6 @@
 
 #include "MitchellFilter.h"
 
-// Register the derived class in the boost serialization framework.
-BOOST_CLASS_EXPORT_IMPLEMENT(MitchellFilter);
-
 MitchellFilter::MitchellFilter(double i_x_width, double i_y_width, double i_b, double i_c):
 FilmFilter(i_x_width, i_y_width), m_b(i_b), m_c(i_c)
   {

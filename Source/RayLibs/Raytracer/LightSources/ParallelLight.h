@@ -57,18 +57,6 @@ class ParallelLight: public DeltaLightSource
     virtual Spectrum_d SamplePhoton(const Point2D_d &i_sample, Ray &o_photon_ray, double &o_pdf) const;
 
   private:
-    ParallelLight() {}; // Empty default constructor for the boost serialization framework.
-
-    // Needed for the boost serialization framework.  
-    friend class boost::serialization::access;
-
-    /**
-    * Serializes to/from the specified Archive. This method is used by the boost serialization framework.
-    */
-    template<class Archive>
-    void serialize(Archive &i_ar, const unsigned int i_version);
-
-  private:
     Vector3D_d m_direction;
     BBox3D_d m_world_bounds;
 
@@ -84,24 +72,5 @@ class ParallelLight: public DeltaLightSource
     // The CDF is based on the triangle's projected area.
     double m_area_CDF[6];
   };
-
-/////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-template<class Archive>
-void ParallelLight::serialize(Archive &i_ar, const unsigned int i_version)
-  {
-  i_ar & boost::serialization::base_object<DeltaLightSource>(*this);
-  i_ar & m_direction;
-  i_ar & m_world_bounds;
-  i_ar & m_bbox_projected_area;
-  i_ar & m_radiance;
-  i_ar & m_power;
-  i_ar & m_bbox_emitting_triangles;
-  i_ar & m_area_CDF;
-  }
-
-// Register the derived class in the boost serialization framework.
-BOOST_CLASS_EXPORT_KEY(ParallelLight)
 
 #endif // POINT_LIGHT_H

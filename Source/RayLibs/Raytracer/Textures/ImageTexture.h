@@ -67,18 +67,6 @@ class ImageTexture: public Texture<ReturnType>
     ReturnType Evaluate(const DifferentialGeometry &i_dg, size_t i_triangle_index) const;
 
   private:
-    ImageTexture() {}; // Empty default constructor for the boost serialization framework.
-
-    // Needed for the boost serialization framework.  
-    friend class boost::serialization::access;
-
-    /**
-    * Serializes to/from the specified Archive. This method is used by the boost serialization framework.
-    */
-    template<class Archive>
-    void serialize(Archive &i_ar, const unsigned int i_version);
-
-  private:
     intrusive_ptr<const MIPMap<MemoryType>> mp_mip_map;
     intrusive_ptr<const Mapping2D> mp_mapping;
   };
@@ -158,42 +146,5 @@ class DefaultConverter<SpectrumCoef<InputSpectrumType>, SpectrumCoef<OutputSpect
       return ::Convert<OutputSpectrumType>(i_input);
       }
   };
-
-/////////////////////////////////////////// Serialization ////////////////////////////////////////////////
-
-template<typename MemoryType, typename ReturnType, typename Converter>
-template<class Archive>
-void ImageTexture<MemoryType,ReturnType,Converter>::serialize(Archive &i_ar, const unsigned int i_version)
-  {
-  i_ar & boost::serialization::base_object<Texture<ReturnType>>(*this);
-
-  i_ar & mp_mip_map;
-  i_ar & mp_mapping;
-  }
-
-// The following code exports different specializations of the ImageTexture template in the boost serialization framework.
-// If you need to serialize a new specialization you have to add it here.
-typedef ImageTexture<Spectrum_f, Spectrum_f, DefaultConverter<Spectrum_f,Spectrum_f>> ImageTexture_Spectrum_f_Spectrum_f;
-typedef ImageTexture<Spectrum_f, Spectrum_d, DefaultConverter<Spectrum_f,Spectrum_d>> ImageTexture_Spectrum_f_Spectrum_d;
-typedef ImageTexture<Spectrum_d, Spectrum_d, DefaultConverter<Spectrum_d,Spectrum_d>> ImageTexture_Spectrum_d_Spectrum_d;
-
-typedef ImageTexture<SpectrumCoef_f, SpectrumCoef_f, DefaultConverter<SpectrumCoef_f,SpectrumCoef_f>> ImageTexture_SpectrumCoef_f_SpectrumCoef_f;
-typedef ImageTexture<SpectrumCoef_f, SpectrumCoef_d, DefaultConverter<SpectrumCoef_f,SpectrumCoef_d>> ImageTexture_SpectrumCoef_f_SpectrumCoef_d;
-typedef ImageTexture<SpectrumCoef_d, SpectrumCoef_d, DefaultConverter<SpectrumCoef_d,SpectrumCoef_d>> ImageTexture_SpectrumCoef_d_SpectrumCoef_d;
-
-typedef ImageTexture<float, float, DefaultConverter<float,float>> ImageTexture_float_float;
-typedef ImageTexture<double, double, DefaultConverter<double,double>> ImageTexture_double_double;
-
-typedef ImageTexture<float, double, DefaultConverter<float,double>> ImageTexture_float_double;
-
-BOOST_CLASS_EXPORT_KEY(ImageTexture_Spectrum_f_Spectrum_f)
-BOOST_CLASS_EXPORT_KEY(ImageTexture_Spectrum_f_Spectrum_d)
-BOOST_CLASS_EXPORT_KEY(ImageTexture_Spectrum_d_Spectrum_d)
-BOOST_CLASS_EXPORT_KEY(ImageTexture_SpectrumCoef_f_SpectrumCoef_f)
-BOOST_CLASS_EXPORT_KEY(ImageTexture_SpectrumCoef_f_SpectrumCoef_d)
-BOOST_CLASS_EXPORT_KEY(ImageTexture_SpectrumCoef_d_SpectrumCoef_d)
-BOOST_CLASS_EXPORT_KEY(ImageTexture_float_float)
-BOOST_CLASS_EXPORT_KEY(ImageTexture_double_double)
-BOOST_CLASS_EXPORT_KEY(ImageTexture_float_double)
 
 #endif // IMAGE_TEXTURE_H

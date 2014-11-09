@@ -18,11 +18,6 @@
 #include <Math/MathRoutines.h>
 #include <tbb/tbb.h>
 
-/////////////////////////////////////// ImageEnvironmentalLight ///////////////////////////////////////////
-
-// Register the derived class in the boost serialization framework.
-BOOST_CLASS_EXPORT_IMPLEMENT(ImageEnvironmentalLight);
-
 ImageEnvironmentalLight::ImageEnvironmentalLight(const BBox3D_d &i_world_bounds, const Transform &i_light_to_world,
                                                  const std::vector<std::vector<Spectrum_f>> &i_image, SpectrumCoef_d i_scale):
 m_world_bounds(i_world_bounds), m_light_to_world(i_light_to_world), m_world_to_light(i_light_to_world.Inverted()), m_image(i_image), m_scale(i_scale)
@@ -95,6 +90,9 @@ void ImageEnvironmentalLight::_Initialize()
   m_nodes_num=1;
   _Build(0, 0, Point2D_i(0,0), Point2D_i((int)m_width, (int)m_height), m_nodes_num);
   ASSERT(m_nodes_num < 2*(1<<MAX_TREE_DEPTH));
+
+  // Release the memory.
+  std::vector<std::vector<Spectrum_f>>().swap(m_image);
 
   // Precompute irradiance values and PDFs.
   _PrecomputeData();

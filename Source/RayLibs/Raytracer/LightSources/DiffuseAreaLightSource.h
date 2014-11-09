@@ -88,18 +88,6 @@ class DiffuseAreaLightSource: public AreaLightSource
     void _SampleArea(double i_triangle_sample, const Point2D_d &i_sample, Point3D_d &o_sampled_point, Vector3D_d &o_geometric_normal) const;
 
   private:
-    DiffuseAreaLightSource() {}; // Empty default constructor for the boost serialization framework.
-
-    // Needed for the boost serialization framework.  
-    friend class boost::serialization::access;
-
-    /**
-    * Serializes to/from the specified Archive. This method is used by the boost serialization framework.
-    */
-    template<class Archive>
-    void serialize(Archive &i_ar, const unsigned int i_version);
-
-  private:
     Spectrum_d m_radiance;
 
     intrusive_ptr<const TriangleMesh> mp_mesh;
@@ -114,21 +102,5 @@ class DiffuseAreaLightSource: public AreaLightSource
     */
     std::vector<double> m_area_CDF;
   };
-
-/////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-template<class Archive>
-void DiffuseAreaLightSource::serialize(Archive &i_ar, const unsigned int i_version)
-  {
-  i_ar & boost::serialization::base_object<AreaLightSource>(*this);
-  i_ar & m_radiance;
-  i_ar & mp_mesh;
-  i_ar & m_area;
-  i_ar & m_area_CDF;
-  }
-
-// Register the derived class in the boost serialization framework.
-BOOST_CLASS_EXPORT_KEY(DiffuseAreaLightSource)
 
 #endif // DIFFUSE_AREA_LIGHT_SOURCE_H

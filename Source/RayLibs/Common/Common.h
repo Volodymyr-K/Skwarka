@@ -27,6 +27,4 @@
 #include <memory>
 using std::shared_ptr;
 
-#include "CommonSerialization.h"
-
 #endif // COMMON_H

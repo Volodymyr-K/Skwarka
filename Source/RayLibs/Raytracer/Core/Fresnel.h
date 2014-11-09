@@ -19,8 +19,8 @@
 #include "Spectrum.h"
 #include <Math/Constants.h>
 #include <Math/MathRoutines.h>
-#include <utility>
 #include <cmath>
+#include <algorithm>
 
 /**
 * Computes the fraction of incoming light that is reflected by a dielectric surface.

@@ -13,9 +13,7 @@
 */
 
 #include "GridDensityVolumeRegion.h"
-
-// Register the derived class in the boost serialization framework.
-BOOST_CLASS_EXPORT_IMPLEMENT(GridDensityVolumeRegion);
+#include <algorithm>
 
 GridDensityVolumeRegion::GridDensityVolumeRegion(const BBox3D_d &i_bounds, Spectrum_d &i_base_emission, SpectrumCoef_d &i_base_absorption, SpectrumCoef_d &i_base_scattering,
                                                  intrusive_ptr<const PhaseFunction> ip_phase_function, const std::vector<std::vector<std::vector<float>>> &i_densities):

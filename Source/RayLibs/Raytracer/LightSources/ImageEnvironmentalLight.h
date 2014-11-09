@@ -188,30 +188,6 @@ class ImageEnvironmentalLight: public InfiniteLightSource
     double _LightingPDF(const Vector3D_d &i_lighting_direction, const float *ip_nodes_pdf) const;
 
   private:
-    ImageEnvironmentalLight() {} // Empty default constructor for the boost serialization framework.
-
-    // Needed for the boost serialization framework.  
-    friend class boost::serialization::access;
-
-    /**
-    * Saves ImageEnvironmentalLight to the specified Archive. This method is called by the serialize() method.
-    */
-    template<class Archive>
-    void save(Archive &i_ar, const unsigned int i_version) const;
-
-    /**
-    * Loads ImageEnvironmentalLight from the specified Archive. This method is called by the serialize() method.
-    */
-    template<class Archive>
-    void load(Archive &i_ar, const unsigned int i_version);
-
-    /**
-    * Serializes ImageEnvironmentalLight to/from the specified Archive. This method is used by the boost serialization framework.
-    */
-    template<class Archive>
-    void serialize(Archive &i_ar, const unsigned int i_version);
-
-  private:
     BBox3D_d m_world_bounds;
 
     Transform m_light_to_world, m_world_to_light;
@@ -222,7 +198,7 @@ class ImageEnvironmentalLight: public InfiniteLightSource
     intrusive_ptr<const MIPMap<Spectrum_f>> mp_image_map;
     size_t m_width, m_height;
 
-    // Keeps the image map supplied to the image source. Used only during construction and for serialization.
+    // Keeps the image map supplied to the image source. Used only during construction.
     std::vector<std::vector<Spectrum_f>> m_image;
 
     double m_theta_coef, m_phi_coef;
@@ -253,54 +229,5 @@ class ImageEnvironmentalLight: public InfiniteLightSource
     // Has the same size that the image map has and each row contains concatenated CDFs for all leaves intersecting the row.
     std::vector<std::vector<double>> m_CDF_cols;
   };
-
-/////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-template<class Archive>
-void ImageEnvironmentalLight::save(Archive &i_ar, const unsigned int i_version) const
-  {
-  i_ar & m_world_bounds;
-  i_ar & m_light_to_world;
-  i_ar & m_world_to_light;
-  i_ar & mp_image_map;
-  i_ar & m_image;
-  i_ar & m_height;
-  i_ar & m_width;
-  i_ar & m_scale;
-  }
-
-template<class Archive>
-void ImageEnvironmentalLight::load(Archive &i_ar, const unsigned int i_version)
-  {
-  i_ar & m_world_bounds;
-  i_ar & m_light_to_world;
-  i_ar & m_world_to_light;
-  i_ar & mp_image_map;
-  i_ar & m_image;
-  i_ar & m_height;
-  i_ar & m_width;
-  i_ar & m_scale;
-
-  // Clear vectors with old data.
-  m_nodes_directions.clear();
-  m_irradiances.clear();
-  m_nodes_hemispherical_PDF.clear();
-  m_nodes_spherical_PDF.clear();
-  m_CDF_rows.clear();
-  m_CDF_cols.clear();
-
-  _Initialize();
-  }
-
-template<class Archive>
-void ImageEnvironmentalLight::serialize(Archive &i_ar, const unsigned int i_version)
-  {
-  i_ar & boost::serialization::base_object<InfiniteLightSource>(*this);
-  boost::serialization::split_member(i_ar, *this, i_version);
-  }
-
-// Register the derived class in the boost serialization framework.
-BOOST_CLASS_EXPORT_KEY(ImageEnvironmentalLight)
 
 #endif // IMAGE_ENVIRONMENTAL_LIGHT_H

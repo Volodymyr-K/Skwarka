@@ -14,6 +14,7 @@
 
 #include "UniformImagePixelsOrder.h"
 #include <Common/Common.h>
+#include <algorithm>
 
 UniformImagePixelsOrder::UniformImagePixelsOrder(): ImagePixelsOrder()
   {

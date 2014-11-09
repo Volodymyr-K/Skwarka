@@ -345,20 +345,4 @@ Vector3D<T2> Convert(const Vector3D<T> &i_vector)
   return Vector3D<T2>((T2)i_vector[0], (T2)i_vector[1], (T2)i_vector[2]);
   }
 
-/**
-* Serializes Vector3D to/from the specified Archive. This method is used by the boost serialization framework.
-*/
-template<typename T, class Archive>
-void serialize(Archive &i_ar, Vector3D<T> &i_vector, const unsigned int i_version)
-  {
-  i_ar & i_vector[0];
-  i_ar & i_vector[1];
-  i_ar & i_vector[2];
-  }
-
-// Don't store class info for Vector3D.
-BOOST_CLASS_IMPLEMENTATION(Vector3D_i, boost::serialization::object_serializable)
-BOOST_CLASS_IMPLEMENTATION(Vector3D_f, boost::serialization::object_serializable)
-BOOST_CLASS_IMPLEMENTATION(Vector3D_d, boost::serialization::object_serializable)
-
 #endif // VECTOR3D_H

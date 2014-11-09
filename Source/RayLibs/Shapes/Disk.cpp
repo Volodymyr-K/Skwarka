@@ -16,6 +16,7 @@
 #include <cmath>
 #include <vector>
 #include <map>
+#include <algorithm>
 #include <Math/Constants.h>
 
 Disk::Disk()

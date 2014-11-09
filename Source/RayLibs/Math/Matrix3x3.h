@@ -279,17 +279,4 @@ Matrix3x3<T> operator*(const Matrix3x3<T> &i_left, const Matrix3x3<T> &i_right)
   return Matrix3x3<T>(tmp);
   }
 
-/**
-* Serializes Matrix3x3 to/from the specified Archive. This method is used by the boost serialization framework.
-*/
-template<typename T, class Archive>
-void serialize(Archive &i_ar, Matrix3x3<T> &i_matrix, const unsigned int i_version)
-  {
-  i_ar & i_matrix.m_values;
-  }
-
-// Don't store class info for Matrix3x3.
-BOOST_CLASS_IMPLEMENTATION(Matrix3x3_f, boost::serialization::object_serializable)
-BOOST_CLASS_IMPLEMENTATION(Matrix3x3_d, boost::serialization::object_serializable)
-
 #endif // MATRIX_3X3_H

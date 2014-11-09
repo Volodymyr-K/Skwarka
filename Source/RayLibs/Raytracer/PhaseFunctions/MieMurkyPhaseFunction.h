@@ -42,16 +42,4 @@ inline double MieMurkyPhaseFunction::ScatteringPDF(const Vector3D_d &i_incoming,
   return (0.5 + 16.5 * pow(0.5 * (1.0 + costheta), 32.0)) / (4.0*M_PI);
   }
 
-/**
-* Serializes MieMurkyPhaseFunction to/from the specified Archive. This method is used by the boost serialization framework.
-*/
-template<class Archive>
-void serialize(Archive &i_ar, MieMurkyPhaseFunction &i_phase_function, const unsigned int i_version)
-  {
-  i_ar & boost::serialization::base_object<PhaseFunction>(i_phase_function);
-  }
-
-// Register the derived class in the boost serialization framework.
-BOOST_CLASS_EXPORT_KEY(MieMurkyPhaseFunction)
-
 #endif // MIE_MURKY_PHASE_FUNCTION_H

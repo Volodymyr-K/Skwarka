@@ -53,18 +53,6 @@ class SphericalMapping2D: public Mapping2D
     virtual void Map(const DifferentialGeometry &i_dg, size_t i_triangle_index, Point2D_d &o_point, Vector2D_d &o_dp_dx, Vector2D_d &o_dp_dy) const;
 
   private:
-    SphericalMapping2D() {}; // Empty default constructor for the boost serialization framework.
-
-    // Needed for the boost serialization framework.  
-    friend class boost::serialization::access;
-
-    /**
-    * Serializes to/from the specified Archive. This method is used by the boost serialization framework.
-    */
-    template<class Archive>
-    void serialize(Archive &i_ar, const unsigned int i_version);
-
-  private:
     /**
     * Helper private method that maps specified 3D point to (theta,phi) coordinates.
     */
@@ -129,15 +117,5 @@ inline void SphericalMapping2D::_MapPoint(const Point3D_d &i_point, Point2D_d &o
   o_spherical_uv[0] = theta*INV_PI;
   o_spherical_uv[1] = phi*INV_2PI;
   }
-
-template<class Archive>
-void SphericalMapping2D::serialize(Archive &i_ar, const unsigned int i_version)
-  {
-  i_ar & boost::serialization::base_object<Mapping2D>(*this);
-  i_ar & m_world_to_sphere;
-  }
-
-// Register the derived class in the boost serialization framework.
-BOOST_CLASS_EXPORT_KEY(SphericalMapping2D)
 
 #endif // SPHERICAL_MAPPING_2D_H

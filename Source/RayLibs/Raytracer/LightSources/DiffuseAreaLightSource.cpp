@@ -17,9 +17,6 @@
 #include <Math/SamplingRoutines.h>
 #include <Math/MathRoutines.h>
 
-// Register the derived class in the boost serialization framework.
-BOOST_CLASS_EXPORT_IMPLEMENT(DiffuseAreaLightSource);
-
 DiffuseAreaLightSource::DiffuseAreaLightSource(const Spectrum_d &i_radiance, intrusive_ptr<const TriangleMesh> ip_mesh): AreaLightSource(ip_mesh),
 m_radiance(i_radiance), mp_mesh(ip_mesh)
   {

@@ -595,47 +595,8 @@
     <ClCompile Include="VolumeRegions\HomogeneousVolumeRegion.cpp">
       <Filter>VolumeRegions\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ImageSources\OpenEXRRgbaImageSource.cpp">
-      <Filter>ImageSources\Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ImageSources\RGBImageSource.cpp">
       <Filter>ImageSources\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Mappings\SphericalMapping2D.cpp">
-      <Filter>Mappings\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Mappings\TransformMapping3D.cpp">
-      <Filter>Mappings\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Mappings\UVMapping2D.cpp">
-      <Filter>Mappings\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="PhaseFunctions\HGPhaseFunction.cpp">
-      <Filter>PhaseFunctions\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="PhaseFunctions\IsotropicPhaseFunction.cpp">
-      <Filter>PhaseFunctions\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="PhaseFunctions\MieHazyPhaseFunction.cpp">
-      <Filter>PhaseFunctions\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="PhaseFunctions\MieMurkyPhaseFunction.cpp">
-      <Filter>PhaseFunctions\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="PhaseFunctions\RayleighPhaseFunction.cpp">
-      <Filter>PhaseFunctions\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Textures\ConstantTexture.cpp">
-      <Filter>Textures\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Textures\ImageTexture.cpp">
-      <Filter>Textures\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Textures\ScaleTexture.cpp">
-      <Filter>Textures\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Textures\WindyTexture.cpp">
-      <Filter>Textures\Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

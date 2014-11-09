@@ -161,23 +161,11 @@ class DensityVolumeRegion: public VolumeRegion
     DensityVolumeRegion(const BBox3D_d &i_bounds, Spectrum_d &i_base_emission, SpectrumCoef_d &i_base_absorption,
       SpectrumCoef_d &i_base_scattering, intrusive_ptr<const PhaseFunction> ip_phase_function);
 
-    DensityVolumeRegion() {}; // Empty default constructor for the boost serialization framework.
-
   private:
     /**
     * Private virtual function for the sub-classes to implement that returns density of the media particles at the specified point.
     */
     virtual double _Density(const Point3D_d &i_point) const = 0;
-
-  private:
-    // Needed for the boost serialization framework.  
-    friend class boost::serialization::access;
-
-    /**
-    * Serializes to/from the specified Archive. This method is used by the boost serialization framework.
-    */
-    template<class Archive>
-    void serialize(Archive &i_ar, const unsigned int i_version);
 
   private:
     BBox3D_d m_bounds;
@@ -186,32 +174,5 @@ class DensityVolumeRegion: public VolumeRegion
 
     intrusive_ptr<const PhaseFunction> mp_phase_function;
   };
-
-/////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-/**
-* Serializes VolumeRegion to/from the specified Archive. This method is used by the boost serialization framework.
-*/
-template<class Archive>
-void serialize(Archive &i_ar, VolumeRegion &i_volume, const unsigned int i_version)
-  {
-  // Nothing to do here, everything must be serialized by the derived classes.
-
-  // Just call the serialization for the base ReferenceCounted class.
-  i_ar & boost::serialization::base_object<ReferenceCounted>(i_volume);
-  }
-
-template<class Archive>
-void DensityVolumeRegion::serialize(Archive &i_ar, const unsigned int i_version)
-  {
-  i_ar & boost::serialization::base_object<VolumeRegion>(*this);
-  i_ar & m_bounds;
-  i_ar & m_base_emission;
-  i_ar & m_base_absorption;
-  i_ar & m_base_scattering;
-  i_ar & m_base_attenuation;
-  i_ar & mp_phase_function;
-  }
 
 #endif // VOLUME_REGION_H

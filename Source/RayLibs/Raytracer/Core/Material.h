@@ -59,17 +59,4 @@ inline Material::~Material()
   {
   }
 
-/**
-* Serializes Material to/from the specified Archive. This method is used by the boost serialization framework.
-*/
-template<class Archive>
-void serialize(Archive &i_ar, Material &i_material, const unsigned int i_version)
-  {
-  // Nothing to do here, everything must be serialized by the derived classes.
-
-  // Just call the serialization for the base ReferenceCounted class.
-  i_ar & boost::serialization::base_object<ReferenceCounted>(i_material);
-  }
-
-
 #endif // MATERIAL_H

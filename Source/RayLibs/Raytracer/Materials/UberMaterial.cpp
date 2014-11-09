@@ -20,9 +20,6 @@
 #include <Raytracer/MicrofacetDistributions/BlinnDistribution.h>
 #include <Raytracer/BxDFs/Lambertian.h>
 
-// Register the derived class in the boost serialization framework.
-BOOST_CLASS_EXPORT_IMPLEMENT(UberMaterial);
-
 UberMaterial::UberMaterial(intrusive_ptr<const Texture<SpectrumCoef_d>> ip_Kd,
                            intrusive_ptr<const Texture<SpectrumCoef_d>> ip_Ks,
                            intrusive_ptr<const Texture<SpectrumCoef_d>> ip_Kr,

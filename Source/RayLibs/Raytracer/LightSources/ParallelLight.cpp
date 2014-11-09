@@ -18,9 +18,6 @@
 #include <Math/SamplingRoutines.h>
 #include <utility>
 
-// Register the derived class in the boost serialization framework.
-BOOST_CLASS_EXPORT_IMPLEMENT(ParallelLight);
-
 ParallelLight::ParallelLight(const Vector3D_d &i_direction, const Spectrum_d &i_radiance, const BBox3D_d &i_world_bounds): DeltaLightSource(),
 m_direction(i_direction), m_radiance(i_radiance), m_world_bounds(i_world_bounds)
   {

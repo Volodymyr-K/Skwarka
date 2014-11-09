@@ -40,18 +40,6 @@ class HGPhaseFunction: public PhaseFunction
     double ScatteringPDF(const Vector3D_d &i_incoming, const Vector3D_d &i_outgoing) const;
 
   private:
-    HGPhaseFunction() {}; // Empty default constructor for the boost serialization framework.
-
-    // Needed for the boost serialization framework.  
-    friend class boost::serialization::access;
-
-    /**
-    * Serializes to/from the specified Archive. This method is used by the boost serialization framework.
-    */
-    template<class Archive>
-    void serialize(Archive &i_ar, const unsigned int i_version);
-
-  private:
     double m_g;
   };
 
@@ -67,18 +55,5 @@ inline double HGPhaseFunction::ScatteringPDF(const Vector3D_d &i_incoming, const
   double costheta = i_incoming*i_outgoing;
   return 1.0 / (4.0 * M_PI) * (1.0 - m_g*m_g) * pow(1.0 + m_g*m_g - 2.0 * m_g * costheta, -1.5);
   }
-
-/**
-* Serializes to/from the specified Archive. This method is used by the boost serialization framework.
-*/
-template<class Archive>
-void HGPhaseFunction::serialize(Archive &i_ar, const unsigned int i_version)
-  {
-  i_ar & boost::serialization::base_object<PhaseFunction>(*this);
-  i_ar & m_g;
-  }
-
-// Register the derived class in the boost serialization framework.
-BOOST_CLASS_EXPORT_KEY(HGPhaseFunction)
 
 #endif // HG_PHASE_FUNCTION_H

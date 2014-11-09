@@ -43,16 +43,6 @@ class UVMapping2D: public Mapping2D
     virtual void Map(const DifferentialGeometry &i_dg, size_t i_triangle_index, Point2D_d &o_point, Vector2D_d &o_dp_dx, Vector2D_d &o_dp_dy) const;
 
   private:
-    // Needed for the boost serialization framework.  
-    friend class boost::serialization::access;
-
-    /**
-    * Serializes to/from the specified Archive. This method is used by the boost serialization framework.
-    */
-    template<class Archive>
-    void serialize(Archive &i_ar, const unsigned int i_version);
-
-  private:
     double m_u_scale, m_v_scale;
     Vector2D_d m_uv_translation;
   };
@@ -72,17 +62,5 @@ inline void UVMapping2D::Map(const DifferentialGeometry &i_dg, size_t i_triangle
   o_dp_dx = Vector2D_d(i_dg.m_duv_dx[0]*m_u_scale, i_dg.m_duv_dx[1]*m_v_scale);
   o_dp_dy = Vector2D_d(i_dg.m_duv_dy[0]*m_u_scale, i_dg.m_duv_dy[1]*m_v_scale);
   }
-
-template<class Archive>
-void UVMapping2D::serialize(Archive &i_ar, const unsigned int i_version)
-  {
-  i_ar & boost::serialization::base_object<Mapping2D>(*this);
-  i_ar & m_u_scale;
-  i_ar & m_v_scale;
-  i_ar & m_uv_translation;
-  }
-
-// Register the derived class in the boost serialization framework.
-BOOST_CLASS_EXPORT_KEY(UVMapping2D)
 
 #endif // UV_MAPPING_2D_H

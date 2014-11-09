@@ -16,6 +16,7 @@
 #include "MathRoutines.h"
 
 #include <cmath>
+#include <algorithm>
 
 namespace NoiseRoutines
   {

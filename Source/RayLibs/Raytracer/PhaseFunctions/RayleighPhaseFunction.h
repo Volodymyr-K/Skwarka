@@ -42,16 +42,4 @@ inline double RayleighPhaseFunction::ScatteringPDF(const Vector3D_d &i_incoming,
   return  3.0/(16.0*M_PI) * (1.0 + costheta * costheta);
   }
 
-/**
-* Serializes RayleighPhaseFunction to/from the specified Archive. This method is used by the boost serialization framework.
-*/
-template<class Archive>
-void serialize(Archive &i_ar, RayleighPhaseFunction &i_phase_function, const unsigned int i_version)
-  {
-  i_ar & boost::serialization::base_object<PhaseFunction>(i_phase_function);
-  }
-
-// Register the derived class in the boost serialization framework.
-BOOST_CLASS_EXPORT_KEY(RayleighPhaseFunction)
-
 #endif // RAYLEIGH_PHASE_FUNCTION_H

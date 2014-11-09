@@ -15,6 +15,7 @@
 #include "Cylinder.h"
 #include <cmath>
 #include <vector>
+#include <algorithm>
 #include <Math/Constants.h>
 
 Cylinder::Cylinder()

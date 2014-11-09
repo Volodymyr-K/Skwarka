@@ -74,7 +74,6 @@
   <ItemGroup>
     <ClInclude Include="Assert.h" />
     <ClInclude Include="Common.h" />
-    <ClInclude Include="CommonSerialization.h" />
     <ClInclude Include="IntrusiveSmartPointer.h" />
     <ClInclude Include="Log.h" />
     <ClInclude Include="MemoryPool.h" />

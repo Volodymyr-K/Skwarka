@@ -50,18 +50,6 @@ class MitchellFilter: public FilmFilter
     void GetParameters(double &o_b, double &o_c) const;
 
   private:
-    MitchellFilter() {}; // Empty default constructor for the boost serialization framework.
-
-    // Needed for the boost serialization framework.  
-    friend class boost::serialization::access;
-
-    /**
-    * Serializes to/from the specified Archive. This method is used by the boost serialization framework.
-    */
-    template<class Archive>
-    void serialize(Archive &i_ar, const unsigned int i_version);
-
-  private:
     /**
     * Private helper method that computes filter value for 1D.
     */
@@ -86,18 +74,5 @@ inline double MitchellFilter::_Mitchell1D(double i_x) const
     (-18 + 12*m_b + 6*m_c) * i_x*i_x +
     (6 - 2*m_b)) * (1.0/6.0);
   }
-
-template<class Archive>
-void MitchellFilter::serialize(Archive &i_ar, const unsigned int i_version)
-  {
-  i_ar & boost::serialization::base_object<FilmFilter>(*this);
-  i_ar & m_b;
-  i_ar & m_c;
-  i_ar & m_inv_x_width;
-  i_ar & m_inv_y_width;
-  }
-
-// Register the derived class in the boost serialization framework.
-BOOST_CLASS_EXPORT_KEY(MitchellFilter)
 
 #endif // MITCHELL_FILTER_H

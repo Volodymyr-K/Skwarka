@@ -20,6 +20,7 @@
 #include <Math/MathRoutines.h>
 #include <Math/Geometry.h>
 #include <cmath>
+#include <algorithm>
 
 /**
 * The Blinn microfacet normal distribution implementation.

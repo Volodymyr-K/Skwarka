@@ -51,18 +51,6 @@ class WindyTexture : public Texture<T>
     T _To_T(double i_value) const;
 
   private:
-    WindyTexture() {}; // Empty default constructor for the boost serialization framework.
-
-    // Needed for the boost serialization framework.  
-    friend class boost::serialization::access;
-
-    /**
-    * Serializes to/from the specified Archive. This method is used by the boost serialization framework.
-    */
-    template<class Archive>
-    void serialize(Archive &i_ar, const unsigned int i_version);
-
-  private:
     intrusive_ptr<const Mapping3D> mp_mapping;
   };
 
@@ -104,29 +92,5 @@ inline SpectrumCoef_f WindyTexture<SpectrumCoef_f>::_To_T(double i_value) const
   {
   return SpectrumCoef_f(static_cast<float>(i_value));
   }
-
-template<typename T>
-template<class Archive>
-void WindyTexture<T>::serialize(Archive &i_ar, const unsigned int i_version)
-  {
-  i_ar & boost::serialization::base_object<Texture<T>>(*this);
-  i_ar & mp_mapping;
-  }
-
-// The following code exports different specializations of the WindyTexture template in the boost serialization framework.
-// If you need to serialize a new specialization you have to add it here.
-typedef WindyTexture<Spectrum_f> WindyTexture_Spectrum_f;
-typedef WindyTexture<Spectrum_d> WindyTexture_Spectrum_d;
-typedef WindyTexture<SpectrumCoef_f> WindyTexture_SpectrumCoef_f;
-typedef WindyTexture<SpectrumCoef_d> WindyTexture_SpectrumCoef_d;
-typedef WindyTexture<float> WindyTexture_float;
-typedef WindyTexture<double> WindyTexture_double;
-
-BOOST_CLASS_EXPORT_KEY(WindyTexture_Spectrum_f)
-BOOST_CLASS_EXPORT_KEY(WindyTexture_Spectrum_d)
-BOOST_CLASS_EXPORT_KEY(WindyTexture_SpectrumCoef_f)
-BOOST_CLASS_EXPORT_KEY(WindyTexture_SpectrumCoef_d)
-BOOST_CLASS_EXPORT_KEY(WindyTexture_float)
-BOOST_CLASS_EXPORT_KEY(WindyTexture_double)
 
 #endif // WINDY_TEXTURE_H

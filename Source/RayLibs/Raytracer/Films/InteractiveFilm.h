@@ -90,18 +90,6 @@ class InteractiveFilm: public Film
     void GetCropWindow(Point2D_i &o_begin, Point2D_i &o_end) const;
 
   private:
-    InteractiveFilm() {}; // Empty default constructor for the boost serialization framework.
-
-    // Needed for the boost serialization framework.  
-    friend class boost::serialization::access;
-
-    /**
-    * Serializes to/from the specified Archive. This method is used by the boost serialization framework.
-    */
-    template<class Archive>
-    void serialize(Archive &i_ar, const unsigned int i_version);
-
-  private:
     size_t m_x_resolution, m_y_resolution;
     Point2D_i m_crop_window_begin, m_crop_window_end;
 
@@ -112,22 +100,5 @@ class InteractiveFilm: public Film
     // Smaller factor results in a better approximation but takes more processing time when adding samples.
     static const unsigned int FRACTION_FACTOR = 4;
   };
-
-/////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-template<class Archive>
-void InteractiveFilm::serialize(Archive &i_ar, const unsigned int i_version)
-  {
-  i_ar & boost::serialization::base_object<Film>(*this);
-  i_ar & m_x_resolution;
-  i_ar & m_y_resolution;
-  i_ar & m_crop_window_begin;
-  i_ar & m_crop_window_end;
-  i_ar & m_image_films;
-  }
-
-// Register the derived class in the boost serialization framework.
-BOOST_CLASS_EXPORT_KEY(InteractiveFilm)
 
 #endif // INTERACTIVE_FILM_H

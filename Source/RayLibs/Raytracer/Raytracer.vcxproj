@@ -208,11 +208,7 @@
     <ClCompile Include="BxDFs\OrenNayar.cpp" />
     <ClCompile Include="BxDFs\ScaledBxDF.cpp" />
     <ClCompile Include="BxDFs\SpecularTransmission.cpp" />
-    <ClCompile Include="ImageSources\OpenEXRRgbaImageSource.cpp" />
     <ClCompile Include="ImageSources\RGBImageSource.cpp" />
-    <ClCompile Include="Mappings\SphericalMapping2D.cpp" />
-    <ClCompile Include="Mappings\TransformMapping3D.cpp" />
-    <ClCompile Include="Mappings\UVMapping2D.cpp" />
     <ClCompile Include="Materials\MatteMaterial.cpp" />
     <ClCompile Include="Materials\MERLMeasuredMaterial.cpp" />
     <ClCompile Include="Materials\MetalMaterial.cpp" />
@@ -221,13 +217,6 @@
     <ClCompile Include="Materials\SubstrateMaterial.cpp" />
     <ClCompile Include="Materials\TransparentMaterial.cpp" />
     <ClCompile Include="Materials\UberMaterial.cpp" />
-    <ClCompile Include="PhaseFunctions\HGPhaseFunction.cpp" />
-    <ClCompile Include="PhaseFunctions\IsotropicPhaseFunction.cpp" />
-    <ClCompile Include="PhaseFunctions\MieHazyPhaseFunction.cpp" />
-    <ClCompile Include="PhaseFunctions\MieMurkyPhaseFunction.cpp" />
-    <ClCompile Include="PhaseFunctions\RayleighPhaseFunction.cpp">
-      <PreprocessToFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</PreprocessToFile>
-    </ClCompile>
     <ClCompile Include="Samplers\ConsecutiveImagePixelsOrder.cpp" />
     <ClCompile Include="Samplers\LDSampler.cpp" />
     <ClCompile Include="Samplers\RandomBlockedImagePixelsOrder.cpp" />
@@ -245,10 +234,6 @@
     <ClCompile Include="LTEIntegrators\PhotonLTEIntegrator\PhotonShootingPipeline.cpp" />
     <ClCompile Include="LightsSamplingStrategies\IrradianceLightsSamplingStrategy.cpp" />
     <ClCompile Include="LightsSamplingStrategies\PowerLightsSamplingStrategy.cpp" />
-    <ClCompile Include="Textures\ConstantTexture.cpp" />
-    <ClCompile Include="Textures\ImageTexture.cpp" />
-    <ClCompile Include="Textures\ScaleTexture.cpp" />
-    <ClCompile Include="Textures\WindyTexture.cpp" />
     <ClCompile Include="VolumeRegions\AggregateVolumeRegion.cpp" />
     <ClCompile Include="VolumeRegions\GridDensityVolumeRegion.cpp" />
     <ClCompile Include="VolumeRegions\HomogeneousVolumeRegion.cpp" />

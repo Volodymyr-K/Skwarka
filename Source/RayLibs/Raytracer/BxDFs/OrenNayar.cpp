@@ -14,6 +14,7 @@
 
 #include "OrenNayar.h"
 #include <Math/MathRoutines.h>
+#include <algorithm>
 
 OrenNayar::OrenNayar(SpectrumCoef_d i_reflectance, double i_sigma):
 BxDF(BxDFType(BSDF_REFLECTION | BSDF_DIFFUSE)), m_reflectance(i_reflectance)

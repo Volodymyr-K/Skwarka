@@ -226,11 +226,6 @@ void TriangleMesh::_Initialize(const std::vector<Point3D_f> &i_vertices, const s
     for(size_t i=0;i<i_tangents.size();++i)
       m_tangents[i] = i_tangents[i].Normalized();
     }
-
-  // Assign dummy values otherwise the boost serialization engine will complain.
-  m_topology_info.m_manifold=false;
-  m_topology_info.m_number_of_patches=false;
-  m_topology_info.m_solid=false;
   }
 
 /**

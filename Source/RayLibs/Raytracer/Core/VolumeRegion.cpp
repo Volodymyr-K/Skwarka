@@ -13,6 +13,7 @@
 */
 
 #include "VolumeRegion.h"
+#include <algorithm>
 
 DensityVolumeRegion::DensityVolumeRegion(const BBox3D_d &i_bounds, Spectrum_d &i_base_emission, SpectrumCoef_d &i_base_absorption,
                                          SpectrumCoef_d &i_base_scattering, intrusive_ptr<const PhaseFunction> ip_phase_function):

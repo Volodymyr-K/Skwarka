@@ -20,14 +20,6 @@
 #include <Raytracer/Core/Color.h>
 #include <FreeImage.h>
 
-// Register the derived class in the boost serialization framework.
-BOOST_CLASS_EXPORT_IMPLEMENT(RGBImageSource_float);
-BOOST_CLASS_EXPORT_IMPLEMENT(RGBImageSource_double);
-BOOST_CLASS_EXPORT_IMPLEMENT(RGBImageSource_Spectrum_float);
-BOOST_CLASS_EXPORT_IMPLEMENT(RGBImageSource_Spectrum_double);
-BOOST_CLASS_EXPORT_IMPLEMENT(RGBImageSource_SpectrumCoef_float);
-BOOST_CLASS_EXPORT_IMPLEMENT(RGBImageSource_SpectrumCoef_double);
-
 std::vector<std::vector<RGBColor_f>> LoadImageFromFile(const std::string &i_filename, const ColorSystem &i_color_system)
   {
   // check the file signature and deduce its format (the second argument is currently not used by FreeImage)

@@ -307,27 +307,4 @@ inline Transform Transform::operator*(const Transform &i_transform) const
   return Transform(m1, m2);
   }
 
-template<class Archive>
-void save(Archive &i_ar, const Transform &i_transform, const unsigned int i_version)
-  {
-  const Matrix4x4_d matrix(i_transform.GetMatrix());
-  i_ar << matrix;
-  }
-
-template<class Archive>
-void load(Archive &i_ar, Transform &io_transform, const unsigned int i_version)
-  {
-  Matrix4x4_d matrix;
-  i_ar >> matrix;
-  io_transform = Transform(matrix);
-  }
-
-template<class Archive>
-void serialize(Archive &i_ar, Transform &io_transform, const unsigned int i_version)
-  {
-  boost::serialization::split_free(i_ar, io_transform, i_version);
-  }
-
-BOOST_CLASS_IMPLEMENTATION(Transform, boost::serialization::object_serializable)
-
 #endif // TRANSFORM_H

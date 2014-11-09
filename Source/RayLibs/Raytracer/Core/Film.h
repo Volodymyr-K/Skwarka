@@ -76,18 +76,6 @@ class Film: public ReferenceCounted
     */
     Film(size_t i_x_resolution, size_t i_y_resolution);
 
-    Film() {} // Empty default constructor for the boost serialization framework.
-
-  private:
-    // Needed for the boost serialization framework.  
-    friend class boost::serialization::access;
-
-    /**
-    * Serializes to/from the specified Archive. This method is used by the boost serialization framework.
-    */
-    template<class Archive>
-    void serialize(Archive &i_ar, const unsigned int i_version);
-
   private:
     // Not implemented, not a value type.
     Film(const Film&);
@@ -113,14 +101,6 @@ inline size_t Film::GetXResolution() const
 inline size_t Film::GetYResolution() const
   {
   return m_y_resolution;
-  }
-
-template<class Archive>
-void Film::serialize(Archive &i_ar, const unsigned int i_version)
-  {
-  i_ar & boost::serialization::base_object<ReferenceCounted>(*this);
-  i_ar & m_x_resolution;
-  i_ar & m_y_resolution;
   }
 
 #endif // FILM_H

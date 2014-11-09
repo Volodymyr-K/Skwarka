@@ -134,19 +134,6 @@ inline Point3D_d Ray::operator()(double i_t) const
   return m_origin+m_direction*i_t;
   }
 
-/**
-* Serializes Ray to/from the specified Archive. This method is used by the boost serialization framework.
-*/
-template<class Archive>
-void serialize(Archive &i_ar, Ray &i_ray, const unsigned int i_version)
-  {
-  i_ar & i_ray.m_origin;
-  i_ar & i_ray.m_direction;
-  i_ar & i_ray.m_min_t;
-  i_ar & i_ray.m_max_t;
-  }
-
-
 inline RayDifferential::RayDifferential():
 m_base_ray(), m_has_differentials(false), m_specular_depth(0)
   {
@@ -156,24 +143,5 @@ inline RayDifferential::RayDifferential(const Ray &i_ray):
 m_base_ray(i_ray), m_has_differentials(false), m_specular_depth(0)
   {
   }
-
-/**
-* Serializes RayDifferential to/from the specified Archive. This method is used by the boost serialization framework.
-*/
-template<class Archive>
-void serialize(Archive &i_ar, RayDifferential &i_ray, const unsigned int i_version)
-  {
-  i_ar & i_ray.m_base_ray;
-  i_ar & i_ray.m_origin_dx;
-  i_ar & i_ray.m_origin_dy;
-  i_ar & i_ray.m_direction_dx;
-  i_ar & i_ray.m_direction_dy;
-  i_ar & i_ray.m_has_differentials;
-  i_ar & i_ray.m_specular_depth;
-  }
-
-// Don't store class info for Ray and RayDifferential.
-BOOST_CLASS_IMPLEMENTATION(Ray, boost::serialization::object_serializable)
-BOOST_CLASS_IMPLEMENTATION(RayDifferential, boost::serialization::object_serializable)
 
 #endif // RAY_H

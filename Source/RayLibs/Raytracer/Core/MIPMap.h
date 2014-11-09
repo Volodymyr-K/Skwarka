@@ -116,42 +116,9 @@ class MIPMap: public ReferenceCounted
     std::vector<ResampleWeight> _ComputeResampleWeights(size_t i_old_size, size_t i_new_size) const;
 
   private:
-    MIPMap() {}; // Empty default constructor for the boost serialization framework.
-
-    // Needed for the boost serialization framework.  
-    friend class boost::serialization::access;
-
-    /**
-    * Saves MIPMap to the specified Archive. This method is called by the serialize() method.
-    */
-    template<class Archive>
-    void save(Archive &i_ar, const unsigned int i_version) const;
-
-    /**
-    * Loads MIPMap from the specified Archive. This method is called by the serialize() method.
-    */
-    template<class Archive>
-    void load(Archive &i_ar, const unsigned int i_version);
-
-    /**
-    * Serializes MIPMap to/from the specified Archive. This method is used by the boost serialization framework.
-    */
-    template<class Archive>
-    void serialize(Archive &i_ar, const unsigned int i_version);
-
-  private:
     size_t m_width, m_height, m_num_levels;
     double m_max_anisotropy;
     bool m_repeat;
-
-    /**
-    * ImageSource instance the MIPMap was initialized from.
-    * Although it is not used for lookups after the MIPMap is constructed we still store the ImageSource for the serialization.
-    * In most of the cases the serialization takes much less space when ImageSource is provided.
-    *
-    * Can be NULL, in this case MIPMap levels are serialized directly.
-    */
-    intrusive_ptr<const ImageSource<T>> mp_image_source;
 
     /**
     * Levels of the MIP-map. 0-th level corresponds to the original image and the highest level has 1x1 size.
@@ -180,14 +147,14 @@ struct MIPMap<T>::ResampleWeight
 
 template <typename T>
 MIPMap<T>::MIPMap(const std::vector<std::vector<T>> &i_values, bool i_repeat, double i_max_anisotropy):
-m_repeat(i_repeat), mp_image_source(NULL)
+m_repeat(i_repeat)
   {
   _Initialize(i_values, i_max_anisotropy);
   }
 
 template <typename T>
 MIPMap<T>::MIPMap(intrusive_ptr<const ImageSource<T>> ip_image_source, bool i_repeat, double i_max_anisotropy):
-m_repeat(i_repeat), mp_image_source(ip_image_source)
+m_repeat(i_repeat)
   {
   ASSERT(ip_image_source);
   ASSERT(ip_image_source->GetHeight()>0 && ip_image_source->GetWidth()>0);
@@ -590,73 +557,6 @@ T MIPMap<T>::_EWA(size_t i_level, Point2D_d i_point, Vector2D_d i_dxy_1, Vector2
 
   ASSERT(den > 0.0);
   return static_cast<T>( num / den );
-  }
-
-template<typename T>
-template<class Archive>
-void MIPMap<T>::save(Archive &i_ar, const unsigned int i_version) const
-  {
-  i_ar & boost::serialization::base_object<ReferenceCounted>(*this);
-
-  bool image_source_provided = mp_image_source.get() != NULL;
-  i_ar & image_source_provided;
-  i_ar & m_repeat;
-  i_ar & m_max_anisotropy;
-
-  if (image_source_provided)
-    i_ar & mp_image_source;
-  else
-    {
-    i_ar & m_width;
-    i_ar & m_height;
-    i_ar & m_num_levels;
-    i_ar & m_levels;
-    }
-  }
-
-template<typename T>
-template<class Archive>
-void MIPMap<T>::load(Archive &i_ar, const unsigned int i_version)
-  {
-  // Delete previous levels first to avoid memory leaks.
-  for(size_t i=0;i<m_levels.size();++i)
-    delete m_levels[i];
-
-  m_levels.clear();
-  m_num_levels = 0;
-
-  // Serialize the base class.
-  i_ar & boost::serialization::base_object<ReferenceCounted>(*this);
-
-  bool image_source_provided;
-  i_ar & image_source_provided;
-  i_ar & m_repeat;
-  i_ar & m_max_anisotropy;
-
-  if (image_source_provided)
-    {
-    i_ar & mp_image_source;
-    _Initialize(mp_image_source->GetImage(), m_max_anisotropy);
-    }
-  else
-    {
-    i_ar & m_width;
-    i_ar & m_height;
-    i_ar & m_num_levels;
-    i_ar & m_levels;
-
-    mp_image_source = NULL;
-    }
-
-  _InitializeEWA();
-  }
-
-template<typename T>
-template<class Archive>
-void MIPMap<T>::serialize(Archive &i_ar, const unsigned int i_version)
-  {
-  i_ar & boost::serialization::base_object<ReferenceCounted>(*this);
-  boost::serialization::split_member(i_ar, *this, i_version);
   }
 
 #endif // MIP_MAP_H

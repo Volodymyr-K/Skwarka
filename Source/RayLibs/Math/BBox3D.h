@@ -21,6 +21,7 @@
 #include "Triangle3D.h"
 #include <utility>
 #include <numeric>
+#include <algorithm>
 
 /**
 * Class template for 3D bounding box.
@@ -239,20 +240,5 @@ BBox3D<T2> Convert(const BBox3D<T> &i_bbox)
   {
   return BBox3D<T2>(Convert<T2>(i_bbox.m_min), Convert<T2>(i_bbox.m_max));
   }
-
-/**
-* Serializes BBox3D to/from the specified Archive. This method is used by the boost serialization framework.
-*/
-template<typename T, class Archive>
-void serialize(Archive &i_ar, BBox3D<T> &i_bbox, const unsigned int i_version)
-  {
-  i_ar & i_bbox.m_min;
-  i_ar & i_bbox.m_max;
-  }
-
-// Don't store class info for BBox3D.
-BOOST_CLASS_IMPLEMENTATION(BBox3D_i, boost::serialization::object_serializable)
-BOOST_CLASS_IMPLEMENTATION(BBox3D_f, boost::serialization::object_serializable)
-BOOST_CLASS_IMPLEMENTATION(BBox3D_d, boost::serialization::object_serializable)
 
 #endif // BBOX3D_H

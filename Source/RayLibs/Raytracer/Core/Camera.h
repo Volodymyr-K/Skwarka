@@ -58,22 +58,10 @@ class Camera: public ReferenceCounted
     */
     Camera(const Transform &i_camera2world, intrusive_ptr<Film> ip_film);
 
-    Camera() {} // Empty default constructor for the boost serialization framework.
-
     /**
     * Helper method for derived classes that transform the ray in the camera space to the world space.
     */
     void _TransformRay(const Ray &i_ray, Ray &o_ray) const;
-
-  private:
-    // Needed for the boost serialization framework.  
-    friend class boost::serialization::access;
-
-    /**
-    * Serializes to/from the specified Archive. This method is used by the boost serialization framework.
-    */
-    template<class Archive>
-    void serialize(Archive &i_ar, const unsigned int i_version);
 
   private:
     // Not implemented, not a value type.
@@ -84,16 +72,5 @@ class Camera: public ReferenceCounted
     Transform m_camera2world;
     intrusive_ptr<Film> mp_film;
   };
-
-/////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-template<class Archive>
-void Camera::serialize(Archive &i_ar,  const unsigned int i_version)
-  {
-  i_ar & boost::serialization::base_object<ReferenceCounted>(*this);
-  i_ar & m_camera2world;
-  i_ar & mp_film;
-  }
 
 #endif // CAMERA_H

@@ -91,18 +91,6 @@ class HomogeneousVolumeRegion: public VolumeRegion
     SpectrumCoef_d OpticalThickness(const Ray &i_ray, double i_step, double i_offset_sample) const;
 
   private:
-    HomogeneousVolumeRegion() {}; // Empty default constructor for the boost serialization framework.
-
-    // Needed for the boost serialization framework.  
-    friend class boost::serialization::access;
-
-    /**
-    * Serializes to/from the specified Archive. This method is used by the boost serialization framework.
-    */
-    template<class Archive>
-    void serialize(Archive &i_ar, const unsigned int i_version);
-
-  private:
     BBox3D_d m_bounds;
 
     Spectrum_d m_emission;
@@ -110,23 +98,5 @@ class HomogeneousVolumeRegion: public VolumeRegion
 
     intrusive_ptr<const PhaseFunction> mp_phase_function;
   };
-
-/////////////////////////////////////////// IMPLEMENTATION ////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-template<class Archive>
-void HomogeneousVolumeRegion::serialize(Archive &i_ar,  const unsigned int i_version)
-  {
-  i_ar & boost::serialization::base_object<VolumeRegion>(*this);
-  i_ar & m_bounds;
-  i_ar & m_emission;
-  i_ar & m_absorption;
-  i_ar & m_scattering;
-  i_ar & m_attenuation;
-  i_ar & mp_phase_function;
-  }
-
-// Register the derived class in the boost serialization framework.
-BOOST_CLASS_EXPORT_KEY(HomogeneousVolumeRegion)
 
 #endif // HOMOGENEOUS_VOLUME_REGION_H

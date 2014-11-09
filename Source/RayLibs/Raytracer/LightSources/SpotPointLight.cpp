@@ -18,9 +18,6 @@
 #include <Math/MathRoutines.h>
 #include <utility>
 
-// Register the derived class in the boost serialization framework.
-BOOST_CLASS_EXPORT_IMPLEMENT(SpotPointLight);
-
 SpotPointLight::SpotPointLight(const Point3D_d &i_position, Vector3D_d i_direction, const Spectrum_d &i_intensity, double i_internal_cone_angle, double i_outer_cone_angle): DeltaLightSource(),
 m_position(i_position), m_direction(i_direction), m_intensity(i_intensity), m_internal_cone_angle(i_internal_cone_angle), m_outer_cone_angle(i_outer_cone_angle)
   {
