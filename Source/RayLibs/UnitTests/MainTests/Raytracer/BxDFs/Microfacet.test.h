@@ -136,17 +136,17 @@ class MicrofacetTestSuite : public CxxTest::TestSuite
 
     void test_Microfacet_TotalScattering2()
       {
-      size_t num_samples_sqrt=300;
+      size_t num_samples_sqrt=500;
       std::vector<Point2D_d> samples1(num_samples_sqrt*num_samples_sqrt), samples2(num_samples_sqrt*num_samples_sqrt);
-      SamplingRoutines::StratifiedSampling2D(samples1.begin(),num_samples_sqrt,num_samples_sqrt,true);
-      SamplingRoutines::StratifiedSampling2D(samples2.begin(),num_samples_sqrt,num_samples_sqrt,true);
+      SamplingRoutines::StratifiedSampling2D(samples1.begin(), num_samples_sqrt, num_samples_sqrt, true);
+      SamplingRoutines::StratifiedSampling2D(samples2.begin(), num_samples_sqrt, num_samples_sqrt, true);
       SamplingRoutines::Shuffle(samples2.begin(), samples2.size());
 
       SamplesSequence2D sequence1(&samples1[0], (&samples1[0]) + samples1.size());
       SamplesSequence2D sequence2(&samples2[0], (&samples2[0]) + samples2.size());
 
       SpectrumCoef_d total=mp_bxdf->TotalScattering(true, sequence1, sequence2);
-      CustomAssertDelta(total, SpectrumCoef_d(0.8186), 0.005); // This is an empirical value.
+      CustomAssertDelta(total, SpectrumCoef_d(0.8095), 0.003); // This is an empirical value.
       }
 
   private:

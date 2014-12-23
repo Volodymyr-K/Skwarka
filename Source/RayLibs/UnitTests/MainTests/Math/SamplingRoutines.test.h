@@ -336,20 +336,20 @@ class SamplingRoutinesTestSuite : public CxxTest::TestSuite
       const size_t num_samples = 10000;
 
       std::vector<int> samples;
-      for(size_t i=0;i<num_samples;++i)
+      for (size_t i=0; i<num_samples; ++i)
         samples.push_back(i);
 
       std::vector<int> shuffled(samples.begin(), samples.end());
       SamplingRoutines::Shuffle(shuffled.begin(), shuffled.size());
 
       double distance=0;
-      for(size_t i=0;i<num_samples;++i)
+      for (size_t i=0; i<num_samples; ++i)
         distance+=fabs((double)i-shuffled[i]);
 
       double normalized_distance = distance/num_samples/num_samples;
 
       // Mean value for the distance is 1/3 (since the distribution is uniform).
-      TS_ASSERT_DELTA(normalized_distance, 1.0/3.0, 0.023); // empirical threshold for the given number of samples.
+      TS_ASSERT_DELTA(normalized_distance, 1.0/3.0, 0.01); // empirical threshold for the given number of samples.
 
       std::sort(shuffled.begin(), shuffled.end());
       TS_ASSERT(samples==shuffled); // Make sure that shuffle does not change values, only permutes them.

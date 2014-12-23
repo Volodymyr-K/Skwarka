@@ -426,15 +426,15 @@ namespace SamplingRoutines
   void Shuffle(ValueIterator i_begin, size_t i_samples_num, RandomGenerator<double> *ip_rng)
     {
     if (ip_rng)
-      for (size_t i = 0; i < i_samples_num; ++i)
+      for (size_t i = 1; i < i_samples_num; ++i)
         {
-        unsigned int other = (unsigned int) (*ip_rng)(i_samples_num);
+        unsigned int other = (unsigned int) (*ip_rng)(i);
         std::swap(*(i_begin+i), *(i_begin+other));
         }
     else
-      for (size_t i = 0; i < i_samples_num; ++i)
+      for (size_t i = 1; i < i_samples_num; ++i)
         {
-        unsigned int other = (unsigned int) RandomInt((int)i_samples_num);
+        unsigned int other = (unsigned int) RandomInt((int)i);
         std::swap(*(i_begin+i), *(i_begin+other));
         }
     }
