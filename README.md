@@ -39,6 +39,10 @@ General:
 - Supports volumetric scattering.
 - Multi-threaded. The system uses the Intel TBB library to take advantage of multi-core systems.
 
+GALLERY
+==============
+The [gallery](http://volodymyr-kachurovskyi.github.io/Skwarka/gallery.html) contains a number of interesting scenes rendered by Skwarka to illustrate its functionality.
+
 FILE STRUCTURE
 ==============
 
