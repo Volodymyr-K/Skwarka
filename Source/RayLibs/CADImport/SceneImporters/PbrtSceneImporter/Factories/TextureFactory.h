@@ -20,10 +20,13 @@
 #include <Raytracer/Mappings/SphericalMapping2D.h>
 #include <Raytracer/Mappings/TransformMapping3D.h>
 #include <Raytracer/Mappings/UVMapping2D.h>
+#include <Raytracer/Mappings/PlanarMapping2D.h>
 #include <Raytracer/Textures/ConstantTexture.h>
 #include <Raytracer/Textures/ImageTexture.h>
 #include <Raytracer/Textures/ScaleTexture.h>
+#include <Raytracer/Textures/MixTexture.h>
 #include <Raytracer/Textures/WindyTexture.h>
+#include <Raytracer/Textures/WrinkledTexture.h>
 #include <Raytracer/Core/SpectrumRoutines.h>
 #include <Raytracer/Core/MIPMap.h>
 #include "../PbrtUtils.h"
@@ -124,6 +127,14 @@ namespace PbrtImport
           p_map.reset( new UVMapping2D(su, sv, Vector2D_d(du, dv)) );
           }
         else if (type == "spherical") p_map.reset( new SphericalMapping2D(i_tex_to_world.Inverted()) );
+        else if (type == "planar")
+          {
+          Vector3D_d u = tp.FindVector("v1", Vector3D_d(1, 0, 0));
+          Vector3D_d v = tp.FindVector("v2", Vector3D_d(0, 1, 0));
+          double u_offset = tp.FindFloat("udelta", 0.f);
+          double v_offset = tp.FindFloat("vdelta", 0.f);
+          p_map.reset(new PlanarMapping2D(u, v, u_offset, v_offset));
+          }
         else
           {
           PbrtImport::Utils::LogError(mp_log, std::string("2D texture mapping \"") + type + std::string("\" unknown or not supported. Using UV mapping texture."));
@@ -173,8 +184,7 @@ namespace PbrtImport
 
       intrusive_ptr<const Texture<double>> _CreateMixFloatTexture(const Transform &i_tex_to_world, const TextureParams &tp) const
         {
-        PbrtImport::Utils::LogError(mp_log, "Mix texture is not supported");
-        return NULL;
+        return new MixTexture<double, double>(tp.GetFloatTexture("tex1", 0.0, mp_log), tp.GetFloatTexture("tex2", 1.0, mp_log),  tp.GetFloatTexture("amount", 0.5, mp_log));
         }
 
       intrusive_ptr<const Texture<double>> _CreateBilerpFloatTexture(const Transform &i_tex_to_world, const TextureParams &tp) const
@@ -209,8 +219,8 @@ namespace PbrtImport
 
       intrusive_ptr<const Texture<double>> _CreateWrinkledFloatTexture(const Transform &i_tex_to_world, const TextureParams &tp) const
         {
-        PbrtImport::Utils::LogError(mp_log, "Wrinkled texture is not supported");
-        return NULL;
+        intrusive_ptr<const Mapping3D> p_map(new TransformMapping3D(i_tex_to_world));
+        return new WrinkledTexture<double>(tp.FindInt("octaves", 8), tp.FindFloat("roughness", 0.5f), p_map);
         }
 
       intrusive_ptr<const Texture<double>> _CreateMarbleFloatTexture(const Transform &i_tex_to_world, const TextureParams &tp) const
@@ -246,6 +256,14 @@ namespace PbrtImport
           p_map.reset( new UVMapping2D(su, sv, Vector2D_d(du, dv)) );
           }
         else if (type == "spherical") p_map.reset( new SphericalMapping2D(i_tex_to_world.Inverted()) );
+        else if (type == "planar")
+          {
+          Vector3D_d u = tp.FindVector("v1", Vector3D_d(1, 0, 0));
+          Vector3D_d v = tp.FindVector("v2", Vector3D_d(0, 1, 0));
+          double u_offset = tp.FindFloat("udelta", 0.f);
+          double v_offset = tp.FindFloat("vdelta", 0.f);
+          p_map.reset(new PlanarMapping2D(u, v, u_offset, v_offset));
+          }
         else
           {
           PbrtImport::Utils::LogError(mp_log, std::string("2D texture mapping \"") + type + std::string("\" unknown or not supported. Using UV mapping texture."));
@@ -295,8 +313,9 @@ namespace PbrtImport
 
       intrusive_ptr<const Texture<SpectrumCoef_d>> _CreateMixSpectrumCoefTexture(const Transform &i_tex_to_world, const TextureParams &tp) const
         {
-        PbrtImport::Utils::LogError(mp_log, "Mix texture is not supported");
-        return NULL;
+        return new MixTexture<SpectrumCoef_d, double>(tp.GetSpectrumCoefTexture("tex1", SpectrumCoef_d(0.0), mp_log),
+                                                      tp.GetSpectrumCoefTexture("tex2", SpectrumCoef_d(1.0), mp_log),
+                                                      tp.GetFloatTexture("amount", 0.5, mp_log));
         }
 
       intrusive_ptr<const Texture<SpectrumCoef_d>> _CreateBilerpSpectrumCoefTexture(const Transform &i_tex_to_world, const TextureParams &tp) const
@@ -331,8 +350,8 @@ namespace PbrtImport
 
       intrusive_ptr<const Texture<SpectrumCoef_d>> _CreateWrinkledSpectrumCoefTexture(const Transform &i_tex_to_world, const TextureParams &tp) const
         {
-        PbrtImport::Utils::LogError(mp_log, "Wrinkled texture is not supported");
-        return NULL;
+        intrusive_ptr<const Mapping3D> p_map(new TransformMapping3D(i_tex_to_world));
+        return new WrinkledTexture<SpectrumCoef_d>(tp.FindInt("octaves", 8), tp.FindFloat("roughness", 0.5f), p_map);
         }
 
       intrusive_ptr<const Texture<SpectrumCoef_d>> _CreateMarbleSpectrumCoefTexture(const Transform &i_tex_to_world, const TextureParams &tp) const

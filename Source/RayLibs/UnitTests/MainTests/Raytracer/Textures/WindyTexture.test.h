@@ -40,6 +40,7 @@ class WindyTextureTestSuite : public CxxTest::TestSuite
         if (val<mn) mn=val;
         }
 
+      ASSERT(mx>mn);
       ASSERT(mn>=-1.0 && mn<=1.0);
       ASSERT(mx>=-1.0 && mx<=1.0);
       }

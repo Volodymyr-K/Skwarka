@@ -136,6 +136,7 @@
     <ClInclude Include="BxDFs\ScaledBxDF.h" />
     <ClInclude Include="BxDFs\SpecularReflection.h" />
     <ClInclude Include="BxDFs\SpecularTransmission.h" />
+    <ClInclude Include="Mappings\PlanarMapping2D.h" />
     <ClInclude Include="Materials\MatteMaterial.h" />
     <ClInclude Include="Materials\MERLMeasuredMaterial.h" />
     <ClInclude Include="Materials\MetalMaterial.h" />
@@ -146,6 +147,7 @@
     <ClInclude Include="Materials\UberMaterial.h" />
     <ClInclude Include="Textures\ConstantTexture.h" />
     <ClInclude Include="Textures\ImageTexture.h" />
+    <ClInclude Include="Textures\MixTexture.h" />
     <ClInclude Include="Textures\ScaleTexture.h" />
     <ClInclude Include="Samplers\ConsecutiveImagePixelsOrder.h" />
     <ClInclude Include="Samplers\LDSampler.h" />
@@ -170,6 +172,7 @@
     <ClInclude Include="Mappings\TransformMapping3D.h" />
     <ClInclude Include="Mappings\UVMapping2D.h" />
     <ClInclude Include="Textures\WindyTexture.h" />
+    <ClInclude Include="Textures\WrinkledTexture.h" />
     <ClInclude Include="VolumeRegions\AggregateVolumeRegion.h" />
     <ClInclude Include="VolumeRegions\GridDensityVolumeRegion.h" />
     <ClInclude Include="VolumeRegions\HomogeneousVolumeRegion.h" />

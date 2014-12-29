@@ -214,6 +214,8 @@ copy  "..\..\..\ThirdParty\FreeImage\3.16\Dist\FreeImage.dll" "$(OutDir)"
     <CxxTest Include="MainTests\Raytracer\Textures\ImageTexture.test.h" />
     <CxxTest Include="MainTests\Raytracer\Textures\ScaleTexture.test.h" />
     <CxxTest Include="MainTests\Raytracer\Textures\WindyTexture.test.h" />
+    <CxxTest Include="MainTests\Raytracer\Textures\WrinkledTexture.test.h" />
+    <CxxTest Include="MainTests\Raytracer\Textures\MixTexture.test.h" />
     <CxxTest Include="MainTests\Raytracer\Materials\MatteMaterial.test.h" />
     <CxxTest Include="MainTests\Raytracer\Materials\MERLMeasuredMaterial.test.h" />
     <CxxTest Include="MainTests\Raytracer\Materials\MetalMaterial.test.h" />
@@ -235,6 +237,7 @@ copy  "..\..\..\ThirdParty\FreeImage\3.16\Dist\FreeImage.dll" "$(OutDir)"
     <CxxTest Include="MainTests\Raytracer\Mappings\SphericalMapping2D.test.h" />
     <CxxTest Include="MainTests\Raytracer\Mappings\TransformMapping3D.test.h" />
     <CxxTest Include="MainTests\Raytracer\Mappings\UVMapping2D.test.h" />
+    <CxxTest Include="MainTests\Raytracer\Mappings\PlanarMapping2D.test.h" />
     <CxxTest Include="MainTests\Raytracer\LTEIntegrators\PhotonLTEIntegrator.test.h" />
     <CxxTest Include="MainTests\Raytracer\VolumeRegions\AggregateVolumeRegion.test.h" />
     <CxxTest Include="MainTests\Raytracer\VolumeRegions\GridDensityVolumeRegion.test.h" />
@@ -331,6 +334,7 @@ copy  "..\..\..\ThirdParty\FreeImage\3.16\Dist\FreeImage.dll" "$(OutDir)"
     <ClCompile Include="MIPMap.test.cpp" />
     <ClCompile Include="MitchellFilter.test.cpp" />
     <ClCompile Include="MixMaterial.test.cpp" />
+    <ClCompile Include="MixTexture.test.cpp" />
     <ClCompile Include="NoiseRoutines.test.cpp" />
     <ClCompile Include="Numerics.test.cpp" />
     <ClCompile Include="OpenEXRRgbaImageSource.test.cpp" />
@@ -338,6 +342,7 @@ copy  "..\..\..\ThirdParty\FreeImage\3.16\Dist\FreeImage.dll" "$(OutDir)"
     <ClCompile Include="ParallelLight.test.cpp" />
     <ClCompile Include="PerspectiveCamera.test.cpp" />
     <ClCompile Include="PhotonLTEIntegrator.test.cpp" />
+    <ClCompile Include="PlanarMapping2D.test.cpp" />
     <ClCompile Include="PlasticMaterial.test.cpp" />
     <ClCompile Include="Point2D.test.cpp" />
     <ClCompile Include="Point3D.test.cpp" />
@@ -380,6 +385,7 @@ copy  "..\..\..\ThirdParty\FreeImage\3.16\Dist\FreeImage.dll" "$(OutDir)"
     <ClCompile Include="Vector2D.test.cpp" />
     <ClCompile Include="Vector3D.test.cpp" />
     <ClCompile Include="WindyTexture.test.cpp" />
+    <ClCompile Include="WrinkledTexture.test.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

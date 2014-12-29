@@ -431,6 +431,15 @@
     <ClInclude Include="Textures\WindyTexture.h">
       <Filter>Textures\Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Textures\MixTexture.h">
+      <Filter>Textures\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Textures\WrinkledTexture.h">
+      <Filter>Textures\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Mappings\PlanarMapping2D.h">
+      <Filter>Mappings\Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Core\BSDF.cpp">
