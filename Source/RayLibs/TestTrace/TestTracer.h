@@ -49,7 +49,6 @@
 #include <Raytracer/LTEIntegrators/DirectLightingLTEIntegrator.h>
 #include <Raytracer/LTEIntegrators/PhotonLTEIntegrator.h>
 #include <Raytracer/Core/MIPMap.h>
-#include "EasyBMP.h"
 
 // Disable compiler warning raised in the OpenEXR's code.
 #pragma warning( push )
@@ -96,11 +95,10 @@ class TestTracer
 
 inline void TestTracer::LoadMesh()
 {
-
   intrusive_ptr<Log> p_log( new StreamLog(std::cerr, Log::ERROR_LEVEL) );
 
   tbb::tick_count t0 = tbb::tick_count::now();
-  PbrtSceneImporter importer("D:\\raytracing\\pbrt_scenes\\sponza-phomap.pbrt", p_log);
+  //PbrtSceneImporter importer("D:\\raytracing\\pbrt_scenes\\sponza-phomap.pbrt", p_log);
   //PbrtSceneImporter importer("D:\\raytracing\\pbrt_scenes\\plants-godrays.pbrt", p_log);
   //PbrtSceneImporter importer("D:\\raytracing\\pbrt_scenes\\plants-dusk.pbrt", p_log);
   //PbrtSceneImporter importer("D:\\raytracing\\pbrt_scenes\\yeahright.pbrt", p_log);
@@ -110,17 +108,27 @@ inline void TestTracer::LoadMesh()
   //PbrtSceneImporter importer("D:\\raytracing\\pbrt_scenes\\spheres-differentials-texfilt.pbrt", p_log);
   //PbrtSceneImporter importer("D:\\raytracing\\pbrt_scenes\\spheres.pbrt", p_log);
   //PbrtSceneImporter importer("D:\\raytracing\\pbrt_scenes\\buddhamesh.pbrt", p_log);
+  //PbrtSceneImporter importer("D:\\raytracing\\pbrt_scenes\\metal-ssynth.pbrt", p_log);
+  //PbrtSceneImporter importer("D:\\raytracing\\pbrt_scenes\\smoke-2.pbrt", p_log);
+  //PbrtSceneImporter importer("D:\\raytracing\\pbrt_scenes\\sibenik-igi.pbrt", p_log);
   //PbrtSceneImporter importer("D:\\raytracing\\pbrt_scenes\\sanmiguel.pbrt", p_log);
+  //PbrtSceneImporter importer("D:\\raytracing\\pbrt_scenes\\sanmiguel_cam3.pbrt", p_log);
   //PbrtSceneImporter importer("D:\\raytracing\\pbrt_scenes\\sanmiguel_cam14.pbrt", p_log);
   //PbrtSceneImporter importer("D:\\raytracing\\pbrt_scenes\\sanmiguel_cam25.pbrt", p_log);
+  PbrtSceneImporter importer("D:\\raytracing\\pbrt_scenes\\dof-dragons.pbrt", p_log);
 
+  //PbrtSceneImporter importer("D:\\raytracing\\pbrt_scenes\\villa-photons.pbrt", p_log);
+  //PbrtSceneImporter importer("D:\\raytracing\\pbrt_scenes\\villa-lights-on.pbrt", p_log);
+  //PbrtSceneImporter importer("D:\\raytracing\\pbrt_scenes\\villa-daylight.pbrt", p_log);
+
+  
   importer.GetScene();
 
   mp_scene = importer.GetScene();
   mp_pbrt_camera = importer.GetCameras()[0];
   m_imageWidth = (int)mp_pbrt_camera->GetFilm()->GetXResolution();
   m_imageHeight = (int)mp_pbrt_camera->GetFilm()->GetYResolution();
-
+  
   tbb::tick_count t1 = tbb::tick_count::now();
   printf("Importing: %lf\n", (t1-t0).seconds());
   return;
@@ -152,36 +160,36 @@ inline void TestTracer::RenderImage()
 
   Point2D_i window_begin, window_end;
   p_camera->GetFilm()->GetSamplingExtent(window_begin, window_end);
-  intrusive_ptr<Sampler> p_sampler( new LDSampler(window_begin, window_end, 8, pixel_order) );
+  intrusive_ptr<Sampler> p_sampler( new LDSampler(window_begin, window_end, 256, pixel_order) );
 
  /*
   DirectLightingLTEIntegratorParams params;
   params.m_direct_light_samples_num=8;
   params.m_max_specular_depth=6;
-  params.m_media_step_size=0.1;
+  params.m_media_step_size=0.01;
   intrusive_ptr<DirectLightingLTEIntegrator> p_lte_int( new DirectLightingLTEIntegrator(mp_scene, params) );
- */ 
+ */
  
   PhotonLTEIntegratorParams params;
-  params.m_direct_light_samples_num=8;
-  params.m_gather_samples_num=8;
+  params.m_direct_light_samples_num=16;
+  params.m_gather_samples_num=16;
   params.m_caustic_lookup_photons_num=100;
   params.m_max_caustic_lookup_dist=0.05;
   params.m_max_specular_depth=10;
   params.m_media_step_size=0.01;
-  //params.m_max_caustic_photons=1000;
-  //params.m_max_direct_photons=2000;
+  //params.m_max_caustic_photons=6000000;
+  //params.m_max_direct_photons=6000000;
   //params.m_max_indirect_photons=3000;
   intrusive_ptr<PhotonLTEIntegrator> p_lte_int( new PhotonLTEIntegrator(mp_scene, params) );
-  
 
   t0 = tbb::tick_count::now();
-  p_lte_int->ShootPhotons(100*1000000, true);
+  p_lte_int->ShootPhotons(1000*1000000U, true);
   t1 = tbb::tick_count::now();
   printf("Shooting: %lf\n", (t1-t0).seconds());
   
+
   intrusive_ptr<SamplerBasedRenderer> p_renderer( new SamplerBasedRenderer(p_lte_int, p_sampler) );
-  p_renderer->SetDisplayUpdateCallback(mp_callback, 10.0);
+  p_renderer->SetDisplayUpdateCallback(mp_callback, 60.0);
  
   tbb::task_scheduler_init init;
   t0 = tbb::tick_count::now();
