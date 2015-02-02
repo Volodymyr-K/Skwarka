@@ -77,6 +77,7 @@
 int
 main (int argc, char *argv[])
 {
+/*
     TEST (testMagic);
     TEST (testXdr);
     TEST (testHuf);
@@ -106,6 +107,7 @@ main (int argc, char *argv[])
     TEST (testNativeFormat);
     TEST (testIsComplete);    
     
+*/
     #ifdef HAVE_LINUX_PROCFS
 
 	//

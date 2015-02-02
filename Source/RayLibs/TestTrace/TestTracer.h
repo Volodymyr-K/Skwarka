@@ -160,7 +160,7 @@ inline void TestTracer::RenderImage()
 
   Point2D_i window_begin, window_end;
   p_camera->GetFilm()->GetSamplingExtent(window_begin, window_end);
-  intrusive_ptr<Sampler> p_sampler( new LDSampler(window_begin, window_end, 256, pixel_order) );
+  intrusive_ptr<Sampler> p_sampler( new LDSampler(window_begin, window_end, 8, pixel_order) );
 
  /*
   DirectLightingLTEIntegratorParams params;
@@ -183,7 +183,7 @@ inline void TestTracer::RenderImage()
   intrusive_ptr<PhotonLTEIntegrator> p_lte_int( new PhotonLTEIntegrator(mp_scene, params) );
 
   t0 = tbb::tick_count::now();
-  p_lte_int->ShootPhotons(1000*1000000U, true);
+  p_lte_int->ShootPhotons(50*1000000U, true);
   t1 = tbb::tick_count::now();
   printf("Shooting: %lf\n", (t1-t0).seconds());
   

@@ -271,8 +271,8 @@ static vector<string> getSymbols(char* buf, const int length)
             if (!buf)
                 break;
         }
-        // symbol starts with two underbars, skip it
-        else if (buf[0] == '_' && buf[1] == '_') {
+        // symbol starts with one underbar, skip it
+        else if (buf[0] == '_') {
             buf = strchr(buf, '\n');
             if (!buf)
                 break;
@@ -386,8 +386,8 @@ static void getLibsFromMap(char* buf, const int length, set<string>& libs)
             if (!buf)
                 break;
         }
-        // symbol starts with two underbars, skip it
-        /*	else if (buf[0] == '_' && buf[1] == '_') {
+        // symbol starts with one underbar, skip it
+        /*	else if (buf[0] == '_') {
         buf = strchr(buf, '\n');
         if (!buf)
         break;
@@ -498,8 +498,8 @@ static void getObjsFromMap(char* buf, const int length, set<string>& objs)
             if (!buf)
                 break;
         }
-        // symbol starts with two underbars, skip it
-        else if (buf[0] == '_' && buf[1] == '_') {
+        // symbol starts with one underbar, skip it
+        else if (buf[0] == '_') {
             buf = strchr(buf, '\n');
             if (!buf)
                 break;
@@ -595,8 +595,8 @@ static void getSymbolsFromMap(char* buf, const int length, vector<string>& strin
             if (!buf)
                 break;
         }
-        // symbol starts with two underbars, skip it
-        else if (buf[0] == '_' && buf[1] == '_') {
+        // symbol starts with one underbar, skip it
+        else if (buf[0] == '_') {
             buf = strchr(buf, '\n');
             if (!buf)
                 break;
@@ -682,7 +682,7 @@ static void createResponseFile(string& repFile, string& path, string& moduleName
             fprintf(r, "/NODEFAULTLIB ");
 
         // misc stuff
-        fprintf(r, "/DLL /DEBUG /PDB:\"%s\\%s.pdb\" /DEF:\"%s\\%s.map.DEF\" /MACHINE:X86 ", 
+        fprintf(r, "/DLL /DEBUG /PDB:\"%s\\%s.pdb\" /DEF:\"%s\\%s.map.DEF\" /MACHINE:X64 ", 
             path.c_str(), moduleName.c_str(),       // PDB
             path.c_str(), moduleName.c_str());      // DEF
 
