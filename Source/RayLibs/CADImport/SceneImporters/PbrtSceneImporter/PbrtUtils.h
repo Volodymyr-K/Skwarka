@@ -22,7 +22,6 @@
 #include <string>
 #include <boost/algorithm/string.hpp>
 #include <Raytracer/Core/ImageSource.h>
-#include <Raytracer/ImageSources/OpenEXRRgbaImageSource.h>
 #include <Raytracer/ImageSources/RGBImageSource.h>
 
 namespace PbrtImport
@@ -125,18 +124,13 @@ namespace PbrtImport
 
       try
         {
-        if (boost::iequals(ext, "exr"))
-          return new OpenEXRRgbaImageSource<T>(i_filename, i_E_whitepoint, i_scale);
+        intrusive_ptr<const ImageSource<T>> p_image_source;
+        if (i_E_whitepoint)
+          p_image_source.reset(new RGBImageSource<T>(i_filename, global_sRGB_E_ColorSystem, i_scale));
         else
-          {
-          intrusive_ptr<const ImageSource<T>> p_image_source;
-          if (i_E_whitepoint)
-            p_image_source.reset(new RGBImageSource<T>(i_filename, global_sRGB_E_ColorSystem, i_scale));
-          else
-            p_image_source.reset(new RGBImageSource<T>(i_filename, global_sRGB_D65_ColorSystem, i_scale));
+          p_image_source.reset(new RGBImageSource<T>(i_filename, global_sRGB_D65_ColorSystem, i_scale));
 
-          return p_image_source;
-          }
+        return p_image_source;
         }
       catch (const std::exception &)
         {

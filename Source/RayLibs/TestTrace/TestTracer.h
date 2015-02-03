@@ -50,15 +50,6 @@
 #include <Raytracer/LTEIntegrators/PhotonLTEIntegrator.h>
 #include <Raytracer/Core/MIPMap.h>
 
-// Disable compiler warning raised in the OpenEXR's code.
-#pragma warning( push )
-#pragma warning( disable : 4231 )
-#include <ImfRgbaFile.h>
-#include <ImfStringAttribute.h>
-#include <ImfMatrixAttribute.h>
-#include <ImfArray.h>
-#pragma warning( pop )
-
 #include <CADImport/SceneImporters/PbrtSceneImporter.h>
 
 class TestTracer

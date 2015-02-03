@@ -18,7 +18,8 @@
 // Disable compiler warning raised in the OpenEXR's code.
 #pragma warning( push )
 #pragma warning( disable : 4231 )
-#include <half.h>
+#include "Half/half.h"
+#include "Half/halfLimits.h"
 #pragma warning( pop )
 
 typedef half HalfFloat;

@@ -9,6 +9,12 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
+    <Filter Include="Header Files\Half">
+      <UniqueIdentifier>{f01e61eb-c60f-435d-8175-fdcdaa09c236}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Half">
+      <UniqueIdentifier>{82c7a4a9-a770-4539-a641-da74c0bd42a1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CompressedDirection.cpp">
@@ -22,6 +28,9 @@
     </ClCompile>
     <ClCompile Include="NoiseRoutines.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Half\half.cpp">
+      <Filter>Source Files\Half</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -84,6 +93,18 @@
     </ClInclude>
     <ClInclude Include="NoiseRoutines.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Half\eLut.h">
+      <Filter>Header Files\Half</Filter>
+    </ClInclude>
+    <ClInclude Include="Half\half.h">
+      <Filter>Header Files\Half</Filter>
+    </ClInclude>
+    <ClInclude Include="Half\halfLimits.h">
+      <Filter>Header Files\Half</Filter>
+    </ClInclude>
+    <ClInclude Include="Half\toFloat.h">
+      <Filter>Header Files\Half</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

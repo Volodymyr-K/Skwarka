@@ -55,8 +55,8 @@
     <ClCompile>
       <AdditionalOptions>/MP /bigobj %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\;..\..\..\ThirdParty\;..\..\..\ThirdParty\boost\1.56\;..\..\..\ThirdParty\TBB\4.2\include;..\..\..\ThirdParty\OpenEXR\Deploy\include;..\..\..\ThirdParty\FreeImage\3.16\Dist;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>TBB_USE_DEBUG;WIN32;_DEBUG;_WINDOWS;NOMINMAX;OPENEXR_DLL;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\;..\..\..\ThirdParty\;..\..\..\ThirdParty\boost\1.56\;..\..\..\ThirdParty\TBB\4.2\include;..\..\..\ThirdParty\FreeImage\3.16\Dist;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>TBB_USE_DEBUG;WIN32;_DEBUG;_WINDOWS;NOMINMAX;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -67,9 +67,9 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>tbb_debug.lib;Half.lib;Iex.lib;IlmImf.lib;IlmThread.lib;Imath.lib;zlibwapi.lib;FreeImaged.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>tbb_debug.lib;FreeImaged.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName)d.exe</OutputFile>
-      <AdditionalLibraryDirectories>..\..\..\ThirdParty\TBB\4.2\lib\intel64\vc12;..\..\..\ThirdParty\OpenEXR\Deploy\lib\Debug;..\..\..\ThirdParty\boost\libs\1.56;..\..\..\ThirdParty\FreeImage\3.16\Dist;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\ThirdParty\TBB\4.2\lib\intel64\vc12;..\..\..\ThirdParty\boost\libs\1.56;..\..\..\ThirdParty\FreeImage\3.16\Dist;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
@@ -81,11 +81,6 @@
       <Message>Copying 3rd party binaries</Message>
       <Command>copy "..\..\..\ThirdParty\TBB\4.2\bin\intel64\vc12\tbb_debug.dll" "$(OutDir)"
 copy  "..\..\..\ThirdParty\TBB\4.2\bin\intel64\vc12\tbb_debug.pdb" "$(OutDir)"
-copy  "..\..\..\ThirdParty\OpenEXR\Deploy\bin\Debug\IlmImf.dll" "$(OutDir)"
-copy  "..\..\..\ThirdParty\OpenEXR\Deploy\bin\Debug\Half.dll" "$(OutDir)"
-copy  "..\..\..\ThirdParty\OpenEXR\Deploy\bin\Debug\Iex.dll" "$(OutDir)"
-copy  "..\..\..\ThirdParty\OpenEXR\Deploy\bin\Debug\IlmThread.dll" "$(OutDir)"
-copy  "..\..\..\ThirdParty\OpenEXR\Deploy\bin\Debug\zlibwapi.dll" "$(OutDir)"
 copy  "..\..\..\ThirdParty\FreeImage\3.16\Dist\FreeImaged.dll" "$(OutDir)"
 </Command>
     </PostBuildEvent>
@@ -97,8 +92,8 @@ copy  "..\..\..\ThirdParty\FreeImage\3.16\Dist\FreeImaged.dll" "$(OutDir)"
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <AdditionalIncludeDirectories>..\;..\..\..\ThirdParty\;..\..\..\ThirdParty\boost\1.56\;..\..\..\ThirdParty\TBB\4.2\include;..\..\..\ThirdParty\OpenEXR\Deploy\include;..\..\..\ThirdParty\FreeImage\3.16\Dist;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;NOMINMAX;_SECURE_SCL=0;OPENEXR_DLL;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\;..\..\..\ThirdParty\;..\..\..\ThirdParty\boost\1.56\;..\..\..\ThirdParty\TBB\4.2\include;..\..\..\ThirdParty\FreeImage\3.16\Dist;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;NOMINMAX;_SECURE_SCL=0;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
       <FloatingPointModel>Precise</FloatingPointModel>
@@ -110,8 +105,8 @@ copy  "..\..\..\ThirdParty\FreeImage\3.16\Dist\FreeImaged.dll" "$(OutDir)"
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>tbb.lib;Half.lib;Iex.lib;IlmImf.lib;IlmThread.lib;Imath.lib;zlibwapi.lib;FreeImage.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\..\..\ThirdParty\TBB\4.2\lib\intel64\vc12;..\..\..\ThirdParty\OpenEXR\Deploy\lib\Release;..\..\..\ThirdParty\boost\libs\1.56;..\..\..\ThirdParty\FreeImage\3.16\Dist;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>tbb.lib;FreeImage.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\..\ThirdParty\TBB\4.2\lib\intel64\vc12;..\..\..\ThirdParty\boost\libs\1.56;..\..\..\ThirdParty\FreeImage\3.16\Dist;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
@@ -125,11 +120,6 @@ copy  "..\..\..\ThirdParty\FreeImage\3.16\Dist\FreeImaged.dll" "$(OutDir)"
       <Message>Copying 3rd party binaries</Message>
       <Command>copy "..\..\..\ThirdParty\TBB\4.2\bin\intel64\vc12\tbb.dll" "$(OutDir)"
 copy  "..\..\..\ThirdParty\TBB\4.2\bin\intel64\vc12\tbb.pdb" "$(OutDir)"
-copy  "..\..\..\ThirdParty\OpenEXR\Deploy\bin\Release\IlmImf.dll" "$(OutDir)"
-copy  "..\..\..\ThirdParty\OpenEXR\Deploy\bin\Release\Half.dll" "$(OutDir)"
-copy  "..\..\..\ThirdParty\OpenEXR\Deploy\bin\Release\Iex.dll" "$(OutDir)"
-copy  "..\..\..\ThirdParty\OpenEXR\Deploy\bin\Release\IlmThread.dll" "$(OutDir)"
-copy  "..\..\..\ThirdParty\OpenEXR\Deploy\bin\Release\zlibwapi.dll" "$(OutDir)"
 copy  "..\..\..\ThirdParty\FreeImage\3.16\Dist\FreeImage.dll" "$(OutDir)"
 </Command>
     </PostBuildEvent>

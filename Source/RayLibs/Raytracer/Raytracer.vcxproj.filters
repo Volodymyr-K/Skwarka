@@ -422,9 +422,6 @@
     <ClInclude Include="PhaseFunctions\RayleighPhaseFunction.h">
       <Filter>PhaseFunctions\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ImageSources\OpenEXRRgbaImageSource.h">
-      <Filter>ImageSources\Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ImageSources\RGBImageSource.h">
       <Filter>ImageSources\Header Files</Filter>
     </ClInclude>
