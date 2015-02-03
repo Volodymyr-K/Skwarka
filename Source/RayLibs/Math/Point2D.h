@@ -47,8 +47,8 @@ class Point2D
     bool operator==(const Point2D<T> &i_point) const;
     bool operator!=(const Point2D<T> &i_point) const;
 
-    T operator[](unsigned char i_index) const;
-    T &operator[](unsigned char i_index);
+    T operator[](size_t i_index) const;
+    T &operator[](size_t i_index);
 
   private:
     T m_coordinates[2];
@@ -177,16 +177,16 @@ bool Point2D<T>::operator!=(const Point2D<T> &i_point) const
   }
 
 template<typename T>
-T Point2D<T>::operator[](unsigned char i_index) const
+T Point2D<T>::operator[](size_t i_index) const
   {
-  ASSERT(i_index>=0 && i_index<2);
+  ASSERT(i_index<2);
   return m_coordinates[i_index];
   }
 
 template<typename T>
-T &Point2D<T>::operator[](unsigned char i_index)
+T &Point2D<T>::operator[](size_t i_index)
   {
-  ASSERT(i_index>=0 && i_index<2);
+  ASSERT(i_index<2);
   return m_coordinates[i_index];
   }
 

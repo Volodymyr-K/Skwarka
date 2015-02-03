@@ -80,7 +80,7 @@ SpectrumCoef_d BSDF::_SampleSpecularOnly(const Vector3D_d &i_incident, Vector3D_
   Vector3D_d exitants[MAX_BXDFS_NUM];
   double pdfs[MAX_BXDFS_NUM];
   double luminances[MAX_BXDFS_NUM];
-  unsigned char indices[MAX_BXDFS_NUM];
+  size_t indices[MAX_BXDFS_NUM];
 
   Vector3D_d incident_local = WorldToLocal(i_incident);
   ASSERT(incident_local.IsNormalized());

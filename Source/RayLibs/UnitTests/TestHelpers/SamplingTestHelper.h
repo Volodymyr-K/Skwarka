@@ -239,9 +239,9 @@ namespace SamplingTestHelper
   template<typename T>
   bool TestLD02Distribution2D(const std::vector<Point2D<T>> &i_values, Point2D<T> i_low, Point2D<T> i_high)
     {
-    size_t N=i_values.size();
+    unsigned int N = (unsigned int)i_values.size();
     ASSERT(MathRoutines::IsPowerOf2(N));
-    size_t p = MathRoutines::CeilLog2(N);
+    int p = MathRoutines::CeilLog2(N);
 
     for(size_t i=0;i<=p;++i)
       if (_CheckLD02Stratification(i_values, i_low, i_high, 1<<i, 1<<(p-i))==false)

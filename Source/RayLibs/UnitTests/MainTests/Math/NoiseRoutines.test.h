@@ -35,8 +35,8 @@ class NoiseTestSuite : public CxxTest::TestSuite
         if (val<mn) mn=val;
         }
 
-      ASSERT(mn>=-1.0 && mn<=1.0);
-      ASSERT(mx>=-1.0 && mx<=1.0);
+      ASSERT(mn>=-1.04 && mn<=1.04); // Perlin noise can slightly break the [-1;1] range
+      ASSERT(mx>=-1.04 && mx<=1.04);
       }
 
     void test_FBm_Range()

@@ -20,18 +20,18 @@
 //////////////////////////////////////////////// LDSampler /////////////////////////////////////////////////////
 
 LDSampler::LDSampler(const Point2D_i &i_image_begin, const Point2D_i &i_image_end, size_t i_samples_per_pixel):
-Sampler(i_image_begin, i_image_end, MathRoutines::RoundUpPow2(i_samples_per_pixel)), m_samples_per_pixel(MathRoutines::RoundUpPow2(i_samples_per_pixel))
+Sampler(i_image_begin, i_image_end, MathRoutines::RoundUpPow2((unsigned int)i_samples_per_pixel)), m_samples_per_pixel(MathRoutines::RoundUpPow2((unsigned int)i_samples_per_pixel))
   {
   }
 
 LDSampler::LDSampler(const Point2D_i &i_image_begin, const Point2D_i &i_image_end, size_t i_samples_per_pixel, intrusive_ptr<ImagePixelsOrder> ip_pixels_order):
-Sampler(i_image_begin, i_image_end, MathRoutines::RoundUpPow2(i_samples_per_pixel), ip_pixels_order), m_samples_per_pixel(MathRoutines::RoundUpPow2(i_samples_per_pixel))
+Sampler(i_image_begin, i_image_end, MathRoutines::RoundUpPow2((unsigned int)i_samples_per_pixel), ip_pixels_order), m_samples_per_pixel(MathRoutines::RoundUpPow2((unsigned int)i_samples_per_pixel))
   {
   }
 
 size_t LDSampler::_RoundSamplesNumber(size_t i_samples_number) const
   {
-  return MathRoutines::RoundUpPow2(i_samples_number);
+  return MathRoutines::RoundUpPow2((unsigned int)i_samples_number);
   }
 
 intrusive_ptr<SubSampler> LDSampler::_CreateSubSampler(const std::vector<Point2D_i> &i_pixels, size_t i_samples_per_pixel, RandomGenerator<double> *ip_rng) const
@@ -47,7 +47,7 @@ SubSampler(i_pixels, i_samples_per_pixel, ip_rng), m_samples_per_pixel(i_samples
 m_sequences_1D_size(i_sequences_1D_size), m_sequences_2D_size(i_sequences_2D_size),
 m_image_points(i_samples_per_pixel), m_lens_UVs(i_samples_per_pixel)
   {
-  ASSERT(MathRoutines::IsPowerOf2(i_samples_per_pixel));
+  ASSERT(MathRoutines::IsPowerOf2((unsigned int)i_samples_per_pixel));
   m_inv_samples_per_pixel_sqrt = 1.0 / sqrt((double)i_samples_per_pixel);
 
   size_t count_1D=0, count_2D=0;

@@ -87,7 +87,7 @@ Spectrum_d ParallelLight::SamplePhoton(const Point2D_d &i_sample, Ray &o_photon_
 
   double pdf;
   const double *p_sampled = MathRoutines::BinarySearchCDF(&(m_area_CDF[0]), (&m_area_CDF[5])+1, sample[0], &pdf);
-  int index = p_sampled-&(m_area_CDF[0]);
+  auto index = std::distance(&(m_area_CDF[0]), p_sampled);
   ASSERT(index>=0 && index<6);
 
   if (index>0)

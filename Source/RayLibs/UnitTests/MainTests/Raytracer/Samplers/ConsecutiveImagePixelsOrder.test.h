@@ -38,7 +38,7 @@ class ConsecutiveImagePixelsOrderTestSuite: public CxxTest::TestSuite
       pixels_order.SetImageSize(Point2D_i(-5,-5),Point2D_i(-5+100,-5+100));
 
       bool correct_order=true;
-      size_t count=0;
+      int count=0;
       Point2D_i pixel;
       while(pixels_order.GetNextPixel(pixel))
         {

@@ -258,7 +258,7 @@ Spectrum_d DirectLightingIntegrator::_SampleLights(const Intersection &i_interse
     ++position_iterator;
     }
 
-  return radiance / m_lights_samples_num;
+  return radiance / (double)m_lights_samples_num;
   }
 
 Spectrum_d DirectLightingIntegrator::_SampleBSDF(const Intersection &i_intersection, const Vector3D_d &i_view_direction,
@@ -362,7 +362,7 @@ Spectrum_d DirectLightingIntegrator::_SampleBSDF(const Intersection &i_intersect
     ++bxdf_iterator;
     }
 
-  return radiance / m_bsdf_samples_num;
+  return radiance / (double)m_bsdf_samples_num;
   }
 
 size_t DirectLightingIntegrator::_GetAreaLightIndex(const AreaLightSource *ip_area_light) const

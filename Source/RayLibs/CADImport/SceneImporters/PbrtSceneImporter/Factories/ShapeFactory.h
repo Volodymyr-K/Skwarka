@@ -110,7 +110,7 @@ namespace PbrtImport
       intrusive_ptr<TriangleMesh> _CreateTriangleMeshShape(const Transform &i_obj_to_world, bool i_reverse_orientation, const ParamSet &i_params,
         const std::map<std::string, intrusive_ptr<const Texture<double>>> &i_float_textures) const
         {
-        int nvi, npi, nuvi, nsi, nni;
+        size_t nvi, npi, nuvi, nsi, nni;
         const int *vi = i_params.FindInt("indices", &nvi);
         const Point3D_d *P = i_params.FindPoint("P", &npi);
         const float *uvs = i_params.FindFloat("uv", &nuvi);
@@ -123,14 +123,14 @@ namespace PbrtImport
           if (nuvi < 2 * npi)
             {
             std::string message = std::string("Not enough of \"uv\"s for triangle mesh.  Expected ");
-            message += 2*npi; message += ", found "; message += nuvi; message += ".  Discarding.";
+            message += std::to_string(2*npi); message += ", found "; message += std::to_string(nuvi); message += ".  Discarding.";
             PbrtImport::Utils::LogError(mp_log, message);
             uvs = NULL;
             }
           else if (nuvi > 2 * npi)
             {
             std::string message = std::string("More \"uv\"s provided than will be used for triangle mesh. (");
-            message += 2*npi; message += " expected, "; message += nuvi; message += " found)";
+            message += std::to_string(2*npi); message += " expected, "; message += std::to_string(nuvi); message += " found)";
             PbrtImport::Utils::LogWarning(mp_log, message);
             }
           }
@@ -177,7 +177,7 @@ namespace PbrtImport
           if (vi[i] >= npi)
             {
             std::string message = std::string("TriangleMesh has out of-bounds vertex index ");
-            message += vi[i]; message += " ("; message += npi; message += " \"P\" values were given)";
+            message += std::to_string(vi[i]); message += " ("; message += std::to_string(npi); message += " \"P\" values were given)";
             PbrtImport::Utils::LogError(mp_log, message);
             return NULL;
             }

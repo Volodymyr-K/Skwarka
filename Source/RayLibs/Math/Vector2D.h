@@ -80,8 +80,8 @@ class Vector2D
     */
     bool IsNormalized() const;
 
-    T operator[](unsigned char i_index) const;
-    T &operator[](unsigned char i_index);
+    T operator[](size_t i_index) const;
+    T &operator[](size_t i_index);
   private:
     T m_coordinates[2];
   };
@@ -273,16 +273,16 @@ bool Vector2D<T>::IsNormalized() const
   }
 
 template<typename T>
-T Vector2D<T>::operator[](unsigned char i_index) const
+T Vector2D<T>::operator[](size_t i_index) const
   {
-  ASSERT(i_index>=0 && i_index<2);
+  ASSERT(i_index<2);
   return m_coordinates[i_index];
   }
 
 template<typename T>
-T &Vector2D<T>::operator[](unsigned char i_index)
+T &Vector2D<T>::operator[](size_t i_index)
   {
-  ASSERT(i_index>=0 && i_index<2);
+  ASSERT(i_index<2);
   return m_coordinates[i_index];
   }
 

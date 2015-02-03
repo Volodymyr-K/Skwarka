@@ -31,7 +31,7 @@ namespace PbrtImport
   template <typename T>
   struct ParamSetItem : public ReferenceCounted
     {
-    ParamSetItem(const std::string &name, const T *val, int nItems = 1);
+    ParamSetItem(const std::string &name, const T *val, size_t nItems = 1);
 
     ~ParamSetItem()
       {
@@ -39,12 +39,12 @@ namespace PbrtImport
       }
 
     std::string name;
-    int nItems;
+    size_t nItems;
     T *data;
     };
 
   template <typename T>
-  ParamSetItem<T>::ParamSetItem(const std::string &n, const T *v, int ni)
+  ParamSetItem<T>::ParamSetItem(const std::string &n, const T *v, size_t ni)
     {
     name = n;
     nItems = ni;
@@ -59,22 +59,22 @@ namespace PbrtImport
     public:
       ParamSet(const std::string &i_base_path = ""): m_base_path(i_base_path) { }
 
-      void AddFloat(const std::string &, const float *, int nItems = 1);
-      void AddInt(const std::string &, const int *, int nItems);
-      void AddBool(const std::string &, const bool *, int nItems);
-      void AddPoint(const std::string &, const Point3D_d *, int nItems);
-      void AddVector(const std::string &, const Vector3D_d *, int nItems);
-      void AddNormal(const std::string &, const Vector3D_d *, int nItems);
-      void AddString(const std::string &, const std::string *, int nItems);
+      void AddFloat(const std::string &, const float *, size_t nItems = 1);
+      void AddInt(const std::string &, const int *, size_t nItems);
+      void AddBool(const std::string &, const bool *, size_t nItems);
+      void AddPoint(const std::string &, const Point3D_d *, size_t nItems);
+      void AddVector(const std::string &, const Vector3D_d *, size_t nItems);
+      void AddNormal(const std::string &, const Vector3D_d *, size_t nItems);
+      void AddString(const std::string &, const std::string *, size_t nItems);
       void AddTexture(const std::string &, const std::string &);
-      void AddRGBSpectrum(const std::string &, const float *, int nItems);
-      void AddRGBSpectrumCoef(const std::string &, const float *, int nItems);
-      void AddXYZSpectrum(const std::string &, const float *, int nItems);
-      void AddXYZSpectrumCoef(const std::string &, const float *, int nItems);
-      void AddSampledSpectrumFiles(const std::string &, const std::string *, int nItems, intrusive_ptr<Log> ip_log = NULL);
-      void AddSampledSpectrumCoefFiles(const std::string &, const std::string *, int nItems, intrusive_ptr<Log> ip_log = NULL);
-      void AddSampledSpectrum(const std::string &, const float *, int nItems);
-      void AddSampledSpectrumCoef(const std::string &, const float *, int nItems);
+      void AddRGBSpectrum(const std::string &, const float *, size_t nItems);
+      void AddRGBSpectrumCoef(const std::string &, const float *, size_t nItems);
+      void AddXYZSpectrum(const std::string &, const float *, size_t nItems);
+      void AddXYZSpectrumCoef(const std::string &, const float *, size_t nItems);
+      void AddSampledSpectrumFiles(const std::string &, const std::string *, size_t nItems, intrusive_ptr<Log> ip_log = NULL);
+      void AddSampledSpectrumCoefFiles(const std::string &, const std::string *, size_t nItems, intrusive_ptr<Log> ip_log = NULL);
+      void AddSampledSpectrum(const std::string &, const float *, size_t nItems);
+      void AddSampledSpectrumCoef(const std::string &, const float *, size_t nItems);
       bool EraseInt(const std::string &);
       bool EraseBool(const std::string &);
       bool EraseFloat(const std::string &);
@@ -96,15 +96,15 @@ namespace PbrtImport
       std::string FindOneString(const std::string &, const std::string &d) const;
       std::string FindOneFilename(const std::string &, const std::string &d) const;
       std::string FindTexture(const std::string &) const;
-      const float *FindFloat(const std::string &, int *nItems) const;
-      const int *FindInt(const std::string &, int *nItems) const;
-      const bool *FindBool(const std::string &, int *nItems) const;
-      const Point3D_d *FindPoint(const std::string &, int *nItems) const;
-      const Vector3D_d *FindVector(const std::string &, int *nItems) const;
-      const Vector3D_d *FindNormal(const std::string &, int *nItems) const;
-      const Spectrum_d *FindSpectrum(const std::string &, int *nItems) const;
-      const SpectrumCoef_d *FindSpectrumCoef(const std::string &, int *nItems) const;
-      const std::string *FindString(const std::string &, int *nItems) const;
+      const float *FindFloat(const std::string &, size_t *nItems) const;
+      const int *FindInt(const std::string &, size_t *nItems) const;
+      const bool *FindBool(const std::string &, size_t *nItems) const;
+      const Point3D_d *FindPoint(const std::string &, size_t *nItems) const;
+      const Vector3D_d *FindVector(const std::string &, size_t *nItems) const;
+      const Vector3D_d *FindNormal(const std::string &, size_t *nItems) const;
+      const Spectrum_d *FindSpectrum(const std::string &, size_t *nItems) const;
+      const SpectrumCoef_d *FindSpectrumCoef(const std::string &, size_t *nItems) const;
+      const std::string *FindString(const std::string &, size_t *nItems) const;
       void Clear();
 
     private:

@@ -67,8 +67,8 @@ class UniformImagePixelsOrderTestSuite: public CxxTest::TestSuite
     void test_UniformImagePixelsOrder_RangeAndCoverage()
       {
       bool correct=true;
-      for(size_t x=0;x<=16;++x)
-        for(size_t y=0;y<=16;++y)
+      for (int x=0; x<=16; ++x)
+        for (int y=0; y<=16; ++y)
           if (CheckRangeAndCoverage(x,y)==false)
             {
             TS_FAIL("Failed.");

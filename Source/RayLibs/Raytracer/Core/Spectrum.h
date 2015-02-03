@@ -59,8 +59,8 @@ class Spectrum
     bool operator==(const Spectrum<T> &i_spectrum) const;
     bool operator!=(const Spectrum<T> &i_spectrum) const;
 
-    T operator[](unsigned char i_index) const;
-    T &operator[](unsigned char i_index);
+    T operator[](size_t i_index) const;
+    T &operator[](size_t i_index);
 
     /**
     * Clamps the spectrum components to the specified range.
@@ -254,10 +254,9 @@ Spectrum<T> Spectrum<T>::operator/(double i_value) const
   {
   ASSERT(IsNaN(i_value)==false);
   ASSERT(i_value != 0.0);
-  return Spectrum<T>(
-    (T) (m_values[0]/i_value), 
-    (T) (m_values[1]/i_value), 
-    (T) (m_values[2]/i_value));
+
+  double inv = 1.0 / i_value;
+  return (*this) * inv;
   }
 
 template<typename T>
@@ -266,9 +265,8 @@ Spectrum<T> &Spectrum<T>::operator/=(double i_value)
   ASSERT(IsNaN(i_value)==false);
   ASSERT(i_value != 0.0);
 
-  m_values[0]=(T)(m_values[0]/i_value);
-  m_values[1]=(T)(m_values[1]/i_value);
-  m_values[2]=(T)(m_values[2]/i_value);
+  double inv = 1.0 / i_value;
+  (*this)*=inv;
   return *this;
   }
 
@@ -288,16 +286,16 @@ bool Spectrum<T>::operator!=(const Spectrum<T> &i_spectrum) const
   }
 
 template<typename T>
-T Spectrum<T>::operator[](unsigned char i_index) const
+T Spectrum<T>::operator[](size_t i_index) const
   {
-  ASSERT(i_index>=0 && i_index<3);
+  ASSERT(i_index<3);
   return m_values[i_index];
   }
 
 template<typename T>
-T &Spectrum<T>::operator[](unsigned char i_index)
+T &Spectrum<T>::operator[](size_t i_index)
   {
-  ASSERT(i_index>=0 && i_index<3);
+  ASSERT(i_index<3);
   return m_values[i_index];
   }
 

@@ -333,17 +333,17 @@ class SamplingRoutinesTestSuite : public CxxTest::TestSuite
 
     void test_Shuffle()
       {
-      const size_t num_samples = 10000;
+      const int num_samples = 10000;
 
       std::vector<int> samples;
-      for (size_t i=0; i<num_samples; ++i)
+      for (int i=0; i<num_samples; ++i)
         samples.push_back(i);
 
       std::vector<int> shuffled(samples.begin(), samples.end());
       SamplingRoutines::Shuffle(shuffled.begin(), shuffled.size());
 
       double distance=0;
-      for (size_t i=0; i<num_samples; ++i)
+      for (int i=0; i<num_samples; ++i)
         distance+=fabs((double)i-shuffled[i]);
 
       double normalized_distance = distance/num_samples/num_samples;
@@ -381,14 +381,14 @@ class SamplingRoutinesTestSuite : public CxxTest::TestSuite
 
     void test_VanDerCorput_Range()
       {
-      size_t p = 12;
-      size_t N = 1<<p;
+      unsigned int p = 12;
+      unsigned int N = 1<<p;
 
-      for(size_t t=0;t<100;++t)
+      for (unsigned int t=0; t<100; ++t)
         {
         unsigned int scramble = RandomUInt();
 
-        for(size_t i=0;i<N;++i)
+        for (unsigned int i=0; i<N; ++i)
           {
           double val=SamplingRoutines::VanDerCorput(i,scramble);
           if (val<0.0 || val>1.0)
@@ -404,14 +404,14 @@ class SamplingRoutinesTestSuite : public CxxTest::TestSuite
     // The method also tests different scramble values.
     void test_VanDerCorput_Stratification()
       {
-      size_t p = 12;
-      size_t N = 1<<p;
+      unsigned int p = 12;
+      unsigned int N = 1<<p;
 
-      for(size_t t=0;t<100;++t)
+      for (unsigned int t=0; t<100; ++t)
         {
         std::vector<double> values;
         unsigned int scramble = RandomUInt();
-        for(size_t i=0;i<N;++i)
+        for (unsigned int i=0; i<N; ++i)
           values.push_back(SamplingRoutines::VanDerCorput(i, scramble));
 
         if (_TestLDStratification1D(values)==false)
@@ -424,14 +424,14 @@ class SamplingRoutinesTestSuite : public CxxTest::TestSuite
 
     void test_Sobol2_Range()
       {
-      size_t p = 12;
-      size_t N = 1<<p;
+      unsigned int p = 12;
+      unsigned int N = 1<<p;
 
-      for(size_t t=0;t<100;++t)
+      for (unsigned int t=0; t<100; ++t)
         {
         unsigned int scramble = RandomUInt();
 
-        for(size_t i=0;i<N;++i)
+        for (unsigned int i=0; i<N; ++i)
           {
           double val=SamplingRoutines::Sobol2(i,scramble);
           if (val<0.0 || val>1.0)
@@ -447,14 +447,14 @@ class SamplingRoutinesTestSuite : public CxxTest::TestSuite
     // The method also tests different scramble values.
     void test_Sobol2_Stratification()
       {
-      size_t p = 12;
-      size_t N = 1<<p;
+      unsigned int p = 12;
+      unsigned int N = 1<<p;
 
-      for(size_t t=0;t<100;++t)
+      for (unsigned int t=0; t<100; ++t)
         {
         std::vector<double> values;
         unsigned int scramble = RandomUInt();
-        for(size_t i=0;i<N;++i)
+        for (unsigned int i=0; i<N; ++i)
           values.push_back(SamplingRoutines::Sobol2(i, scramble));
 
         if (_TestLDStratification1D(values)==false)
@@ -467,9 +467,9 @@ class SamplingRoutinesTestSuite : public CxxTest::TestSuite
 
     void test_RadicalInverse_Range()
       {
-      for(size_t base=2;base<20;++base)
+      for (unsigned int base=2; base<20; ++base)
         {
-        for(size_t i=0;i<1000;++i)
+        for (unsigned int i=0; i<1000; ++i)
           {
           double val=SamplingRoutines::RadicalInverse(i,base);
           if (val<0.0 || val>1.0)
@@ -485,21 +485,21 @@ class SamplingRoutinesTestSuite : public CxxTest::TestSuite
     // (Actually aligned sub-region of any length should be reasonably stratified but the stratification is most when the length is a power of the base).
     void test_RadicalInverse_Stratification()
       {
-      size_t N = 10000;
-      for(size_t base=2;base<20;++base)
+      unsigned int N = 10000;
+      for (unsigned int base=2; base<20; ++base)
         {
         std::vector<double> values;
-        for(size_t i=0;i<N;++i)
+        for (unsigned int i=0; i<N; ++i)
           values.push_back(SamplingRoutines::RadicalInverse(i,base));
 
-        for(size_t i=base;i<=N;i*=base)
+        for (unsigned int i=base; i<=N; i*=base)
           {
           // Test that first i samples are well distributed.
           std::sort(values.begin(), values.begin()+i);
 
           // Find largest distance between adjacent samples.
           double mx = values[0];
-          for(size_t j=1;j<i;++j)
+          for (unsigned int j=1; j<i; ++j)
             if (values[j]-values[j-1]>mx) mx=values[j]-values[j-1];
           if (1.0-values[i-1]>mx) mx=1.0-values[i-1];
 
@@ -518,15 +518,15 @@ class SamplingRoutinesTestSuite : public CxxTest::TestSuite
     private:
       bool _TestLDStratification1D(const std::vector<double> &i_values)
         {
-        size_t N = i_values.size();
+        unsigned int N = (unsigned int)i_values.size();
         ASSERT(MathRoutines::IsPowerOf2(N));
 
-        size_t p = MathRoutines::CeilLog2(N);
+        int p = MathRoutines::CeilLog2(N);
 
-        for(size_t i=0;i<=p;++i)
+        for (int i=0; i<=p; ++i)
           {
-          size_t num=1<<i;
-          for(size_t j=0;j<N;j+=num)
+          unsigned int num=1<<i;
+          for (unsigned int j=0; j<N; j+=num)
             if (_TestStratification1D(i_values, j, j+num)==false)
               return false;
           }

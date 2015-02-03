@@ -61,7 +61,7 @@ SpectrumCoef_d BxDF::TotalScattering(const Vector3D_d &i_incident, SamplesSequen
       ret.AddWeighted(tmp, fabs(exitant[2]) / pdf_exitant);
     }
 
-  ret/=num_samples;
+  ret/=(double)num_samples;
 
   // Clamp spectrum values because a surface can not physically scatter more light than it received.
   ret.Clamp(0.0,1.0);

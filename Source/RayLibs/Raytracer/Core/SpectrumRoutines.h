@@ -245,7 +245,7 @@ namespace SpectrumRoutines
       {
       for(size_t i=0;i<CIE_SAMPLES_NUM;++i)
         {
-        double val = _InterpolateSortedSamples(i_samples, CIE_WAVELENGTH_START+i);
+        double val = _InterpolateSortedSamples(i_samples, (double)CIE_WAVELENGTH_START+i);
         xyz[0] += val * CIE_X[i];
         xyz[1] += val * CIE_Y[i];
         xyz[2] += val * CIE_Z[i];
@@ -259,7 +259,7 @@ namespace SpectrumRoutines
 
       for(size_t i=0;i<CIE_SAMPLES_NUM;++i)
         {
-        double val = _InterpolateSortedSamples(sorted_samples, CIE_WAVELENGTH_START+i);
+        double val = _InterpolateSortedSamples(sorted_samples, (double)CIE_WAVELENGTH_START+i);
         xyz[0] += val * CIE_X[i];
         xyz[1] += val * CIE_Y[i];
         xyz[2] += val * CIE_Z[i];

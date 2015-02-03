@@ -175,12 +175,12 @@ void ImageEnvironmentalLight::_Build(size_t i_node_index, size_t i_depth, const 
   m_nodes[i_node_index].m_split_axis = split_axis;
   m_nodes[i_node_index].m_split_coordinate = (i_begin[split_axis]+i_end[split_axis])/2;
 
-  Point2D_i middle_point = split_axis==0 ? Point2D_i(m_nodes[i_node_index].m_split_coordinate, i_end[1]) : Point2D_i(i_end[0], m_nodes[i_node_index].m_split_coordinate);
+  Point2D_i middle_point = split_axis==0 ? Point2D_i((int)m_nodes[i_node_index].m_split_coordinate, i_end[1]) : Point2D_i(i_end[0], (int)m_nodes[i_node_index].m_split_coordinate);
   _Build(io_next_free_node_index++, i_depth+1, i_begin, middle_point, io_next_free_node_index);
 
   size_t right_child_index = io_next_free_node_index;
   m_nodes[i_node_index].m_right_child = right_child_index;
-  middle_point = split_axis==0 ? Point2D_i(m_nodes[i_node_index].m_split_coordinate, i_begin[1]) : Point2D_i(i_begin[0], m_nodes[i_node_index].m_split_coordinate);
+  middle_point = split_axis==0 ? Point2D_i((int)m_nodes[i_node_index].m_split_coordinate, i_begin[1]) : Point2D_i(i_begin[0], (int)m_nodes[i_node_index].m_split_coordinate);
   _Build(io_next_free_node_index++, i_depth+1, middle_point, i_end, io_next_free_node_index);
 
   m_nodes[i_node_index].m_total_radiance = m_nodes[i_node_index+1].m_total_radiance + m_nodes[right_child_index].m_total_radiance;
@@ -449,8 +449,8 @@ double ImageEnvironmentalLight::_LightingPDF(const Vector3D_d &i_lighting_direct
   double theta = MathRoutines::SphericalTheta(i_lighting_direction);
   Point2D_i texel((int) (phi*m_width*INV_2PI), (int) (theta*m_height*INV_PI));
 
-  if (texel[0] == m_width) texel[0] = m_width-1;
-  if (texel[1] == m_height) texel[1] = m_height-1;
+  if (texel[0] == m_width) texel[0] = (int)m_width-1;
+  if (texel[1] == m_height) texel[1] = (int)m_height-1;
 
   size_t index=0;
   double leaf_pdf = 1.0;

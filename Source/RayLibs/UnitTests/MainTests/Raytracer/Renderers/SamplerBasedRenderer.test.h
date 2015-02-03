@@ -85,7 +85,7 @@ class SamplerBasedRendererTestSuite : public CxxTest::TestSuite
         for(size_t y=0;y<film->GetXResolution();++y)
           {
           Spectrum_d spectrum;
-          bool pixel_computed = film->GetPixel(Point2D_i(x,y), spectrum);
+          bool pixel_computed = film->GetPixel(Point2D_i((int)x, (int)y), spectrum);
 
           if (pixel_computed==false)
             {

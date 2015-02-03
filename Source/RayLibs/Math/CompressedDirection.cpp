@@ -21,7 +21,7 @@ class CompressedDirection_StaticInitializer
   public:
     CompressedDirection_StaticInitializer()
       {
-      for(size_t i=0;i<(1<<16);++i)
+      for(int i=0;i<(1<<16);++i)
         {
         unsigned char x = (i&CompressedDirection::X_BITS_MASK)>>6;
         unsigned char y = (i&CompressedDirection::Y_BITS_MASK);

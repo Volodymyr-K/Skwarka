@@ -393,10 +393,10 @@ namespace SamplingRoutines
       // Permute LHS samples in both dimensions.
       for (size_t j = 0; j < i_samples_num; ++j)
         {
-        size_t other = (size_t) (*ip_rng)(i_samples_num);
+        size_t other = (size_t)(*ip_rng)((double)i_samples_num);
         std::swap( (*(i_begin+j)) [0], (*(i_begin+other)) [0] );
 
-        other = (size_t) (*ip_rng)(i_samples_num);
+        other = (size_t)(*ip_rng)((double)i_samples_num);
         std::swap( (*(i_begin+j)) [1], (*(i_begin+other)) [1] );
         }
       }
@@ -428,13 +428,13 @@ namespace SamplingRoutines
     if (ip_rng)
       for (size_t i = 1; i < i_samples_num; ++i)
         {
-        unsigned int other = (unsigned int) (*ip_rng)(i);
+        size_t other = (size_t)(*ip_rng)((double)i);
         std::swap(*(i_begin+i), *(i_begin+other));
         }
     else
       for (size_t i = 1; i < i_samples_num; ++i)
         {
-        unsigned int other = (unsigned int) RandomInt((int)i);
+        size_t other = (size_t)RandomInt((int)i);
         std::swap(*(i_begin+i), *(i_begin+other));
         }
     }

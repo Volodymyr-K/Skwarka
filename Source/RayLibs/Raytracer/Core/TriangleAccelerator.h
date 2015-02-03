@@ -86,7 +86,7 @@ class TriangleAccelerator
     /**
     * Helper method that search the nearest intersection with the specified subtree. The method recursively processes all the nested instances.
     */
-    bool _NodeIntersect(const TriangleAccelerator::Node *ip_node, Ray &i_ray, int &o_primitive_index, int &o_triangle_index) const;
+    bool _NodeIntersect(const TriangleAccelerator::Node *ip_node, Ray &i_ray, size_t &o_primitive_index, size_t &o_triangle_index) const;
 
     /**
     * Helper method that looks for any intersection with the specified subtree. The method recursively processes all the nested instances.

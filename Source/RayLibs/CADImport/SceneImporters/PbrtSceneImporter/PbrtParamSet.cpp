@@ -48,43 +48,43 @@ namespace PbrtImport
       return d
 
   // ParamSet Methods
-  void ParamSet::AddFloat(const std::string &name, const float *data, int nItems)
+  void ParamSet::AddFloat(const std::string &name, const float *data, size_t nItems)
     {
     EraseFloat(name);
     floats.push_back(new ParamSetItem<float>(name, data, nItems));
     }
 
-  void ParamSet::AddInt(const std::string &name, const int *data, int nItems)
+  void ParamSet::AddInt(const std::string &name, const int *data, size_t nItems)
     {
     EraseInt(name);
     ints.push_back(new ParamSetItem<int>(name, data, nItems));
     }
 
-  void ParamSet::AddBool(const std::string &name, const bool *data, int nItems)
+  void ParamSet::AddBool(const std::string &name, const bool *data, size_t nItems)
     {
     EraseBool(name);
     bools.push_back(new ParamSetItem<bool>(name, data, nItems));
     }
 
-  void ParamSet::AddPoint(const std::string &name, const Point3D_d *data, int nItems)
+  void ParamSet::AddPoint(const std::string &name, const Point3D_d *data, size_t nItems)
     {
     ErasePoint(name);
     points.push_back(new ParamSetItem<Point3D_d>(name, data, nItems));
     }
 
-  void ParamSet::AddVector(const std::string &name, const Vector3D_d *data, int nItems)
+  void ParamSet::AddVector(const std::string &name, const Vector3D_d *data, size_t nItems)
     {
     EraseVector(name);
     vectors.push_back(new ParamSetItem<Vector3D_d>(name, data, nItems));
     }
 
-  void ParamSet::AddNormal(const std::string &name, const Vector3D_d *data, int nItems)
+  void ParamSet::AddNormal(const std::string &name, const Vector3D_d *data, size_t nItems)
     {
     EraseNormal(name);
     normals.push_back(new ParamSetItem<Vector3D_d>(name, data, nItems));
     }
 
-  void ParamSet::AddString(const std::string &name, const std::string *data, int nItems)
+  void ParamSet::AddString(const std::string &name, const std::string *data, size_t nItems)
     {
     EraseString(name);
     strings.push_back(new ParamSetItem<std::string>(name, data, nItems));
@@ -96,7 +96,7 @@ namespace PbrtImport
     textures.push_back(new ParamSetItem<std::string>(name, (std::string *)&value, 1));
     }
 
-  void ParamSet::AddRGBSpectrum(const std::string &name, const float *data, int nItems)
+  void ParamSet::AddRGBSpectrum(const std::string &name, const float *data, size_t nItems)
     {
     EraseSpectrum(name);
     ASSERT(nItems % 3 == 0);
@@ -108,7 +108,7 @@ namespace PbrtImport
     delete[] s;
     }
 
-  void ParamSet::AddRGBSpectrumCoef(const std::string &name, const float *data, int nItems)
+  void ParamSet::AddRGBSpectrumCoef(const std::string &name, const float *data, size_t nItems)
     {
     EraseSpectrumCoef(name);
     ASSERT(nItems % 3 == 0);
@@ -128,7 +128,7 @@ namespace PbrtImport
     delete[] s;
     }
 
-  void ParamSet::AddXYZSpectrum(const std::string &name, const float *data, int nItems)
+  void ParamSet::AddXYZSpectrum(const std::string &name, const float *data, size_t nItems)
     {
     EraseSpectrum(name);
     ASSERT(nItems % 3 == 0);
@@ -140,7 +140,7 @@ namespace PbrtImport
     delete[] s;
     }
 
-  void ParamSet::AddXYZSpectrumCoef(const std::string &name, const float *data, int nItems)
+  void ParamSet::AddXYZSpectrumCoef(const std::string &name, const float *data, size_t nItems)
     {
     EraseSpectrumCoef(name);
     ASSERT(nItems % 3 == 0);
@@ -152,7 +152,7 @@ namespace PbrtImport
     delete[] s;
     }
 
-  void ParamSet::AddSampledSpectrum(const std::string &name, const float *data, int nItems)
+  void ParamSet::AddSampledSpectrum(const std::string &name, const float *data, size_t nItems)
     {
     EraseSpectrum(name);
     ASSERT(nItems % 2 == 0);
@@ -168,7 +168,7 @@ namespace PbrtImport
     spectrums.push_back(new ParamSetItem<Spectrum_d>(name, &s, 1));
     }
 
-  void ParamSet::AddSampledSpectrumCoef(const std::string &name, const float *data, int nItems)
+  void ParamSet::AddSampledSpectrumCoef(const std::string &name, const float *data, size_t nItems)
     {
     EraseSpectrumCoef(name);
     ASSERT(nItems % 2 == 0);
@@ -184,7 +184,7 @@ namespace PbrtImport
     spectrum_coefs.push_back(new ParamSetItem<SpectrumCoef_d>(name, &s, 1));
     }
 
-  void ParamSet::AddSampledSpectrumFiles(const std::string &name, const std::string *names, int nItems, intrusive_ptr<Log> ip_log)
+  void ParamSet::AddSampledSpectrumFiles(const std::string &name, const std::string *names, size_t nItems, intrusive_ptr<Log> ip_log)
     {
     EraseSpectrum(name);
     Spectrum_d *s = new Spectrum_d[nItems];
@@ -225,7 +225,7 @@ namespace PbrtImport
     delete[] s;
     }
 
-  void ParamSet::AddSampledSpectrumCoefFiles(const std::string &name, const std::string *names, int nItems, intrusive_ptr<Log> ip_log)
+  void ParamSet::AddSampledSpectrumCoefFiles(const std::string &name, const std::string *names, size_t nItems, intrusive_ptr<Log> ip_log)
     {
     EraseSpectrumCoef(name);
     SpectrumCoef_d *s = new SpectrumCoef_d[nItems];
@@ -324,17 +324,17 @@ namespace PbrtImport
     LOOKUP_ONE(floats);
     }
 
-  const float *ParamSet::FindFloat(const std::string &name, int *nItems) const
+  const float *ParamSet::FindFloat(const std::string &name, size_t *nItems) const
     {
     LOOKUP_PTR(floats);
     }
 
-  const int *ParamSet::FindInt(const std::string &name, int *nItems) const
+  const int *ParamSet::FindInt(const std::string &name, size_t *nItems) const
     {
     LOOKUP_PTR(ints);
     }
 
-  const bool *ParamSet::FindBool(const std::string &name, int *nItems) const
+  const bool *ParamSet::FindBool(const std::string &name, size_t *nItems) const
     {
     LOOKUP_PTR(bools);
     }
@@ -349,7 +349,7 @@ namespace PbrtImport
     LOOKUP_ONE(bools);
     }
 
-  const Point3D_d *ParamSet::FindPoint(const std::string &name, int *nItems) const
+  const Point3D_d *ParamSet::FindPoint(const std::string &name, size_t *nItems) const
     {
     LOOKUP_PTR(points);
     }
@@ -359,7 +359,7 @@ namespace PbrtImport
     LOOKUP_ONE(points);
     }
 
-  const Vector3D_d *ParamSet::FindVector(const std::string &name, int *nItems) const
+  const Vector3D_d *ParamSet::FindVector(const std::string &name, size_t *nItems) const
     {
     LOOKUP_PTR(vectors);
     }
@@ -369,7 +369,7 @@ namespace PbrtImport
     LOOKUP_ONE(vectors);
     }
 
-  const Vector3D_d *ParamSet::FindNormal(const std::string &name, int *nItems) const
+  const Vector3D_d *ParamSet::FindNormal(const std::string &name, size_t *nItems) const
     {
     LOOKUP_PTR(normals);
     }
@@ -379,7 +379,7 @@ namespace PbrtImport
     LOOKUP_ONE(normals);
     }
 
-  const Spectrum_d *ParamSet::FindSpectrum(const std::string &name, int *nItems) const
+  const Spectrum_d *ParamSet::FindSpectrum(const std::string &name, size_t *nItems) const
     {
     LOOKUP_PTR(spectrums);
     }
@@ -389,7 +389,7 @@ namespace PbrtImport
     LOOKUP_ONE(spectrums);
     }
 
-  const SpectrumCoef_d *ParamSet::FindSpectrumCoef(const std::string &name, int *nItems) const
+  const SpectrumCoef_d *ParamSet::FindSpectrumCoef(const std::string &name, size_t *nItems) const
     {
     LOOKUP_PTR(spectrum_coefs);
     }
@@ -399,7 +399,7 @@ namespace PbrtImport
     LOOKUP_ONE(spectrum_coefs);
     }
 
-  const std::string *ParamSet::FindString(const std::string &name, int *nItems) const
+  const std::string *ParamSet::FindString(const std::string &name, size_t *nItems) const
     {
     LOOKUP_PTR(strings);
     }

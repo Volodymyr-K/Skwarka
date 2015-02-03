@@ -55,7 +55,7 @@ bool UniformImagePixelsOrder::GetNextPixel(Point2D_i &o_image_pixel)
   // The outer loop is used to iterate through the image pixels until we find a pixel that has not been visited yet.
   while(true)
     {
-    Point2D_i lower=Point2D_i(0,0), upper=Point2D_i(m_size_x,m_size_y);
+    Point2D_i lower=Point2D_i(0, 0), upper=Point2D_i((int)m_size_x, (int)m_size_y);
     bool already_visited=false;
 
     // The loop through the bits of the unsigned integer value.
@@ -77,12 +77,12 @@ bool UniformImagePixelsOrder::GetNextPixel(Point2D_i &o_image_pixel)
       if (local_size_x>=local_size_y)
         {
         int mid_x=(lower[0]+upper[0])/2;
-        if (m_path_bitmask & (1<<i)) upper[0]=mid_x; else lower[0]=mid_x;
+        if (m_path_bitmask & ((size_t)1<<i)) upper[0]=mid_x; else lower[0]=mid_x;
         }
       else
         {
         int mid_y=(lower[1]+upper[1])/2;
-        if (m_path_bitmask & (1<<i)) upper[1]=mid_y; else lower[1]=mid_y;
+        if (m_path_bitmask & ((size_t)1<<i)) upper[1]=mid_y; else lower[1]=mid_y;
         }
       }
 

@@ -47,7 +47,7 @@ namespace PbrtImport
         int xres = i_params.FindOneInt("xresolution", 640);
         int yres = i_params.FindOneInt("yresolution", 480);
         float crop[4] = { 0, 1, 0, 1 };
-        int cwi;
+        size_t cwi;
         const float *cr = i_params.FindFloat("cropwindow", &cwi);
         if (cr && cwi == 4)
           {

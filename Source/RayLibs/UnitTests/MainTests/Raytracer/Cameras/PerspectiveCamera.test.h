@@ -62,8 +62,8 @@ class PerspectiveCameraTestSuite : public CxxTest::TestSuite
       {
       PerspectiveCamera cam(m_transformation, mp_film, 0.0, 0.0, m_x_view_angle);
 
-      double x_res = cam.GetFilm()->GetXResolution();
-      double y_res = cam.GetFilm()->GetYResolution();
+      double x_res = (double)cam.GetFilm()->GetXResolution();
+      double y_res = (double)cam.GetFilm()->GetYResolution();
 
       Ray ray;
       cam.GenerateRay(Point2D_d(RandomDouble(x_res),RandomDouble(y_res)),Point2D_d(RandomDouble(1.0),RandomDouble(1.0)),ray);
@@ -74,8 +74,8 @@ class PerspectiveCameraTestSuite : public CxxTest::TestSuite
       {
       PerspectiveCamera cam(m_transformation, mp_film, 0.0, 0.0, m_x_view_angle);
 
-      double x_res = cam.GetFilm()->GetXResolution();
-      double y_res = cam.GetFilm()->GetYResolution();
+      double x_res = (double)cam.GetFilm()->GetXResolution();
+      double y_res = (double)cam.GetFilm()->GetYResolution();
 
       Ray ray;
       ray.m_min_t=ray.m_max_t=-10.0;
@@ -87,8 +87,8 @@ class PerspectiveCameraTestSuite : public CxxTest::TestSuite
     void test_PerspectiveCamera_PinHoleCameraTransformation()
       {
       PerspectiveCamera cam(m_transformation, mp_film, 0.0, 0.0, m_x_view_angle);
-      double x_res = cam.GetFilm()->GetXResolution();
-      double y_res = cam.GetFilm()->GetYResolution();
+      double x_res = (double)cam.GetFilm()->GetXResolution();
+      double y_res = (double)cam.GetFilm()->GetYResolution();
 
       Ray ray;
       cam.GenerateRay(Point2D_d(x_res/2.0,y_res/2.0),Point2D_d(0.0,0.0),ray);
@@ -101,8 +101,8 @@ class PerspectiveCameraTestSuite : public CxxTest::TestSuite
       {
       PerspectiveCamera cam(m_transformation, mp_film, 0.0, 0.0, m_x_view_angle);
 
-      double x_res = cam.GetFilm()->GetXResolution();
-      double y_res = cam.GetFilm()->GetYResolution();
+      double x_res = (double)cam.GetFilm()->GetXResolution();
+      double y_res = (double)cam.GetFilm()->GetYResolution();
 
       Ray ray1,ray2;
 
@@ -129,8 +129,8 @@ class PerspectiveCameraTestSuite : public CxxTest::TestSuite
       double focal_distance = 10.0;
       PerspectiveCamera cam(m_transformation, mp_film, lens_radius, focal_distance, m_x_view_angle);
 
-      double x_res = cam.GetFilm()->GetXResolution();
-      double y_res = cam.GetFilm()->GetYResolution();
+      double x_res = (double)cam.GetFilm()->GetXResolution();
+      double y_res = (double)cam.GetFilm()->GetYResolution();
 
       Ray ray;
       cam.GenerateRay(Point2D_d(x_res/2.0,y_res/2.0),Point2D_d(RandomDouble(1.0),RandomDouble(1.0)),ray);

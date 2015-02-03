@@ -523,7 +523,7 @@ Spectrum_d PhotonLTEIntegrator::_FinalGather(const Intersection &i_intersection,
       }
     }
 
-  return radiance / gather_samples;
+  return radiance / (double)gather_samples;
   }
 
 Spectrum_d PhotonLTEIntegrator::_LookupCausticRadiance(const BSDF *ip_bsdf, const DifferentialGeometry &i_dg, const Vector3D_d &i_direction, ThreadSpecifics i_ts) const

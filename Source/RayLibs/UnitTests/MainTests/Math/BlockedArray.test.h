@@ -29,7 +29,7 @@ class BlockedArrayTestSuite : public CxxTest::TestSuite
       std::vector<std::vector<Spectrum_d>> spectrums(n, std::vector<Spectrum_d>(m));
       for(size_t i=0;i<n;++i)
         for(size_t j=0;j<m;++j)
-          spectrums[i][j]=Spectrum_d(i*3+j);
+          spectrums[i][j]=Spectrum_d((double)(i*3+j));
 
       BlockedArray<Spectrum_d> A(spectrums);
       for(size_t i=0;i<n;++i)
@@ -56,7 +56,7 @@ class BlockedArrayTestSuite : public CxxTest::TestSuite
       BlockedArray<double,3> A(n,m);
       for(size_t i=0;i<n;++i)
         for(size_t j=0;j<m;++j)
-          A.Get(i,j)=3*i+j;
+          A.Get(i, j)=(double)(3*i+j);
 
       for(size_t i=0;i<n;++i)
         for(size_t j=0;j<m;++j)
@@ -73,7 +73,7 @@ class BlockedArrayTestSuite : public CxxTest::TestSuite
       BlockedArray<double,3> A(n,m);
       for(size_t i=0;i<n;++i)
         for(size_t j=0;j<m;++j)
-          A.Get(i,j)=3*i+j;
+          A.Get(i, j)=(double)(3*i+j);
 
       A.Fill(-1.5);
 

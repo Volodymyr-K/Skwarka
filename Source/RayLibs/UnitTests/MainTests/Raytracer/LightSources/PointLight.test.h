@@ -105,7 +105,7 @@ class PointLightTestSuite : public CxxTest::TestSuite
         }
 
       // Check that the integrated irradiance is equal to the light's power.
-      sum /= num_samples;
+      sum /= (double)num_samples;
       Spectrum_d power = p_light->Power();
       CustomAssertDelta(sum, power, 1e-6);
       }

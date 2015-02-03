@@ -26,7 +26,7 @@ Film(i_x_resolution, i_y_resolution), m_x_resolution(i_x_resolution), m_y_resolu
   ASSERT(m_filter_x_width > 0.0 && m_filter_y_width > 0.0);
 
   m_crop_window_begin = Point2D_i(0, 0);
-  m_crop_window_end = Point2D_i(m_x_resolution, m_y_resolution);
+  m_crop_window_end = Point2D_i((int)m_x_resolution, (int)m_y_resolution);
   }
 
 void ImageFilm::AddSample(const Point2D_d &i_image_point, const Spectrum_d &i_spectrum)

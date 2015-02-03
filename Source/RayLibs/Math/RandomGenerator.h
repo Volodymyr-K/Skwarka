@@ -36,7 +36,7 @@ class RandomGenerator
     /**
     * Constructs random generator with the specified seed value.
     */
-    RandomGenerator(typename UnderlyingRandomGenerator::result_type i_seed);
+    RandomGenerator(size_t i_seed);
 
     /**
     * Produces random value in [0;i_max) range.
@@ -83,8 +83,8 @@ RandomGenerator<ResultType,UnderlyingRandomGenerator>::RandomGenerator()
   }
 
 template<typename ResultType, typename UnderlyingRandomGenerator>
-RandomGenerator<ResultType,UnderlyingRandomGenerator>::RandomGenerator(typename UnderlyingRandomGenerator::result_type i_seed):
-m_generator(i_seed)
+RandomGenerator<ResultType,UnderlyingRandomGenerator>::RandomGenerator(size_t i_seed):
+m_generator(static_cast<typename UnderlyingRandomGenerator::result_type>(i_seed))
   {
   // We add 1.0 to the divider to prevent the random generator from returning upper bound of the input range in operator() methods.
   m_inv_max = 1.0 / (1.0+std::numeric_limits<typename UnderlyingRandomGenerator::result_type>::max());

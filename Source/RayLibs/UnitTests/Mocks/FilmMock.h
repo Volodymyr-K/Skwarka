@@ -47,7 +47,7 @@ class FilmMock: public Film
     virtual void GetSamplingExtent(Point2D_i &o_begin, Point2D_i &o_end) const
       {
       o_begin=Point2D_i(0,0);
-      o_end=Point2D_i(GetXResolution(),GetYResolution());
+      o_end=Point2D_i((int)GetXResolution(), (int)GetYResolution());
       }
   };
 

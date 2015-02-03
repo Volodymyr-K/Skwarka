@@ -100,7 +100,7 @@ class ImageFilmTestSuite : public CxxTest::TestSuite
         for(size_t y=0;y<50;++y)
           {
           Spectrum_d spectrum_res;
-          if (mp_film->GetPixel(Point2D_i(x,y), spectrum_res, false))
+          if (mp_film->GetPixel(Point2D_i((int)x, (int)y), spectrum_res, false))
             {
             cleared=false;
             break;
@@ -130,7 +130,7 @@ class ImageFilmTestSuite : public CxxTest::TestSuite
         for(size_t y=0;y<50;++y)
           {
           Spectrum_d spectrum_res;
-          bool pixel_read = mp_film->GetPixel(Point2D_i(x,y), spectrum_res, false);
+          bool pixel_read = mp_film->GetPixel(Point2D_i((int)x, (int)y), spectrum_res, false);
 
           bool inside_crop_window = (x>=20 && x<80 && y>=10 && y<40);
           if (inside_crop_window != pixel_read)

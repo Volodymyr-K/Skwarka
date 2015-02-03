@@ -85,7 +85,7 @@ class TestTracer
 
 
 inline void TestTracer::LoadMesh()
-{
+  {
   intrusive_ptr<Log> p_log( new StreamLog(std::cerr, Log::ERROR_LEVEL) );
 
   tbb::tick_count t0 = tbb::tick_count::now();

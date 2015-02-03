@@ -264,7 +264,7 @@ T MIPMap<T>::Evaluate(const Point2D_d &i_point, double i_width) const
   double level = 0.0;
   if (i_width > 1e-10)
     if (i_width > 1.0)
-      level = m_num_levels - 1;
+      level = (double)m_num_levels - 1;
     else
       level = m_num_levels - 1 + MathRoutines::Log2(i_width);
 
@@ -317,7 +317,7 @@ T MIPMap<T>::Evaluate(const Point2D_d &i_point, Vector2D_d i_dxy_1, Vector2D_d i
   double level = 0.0;
   if (minor_length > 1e-10)
     if (minor_length > 1.0)
-      level = m_num_levels - 1;
+      level = (double)m_num_levels - 1;
     else
       level = std::max(0.0, m_num_levels - 1 + MathRoutines::Log2(minor_length));
 

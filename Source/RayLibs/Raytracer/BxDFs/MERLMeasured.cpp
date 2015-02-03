@@ -139,9 +139,10 @@ void MERLMeasuredData::Segmentation2D::PDF(const Point2D_d &i_point, Point2D_d &
   ASSERT(i_point[0]>=0.0 && i_point[0]<1.0);
   ASSERT(i_point[1]>=0.0 && i_point[1]<1.0);
 
-  int col_index = std::upper_bound(m_grid_X.begin(), m_grid_X.end(), i_point[0]) - m_grid_X.begin() - 1;
-  int row_index = std::upper_bound(m_grid_Y.begin(), m_grid_Y.end(), i_point[1]) - m_grid_Y.begin() - 1;
-  ASSERT(row_index>=0 && col_index>=0);
+  size_t col_index = std::upper_bound(m_grid_X.begin(), m_grid_X.end(), i_point[0]) - m_grid_X.begin();
+  size_t row_index = std::upper_bound(m_grid_Y.begin(), m_grid_Y.end(), i_point[1]) - m_grid_Y.begin();
+  ASSERT(row_index>0 && col_index>0);
+  --col_index; --row_index;
 
   const float *p_CDF_cols = m_CDF_cols[row_index];
   o_box_min[0] = m_grid_X[col_index];

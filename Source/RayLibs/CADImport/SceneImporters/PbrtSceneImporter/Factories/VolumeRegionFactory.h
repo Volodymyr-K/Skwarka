@@ -69,7 +69,7 @@ namespace PbrtImport
         Point3D_d p0 = i_params.FindOnePoint("p0", Point3D_d(0,0,0));
         Point3D_d p1 = i_params.FindOnePoint("p1", Point3D_d(1,1,1));
 
-        int nitems;
+        size_t nitems;
         const float *data = i_params.FindFloat("density", &nitems);
         if (!data)
           {
@@ -83,7 +83,7 @@ namespace PbrtImport
         if (nitems != nx*ny*nz)
           {
           std::string message = std::string("VolumeGridDensity has ");
-          message += nitems; message += " density values but nx*ny*nz = "; message += nx*ny*nz;
+          message += std::to_string(nitems); message += " density values but nx*ny*nz = "; message += nx*ny*nz;
           PbrtImport::Utils::LogError(mp_log, message);
           return NULL;
           }

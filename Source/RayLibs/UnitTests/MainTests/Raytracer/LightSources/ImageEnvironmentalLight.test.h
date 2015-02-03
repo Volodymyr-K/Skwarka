@@ -143,7 +143,7 @@ class ImageEnvironmentalLightTestSuite : public CxxTest::TestSuite
             }
           }
         }
-      radiance2 /= samples.size();
+      radiance2 /= (double)samples.size();
 
       TS_ASSERT_DELTA(radiance[0],radiance2[0],radiance[0]*0.01);
       TS_ASSERT_DELTA(radiance[1],radiance2[1],radiance[1]*0.01);
@@ -206,7 +206,7 @@ class ImageEnvironmentalLightTestSuite : public CxxTest::TestSuite
               }
             }
           }
-        irradiance2 /= samples.size();
+        irradiance2 /= (double)samples.size();
 
         TS_ASSERT_DELTA(irradiance[0],irradiance2[0],irradiance[0]*0.01);
         TS_ASSERT_DELTA(irradiance[1],irradiance2[1],irradiance[1]*0.01);
@@ -281,7 +281,7 @@ class ImageEnvironmentalLightTestSuite : public CxxTest::TestSuite
           power += sampled_irradiance / pdf;
         }
 
-      power /= samples2.size();
+      power /= (double)samples2.size();
 
       Spectrum_d power2 = mp_light->Power();
       TS_ASSERT_DELTA(power[0],power2[0],power[0]*0.05);
@@ -364,7 +364,7 @@ class ImageEnvironmentalLightTestSuite : public CxxTest::TestSuite
         for(int x=int(i_x)-1;x<=int(i_x)+1;++x)
           {
           double tmp = exp(-(y-i_y)*(y-i_y)-(x-i_x)*(x-i_x));
-          int x1 = (x+m_width)%m_width, y1=y;
+          int x1 = (int) ((x+m_width)%m_width), y1=y;
           if (y1>=0 && y1<(int)m_height)
             {
             w += tmp;

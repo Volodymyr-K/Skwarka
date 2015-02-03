@@ -58,8 +58,8 @@ class SpectrumCoef
     bool operator==(const SpectrumCoef<T> &i_spectrum) const;
     bool operator!=(const SpectrumCoef<T> &i_spectrum) const;
 
-    T operator[](unsigned char i_index) const;
-    T &operator[](unsigned char i_index);
+    T operator[](size_t i_index) const;
+    T &operator[](size_t i_index);
 
     /**
     * Clamps the spectrum components to the specified range.
@@ -256,10 +256,9 @@ SpectrumCoef<T> SpectrumCoef<T>::operator/(double i_value) const
   {
   ASSERT(IsNaN(i_value)==false);
   ASSERT(i_value != 0.0);
-  return SpectrumCoef<T>(
-    (T) (m_values[0]/i_value), 
-    (T) (m_values[1]/i_value), 
-    (T) (m_values[2]/i_value));
+
+  double inv = 1.0 / i_value;
+  return (*this) * inv;
   }
 
 template<typename T>
@@ -268,9 +267,8 @@ SpectrumCoef<T> &SpectrumCoef<T>::operator/=(double i_value)
   ASSERT(IsNaN(i_value)==false);
   ASSERT(i_value != 0.0);
 
-  m_values[0]=(T)(m_values[0]/i_value);
-  m_values[1]=(T)(m_values[1]/i_value);
-  m_values[2]=(T)(m_values[2]/i_value);
+  double inv = 1.0 / i_value;
+  (*this)*=inv;
   return *this;
   }
 
@@ -290,16 +288,16 @@ bool SpectrumCoef<T>::operator!=(const SpectrumCoef<T> &i_spectrum) const
   }
 
 template<typename T>
-T SpectrumCoef<T>::operator[](unsigned char i_index) const
+T SpectrumCoef<T>::operator[](size_t i_index) const
   {
-  ASSERT(i_index>=0 && i_index<3);
+  ASSERT(i_index<3);
   return m_values[i_index];
   }
 
 template<typename T>
-T &SpectrumCoef<T>::operator[](unsigned char i_index)
+T &SpectrumCoef<T>::operator[](size_t i_index)
   {
-  ASSERT(i_index>=0 && i_index<3);
+  ASSERT(i_index<3);
   return m_values[i_index];
   }
 

@@ -134,7 +134,7 @@ class MemoryPoolTestSuite : public CxxTest::TestSuite
 
       std::vector<double, MemoryPoolAllocator<double>> v(alloc);
       for(size_t i=0;i<1234;++i)
-        v.push_back(i);
+        v.push_back((double)i);
 
       for(size_t i=0;i<1234;++i)
         if (v[i]!=i)

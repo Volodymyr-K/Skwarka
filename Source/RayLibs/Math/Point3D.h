@@ -47,8 +47,8 @@ class Point3D
     bool operator==(const Point3D<T> &i_point) const;
     bool operator!=(const Point3D<T> &i_point) const;
 
-    T operator[](unsigned char i_index) const;
-    T &operator[](unsigned char i_index);
+    T operator[](size_t i_index) const;
+    T &operator[](size_t i_index);
 
   private:
     T m_coordinates[3];
@@ -184,16 +184,16 @@ bool Point3D<T>::operator!=(const Point3D<T> &i_point) const
   }
 
 template<typename T>
-T Point3D<T>::operator[](unsigned char i_index) const
+T Point3D<T>::operator[](size_t i_index) const
   {
-  ASSERT(i_index>=0 && i_index<3);
+  ASSERT(i_index<3);
   return m_coordinates[i_index];
   }
 
 template<typename T>
-T &Point3D<T>::operator[](unsigned char i_index)
+T &Point3D<T>::operator[](size_t i_index)
   {
-  ASSERT(i_index>=0 && i_index<3);
+  ASSERT(i_index<3);
   return m_coordinates[i_index];
   }
 

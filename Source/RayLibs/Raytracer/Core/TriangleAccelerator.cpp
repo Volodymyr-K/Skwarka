@@ -151,7 +151,7 @@ BBox3D_d TriangleAccelerator::GetWorldBounds() const
   return Convert<double>(mp_root->m_bbox);
   }
 
-bool TriangleAccelerator::_NodeIntersect(const TriangleAccelerator::Node *ip_node, Ray &io_ray, int &o_primitive_index, int &o_triangle_index) const
+bool TriangleAccelerator::_NodeIntersect(const TriangleAccelerator::Node *ip_node, Ray &io_ray, size_t &o_primitive_index, size_t &o_triangle_index) const
   {
   Ray ray(io_ray);
 
@@ -165,8 +165,8 @@ bool TriangleAccelerator::_NodeIntersect(const TriangleAccelerator::Node *ip_nod
   todo[0]=ip_node;
   int todo_size=1;
 
-  bool instanced_primitive_intersected = false;
-  int triangle_index = -1;
+  bool intersected = false, instanced_primitive_intersected = false;
+  size_t triangle_index;
   while (todo_size>0)
     {
     ASSERT(todo_size<=2*MAX_TREE_DEPTH+1);
@@ -217,9 +217,10 @@ bool TriangleAccelerator::_NodeIntersect(const TriangleAccelerator::Node *ip_nod
         Ray transformed_ray;
         m_instance_to_world_transformations[i].Inverted().operator()(ray, transformed_ray);
 
-        int triangle_index2, primitive_index2;
+        size_t triangle_index2, primitive_index2;
         if ( _NodeIntersect(m_instance_nodes[i], transformed_ray, primitive_index2, triangle_index2) )
           {
+          intersected = true;
           instanced_primitive_intersected = true;
 
           ray.m_max_t = transformed_ray.m_max_t;
@@ -265,6 +266,8 @@ bool TriangleAccelerator::_NodeIntersect(const TriangleAccelerator::Node *ip_nod
               {
               ray.m_max_t = t;
               triangle_index = i;
+
+              intersected = true;
               instanced_primitive_intersected = false;
               }
             }
@@ -279,20 +282,20 @@ bool TriangleAccelerator::_NodeIntersect(const TriangleAccelerator::Node *ip_nod
   if (instanced_primitive_intersected)
     return true;
   else
-    if (triangle_index == -1)
-      return false;
-    else
+    if (intersected)
       {
       o_primitive_index = m_primitive_indices[triangle_index];
       o_triangle_index = m_triangle_indices[triangle_index];
       return true;
       }
+    else
+      return false;
   }
 
 bool TriangleAccelerator::Intersect(const RayDifferential &i_ray, Intersection &o_intersection, double *o_t) const
   {
   ASSERT(i_ray.m_base_ray.m_direction.IsNormalized());
-  int primitive_index, triangle_index;
+  size_t primitive_index, triangle_index;
 
   Ray ray(i_ray.m_base_ray);
   if (_NodeIntersect(mp_root, ray, primitive_index, triangle_index))

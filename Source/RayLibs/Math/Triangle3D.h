@@ -43,8 +43,8 @@ class Triangle3D
     */
     T GetArea() const;
 
-    const Point3D<T> &operator[](unsigned char i_index) const;
-    Point3D<T> &operator[](unsigned char i_index);
+    const Point3D<T> &operator[](size_t i_index) const;
+    Point3D<T> &operator[](size_t i_index);
 
   private:
     Point3D<T> m_vertices[3];
@@ -86,16 +86,16 @@ T Triangle3D<T>::GetArea() const
   }
 
 template<typename T>
-const Point3D<T> &Triangle3D<T>::operator[](unsigned char i_index) const
+const Point3D<T> &Triangle3D<T>::operator[](size_t i_index) const
   {
-  ASSERT(i_index>=0 && i_index<3);
+  ASSERT(i_index<3);
   return m_vertices[i_index];
   }
 
 template<typename T>
-Point3D<T> &Triangle3D<T>::operator[](unsigned char i_index)
+Point3D<T> &Triangle3D<T>::operator[](size_t i_index)
   {
-  ASSERT(i_index>=0 && i_index<3);
+  ASSERT(i_index<3);
   return m_vertices[i_index];
   }
 
