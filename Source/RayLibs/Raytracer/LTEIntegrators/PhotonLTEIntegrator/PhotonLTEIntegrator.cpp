@@ -37,6 +37,15 @@ LTEIntegrator(ip_scene), mp_scene(ip_scene), m_params(i_params)
   if (m_params.m_max_specular_depth > 50)
     m_params.m_max_specular_depth = 50;
 
+  if (m_params.m_max_caustic_photons == 0 || m_params.m_max_caustic_photons > MAX_PHOTONS_IN_MAP)
+    m_params.m_max_caustic_photons = MAX_PHOTONS_IN_MAP;
+
+  if (m_params.m_max_direct_photons == 0 || m_params.m_max_direct_photons > MAX_PHOTONS_IN_MAP)
+    m_params.m_max_direct_photons = MAX_PHOTONS_IN_MAP;
+
+  if (m_params.m_max_indirect_photons == 0 || m_params.m_max_indirect_photons > MAX_PHOTONS_IN_MAP)
+    m_params.m_max_indirect_photons = MAX_PHOTONS_IN_MAP;
+
   m_scene_total_area = 0.0;
   const std::vector<intrusive_ptr<const Primitive>> &primitives = ip_scene->GetPrimitives();
   for(size_t i=0;i<primitives.size();++i)
@@ -115,7 +124,7 @@ void PhotonLTEIntegrator::_GetLightsPowerCDF(const LightSources &i_light_sources
 
 std::pair<Spectrum_f, Spectrum_f>
 PhotonLTEIntegrator::_LookupPhotonIrradiance(const Point3D_d &i_point, const Vector3D_d &i_normal, shared_ptr<const KDTree<Photon>> ip_photon_map,
-                                             double i_max_lookup_dist, NearestPhoton *op_nearest_photons) const
+                                             size_t i_photon_paths, double i_max_lookup_dist, NearestPhoton *op_nearest_photons) const
   {
   if (ip_photon_map == NULL)
     return std::make_pair(Spectrum_f(), Spectrum_f());
@@ -153,13 +162,14 @@ PhotonLTEIntegrator::_LookupPhotonIrradiance(const Point3D_d &i_point, const Vec
     */
     max_dist_sqr *= (photons_found) / (photons_found-0.5);
 
-  double inv = 1.0 / (M_PI * mp_photon_maps->GetNumberOfPhotonPaths() * max_dist_sqr);
+  double inv = 1.0 / (M_PI * i_photon_paths * max_dist_sqr);
   return std::make_pair(Convert<float>(external_irradiance * inv), Convert<float>(internal_irradiance * inv) );
   }
 
 void PhotonLTEIntegrator::_ConstructIrradiancePhotonMap()
   {
-  ASSERT(mp_photon_maps->GetCausticMap() && mp_photon_maps->GetDirectMap() && mp_photon_maps->GetIndirectMap());
+  // Caustic map can be null.
+  ASSERT(mp_photon_maps->GetDirectMap() && mp_photon_maps->GetIndirectMap());
   mp_irradiance_map.reset((KDTree<IrradiancePhoton>*)NULL);
 
   const std::vector<Photon> &direct_photons = mp_photon_maps->GetDirectMap()->GetAllPoints();
@@ -238,7 +248,7 @@ void PhotonLTEIntegrator::_ConstructIrradiancePhotonMap()
 
 void PhotonLTEIntegrator::ShootPhotons(size_t i_photons, bool i_low_thread_priority)
   {
-  mp_photon_maps.reset(new PhotonMaps(m_params.m_max_caustic_photons, m_params.m_max_direct_photons, m_params.m_max_indirect_photons));
+  mp_photon_maps.reset(new PhotonMaps());
 
   const LightSources &lights = mp_scene->GetLightSources();
   if (lights.m_delta_light_sources.size() + lights.m_area_light_sources.size() + lights.m_infinite_light_sources.size() == 0 || i_photons == 0)
@@ -247,7 +257,7 @@ void PhotonLTEIntegrator::ShootPhotons(size_t i_photons, bool i_low_thread_prior
   std::vector<double> lights_CDF;
   _GetLightsPowerCDF(lights, lights_CDF);
 
-  PhotonsInputFilter input_filter(i_photons, MAX_PIPELINE_TOKENS_NUM, 4096);
+  PhotonsInputFilter input_filter(mp_photon_maps, i_photons, m_params.m_max_caustic_photons, m_params.m_max_direct_photons, m_params.m_max_indirect_photons, MAX_PIPELINE_TOKENS_NUM, 4096);
   PhotonsShootingFilter shooting_filter(this, mp_scene, lights_CDF, i_low_thread_priority);
   PhotonsMergingFilter merging_filter(mp_photon_maps);
 
@@ -259,7 +269,7 @@ void PhotonLTEIntegrator::ShootPhotons(size_t i_photons, bool i_low_thread_prior
   pipeline.run(MAX_PIPELINE_TOKENS_NUM);
   pipeline.clear();
 
-  // Construct the KD trees. We explicitly do this now till we are still in a single thread to avoid concurrency issues later.
+  // Construct the KD trees. We explicitly do this now while we are still in a single thread to avoid concurrency issues later.
   mp_photon_maps->GetCausticMap();
   mp_photon_maps->GetDirectMap();
   mp_photon_maps->GetIndirectMap();
@@ -573,7 +583,7 @@ Spectrum_d PhotonLTEIntegrator::_LookupCausticRadiance(const BSDF *ip_bsdf, cons
     */
     max_dist_sqr *= (photons_found) / (photons_found-0.5);
 
-  return radiance / (mp_photon_maps->GetNumberOfPhotonPaths() * max_dist_sqr);
+  return radiance / (mp_photon_maps->GetNumberOfCausticPaths() * max_dist_sqr);
   }
 
 double PhotonLTEIntegrator::_PhotonKernel(double i_dist_sqr, double i_max_dist_sqr) const

@@ -24,8 +24,13 @@
 ///////////////////////////////////////// PhotonsInputFilter //////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-PhotonLTEIntegrator::PhotonsInputFilter::PhotonsInputFilter(size_t i_photon_paths, size_t i_number_of_chunks, size_t i_paths_per_chunk) :
-filter(serial_out_of_order), m_paths_required(i_photon_paths), m_paths_per_chunk(i_paths_per_chunk), m_next_chunk_index(0), m_paths_completed(0)
+PhotonLTEIntegrator::PhotonsInputFilter::PhotonsInputFilter(shared_ptr<PhotonMaps> ip_photon_maps, size_t i_photon_paths,
+                                                            size_t i_caustic_photons_required, size_t i_direct_photons_required, size_t i_indirect_photons_required,
+                                                            size_t i_number_of_chunks, size_t i_paths_per_chunk) :
+filter(serial_out_of_order),
+m_paths_required(i_photon_paths), mp_photon_maps(ip_photon_maps),
+m_caustic_photons_required(i_caustic_photons_required), m_direct_photons_required(i_direct_photons_required), m_indirect_photons_required(i_indirect_photons_required),
+m_paths_per_chunk(i_paths_per_chunk), m_next_chunk_index(0), m_total_paths(0)
   {
   ASSERT(i_number_of_chunks>0);
   ASSERT(i_paths_per_chunk>0);
@@ -42,8 +47,21 @@ PhotonLTEIntegrator::PhotonsInputFilter::~PhotonsInputFilter()
 
 void* PhotonLTEIntegrator::PhotonsInputFilter::operator()(void*)
   {
-  if (m_paths_completed >= m_paths_required)
+  // We don't get the size by calling std::vector::size() method because it is not thread-safe.
+  bool caustic_done = mp_photon_maps->GetNumberOfCausticPhotons() >= m_caustic_photons_required;
+  bool direct_done = mp_photon_maps->GetNumberOfDirectPhotons() >= m_direct_photons_required;
+  bool indirect_done = mp_photon_maps->GetNumberOfIndirectPhotons() >= m_indirect_photons_required;
+
+  if (m_total_paths >= m_paths_required || (caustic_done && direct_done && indirect_done))
     return NULL;
+
+  // Heuristically stop when no more photons can be added to maps.
+  // E.g. if direct and indirect maps are full but the caustic one is empty (e.g. because there are no caustic objects in the scene), stop the process.
+  if (m_total_paths>10000000 &&
+      (caustic_done || mp_photon_maps->GetNumberOfCausticPhotons()==0) &&
+      (direct_done || mp_photon_maps->GetNumberOfDirectPhotons()==0) &&
+      (indirect_done || mp_photon_maps->GetNumberOfIndirectPhotons()==0))
+      return NULL;
 
   /*
   Here we loop over all chunks until we find an available one, i.e. a one that is not locked by other thread.
@@ -57,14 +75,18 @@ void* PhotonLTEIntegrator::PhotonsInputFilter::operator()(void*)
   m_next_chunk_index = (m_next_chunk_index+1) % m_chunks.size();
 
   p_chunk->m_available = false;
-  p_chunk->m_paths_num = std::min(m_paths_per_chunk, m_paths_required-m_paths_completed);
-  p_chunk->m_first_path_index = m_paths_completed;
+  p_chunk->m_paths_num = std::min(m_paths_per_chunk, m_paths_required-m_total_paths);
+  p_chunk->m_first_path_index = m_total_paths;
 
   p_chunk->m_caustic_photons.clear();
   p_chunk->m_direct_photons.clear();
   p_chunk->m_indirect_photons.clear();
 
-  m_paths_completed += p_chunk->m_paths_num;
+  p_chunk->m_caustic_done = caustic_done;
+  p_chunk->m_direct_done = direct_done;
+  p_chunk->m_indirect_done = indirect_done;
+
+  m_total_paths += p_chunk->m_paths_num;
 
   return p_chunk;
   }
@@ -161,12 +183,12 @@ void* PhotonLTEIntegrator::PhotonsShootingFilter::operator()(void* ip_chunk)
       Photon photon(Convert<float>(photon_isect.m_dg.m_point), Convert<float>(weight), CompressedDirection(incident), CompressedDirection(p_photon_BSDF->GetGeometricNormal()));
       if (intersections_num == 1)
         {
-        if (has_non_specular)
+        if (has_non_specular && p_chunk->m_direct_done==false)
           p_chunk->m_direct_photons.push_back(photon);
         }
       else if (specular_path)
         {
-        if (has_non_specular)
+        if (has_non_specular && p_chunk->m_caustic_done==false)
           p_chunk->m_caustic_photons.push_back(photon);
         }
       else
@@ -178,7 +200,8 @@ void* PhotonLTEIntegrator::PhotonsShootingFilter::operator()(void* ip_chunk)
         Although this brings error to the final image it is usually not so bad since indirect photons are pretty equally distributed in the scene.
         This is probably the fastest method to deal with this kind of problem (e.g. pbrt does not account for this at all by returning black radiance for such final gather rays).
         */
-        p_chunk->m_indirect_photons.push_back(photon);
+        if (p_chunk->m_indirect_done==false)
+          p_chunk->m_indirect_photons.push_back(photon);
         }
 
       // Sample new photon ray direction.
@@ -223,6 +246,9 @@ void* PhotonLTEIntegrator::PhotonsShootingFilter::operator()(void* ip_chunk)
       bool previous_specular = (sampled_type & BSDF_SPECULAR) != 0;
       specular_path = previous_specular && specular_path;
 
+      if (specular_path == false && p_chunk->m_indirect_done)
+        break;
+
       photon_ray = Ray(photon_isect.m_dg.m_point, exitant, CoreUtils::GetNextMinT(photon_isect, exitant));
       } // while (mp_scene->Intersect(photon_ray, photon_isect, &isect_t))
   
@@ -238,7 +264,7 @@ void* PhotonLTEIntegrator::PhotonsShootingFilter::operator()(void* ip_chunk)
 //////////////////////////////////////// PhotonsMergingFilter /////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  PhotonLTEIntegrator::PhotonsMergingFilter::PhotonsMergingFilter(shared_ptr<PhotonMaps> ip_photon_maps) : tbb::filter(serial_out_of_order),
+PhotonLTEIntegrator::PhotonsMergingFilter::PhotonsMergingFilter(shared_ptr<PhotonMaps> ip_photon_maps) : tbb::filter(serial_out_of_order),
 mp_photon_maps(ip_photon_maps)
   {
   ASSERT(ip_photon_maps);
@@ -248,7 +274,14 @@ void* PhotonLTEIntegrator::PhotonsMergingFilter::operator()(void* ip_chunk)
   {
   PhotonsChunk *p_chunk = static_cast<PhotonsChunk*>(ip_chunk);
 
-  mp_photon_maps->AddPhotons(p_chunk->m_caustic_photons, p_chunk->m_direct_photons, p_chunk->m_indirect_photons, p_chunk->m_paths_num);
+  if (!p_chunk->m_caustic_done)
+    mp_photon_maps->AddCausticPhotons(p_chunk->m_caustic_photons, p_chunk->m_paths_num);
+
+  if (!p_chunk->m_direct_done)
+    mp_photon_maps->AddDirectPhotons(p_chunk->m_direct_photons, p_chunk->m_paths_num);
+
+  if (!p_chunk->m_indirect_done)
+    mp_photon_maps->AddIndirectPhotons(p_chunk->m_indirect_photons, p_chunk->m_paths_num);
 
   // Release the chunk.
   p_chunk->m_available = true;
@@ -259,64 +292,51 @@ void* PhotonLTEIntegrator::PhotonsMergingFilter::operator()(void* ip_chunk)
 ///////////////////////////////////////////// PhotonMaps //////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-PhotonLTEIntegrator::PhotonMaps::PhotonMaps(size_t i_max_caustic_photons, size_t i_max_direct_photons, size_t i_max_indirect_photons): m_photon_paths(0)
+PhotonLTEIntegrator::PhotonMaps::PhotonMaps()
   {
-    m_max_caustic_photons = i_max_caustic_photons == 0 ? MAX_PHOTONS_IN_MAP : std::min(i_max_caustic_photons, MAX_PHOTONS_IN_MAP);
-    m_max_direct_photons = i_max_direct_photons == 0 ? MAX_PHOTONS_IN_MAP : std::min(i_max_direct_photons, MAX_PHOTONS_IN_MAP);
-    m_max_indirect_photons = i_max_indirect_photons == 0 ? MAX_PHOTONS_IN_MAP : std::min(i_max_indirect_photons, MAX_PHOTONS_IN_MAP);
+  m_caustic_photons_found = m_direct_photons_found = m_indirect_photons_found = 0;
+  m_caustic_paths = m_direct_paths = m_indirect_paths = 0;
   }
 
-void PhotonLTEIntegrator::PhotonMaps::AddPhotons(const std::vector<Photon> &i_caustic_photons, const std::vector<Photon> &i_direct_photons,
-                                                 const std::vector<Photon> &i_indirect_photons, size_t i_paths)
+void PhotonLTEIntegrator::PhotonMaps::AddCausticPhotons(const std::vector<Photon> &i_photons, size_t i_paths)
   {
-  m_photon_paths += i_paths;
+  ASSERT(mp_caustic_map == NULL);
+  m_caustic_paths += i_paths;
+  m_caustic_photons_found += i_photons.size();
+  m_caustic_photons.insert(m_caustic_photons.end(), i_photons.begin(), i_photons.end());
 
-  // Add caustic photons
-  if (mp_caustic_map)
-    _AddPhotonsToKDTree(mp_caustic_map, i_caustic_photons);
-  else
-    if (m_caustic_photons.size() >= m_max_caustic_photons)
-      {
-      mp_caustic_map.reset( new KDTree<Photon>(m_caustic_photons) );
-      m_caustic_photons.swap(std::vector<Photon>());
+  // Avoid allocating unnecessary memory
+  if (m_caustic_photons.size() > PhotonLTEIntegrator::MAX_PHOTONS_IN_MAP / 2)
+    m_caustic_photons.reserve((size_t) (PhotonLTEIntegrator::MAX_PHOTONS_IN_MAP * 1.1));
+  }
 
-      _AddPhotonsToKDTree(mp_caustic_map, i_caustic_photons);
-      }
-    else
-      m_caustic_photons.insert(m_caustic_photons.end(), i_caustic_photons.begin(), i_caustic_photons.end());
+void PhotonLTEIntegrator::PhotonMaps::AddDirectPhotons(const std::vector<Photon> &i_photons, size_t i_paths)
+  {
+  ASSERT(mp_direct_map == NULL);
+  m_direct_paths += i_paths;
+  m_direct_photons_found += i_photons.size();
+  m_direct_photons.insert(m_direct_photons.end(), i_photons.begin(), i_photons.end());
 
-  // Add direct photons
-  if (mp_direct_map)
-    _AddPhotonsToKDTree(mp_direct_map, i_direct_photons);
-  else
-    if (m_direct_photons.size() >= m_max_direct_photons)
-      {
-      mp_direct_map.reset( new KDTree<Photon>(m_direct_photons) );
-      m_direct_photons.swap(std::vector<Photon>());
+  // Avoid allocating unnecessary memory
+  if (m_direct_photons.size() > PhotonLTEIntegrator::MAX_PHOTONS_IN_MAP / 2)
+    m_direct_photons.reserve((size_t)(PhotonLTEIntegrator::MAX_PHOTONS_IN_MAP * 1.1));
+  }
 
-      _AddPhotonsToKDTree(mp_direct_map, i_direct_photons);
-      }
-    else
-      m_direct_photons.insert(m_direct_photons.end(), i_direct_photons.begin(), i_direct_photons.end());
+void PhotonLTEIntegrator::PhotonMaps::AddIndirectPhotons(const std::vector<Photon> &i_photons, size_t i_paths)
+  {
+  ASSERT(mp_indirect_map == NULL);
+  m_indirect_paths += i_paths;
+  m_indirect_photons_found += i_photons.size();
+  m_indirect_photons.insert(m_indirect_photons.end(), i_photons.begin(), i_photons.end());
 
-  // Add indirect photons
-  if (mp_indirect_map)
-    _AddPhotonsToKDTree(mp_indirect_map, i_indirect_photons);
-  else
-    if (m_indirect_photons.size() >= m_max_indirect_photons)
-      {
-      mp_indirect_map.reset( new KDTree<Photon>(m_indirect_photons) );
-      m_indirect_photons.swap(std::vector<Photon>());
-
-      _AddPhotonsToKDTree(mp_indirect_map, i_indirect_photons);
-      }
-    else
-      m_indirect_photons.insert(m_indirect_photons.end(), i_indirect_photons.begin(), i_indirect_photons.end());
+  // Avoid allocating unnecessary memory
+  if (m_indirect_photons.size() > PhotonLTEIntegrator::MAX_PHOTONS_IN_MAP / 2)
+    m_indirect_photons.reserve((size_t)(PhotonLTEIntegrator::MAX_PHOTONS_IN_MAP * 1.1));
   }
 
 shared_ptr<const KDTree<PhotonLTEIntegrator::Photon>> PhotonLTEIntegrator::PhotonMaps::GetCausticMap()
   {
-  if (mp_caustic_map==NULL)
+  if (mp_caustic_map==NULL && m_caustic_photons.size() > 0)
     {
     mp_caustic_map.reset( new KDTree<Photon>(m_caustic_photons) );
     m_caustic_photons.swap(std::vector<Photon>());
@@ -326,7 +346,7 @@ shared_ptr<const KDTree<PhotonLTEIntegrator::Photon>> PhotonLTEIntegrator::Photo
 
 shared_ptr<const KDTree<PhotonLTEIntegrator::Photon>> PhotonLTEIntegrator::PhotonMaps::GetDirectMap()
   {
-  if (mp_direct_map==NULL)
+  if (mp_direct_map==NULL && m_direct_photons.size() > 0)
     {
     mp_direct_map.reset( new KDTree<Photon>(m_direct_photons) );
     m_direct_photons.swap(std::vector<Photon>());
@@ -336,33 +356,10 @@ shared_ptr<const KDTree<PhotonLTEIntegrator::Photon>> PhotonLTEIntegrator::Photo
 
 shared_ptr<const KDTree<PhotonLTEIntegrator::Photon>> PhotonLTEIntegrator::PhotonMaps::GetIndirectMap()
   {
-  if (mp_indirect_map==NULL)
+  if (mp_indirect_map==NULL && m_indirect_photons.size() > 0)
     {
     mp_indirect_map.reset( new KDTree<Photon>(m_indirect_photons) );
     m_indirect_photons.swap(std::vector<Photon>());
     }
   return mp_indirect_map;
-  }
-
-void PhotonLTEIntegrator::PhotonMaps::_AddPhotonsToKDTree(shared_ptr<KDTree<Photon>> ip_map, const std::vector<Photon> &i_photons) const
-  {
-  ASSERT(ip_map);
-
-  for(size_t i=0;i<i_photons.size();++i)
-    {
-    const Photon &photon = i_photons[i];
-
-    PhotonFilter filter(Convert<double>(photon.m_point), photon.m_normal.ToVector3D<double>(), PhotonLTEIntegrator::MAX_NORMAL_DEVIATION_COS);
-    const Photon *p_nearest_photon = ip_map->GetNearestPoint(Convert<double>(photon.m_point), filter);
-    if (p_nearest_photon == NULL)
-      continue;
-
-    /*
-    Yes, we use the "dirty" trick with the const_cast.
-    This looks to be the best option since KDTree can not provide a method that returns non-constant reference to a point
-    because the calling code will be able to change its coordinates (which will invalidate the tree).
-    Since we do not change the photon's position and only change its weight it is relatively safe to use the const_cast.
-    */
-    const_cast<Photon*>(p_nearest_photon)->m_weight += photon.m_weight;
-    }
   }

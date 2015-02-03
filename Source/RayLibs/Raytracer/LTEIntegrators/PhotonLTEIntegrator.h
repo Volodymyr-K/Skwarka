@@ -188,8 +188,8 @@ class PhotonLTEIntegrator: public LTEIntegrator
     * Estimates irradiance based on the specified photon map.
     * The method returns pair of irradiance values for two sides of the surface.
     */
-    std::pair<Spectrum_f, Spectrum_f> _LookupPhotonIrradiance(const Point3D_d &i_point, const Vector3D_d &i_normal,
-      shared_ptr<const KDTree<Photon>> ip_photon_map, double i_max_lookup_dist, NearestPhoton *op_nearest_photons) const;
+    std::pair<Spectrum_f, Spectrum_f> _LookupPhotonIrradiance(const Point3D_d &i_point, const Vector3D_d &i_normal, shared_ptr<const KDTree<Photon>> ip_photon_map,
+                                                              size_t i_photon_paths, double i_max_lookup_dist, NearestPhoton *op_nearest_photons) const;
 
     /**
     * Creates irradiance photons and constructs KDTree for them.
@@ -204,7 +204,13 @@ class PhotonLTEIntegrator: public LTEIntegrator
     * Number of nearby photons to be interpolated when estimating irradiance photons.
     */
     static const size_t LOOKUP_PHOTONS_NUM_FOR_IRRADIANCE = 100;
-    
+
+    /**
+    * Max number of photons (of any type) in photon map.
+    * This setting will override individual values in PhotonLTEIntegratorParams if they are greater than this value.
+    */
+    static const size_t MAX_PHOTONS_IN_MAP = 20000000;
+
     /**
     * Defines the maximum number of tokens (for shooting photons) the TBB pipeline can run concurrently.
     * This is also the upper bound on the number of threads the pipeline can utilize concurrently.
