@@ -74,10 +74,11 @@ The project is distributed under the GNU General Public License Version 3 - see 
 ACKNOWLEDGMENT
 ==============
 
-The project uses the following third-party libraries:
+The project is based on the [PBRT](http://www.pbrt.org/) and reuses some of its ideas and code.
+
+The project also uses the following third-party libraries:
 
 1. [Boost](http://www.boost.org/)
 2. [CxxTest](http://cxxtest.com/)
 3. [FreeImage](http://freeimage.sourceforge.net)
-4. [OpenEXR](http://www.openexr.com/)
-5. [Intel TBB](https://www.threadingbuildingblocks.org/)
+4. [Intel TBB](https://www.threadingbuildingblocks.org/)
