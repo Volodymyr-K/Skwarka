@@ -45,6 +45,12 @@ class KDTree
     KDTree(const std::vector<TPoint3D> &i_points);
 
     /**
+    * Creates KDTree for the specified set of points.
+    * This version of constructor is more efficient because it takes advantage of the parameter rvalue. It moves the content of the vector instead of copying it.
+    */
+    KDTree(std::vector<TPoint3D> &&i_points);
+
+    /**
     * Returns number of points stored in the tree.
     */
     size_t GetNumberOfPoints() const;
@@ -127,7 +133,7 @@ class KDTree
     * Recursively builds the tree.
     * The method initializes node with the specified i_node_index and recursively splits the input range of points [i_begin;i_end) into two subregions.
     */
-    void _Build(size_t i_node_index, size_t i_begin, size_t i_end, const TPoint3D **ip_points_refs, unsigned int &io_next_free_node_index);
+    void _Build(size_t i_begin, size_t i_end);
 
     /**
     * Private helper method that performs the generic lookup operation.
@@ -254,9 +260,9 @@ struct KDTree<TPoint3D>::PointsComparator
     ASSERT(i_split_axis<3);
     }
 
-  bool operator()(const TPoint3D *p_point1, const TPoint3D *p_point2) const
+  bool operator()(const TPoint3D &point1, const TPoint3D &point2) const
     {
-    return (*p_point1)[m_split_axis] == (*p_point2)[m_split_axis] ? (p_point1 < p_point2) : ((*p_point1)[m_split_axis] < (*p_point2)[m_split_axis]);
+    return point1[m_split_axis] < point2[m_split_axis];
     }
   };
 
@@ -383,27 +389,27 @@ class KDTree<TPoint3D>::NearestPointsProc
 ////////////////////////////////////////////// KDTree ////////////////////////////////////////////////////
 
 template<typename TPoint3D>
-KDTree<TPoint3D>::KDTree(const std::vector<TPoint3D> &i_points)
+KDTree<TPoint3D>::KDTree(const std::vector<TPoint3D> &i_points): m_points(i_points)
   {
-  size_t points_num = i_points.size();
+  size_t points_num = m_points.size();
   m_nodes.assign(points_num, Node());
-  m_points.assign(points_num, TPoint3D());
 
   if (points_num == 0)
     return;
 
-  // We use array of pointers for doing an effective sorting. We swap pointers instead of actual values.
-  typedef const TPoint3D *TPoint3D_Ptr;
-  TPoint3D_Ptr *p_points_refs = new TPoint3D_Ptr[points_num];
+  _Build(0, points_num);
+  }
 
-  for (size_t i=0;i<points_num;++i)
-    p_points_refs[i] = &i_points[i];
+template<typename TPoint3D>
+KDTree<TPoint3D>::KDTree(std::vector<TPoint3D> &&i_points) : m_points(std::move(i_points))
+  {
+  size_t points_num = m_points.size();
+  m_nodes.assign(points_num, Node());
 
-  unsigned int next_free_node_index = 1;
-  _Build(0, 0, points_num, p_points_refs, next_free_node_index);
-  ASSERT(next_free_node_index == points_num);
+  if (points_num == 0)
+    return;
 
-  delete[] p_points_refs;
+  _Build(0, points_num);
   }
 
 template<typename TPoint3D>
@@ -419,58 +425,51 @@ const std::vector<TPoint3D> &KDTree<TPoint3D>::GetAllPoints() const
   }
 
 template<typename TPoint3D>
-void KDTree<TPoint3D>::_Build(size_t i_node_index, size_t i_begin, size_t i_end, const TPoint3D **ip_points_refs, unsigned int &io_next_free_node_index)
+void KDTree<TPoint3D>::_Build(size_t i_begin, size_t i_end)
   {
   ASSERT(i_begin<i_end);
-  ASSERT(ip_points_refs);
 
   // If the points range has only point we make a leaf.
   if (i_begin + 1 == i_end)
     {
-    m_nodes[i_node_index].SetLeaf();
-    m_points[i_node_index] = *ip_points_refs[i_begin];
+    m_nodes[i_begin].SetLeaf();
     return;
     }
 
   BBox3D_d bbox;
   for (size_t i=i_begin;i<i_end;++i)
-    {
-    Point3D_d point((*ip_points_refs[i])[0], (*ip_points_refs[i])[1], (*ip_points_refs[i])[2]);
-    bbox.Unite(point);
-    }
+    bbox.Unite(Point3D_d(m_points[i][0], m_points[i][1], m_points[i][2]));
 
   // We split by the longest axis.
   int split_axis = 0;
   if (bbox.m_max[1]-bbox.m_min[1] > bbox.m_max[split_axis]-bbox.m_min[split_axis]) split_axis=1;
   if (bbox.m_max[2]-bbox.m_min[2] > bbox.m_max[split_axis]-bbox.m_min[split_axis]) split_axis=2;
 
-  // Split the input range in two halves.
-  // We split the range by the median point and "sort" them by split_axis coordinate.
+  // Split the input range in two halves by its median element.
   size_t split_index = (i_begin+i_end)/2;
-  std::nth_element(&ip_points_refs[i_begin], &ip_points_refs[split_index], &ip_points_refs[i_end], PointsComparator(split_axis));
+  std::nth_element(m_points.begin() + i_begin, m_points.begin() + split_index, m_points.begin() + i_end, PointsComparator(split_axis));
 
-  m_nodes[i_node_index].SetSplitAxis(split_axis);
-  m_nodes[i_node_index].m_split_coordinate = (float) (*ip_points_refs[split_index])[split_axis];
-  m_points[i_node_index] = *ip_points_refs[split_index];
+  // Put the median element at the beginning of the range so that it corresponds to this node.
+  std::swap(m_points[i_begin], m_points[split_index]);
+
+  m_nodes[i_begin].SetSplitAxis(split_axis);
+  m_nodes[i_begin].m_split_coordinate = (float)(m_points[i_begin])[split_axis];
 
   if (i_begin < split_index)
     {
-    m_nodes[i_node_index].SetHasLeftChild(true);
-    unsigned int child_num = io_next_free_node_index++;
-    _Build(child_num, i_begin, split_index, ip_points_refs, io_next_free_node_index);
+    m_nodes[i_begin].SetHasLeftChild(true);
+    _Build(i_begin+1, split_index+1);
     }
   else
-    m_nodes[i_node_index].SetHasLeftChild(false);
+    m_nodes[i_begin].SetHasLeftChild(false);
 
-  // Note: the split_index's point is not added to any of the children, it is associated with this node.
   if (split_index+1 < i_end)
     {
-    unsigned int child_num = io_next_free_node_index++;
-    m_nodes[i_node_index].SetRightChild(child_num);
-    _Build(child_num, split_index+1, i_end, ip_points_refs, io_next_free_node_index);
+    m_nodes[i_begin].SetRightChild((unsigned int)split_index+1);
+    _Build(split_index+1, i_end);
     }
   else
-    m_nodes[i_node_index].SetRightChild((1<<29)-1); // Initialize with the maximum value which means that the right child is not present.
+    m_nodes[i_begin].SetRightChild((1<<29)-1); // Initialize with the maximum value which means that the right child is not present.
   }
 
 template<typename TPoint3D>

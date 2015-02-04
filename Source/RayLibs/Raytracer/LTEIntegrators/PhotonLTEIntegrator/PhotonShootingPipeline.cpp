@@ -338,7 +338,7 @@ shared_ptr<const KDTree<PhotonLTEIntegrator::Photon>> PhotonLTEIntegrator::Photo
   {
   if (mp_caustic_map==NULL && m_caustic_photons.size() > 0)
     {
-    mp_caustic_map.reset( new KDTree<Photon>(m_caustic_photons) );
+    mp_caustic_map.reset( new KDTree<Photon>(std::move(m_caustic_photons)) );
     m_caustic_photons.swap(std::vector<Photon>());
     }
   return mp_caustic_map;
@@ -348,7 +348,7 @@ shared_ptr<const KDTree<PhotonLTEIntegrator::Photon>> PhotonLTEIntegrator::Photo
   {
   if (mp_direct_map==NULL && m_direct_photons.size() > 0)
     {
-    mp_direct_map.reset( new KDTree<Photon>(m_direct_photons) );
+    mp_direct_map.reset( new KDTree<Photon>(std::move(m_direct_photons)) );
     m_direct_photons.swap(std::vector<Photon>());
     }
   return mp_direct_map;
@@ -358,7 +358,7 @@ shared_ptr<const KDTree<PhotonLTEIntegrator::Photon>> PhotonLTEIntegrator::Photo
   {
   if (mp_indirect_map==NULL && m_indirect_photons.size() > 0)
     {
-    mp_indirect_map.reset( new KDTree<Photon>(m_indirect_photons) );
+    mp_indirect_map.reset( new KDTree<Photon>(std::move(m_indirect_photons)) );
     m_indirect_photons.swap(std::vector<Photon>());
     }
   return mp_indirect_map;

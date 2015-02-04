@@ -20,6 +20,7 @@
 #include <Raytracer/Core/CoreUtils.h>
 #include <Raytracer/Core/SpectrumRoutines.h>
 #include <tbb/pipeline.h>
+#include <tbb/parallel_invoke.h>
 
 // 0.87 cosine value corresponds to 30 degrees angle.
 const double PhotonLTEIntegrator::MAX_NORMAL_DEVIATION_COS = 0.87;
@@ -203,47 +204,38 @@ void PhotonLTEIntegrator::_ConstructIrradiancePhotonMap()
 
   /*
   Estimate maximum lookup distance for the irradiance photons.
-  We do that by finding the set of the most distant indirect photons to the set of irradiance photons.
+  We do this by finding the set of the most distant indirect photons to the set of irradiance photons.
   The set contains 0.1% of all of the indirect photons. After we have the distances we take the smallest one from this set and use it as the maximum lookup distance.
   That way we can say that for 99.9% of all points in the scene (reachable by indirect light) the nearest irradiance photon can be found within this distance.
-  We use heap to keep the set of most distant photons.
   */
-  std::vector<double> heap;
-  size_t max_heap_size = std::max(indirect_photons.size()/1000, (size_t)1);
-  for(size_t i=0;i<indirect_photons.size();++i)
+
+  // Process only every 11th indirect photon to speed things up. It's important that this step is relatively prime with the increment step for irradiance photons above.
+  size_t step = 11;
+
+  // Compute min distance for every indirect photon in parallel.
+  std::vector<double> sqr_distances((indirect_photons.size()+step-1)/step, 0.f);
+  tbb::parallel_for((size_t)0, sqr_distances.size(), [&](size_t i)
     {
-    Point3D_d photon_position = Convert<double>( indirect_photons[i].m_point );
-    Vector3D_d photon_normal = indirect_photons[i].m_normal.ToVector3D<double>();
+    Point3D_d photon_position = Convert<double>(indirect_photons[i*step].m_point);
+    Vector3D_d photon_normal = indirect_photons[i*step].m_normal.ToVector3D<double>();
 
     IrradiancePhotonFilter filter(photon_position, photon_normal, MAX_NORMAL_DEVIATION_COS);
     const IrradiancePhoton *p_irradiance_photon = mp_irradiance_map->GetNearestPoint(photon_position, filter);
     if (p_irradiance_photon == NULL)
-      continue;
-
-    double dist_sqr = p_irradiance_photon ? Vector3D_d(photon_position - Convert<double>(p_irradiance_photon->m_point)).LengthSqr() : DBL_INF;
-
-    if (heap.size()<max_heap_size)
-      {
-      heap.push_back(dist_sqr);
-
-      // If we found enough photons we make a heap from them.
-      if (heap.size() == max_heap_size)
-        std::make_heap(heap.begin(), heap.end(), std::greater<double>());
-      }
+      sqr_distances[i] = 0.0; //  by setting it to 0 we prevent this value from affecting the final result
     else
-      if (dist_sqr>heap[0])
-        {
-        // Remove the nearest photon from heap and add new photon.
-        std::pop_heap(heap.begin(), heap.end(), std::greater<double>());
-        heap.back() = dist_sqr;
-        std::push_heap(heap.begin(), heap.end(), std::greater<double>());
-        }
-    }
+      sqr_distances[i] = Vector3D_d(photon_position - Convert<double>(p_irradiance_photon->m_point)).LengthSqr();
+    });
 
-  if (heap.empty())
+  // Now get the 1/1000th most distant photon to get the 0.1% percentile
+  size_t index = sqr_distances.size()<=1 ? 0 : std::max(sqr_distances.size()/1000, (size_t)1);
+  std::nth_element(sqr_distances.begin(), sqr_distances.begin()+index, sqr_distances.end(), std::greater<double>());
+  ASSERT(sqr_distances[index]>=0.0);
+
+  if (sqr_distances[index] == 0.0)
     m_max_irradiance_lookup_dist = DBL_INF;
   else
-    m_max_irradiance_lookup_dist = sqrt(heap[0]);
+    m_max_irradiance_lookup_dist = sqrt(sqr_distances[index]);
   }
 
 void PhotonLTEIntegrator::ShootPhotons(size_t i_photons, bool i_low_thread_priority)
@@ -270,9 +262,9 @@ void PhotonLTEIntegrator::ShootPhotons(size_t i_photons, bool i_low_thread_prior
   pipeline.clear();
 
   // Construct the KD trees. We explicitly do this now while we are still in a single thread to avoid concurrency issues later.
-  mp_photon_maps->GetCausticMap();
-  mp_photon_maps->GetDirectMap();
-  mp_photon_maps->GetIndirectMap();
+  tbb::parallel_invoke([&]{mp_photon_maps->GetCausticMap(); },
+                       [&]{mp_photon_maps->GetDirectMap(); },
+                       [&]{mp_photon_maps->GetIndirectMap(); });
 
   _ConstructIrradiancePhotonMap();
   }
