@@ -174,7 +174,7 @@ inline void TestTracer::RenderImage()
   intrusive_ptr<PhotonLTEIntegrator> p_lte_int( new PhotonLTEIntegrator(mp_scene, params) );
 
   t0 = tbb::tick_count::now();
-  p_lte_int->ShootPhotons(50*1000000U, true);
+  p_lte_int->ShootPhotons(50*(size_t)1000000, true);
   t1 = tbb::tick_count::now();
   printf("Shooting: %lf\n", (t1-t0).seconds());
   

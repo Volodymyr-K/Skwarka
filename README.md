@@ -64,7 +64,7 @@ Some third-party libraries are not in the repository (to save space) and must be
        Download and extract TBB library from the website [https://www.threadingbuildingblocks.org/](https://www.threadingbuildingblocks.org/) <br/>
        The currently used version is 4.2 and it needs to be extracted to ThirdParty/TBB/4.2 directory
 3. Open Source/RayLibs/RayLibs.sln file in MSVC and it should be instantly ready for build (except for the unit tests).<br/>
-If you also want to build the unit tests (the UnitTests project) you will additionally need to install Python v2.6.5 and make sure it's on your PATH env variable.
+If you also want to build the unit tests (the UnitTests project) you will additionally need to install Python and make sure it's on your PATH env variable.
 
 LICENSE
 =======

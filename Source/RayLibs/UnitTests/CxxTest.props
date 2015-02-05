@@ -11,7 +11,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup>
     <CxxTest>
-      <testgen>python ..\..\..\ThirdParty\cxxtest\3.10.1\cxxtestgen.py</testgen>
+      <testgen>python ..\..\..\ThirdParty\cxxtest\4.4\bin\cxxtestgen</testgen>
       <output>%(Filename).cpp</output>
       <runner>0</runner>
       <CommandLineTemplate>[testgen] [runner] [output] [inputs]</CommandLineTemplate>

@@ -209,7 +209,7 @@ class PhotonLTEIntegrator: public LTEIntegrator
     * Max number of photons (of any type) in photon map.
     * This setting will override individual values in PhotonLTEIntegratorParams if they are greater than this value.
     */
-    static const size_t MAX_PHOTONS_IN_MAP = 20000000;
+    static const size_t MAX_PHOTONS_IN_MAP = 40000000;
 
     /**
     * Defines the maximum number of tokens (for shooting photons) the TBB pipeline can run concurrently.

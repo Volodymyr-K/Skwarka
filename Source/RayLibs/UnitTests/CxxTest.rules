@@ -19,7 +19,7 @@
 					Category="Path"
 					Description="cxxtestgen.py path"
 					Switch="[value]"
-					DefaultValue="python ..\..\..\ThirdParty\cxxtest\3.10.1\cxxtestgen.py"
+					DefaultValue="python ..\..\..\ThirdParty\cxxtest\4.4\bin\cxxtestgen"
 					Delimited="true"
 				/>
 				<EnumProperty
