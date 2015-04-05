@@ -1,0 +1,14 @@
+<RCC>
+    <qresource prefix="/">
+        <file>qml/main.qml</file>
+        <file>qml/ToolBarSeparator.qml</file>
+        <file>qml/tabs/CameraTab.qml</file>
+        <file>qml/tabs/RendererTab.qml</file>
+        <file>qml/images/fileopen.png</file>
+        <file>qml/images/start.png</file>
+        <file>qml/images/stop.png</file>
+        <file>qml/forms/PhotonMapForm.qml</file>
+        <file>qml/forms/DirectLightForm.qml</file>
+        <file>qml/forms/PerspectiveCameraForm.qml</file>
+    </qresource>
+</RCC>
