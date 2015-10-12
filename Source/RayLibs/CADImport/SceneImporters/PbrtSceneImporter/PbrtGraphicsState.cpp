@@ -31,7 +31,7 @@ namespace PbrtImport
     PbrtImport::MaterialFactory material_factory(m_material_to_bump_map, mp_log);
 
     intrusive_ptr<const Material> mtl;
-    if (currentNamedMaterial != "" && namedMaterials.find(currentNamedMaterial) != namedMaterials.end())
+    if (!currentNamedMaterial.empty() && namedMaterials.find(currentNamedMaterial) != namedMaterials.end())
       mtl = namedMaterials[currentNamedMaterial];
 
     if (!mtl)

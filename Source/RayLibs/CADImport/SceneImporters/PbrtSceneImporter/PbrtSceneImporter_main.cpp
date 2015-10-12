@@ -65,7 +65,6 @@ m_filename(i_filename), mp_log(ip_log), m_texture_factory(ip_log)
   m_known_commands.push_back("WorldBegin");
   m_known_commands.push_back("WorldEnd");
 
-  for (size_t i = 0; i<m_known_commands.size(); ++i) m_known_commands[i];
   std::sort(m_known_commands.begin(), m_known_commands.end());
 
   _ReadScene();
@@ -131,7 +130,7 @@ void PbrtSceneImporter::_ReadScene()
 
 void PbrtSceneImporter::_ParseFile()
   {
-  m_buffer = "";
+  m_buffer.clear();
   if (_ReadLines(m_filename)==false) return;
 
   // Make sure that the last read command is processed.

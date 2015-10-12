@@ -112,8 +112,6 @@ inline void TestTracer::LoadMesh()
   //PbrtSceneImporter importer("D:\\raytracing\\pbrt_scenes\\villa-lights-on.pbrt", p_log);
   //PbrtSceneImporter importer("D:\\raytracing\\pbrt_scenes\\villa-daylight.pbrt", p_log);
 
-  
-  importer.GetScene();
 
   mp_scene = importer.GetScene();
   mp_pbrt_camera = importer.GetCameras()[0];

@@ -53,7 +53,7 @@ double BSDF::PDF(const Vector3D_d &i_incident, const Vector3D_d &i_exitant, BxDF
   ASSERT(exitant_local.IsNormalized());
 
   double pdf = 0.0;
-  int num_matched = 0;
+  size_t num_matched = 0;
   for (size_t i=0;i<m_BxDFs_num;++i)
     if (m_BxDFs[i]->MatchesFlags(i_flags))
       {

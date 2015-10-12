@@ -441,15 +441,15 @@ namespace SamplingRoutines
 
   inline double BalanceHeuristic(size_t i_samples_num1, double i_pdf1, size_t i_samples_num2, double i_pdf2)
     {
-    ASSERT(i_samples_num1>=0 && i_pdf1>=0.0);
-    ASSERT(i_samples_num2>=0 && i_pdf2>=0.0);
+    ASSERT(i_pdf1>=0.0);
+    ASSERT(i_pdf2>=0.0);
     return (i_samples_num1 * i_pdf1) / (i_samples_num1 * i_pdf1 + i_samples_num2 * i_pdf2);
     }
 
   inline double PowerHeuristic(size_t i_samples_num1, double i_pdf1, size_t i_samples_num2, double i_pdf2)
     {
-    ASSERT(i_samples_num1>=0 && i_pdf1>=0.0);
-    ASSERT(i_samples_num2>=0 && i_pdf2>=0.0);
+    ASSERT(i_pdf1>=0.0);
+    ASSERT(i_pdf2>=0.0);
     double f = i_samples_num1 * i_pdf1, g = i_samples_num2 * i_pdf2;
     return (f*f) / (f*f + g*g);
     }

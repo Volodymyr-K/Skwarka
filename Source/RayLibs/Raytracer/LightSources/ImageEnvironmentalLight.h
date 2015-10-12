@@ -181,7 +181,7 @@ class ImageEnvironmentalLight: public InfiniteLightSource
 
     void _PrecomputeData();
 
-    Spectrum_d _PrecomputeIrradiance(size_t i_node_index, const Vector3D_d &i_normal, const Point2D_d i_normal_angles, float *op_nodes_PDF) const;
+    Spectrum_d _PrecomputeIrradiance(size_t i_node_index, const Vector3D_d &i_normal, const Point2D_d &i_normal_angles, float *op_nodes_PDF) const;
 
     Spectrum_d _LightingSample(Point2D_d i_sample, const float *ip_nodes_pdf, Vector3D_d &o_lighting_direction, double &o_pdf) const;
 

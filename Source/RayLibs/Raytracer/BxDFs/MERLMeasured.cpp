@@ -281,7 +281,7 @@ SpectrumCoef_d MERLMeasuredData::GetBRDF(const Vector3D_d &i_incident, const Vec
   size_t half_vector_theta_index = std::min(size_t(half_vector_theta_deg_scaled), BRDF_SAMPLING_RES_THETA_H - 1);
 
   size_t index = diff_vector_phi_index + (diff_vector_theta_index + half_vector_theta_index * BRDF_SAMPLING_RES_THETA_D) * BRDF_SAMPLING_RES_PHI_D;
-  ASSERT(index>=0 && index<BRDF_SAMPLING_RES_THETA_H*BRDF_SAMPLING_RES_THETA_D*BRDF_SAMPLING_RES_PHI_D);
+  ASSERT(index<BRDF_SAMPLING_RES_THETA_H*BRDF_SAMPLING_RES_THETA_D*BRDF_SAMPLING_RES_PHI_D);
    
   if (index < (BRDF_SAMPLING_RES_THETA_H-1)*BRDF_SAMPLING_RES_THETA_D*BRDF_SAMPLING_RES_PHI_D)
     {

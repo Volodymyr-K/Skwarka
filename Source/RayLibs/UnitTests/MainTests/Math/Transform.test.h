@@ -239,13 +239,12 @@ class TransformTestSuite : public CxxTest::TestSuite
 
     void test_Transform_MatchDirections_SameAxis()
       {
-      Vector3D_d dir1 = Vector3D_d(1,2,3).Normalized();
-      Vector3D_d dir2 = Vector3D_d(1,2,3).Normalized();
-      Transform t=MakeMatchDirections(dir1, dir2);
+      Vector3D_d dir = Vector3D_d(1,2,3).Normalized();
+      Transform t=MakeMatchDirections(dir, dir);
 
-      Vector3D_d tranformed = t(dir1);
+      Vector3D_d tranformed = t(dir);
 
-      CustomAssertDelta(dir2, tranformed, (1e-10));
+      CustomAssertDelta(dir, tranformed, (1e-10));
       }
 
     void test_Transform_MatchDirections_OppositeAxis()

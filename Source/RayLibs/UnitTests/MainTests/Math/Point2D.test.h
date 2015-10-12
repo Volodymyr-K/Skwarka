@@ -158,8 +158,7 @@ class Point2DTestSuite : public CxxTest::TestSuite
       Point2D_d p1(1.1,-2);
       std::stringstream sstream;
       sstream << p1;
-      std::string s(sstream.str().c_str());
-      TS_ASSERT(s=="1.1 -2");
+      TS_ASSERT(sstream.str() == "1.1 -2");
       }
 
     void test_Point2D_InputStream()

@@ -158,8 +158,7 @@ class Point3DTestSuite : public CxxTest::TestSuite
       Point3D_d p1(1.1,-2.2,3.0);
       std::stringstream sstream;
       sstream << p1;
-      std::string s(sstream.str().c_str());
-      TS_ASSERT(s=="1.1 -2.2 3");
+      TS_ASSERT(sstream.str() == "1.1 -2.2 3");
       }
 
     void test_Point3D_InputStream()

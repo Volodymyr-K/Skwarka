@@ -173,7 +173,7 @@ void MIPMap<T>::_Initialize(const std::vector<std::vector<T>> &i_values, double 
 
     // Set default weights for the case when the old size is even.
     double y_weights[3] = { 0.0, 0.5, 0.5 }, x_weights[3] = { 0.0, 0.5, 0.5 };
-    for (size_t y=0; y<size_y; ++y)
+    for (int y=0; y<size_y; ++y)
       {
       // If the old size is odd, use polyphase filter weights (as described by Stefan Guthe and Paul Heckbert 2003).
       if (prev_size_y&1)
@@ -183,7 +183,7 @@ void MIPMap<T>::_Initialize(const std::vector<std::vector<T>> &i_values, double 
         y_weights[2] = (size_y-y-1) * inv_prev_size_y;
         }
 
-      for (size_t x=0; x<size_x; ++x)
+      for (int x=0; x<size_x; ++x)
         {
         if (prev_size_x&1)
           {
@@ -346,7 +346,7 @@ T MIPMap<T>::Evaluate(const Point2D_d &i_point, Vector2D_d i_dxy_1, Vector2D_d i
 template <typename T>
 T MIPMap<T>::_Interpolate(size_t i_level, Point2D_d i_point) const
   {
-  ASSERT(i_level>=0 && i_level<m_num_levels);
+  ASSERT(i_level<m_num_levels);
   BlockedArray<T> &level = *m_levels[i_level];
 
   i_point[0] = i_point[0] * level.GetSizeV() - 0.5;
@@ -366,7 +366,7 @@ T MIPMap<T>::_Interpolate(size_t i_level, Point2D_d i_point) const
 template <typename T>
 T MIPMap<T>::_EWA(size_t i_level, Point2D_d i_point, Vector2D_d i_dxy_1, Vector2D_d i_dxy_2) const
   {
-  ASSERT(i_level>=0 && i_level<m_num_levels);
+  ASSERT(i_level<m_num_levels);
   BlockedArray<T> &level = *m_levels[i_level];
 
   // Convert EWA coordinates to appropriate scale for level.

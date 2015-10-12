@@ -144,7 +144,7 @@ void* PhotonLTEIntegrator::PhotonsShootingFilter::operator()(void* ip_chunk)
     // Binary search for the sampled light source.
     double light_pdf;
     size_t light_index = MathRoutines::BinarySearchCDF(m_lights_CDF.begin(), m_lights_CDF.end(), SamplingRoutines::RadicalInverse((unsigned int)path_index+1, 11), &light_pdf) - m_lights_CDF.begin();
-    ASSERT(light_index>=0 && light_index<num_lights);
+    ASSERT(light_index<num_lights);
     ASSERT(light_pdf > 0.0);
 
     double photon_pdf = 0.0;

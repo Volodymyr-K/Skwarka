@@ -184,7 +184,7 @@ namespace PbrtImport
 
         intrusive_ptr<const Texture<double>> alphaTex = NULL;
         std::string alphaTexName = i_params.FindTexture("alpha");
-        if (alphaTexName != "")
+        if (!alphaTexName.empty())
           {
           PbrtImport::Utils::LogError(mp_log, "Alpha textures are not supported. Skipping.");
 

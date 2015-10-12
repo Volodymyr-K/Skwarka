@@ -412,7 +412,7 @@ namespace PbrtImport
   std::string ParamSet::FindOneFilename(const std::string &name, const std::string &d) const
     {
     std::string filename = FindOneString(name, "");
-    if (filename == "")
+    if (filename.empty())
       return d;
 
     return _GetFullPath(filename);
@@ -448,8 +448,8 @@ namespace PbrtImport
   intrusive_ptr<const Texture<SpectrumCoef_d>> TextureParams::GetSpectrumCoefTexture(const std::string &n, const SpectrumCoef_d &def, intrusive_ptr<Log> ip_log) const
     {
     std::string name = geomParams.FindTexture(n);
-    if (name == "") name = materialParams.FindTexture(n);
-    if (name != "")
+    if (name.empty()) name = materialParams.FindTexture(n);
+    if (!name.empty())
       {
       if (spectrumTextures.find(name) != spectrumTextures.end())
         return spectrumTextures.find(name)->second;
@@ -468,8 +468,8 @@ namespace PbrtImport
   intrusive_ptr<const Texture<double>> TextureParams::GetFloatTexture(const std::string &n, float def, intrusive_ptr<Log> ip_log) const
     {
     std::string name = geomParams.FindTexture(n);
-    if (name == "") name = materialParams.FindTexture(n);
-    if (name != "")
+    if (name.empty()) name = materialParams.FindTexture(n);
+    if (!name.empty())
       {
       if (floatTextures.find(name) != floatTextures.end())
         return floatTextures.find(name)->second;

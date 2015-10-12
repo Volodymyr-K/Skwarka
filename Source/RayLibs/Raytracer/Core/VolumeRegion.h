@@ -40,7 +40,7 @@ class VolumeRegion: public ReferenceCounted
     * @param op_t_end Parametric coordinate of the end of the intersection region. Can be NULL.
     * @return true if the ray intersects the volume region.
     */
-    virtual bool Intersect(Ray i_ray, double *op_t_begin, double *op_t_end) const = 0;
+    virtual bool Intersect(const Ray &i_ray, double *op_t_begin, double *op_t_end) const = 0;
 
     /**
     * Returns emission density of the volume region at the specified point.

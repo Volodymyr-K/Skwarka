@@ -166,7 +166,7 @@ namespace PbrtImport
 
         intrusive_ptr<const Material> p_ret(new MixMaterial(ip_mat1, ip_mat2, scale));
         intrusive_ptr<const Texture<double>> bumpMap1 = m_material_to_bump_map[ip_mat1.get()];
-        intrusive_ptr<const Texture<double>> bumpMap2 = m_material_to_bump_map[ip_mat1.get()];
+        intrusive_ptr<const Texture<double>> bumpMap2 = m_material_to_bump_map[ip_mat2.get()];
         intrusive_ptr<const Texture<double>> bumpMap;
         if (bumpMap1!=NULL && bumpMap2==NULL) bumpMap = bumpMap1;
         if (bumpMap2!=NULL && bumpMap1==NULL) bumpMap = bumpMap2;

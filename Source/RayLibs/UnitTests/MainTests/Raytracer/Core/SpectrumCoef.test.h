@@ -196,8 +196,7 @@ class SpectrumCoefTestSuite : public CxxTest::TestSuite
       SpectrumCoef_d s1(1.1,-2.2,3.0);
       std::stringstream sstream;
       sstream << s1;
-      std::string s(sstream.str().c_str());
-      TS_ASSERT(s=="1.1 -2.2 3");
+      TS_ASSERT(sstream.str() == "1.1 -2.2 3");
       }
 
     void test_SpectrumCoef_InputStream()

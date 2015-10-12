@@ -239,8 +239,7 @@ class Vector2DTestSuite : public CxxTest::TestSuite
       Vector2D_d v1(1.1,-2);
       std::stringstream sstream;
       sstream << v1;
-      std::string s(sstream.str().c_str());
-      TS_ASSERT(s=="1.1 -2");
+      TS_ASSERT(sstream.str() == "1.1 -2");
       }
 
     void test_Vector2D_InputStream()

@@ -33,7 +33,7 @@ namespace PbrtImport
     public:
       LightSourceFactory(intrusive_ptr<Log> ip_log): mp_log(ip_log) {}
 
-      intrusive_ptr<const DeltaLightSource> CreateDeltaLight(const std::string &i_name, const Transform &i_light_to_world,  const ParamSet &i_params, BBox3D_d i_world_bounds) const
+      intrusive_ptr<const DeltaLightSource> CreateDeltaLight(const std::string &i_name, const Transform &i_light_to_world,  const ParamSet &i_params, const BBox3D_d &i_world_bounds) const
         {
         if (i_name == "point")
           return _CreatePointLight(i_light_to_world, i_params);
@@ -49,7 +49,7 @@ namespace PbrtImport
         return NULL;
         }
 
-      intrusive_ptr<const InfiniteLightSource> CreateInfiniteLight(const std::string &i_name, const Transform &i_light_to_world,  const ParamSet &i_params, BBox3D_d i_world_bounds) const
+      intrusive_ptr<const InfiniteLightSource> CreateInfiniteLight(const std::string &i_name, const Transform &i_light_to_world,  const ParamSet &i_params, const BBox3D_d &i_world_bounds) const
         {
         if (i_name == "infinite" || i_name == "exinfinite")
           return _CreateInfiniteLight(i_light_to_world, i_params, i_world_bounds);
@@ -103,7 +103,7 @@ namespace PbrtImport
         return NULL;
         }
 
-      intrusive_ptr<const DeltaLightSource> _CreateDistantLight(const Transform &i_light_to_world,  const ParamSet &i_params, BBox3D_d i_world_bounds) const
+      intrusive_ptr<const DeltaLightSource> _CreateDistantLight(const Transform &i_light_to_world, const ParamSet &i_params, const BBox3D_d &i_world_bounds) const
         {
         Spectrum_d L = i_params.FindOneSpectrum("L", Spectrum_d(1.0));
         SpectrumCoef_d sc = i_params.FindOneSpectrumCoef("scale", SpectrumCoef_d(1.0));
@@ -115,7 +115,7 @@ namespace PbrtImport
         return new ParallelLight(i_light_to_world(dir), L * sc, i_world_bounds);
         }
 
-      intrusive_ptr<const InfiniteLightSource> _CreateInfiniteLight(const Transform &i_light_to_world,  const ParamSet &i_params, BBox3D_d i_world_bounds) const
+      intrusive_ptr<const InfiniteLightSource> _CreateInfiniteLight(const Transform &i_light_to_world, const ParamSet &i_params, const BBox3D_d &i_world_bounds) const
         {
         Spectrum_d L = i_params.FindOneSpectrum("L", Spectrum_d(1.0));
         SpectrumCoef_d sc = i_params.FindOneSpectrumCoef("scale", SpectrumCoef_d(1.0));

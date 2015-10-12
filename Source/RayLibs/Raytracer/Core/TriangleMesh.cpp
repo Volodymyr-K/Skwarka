@@ -310,7 +310,7 @@ TopologyInfo TriangleMesh::_ComputeTopologyInfo(const ConnectivityData &i_connec
   topology_info.m_solid=true;
   topology_info.m_manifold=true;
 
-  unsigned int number_of_patches = 0;
+  size_t number_of_patches = 0;
 
   // Keeps track of what triangles we have visited so far.
   std::vector<bool> visited(GetNumberOfTriangles(), false);

@@ -96,7 +96,7 @@ class SamplerBasedRendererTestSuite : public CxxTest::TestSuite
           // Since the mesh is a unit radius sphere with a point light in its center we can compute the radiance analytically.
           Spectrum_d analytical_spectrum = Spectrum_d(100.0)*INV_PI * exp(-1.0) * exp(-1.0); // exp is multiplied twice to account for light attenuation and camera ray attenuation.
           Spectrum_d dif = analytical_spectrum-spectrum;
-          if (fabs(dif[0])>0.02 || fabs(dif[0])>0.02 || fabs(dif[0])>0.02)
+          if (fabs(dif[0])>0.02 || fabs(dif[1])>0.02 || fabs(dif[2])>0.02)
             {
             TS_FAIL("Wrong spectrum value.");
             return;

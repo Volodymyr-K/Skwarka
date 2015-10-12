@@ -183,14 +183,14 @@ RGBColor<T>::RGBColor(T i_r, T i_g, T i_b)
 template<typename T>
 T RGBColor<T>::operator[](unsigned char i_index) const
   {
-  ASSERT(i_index>=0 && i_index<3);
+  ASSERT(i_index<3);
   return m_rgb[i_index];
   }
 
 template<typename T>
 T &RGBColor<T>::operator[](unsigned char i_index)
   {
-  ASSERT(i_index>=0 && i_index<3);
+  ASSERT(i_index<3);
   return m_rgb[i_index];
   }
 
@@ -235,14 +235,14 @@ XYZColor<T>::XYZColor(T i_x, T i_y, T i_z)
 template<typename T>
 T XYZColor<T>::operator[](unsigned char i_index) const
   {
-  ASSERT(i_index>=0 && i_index<3);
+  ASSERT(i_index<3);
   return m_xyz[i_index];
   }
 
 template<typename T>
 T &XYZColor<T>::operator[](unsigned char i_index)
   {
-  ASSERT(i_index>=0 && i_index<3);
+  ASSERT(i_index<3);
   return m_xyz[i_index];
   }
 

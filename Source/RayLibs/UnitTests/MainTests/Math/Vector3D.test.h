@@ -239,8 +239,7 @@ class Vector3DTestSuite : public CxxTest::TestSuite
       Vector3D_d v1(1.1,-2.2,3.0);
       std::stringstream sstream;
       sstream << v1;
-      std::string s(sstream.str().c_str());
-      TS_ASSERT(s=="1.1 -2.2 3");
+      TS_ASSERT(sstream.str() == "1.1 -2.2 3");
       }
 
     void test_Vector3D_InputStream()

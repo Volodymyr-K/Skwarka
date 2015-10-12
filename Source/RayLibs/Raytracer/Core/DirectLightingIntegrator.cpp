@@ -194,7 +194,7 @@ Spectrum_d DirectLightingIntegrator::_SampleLights(const Intersection &i_interse
     // Binary search for the sampled light source.
     double light_component_pdf;
     size_t sampled_index = MathRoutines::BinarySearchCDF(ip_lights_CDF, ip_lights_CDF+light_sources_num, component_sample, &light_component_pdf) - ip_lights_CDF;
-    ASSERT(sampled_index>=0 && sampled_index<light_sources_num);
+    ASSERT(sampled_index<light_sources_num);
 
     if (sampled_index<infinity_light_sources_num)
       {
@@ -339,7 +339,7 @@ Spectrum_d DirectLightingIntegrator::_SampleBSDF(const Intersection &i_intersect
           // Select a random infinity light based on the CDF.
           double light_component_pdf;
           size_t sampled_index = MathRoutines::BinarySearchCDF(ip_lights_CDF, ip_lights_CDF+infinity_light_sources_num, (*p_rng)(infinity_lights_probability), &light_component_pdf) - ip_lights_CDF;
-          ASSERT(sampled_index>=0 && sampled_index<infinity_light_sources_num);
+          ASSERT(sampled_index<infinity_light_sources_num);
           bsdf_pdf *= light_component_pdf*inv_infinity_lights_probability;
           ASSERT(bsdf_pdf > 0.0);
 

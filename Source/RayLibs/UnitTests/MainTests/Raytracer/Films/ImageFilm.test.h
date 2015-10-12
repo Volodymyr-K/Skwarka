@@ -118,8 +118,6 @@ class ImageFilmTestSuite : public CxxTest::TestSuite
       for(size_t x=0;x<100;++x)
         for(size_t y=0;y<50;++y)
           {
-          if (y==10 && x==54)
-            x=x;
           Point2D_d image_point=Point2D_d(x+RandomDouble(1.0),y+RandomDouble(1.0));
           Spectrum_d sp(RandomDouble(1.0),RandomDouble(1.0),RandomDouble(1.0));
           mp_film->AddSample(image_point,sp);

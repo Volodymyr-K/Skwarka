@@ -42,7 +42,7 @@ class VolumeRegionMock: public VolumeRegion
       return m_bounds;
       }
 
-    bool Intersect(Ray i_ray, double *op_t_begin, double *op_t_end) const
+    bool Intersect(const Ray &i_ray, double *op_t_begin, double *op_t_end) const
       {
       return m_bounds.Intersect(i_ray, op_t_begin, op_t_end);
       }

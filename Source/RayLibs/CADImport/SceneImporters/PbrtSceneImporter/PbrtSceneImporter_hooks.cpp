@@ -236,7 +236,7 @@ void PbrtSceneImporter::_pbrtMakeNamedMaterial(PbrtImport::SubString i_name, con
   PbrtImport::TextureParams mp(i_params, m_graphicsState.materialParams, m_graphicsState.floatTextures, m_graphicsState.spectrumTextures);
   std::string matName = mp.FindString("type");
 
-  if (matName == "")
+  if (matName.empty())
     PbrtImport::Utils::LogError(mp_log, "No parameter string \"type\" found in _pbrtMakeNamedMaterial");
   else
     {
@@ -283,7 +283,7 @@ void PbrtSceneImporter::_pbrtShape(PbrtImport::SubString i_name, const PbrtImpor
   intrusive_ptr<const Material> mtl = m_graphicsState.CreateMaterial(i_params);
 
   // Possibly create area light for shape
-  if (m_graphicsState.areaLight != "")
+  if (!m_graphicsState.areaLight.empty())
     {
     PbrtImport::LightSourceFactory light_source_factory(mp_log);
     p_area = light_source_factory.CreateAreaLight(m_graphicsState.areaLight, m_current_transform, m_graphicsState.areaLightParams, p_mesh);

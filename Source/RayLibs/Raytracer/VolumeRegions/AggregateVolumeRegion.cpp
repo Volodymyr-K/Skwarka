@@ -28,7 +28,7 @@ BBox3D_d AggregateVolumeRegion::GetBounds() const
   return m_bounds;
   }
 
-bool AggregateVolumeRegion::Intersect(Ray i_ray, double *op_t_begin, double *op_t_end) const
+bool AggregateVolumeRegion::Intersect(const Ray &i_ray, double *op_t_begin, double *op_t_end) const
   {
   double t_begin = DBL_INF;
   double t_end = -DBL_INF;

@@ -44,7 +44,7 @@ class GridDensityVolumeRegion: public DensityVolumeRegion
     * @param op_t_end Parametric coordinate of the end of the intersection region. Can be NULL.
     * @return true if the ray intersects the volume region.
     */
-    bool Intersect(Ray i_ray, double *op_t_begin, double *op_t_end) const;
+    bool Intersect(const Ray &i_ray, double *op_t_begin, double *op_t_end) const;
 
   private:
     /**

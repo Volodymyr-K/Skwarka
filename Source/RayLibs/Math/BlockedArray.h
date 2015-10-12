@@ -98,7 +98,7 @@ m_size_u(i_size_u), m_size_v(i_size_v)
   {
   ASSERT(i_size_u>0 && i_size_v>0); 
 
-  size_t block_size = 1<<block_size_log;
+  size_t block_size = (size_t)1 << block_size_log;
   size_t rounded_u_size = (i_size_u+block_size-1) & ~(block_size-1);
   size_t rounded_v_size = (i_size_v+block_size-1) & ~(block_size-1);
   m_u_blocks = rounded_u_size >> block_size_log;
@@ -112,7 +112,7 @@ m_size_u(i_values.size()), m_size_v(i_values[0].size())
   {
   ASSERT(i_values.size()>0 && i_values[0].size()>0);
 
-  size_t block_size = 1<<block_size_log;
+  size_t block_size = (size_t)1 << block_size_log;
   size_t rounded_u_size = (m_size_u+block_size-1) & ~(block_size-1);
   size_t rounded_v_size = (m_size_v+block_size-1) & ~(block_size-1);
   m_u_blocks = rounded_u_size >> block_size_log;
@@ -148,7 +148,7 @@ size_t BlockedArray<T,block_size_log>::_BlockIndex(size_t i_x) const
 template<typename T, size_t block_size_log>
 size_t BlockedArray<T,block_size_log>::_BlockOffset(size_t i_x) const
   {
-  size_t block_size = 1<<block_size_log;
+  size_t block_size = (size_t)1 << block_size_log;
   return (i_x & (block_size - 1));
   }
 

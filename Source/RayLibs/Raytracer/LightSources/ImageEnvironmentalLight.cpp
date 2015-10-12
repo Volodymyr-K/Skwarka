@@ -222,7 +222,7 @@ void ImageEnvironmentalLight::_PrecomputeData()
   }
 
 // Precomputes irradiance and PDF values for the specified surface normal.
-Spectrum_d ImageEnvironmentalLight::_PrecomputeIrradiance(size_t i_node_index, const Vector3D_d &i_normal, const Point2D_d i_normal_angles, float *op_nodes_PDF) const
+Spectrum_d ImageEnvironmentalLight::_PrecomputeIrradiance(size_t i_node_index, const Vector3D_d &i_normal, const Point2D_d &i_normal_angles, float *op_nodes_PDF) const
   {
   // Compute dot products of the normal with the four corners
   double dots[4] = {
@@ -424,7 +424,7 @@ Spectrum_d ImageEnvironmentalLight::_LightingSample(Point2D_d i_sample, const fl
 
   col += leaf.m_image_begin[0];
   row += leaf.m_image_begin[1];
-  ASSERT(col>=0 && col<m_width && row>=0 && row<m_height);
+  ASSERT(col<m_width && row<m_height);
 
   double d_phi = 2.0*M_PI / m_width;
   double cos_theta1 = cos(row*m_theta_coef), cos_theta2 = cos((row+1)*m_theta_coef);
@@ -478,8 +478,8 @@ double ImageEnvironmentalLight::_LightingPDF(const Vector3D_d &i_lighting_direct
 
   const Node &leaf = m_nodes[index];
 
-  size_t row = texel[1]-leaf.m_image_begin[1], col = texel[0]-leaf.m_image_begin[0];
-  ASSERT(row>=0 && (int)row<leaf.m_image_end[1]-leaf.m_image_begin[1] && col>=0 && (int)col<leaf.m_image_end[0]-leaf.m_image_begin[0]);
+  int row = texel[1]-leaf.m_image_begin[1], col = texel[0]-leaf.m_image_begin[0];
+  ASSERT(row>=0 && row<leaf.m_image_end[1]-leaf.m_image_begin[1] && col>=0 && col<leaf.m_image_end[0]-leaf.m_image_begin[0]);
 
   const double *p_row_CDF = &m_CDF_rows[leaf.m_CDF_begin];
   double row_pdf = row==0 ? *p_row_CDF : *(p_row_CDF+row) - *(p_row_CDF+row-1);

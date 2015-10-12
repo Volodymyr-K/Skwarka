@@ -196,7 +196,7 @@ inline void TriangleAccelerator::Node::SetType(bool i_is_leaf, unsigned char i_s
     m_flags = m_flags & (~3);
   else
     {
-    ASSERT(i_split_axis >=0 && i_split_axis <= 2);
+    ASSERT(i_split_axis <= 2);
     m_flags = (unsigned char)(  (m_flags & (~3)) + i_split_axis + 1  );
     }
   }

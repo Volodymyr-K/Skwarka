@@ -104,8 +104,8 @@ CompressedDirection::CompressedDirection(Vector3D<T> i_vector): m_data(0)
   double scale = 126.999 / (i_vector[0]+i_vector[1]+i_vector[2]);
   unsigned char x = (unsigned char) (i_vector[0] * scale);
   unsigned char y = (unsigned char) (i_vector[1] * scale);
-  ASSERT(x>=0 && x<127);
-  ASSERT(y>=0 && y<127);
+  ASSERT(x<127);
+  ASSERT(y<127);
   ASSERT(x+y<127);
 
   // For sampling, we transform the triangle into a rectangle of size 128x64

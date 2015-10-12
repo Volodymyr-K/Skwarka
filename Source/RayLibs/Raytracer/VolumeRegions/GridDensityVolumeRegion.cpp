@@ -42,12 +42,12 @@ DensityVolumeRegion(i_bounds, i_base_emission, i_base_absorption, i_base_scatter
   if (m_bounds.m_min[1] > m_bounds.m_max[1]) std::swap(m_bounds.m_min[1], m_bounds.m_max[1]);
   if (m_bounds.m_min[2] > m_bounds.m_max[2]) std::swap(m_bounds.m_min[2], m_bounds.m_max[2]);
 
-  m_inv_extent_x = 1.0/fabs(i_bounds.m_max[0]-m_bounds.m_min[0]);
+  m_inv_extent_x = 1.0/fabs(m_bounds.m_max[0]-m_bounds.m_min[0]);
   m_inv_extent_y = 1.0/fabs(m_bounds.m_max[1]-m_bounds.m_min[1]);
   m_inv_extent_z = 1.0/fabs(m_bounds.m_max[2]-m_bounds.m_min[2]);
   }
 
-bool GridDensityVolumeRegion::Intersect(Ray i_ray, double *op_t_begin, double *op_t_end) const
+bool GridDensityVolumeRegion::Intersect(const Ray &i_ray, double *op_t_begin, double *op_t_end) const
   {
   return m_bounds.Intersect(i_ray, op_t_begin, op_t_end);
   }
