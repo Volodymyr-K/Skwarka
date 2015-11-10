@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2014 by Volodymyr Kachurovskyi <Volodymyr.Kachurovskyi@gmail.com>
+* Copyright (C) 2014 - 2015 by Volodymyr Kachurovskyi <Volodymyr.Kachurovskyi@gmail.com>
 *
 * This file is part of Skwarka.
 *
@@ -370,7 +370,7 @@ struct PhotonLTEIntegrator::PhotonsChunk
 class PhotonLTEIntegrator::PhotonsInputFilter: public tbb::filter
   {
   public:
-    PhotonsInputFilter(shared_ptr<PhotonMaps> ip_photon_maps, size_t i_photon_paths,
+    PhotonsInputFilter(const PhotonLTEIntegrator *ip_integrator, shared_ptr<PhotonMaps> ip_photon_maps, size_t i_photon_paths,
                        size_t i_caustic_photons_required, size_t i_direct_photons_required, size_t i_indirect_photons_required,
                        size_t i_number_of_chunks, size_t i_paths_per_chunk);
 
@@ -379,6 +379,7 @@ class PhotonLTEIntegrator::PhotonsInputFilter: public tbb::filter
     void* operator()(void*);
 
   private:
+    const PhotonLTEIntegrator *mp_integrator;
     shared_ptr<PhotonMaps> mp_photon_maps;
     std::vector<PhotonsChunk*> m_chunks;
 

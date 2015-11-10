@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2014 by Volodymyr Kachurovskyi <Volodymyr.Kachurovskyi@gmail.com>
+* Copyright (C) 2014 - 2015 by Volodymyr Kachurovskyi <Volodymyr.Kachurovskyi@gmail.com>
 *
 * This file is part of Skwarka.
 *
@@ -24,14 +24,15 @@
 ///////////////////////////////////////// PhotonsInputFilter //////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-PhotonLTEIntegrator::PhotonsInputFilter::PhotonsInputFilter(shared_ptr<PhotonMaps> ip_photon_maps, size_t i_photon_paths,
+PhotonLTEIntegrator::PhotonsInputFilter::PhotonsInputFilter(const PhotonLTEIntegrator *ip_integrator, shared_ptr<PhotonMaps> ip_photon_maps, size_t i_photon_paths,
                                                             size_t i_caustic_photons_required, size_t i_direct_photons_required, size_t i_indirect_photons_required,
                                                             size_t i_number_of_chunks, size_t i_paths_per_chunk) :
 filter(serial_out_of_order),
-m_paths_required(i_photon_paths), mp_photon_maps(ip_photon_maps),
+mp_integrator(ip_integrator), m_paths_required(i_photon_paths), mp_photon_maps(ip_photon_maps),
 m_caustic_photons_required(i_caustic_photons_required), m_direct_photons_required(i_direct_photons_required), m_indirect_photons_required(i_indirect_photons_required),
 m_paths_per_chunk(i_paths_per_chunk), m_next_chunk_index(0), m_total_paths(0)
   {
+  ASSERT(ip_integrator);
   ASSERT(i_number_of_chunks>0);
   ASSERT(i_paths_per_chunk>0);
 
@@ -47,6 +48,10 @@ PhotonLTEIntegrator::PhotonsInputFilter::~PhotonsInputFilter()
 
 void* PhotonLTEIntegrator::PhotonsInputFilter::operator()(void*)
   {
+  // Stop shooting if the stop was requested by user.
+  if (mp_integrator->m_shooting_stopped)
+    return NULL;
+
   // We don't get the size by calling std::vector::size() method because it is not thread-safe.
   bool caustic_done = mp_photon_maps->GetNumberOfCausticPhotons() >= m_caustic_photons_required;
   bool direct_done = mp_photon_maps->GetNumberOfDirectPhotons() >= m_direct_photons_required;

@@ -76,7 +76,7 @@ class SamplerBasedRendererTestSuite : public CxxTest::TestSuite
     void test_SamplerBasedRendererInsideSphere_Render()
       {
       intrusive_ptr<LTEIntegrator> p_lte_int( new LTEIntegratorMock(mp_scene) );
-      intrusive_ptr<SamplerBasedRenderer> p_renderer( new SamplerBasedRenderer(p_lte_int, mp_sampler, intrusive_ptr<Log>(new StreamLog())) );
+      intrusive_ptr<SamplerBasedRenderer> p_renderer( new SamplerBasedRenderer(p_lte_int, mp_sampler) );
 
       p_renderer->Render(mp_camera);
       intrusive_ptr<Film> film = mp_camera->GetFilm();

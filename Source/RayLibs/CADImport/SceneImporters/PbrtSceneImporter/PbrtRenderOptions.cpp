@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2014 by Volodymyr Kachurovskyi <Volodymyr.Kachurovskyi@gmail.com>
+* Copyright (C) 2014 - 2015 by Volodymyr Kachurovskyi <Volodymyr.Kachurovskyi@gmail.com>
 *
 * This file is part of Skwarka.
 *
@@ -41,6 +41,12 @@ namespace PbrtImport
     else
       p_volumeRegion.reset( new AggregateVolumeRegion(volumeRegions) );
 
+    if (primitives.empty() && p_volumeRegion == NULL)
+      {
+      PbrtImport::Utils::LogError(mp_log, "No primitives or volume regions in the scene description.");
+      return NULL;
+      }
+
     // Compute the world bounds for the construction of the light sources.
     BBox3D_d world_bounds;
     for(size_t i=0;i<primitives.size();++i)
@@ -67,6 +73,12 @@ namespace PbrtImport
         if (p_infinite_light)
           lights.m_infinite_light_sources.push_back(p_infinite_light);
         }
+      }
+
+    if (lights.m_area_light_sources.empty() && lights.m_delta_light_sources.empty() && lights.m_infinite_light_sources.empty())
+      {
+      PbrtImport::Utils::LogError(mp_log, "No lights in the scene description.");
+      return NULL;
       }
 
     intrusive_ptr<const Scene> p_scene( new Scene(primitives, p_volumeRegion, lights) );

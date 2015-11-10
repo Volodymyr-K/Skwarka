@@ -1,0 +1,17 @@
+{
+  "name": "NodeAPI",
+  "version": "0.1.0",
+  "description": "RayLibs API as a node.js module",
+  "main": "index.js",
+  "author": {
+    "name": "Volodymyr Kachurovskyi",
+    "email": "Volodymyr.Kachurovskyi@gmail.com"
+  },
+  "dependencies": {
+  },
+  "devDependencies": {
+    "nan": "^2.1.0",
+    "node-gyp": "^3.0.3"
+  },
+  "license": "GPL"
+}

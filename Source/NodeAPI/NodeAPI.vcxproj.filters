@@ -1,0 +1,90 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Wrappers">
+      <UniqueIdentifier>{fcd74b57-cd5b-4b05-b876-5235f5c7bd0b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Wrappers\Header Files">
+      <UniqueIdentifier>{2f59f2fd-9992-41b5-baa5-a7ec3646949e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Wrappers\Source Files">
+      <UniqueIdentifier>{af6cd8f8-fd82-4708-a860-f30eb7d12a81}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Renderers">
+      <UniqueIdentifier>{b7cddb9d-ffd0-435d-bcf8-0a62dca92867}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Renderers\Header Files">
+      <UniqueIdentifier>{588ab7a8-9a93-45da-bd60-d0d8f77b2fd6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Renderers\Source Files">
+      <UniqueIdentifier>{a50f1de2-0b29-4e2c-9835-9050a49bff11}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core">
+      <UniqueIdentifier>{fe8a0fd9-862f-420d-8a60-019297f2680e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Header Files">
+      <UniqueIdentifier>{843db635-3cfd-477b-903e-bc18b6cfc64d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Source Files">
+      <UniqueIdentifier>{8389ca87-9268-471a-9dbe-1246809c738c}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Source\Wrappers\BaseWrapper.h">
+      <Filter>Wrappers\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Wrappers\SceneWrapper.h">
+      <Filter>Wrappers\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Wrappers\CameraWrapper.h">
+      <Filter>Wrappers\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Renderers\PhotonMapRenderer.h">
+      <Filter>Renderers\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Renderers\AsyncUpdateCallback.h">
+      <Filter>Renderers\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Renderers\FilmConverters.h">
+      <Filter>Renderers\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Core\AsyncLoggingProgressWorker.h">
+      <Filter>Core\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Core\Log.h">
+      <Filter>Core\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Core\SceneImportWorker.h">
+      <Filter>Core\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Core\Util.h">
+      <Filter>Core\Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\Wrappers\SceneWrapper.cpp">
+      <Filter>Wrappers\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Wrappers\CameraWrapper.cpp">
+      <Filter>Wrappers\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Renderers\PhotonMapRenderer.cpp">
+      <Filter>Renderers\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Renderers\FilmConverters.cpp">
+      <Filter>Renderers\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Core\Log.cpp">
+      <Filter>Core\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Core\Main.cpp">
+      <Filter>Core\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Core\SceneImportWorker.cpp">
+      <Filter>Core\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Core\AsyncLoggingProgressWorker.cpp">
+      <Filter>Core\Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

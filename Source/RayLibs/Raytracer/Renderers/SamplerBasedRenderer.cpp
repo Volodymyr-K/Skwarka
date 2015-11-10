@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2014 by Volodymyr Kachurovskyi <Volodymyr.Kachurovskyi@gmail.com>
+* Copyright (C) 2014 - 2015 by Volodymyr Kachurovskyi <Volodymyr.Kachurovskyi@gmail.com>
 *
 * This file is part of Skwarka.
 *
@@ -21,6 +21,7 @@
 #include <Raytracer/Core/SpectrumRoutines.h>
 #include <tbb/pipeline.h>
 #include <vector>
+#include <chrono>
 
 /////////////////////////////////////////// Internal Types ////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -185,16 +186,23 @@ class SamplerBasedRenderer::FilmWriterFilter: public tbb::filter
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 SamplerBasedRenderer::SamplerBasedRenderer(intrusive_ptr<LTEIntegrator> ip_lte_integrator, intrusive_ptr<Sampler> ip_sampler, intrusive_ptr<Log> ip_log): Renderer(),
-mp_lte_integrator(ip_lte_integrator), mp_sampler(ip_sampler), mp_log(ip_log), m_rendering_in_process(false), m_rendering_stopped(false)
+mp_lte_integrator(ip_lte_integrator), mp_sampler(ip_sampler), mp_log(ip_log), m_rendering_in_progress(false), m_rendering_stopped(false)
   {
   ASSERT(ip_lte_integrator);
   ASSERT(ip_sampler);
   }
 
+void SamplerBasedRenderer::SetLog(intrusive_ptr<Log> ip_log)
+  {
+  mp_log = ip_log;
+  }
+
 bool SamplerBasedRenderer::Render(intrusive_ptr<const Camera> ip_camera, bool i_low_thread_priority)
   {
   ASSERT(ip_camera);
-  m_rendering_in_process = true;
+  auto start_time = std::chrono::system_clock::now();
+
+  m_rendering_in_progress = true;
   m_rendering_stopped = false;
 
   ip_camera->GetFilm()->ClearFilm();
@@ -215,17 +223,24 @@ bool SamplerBasedRenderer::Render(intrusive_ptr<const Camera> ip_camera, bool i_
 
   pipeline.run(MAX_PIPELINE_TOKENS_NUM);
   pipeline.clear();
-  m_rendering_in_process = false;
+  m_rendering_in_progress = false;
 
   // Force display update (even if the time period has not passed yet).
   _UpdateDisplay(ip_camera->GetFilm(), true);
+
+  if (mp_log && m_rendering_stopped == false)
+    {
+    auto end_time = std::chrono::system_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time).count();
+    mp_log->LogMessage(Log::INFO_LEVEL, "Rendering complete in " + std::to_string(duration) + " ms.");
+    }
 
   return m_rendering_stopped==false;
   }
 
 bool SamplerBasedRenderer::StopRendering()
   {
-  if (m_rendering_in_process == false)
+  if (m_rendering_in_progress == false)
     {
     if (mp_log)
       mp_log->LogMessage(Log::WARNING_LEVEL, "Rendering is not active. Nothing to stop.");
@@ -246,6 +261,11 @@ bool SamplerBasedRenderer::StopRendering()
 
   m_rendering_stopped = true;
   return true;
+  }
+
+bool SamplerBasedRenderer::InProgress() const
+  {
+  return m_rendering_in_progress;
   }
 
 //////////////////////////////////////////// PixelsChunk /////////////////////////////////////////////////

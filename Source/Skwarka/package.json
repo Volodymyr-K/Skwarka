@@ -1,0 +1,11 @@
+{
+  "main": "main.js",
+  "devDependencies": {
+    "electron-prebuilt": "0.33.7"
+  },
+  "dependencies": {
+    "jquery": "^2.1.4",
+    "lodash": "^3.10.1",
+    "ractive": "^0.7.3"
+  }
+}

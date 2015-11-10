@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2014 by Volodymyr Kachurovskyi <Volodymyr.Kachurovskyi@gmail.com>
+* Copyright (C) 2014 - 2015 by Volodymyr Kachurovskyi <Volodymyr.Kachurovskyi@gmail.com>
 *
 * This file is part of Skwarka.
 *
@@ -97,7 +97,7 @@ class PhotonLTEIntegrator: public LTEIntegrator
 
     * @param i_params Integrator parameters.
     */
-    PhotonLTEIntegrator(intrusive_ptr<const Scene> ip_scene, PhotonLTEIntegratorParams i_params);
+    PhotonLTEIntegrator(intrusive_ptr<const Scene> ip_scene, PhotonLTEIntegratorParams i_params, intrusive_ptr<Log> ip_log = NULL);
 
     /**
     * Shoots photons and construct photon maps (direct, indirect and caustic maps).
@@ -108,6 +108,18 @@ class PhotonLTEIntegrator: public LTEIntegrator
     * @param i_low_thread_priority Specifies OS scheduling priority for tbb threads that perform photons shooting. Use true to set low priority and false for normal priority.
     */
     void ShootPhotons(size_t i_photons, bool i_low_thread_priority = false);
+
+    /**
+    * Stops photon shooting.
+    * This method can be called concurrently with the ShootPhotons() method to stop the shooting process.
+    * Returns true if the process was actually stopped and false otherwise.
+    */
+    bool StopShooting();
+
+    /**
+    * Returns true if the shooting is currently in progress.
+    */
+    bool InProgress() const;
 
   private:
     struct Photon;
@@ -227,6 +239,8 @@ class PhotonLTEIntegrator: public LTEIntegrator
   private:
     intrusive_ptr<const Scene> mp_scene;
 
+    intrusive_ptr<Log> mp_log;
+
     /**
     * Total area of all primitives in the scene.
     * The value is precomputed once in constructor and used later for estimating maximum search radius.
@@ -249,6 +263,8 @@ class PhotonLTEIntegrator: public LTEIntegrator
 
     // IDs of samples sequences used for media integration.
     size_t m_media_offset1_id, m_media_offset2_id;
+
+    bool m_shooting_in_progress, m_shooting_stopped;
   };
 
 #endif // PHOTON_LTE_INTEGRATOR_H

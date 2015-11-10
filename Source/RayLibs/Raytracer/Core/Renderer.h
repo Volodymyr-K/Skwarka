@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2014 by Volodymyr Kachurovskyi <Volodymyr.Kachurovskyi@gmail.com>
+* Copyright (C) 2014 - 2015 by Volodymyr Kachurovskyi <Volodymyr.Kachurovskyi@gmail.com>
 *
 * This file is part of Skwarka.
 *
@@ -46,6 +46,11 @@ class Renderer: public ReferenceCounted
     * Default implementation does nothing and always returns false.
     */
     virtual bool StopRendering();
+
+    /**
+    * Returns true if the rendering is currently in progress.
+    */
+    virtual bool InProgress() const = 0;
 	
     /**
     * Sets callback that will be called periodically to update display with the currently rendered image.

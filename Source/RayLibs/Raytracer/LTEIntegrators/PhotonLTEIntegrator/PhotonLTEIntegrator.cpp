@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2014 by Volodymyr Kachurovskyi <Volodymyr.Kachurovskyi@gmail.com>
+* Copyright (C) 2014 - 2015 by Volodymyr Kachurovskyi <Volodymyr.Kachurovskyi@gmail.com>
 *
 * This file is part of Skwarka.
 *
@@ -21,13 +21,14 @@
 #include <Raytracer/Core/SpectrumRoutines.h>
 #include <tbb/pipeline.h>
 #include <tbb/parallel_invoke.h>
+#include <chrono>
 
 // 0.87 cosine value corresponds to 30 degrees angle.
 const double PhotonLTEIntegrator::MAX_NORMAL_DEVIATION_COS = 0.87;
 
 //////////////////////////////////////// PhotonLTEIntegrator /////////////////////////////////////////////
-PhotonLTEIntegrator::PhotonLTEIntegrator(intrusive_ptr<const Scene> ip_scene, PhotonLTEIntegratorParams i_params):
-LTEIntegrator(ip_scene), mp_scene(ip_scene), m_params(i_params)
+PhotonLTEIntegrator::PhotonLTEIntegrator(intrusive_ptr<const Scene> ip_scene, PhotonLTEIntegratorParams i_params, intrusive_ptr<Log> ip_log) :
+LTEIntegrator(ip_scene), mp_scene(ip_scene), m_params(i_params), mp_log(ip_log), m_shooting_in_progress(false), m_shooting_stopped(false)
   {
   ASSERT(ip_scene);
 
@@ -240,16 +241,20 @@ void PhotonLTEIntegrator::_ConstructIrradiancePhotonMap()
 
 void PhotonLTEIntegrator::ShootPhotons(size_t i_photons, bool i_low_thread_priority)
   {
+  auto start_time = std::chrono::system_clock::now();
   mp_photon_maps.reset(new PhotonMaps());
 
   const LightSources &lights = mp_scene->GetLightSources();
   if (lights.m_delta_light_sources.size() + lights.m_area_light_sources.size() + lights.m_infinite_light_sources.size() == 0 || i_photons == 0)
     return;
 
+  m_shooting_in_progress = true;
+  m_shooting_stopped = false;
+
   std::vector<double> lights_CDF;
   _GetLightsPowerCDF(lights, lights_CDF);
 
-  PhotonsInputFilter input_filter(mp_photon_maps, i_photons, m_params.m_max_caustic_photons, m_params.m_max_direct_photons, m_params.m_max_indirect_photons, MAX_PIPELINE_TOKENS_NUM, 4096);
+  PhotonsInputFilter input_filter(this, mp_photon_maps, i_photons, m_params.m_max_caustic_photons, m_params.m_max_direct_photons, m_params.m_max_indirect_photons, MAX_PIPELINE_TOKENS_NUM, 4096);
   PhotonsShootingFilter shooting_filter(this, mp_scene, lights_CDF, i_low_thread_priority);
   PhotonsMergingFilter merging_filter(mp_photon_maps);
 
@@ -260,6 +265,7 @@ void PhotonLTEIntegrator::ShootPhotons(size_t i_photons, bool i_low_thread_prior
 
   pipeline.run(MAX_PIPELINE_TOKENS_NUM);
   pipeline.clear();
+  m_shooting_in_progress = false;
 
   // Construct the KD trees. We explicitly do this now while we are still in a single thread to avoid concurrency issues later.
   tbb::parallel_invoke([&]{mp_photon_maps->GetCausticMap(); },
@@ -267,6 +273,43 @@ void PhotonLTEIntegrator::ShootPhotons(size_t i_photons, bool i_low_thread_prior
                        [&]{mp_photon_maps->GetIndirectMap(); });
 
   _ConstructIrradiancePhotonMap();
+
+  if (mp_log && m_shooting_stopped == false)
+    {
+    auto end_time = std::chrono::system_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time).count();
+    mp_log->LogMessage(Log::INFO_LEVEL, "Photon shooting complete in " + std::to_string(duration) + " ms.");
+    }
+  }
+
+bool PhotonLTEIntegrator::StopShooting()
+  {
+  if (m_shooting_in_progress == false)
+    {
+    if (mp_log)
+      mp_log->LogMessage(Log::WARNING_LEVEL, "Photon shooting is not active. Nothing to stop.");
+
+    return false;
+    }
+
+  if (m_shooting_stopped == true)
+    {
+    if (mp_log)
+      mp_log->LogMessage(Log::WARNING_LEVEL, "Photon shooting has already been stopped.");
+
+    return false;
+    }
+
+  if (mp_log)
+    mp_log->LogMessage(Log::INFO_LEVEL, "Photon shooting has been stopped.");
+
+  m_shooting_stopped = true;
+  return true;
+  }
+
+bool PhotonLTEIntegrator::InProgress() const
+  {
+  return m_shooting_in_progress;
   }
 
 Spectrum_d PhotonLTEIntegrator::_SurfaceRadiance(const RayDifferential &i_ray, const Intersection &i_intersection, const Sample *ip_sample, ThreadSpecifics i_ts) const

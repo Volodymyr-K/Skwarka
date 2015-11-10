@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2014 by Volodymyr Kachurovskyi <Volodymyr.Kachurovskyi@gmail.com>
+* Copyright (C) 2014 - 2015 by Volodymyr Kachurovskyi <Volodymyr.Kachurovskyi@gmail.com>
 *
 * This file is part of Skwarka.
 *
@@ -38,6 +38,11 @@ class SamplerBasedRenderer: public Renderer
     SamplerBasedRenderer(intrusive_ptr<LTEIntegrator> ip_lte_integrator, intrusive_ptr<Sampler> ip_sampler, intrusive_ptr<Log> ip_log = NULL);
 
     /**
+    * Sets the logger.
+    */
+    void SetLog(intrusive_ptr<Log> ip_log);
+
+    /**
     * Renders the scene for the specified camera.
     * The rendered image is saved to the camera's film. The film is cleared before rendering, so the previous image will be lost.
     * The method calls LTEIntegrator::RequestSamples to let the integrator request the samples sequences.
@@ -53,6 +58,11 @@ class SamplerBasedRenderer: public Renderer
     * Returns true if the rendering was actually stopped and false otherwise.
     */
     virtual bool StopRendering();
+
+    /**
+    * Returns true if the rendering is currently in progress.
+    */
+    virtual bool InProgress() const;
 
   private:
     // Not implemented, not a value type.
@@ -73,7 +83,7 @@ class SamplerBasedRenderer: public Renderer
 
     intrusive_ptr<Log> mp_log;
 
-    bool m_rendering_in_process, m_rendering_stopped;
+    bool m_rendering_in_progress, m_rendering_stopped;
 
     // Defines the maximum number of tokens the TBB pipeline can run concurrently.
     // This is also the upper bound on the number of threads the pipeline can utilize concurrently.
