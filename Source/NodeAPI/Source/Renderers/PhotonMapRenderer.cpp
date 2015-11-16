@@ -158,8 +158,8 @@ NAN_METHOD(PhotonMapRenderer::Render)
   PhotonMapRenderer *p_this = Nan::ObjectWrap::Unwrap<PhotonMapRenderer>(info.This());
   p_this->_StopRendering();
 
-  intrusive_ptr<const Scene> p_scene = Nan::ObjectWrap::Unwrap<SceneWrapper>(info[0]->ToObject())->GetData();
-  intrusive_ptr<const Camera> p_camera = Nan::ObjectWrap::Unwrap<CameraWrapper>(info[1]->ToObject())->GetData();
+  intrusive_ptr<const Scene> p_scene = Nan::ObjectWrap::Unwrap<SceneWrapper>(info[0]->ToObject())->GetScene();
+  intrusive_ptr<const Camera> p_camera = Nan::ObjectWrap::Unwrap<CameraWrapper>(info[1]->ToObject())->GetCamera();
   Nan::Callback *p_complete_callback = new Nan::Callback(info[2].As<v8::Function>());
   Nan::Callback *p_image_update_callback = new Nan::Callback(info[3].As<v8::Function>());
 

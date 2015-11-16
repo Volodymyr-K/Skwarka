@@ -171,7 +171,12 @@ PhotonLTEIntegrator::_LookupPhotonIrradiance(const Point3D_d &i_point, const Vec
 void PhotonLTEIntegrator::_ConstructIrradiancePhotonMap()
   {
   // Caustic map can be null.
-  ASSERT(mp_photon_maps->GetDirectMap() && mp_photon_maps->GetIndirectMap());
+  ASSERT(mp_photon_maps->GetDirectMap());
+
+  // If the indirect map is null, nothing to do here.
+  if (mp_photon_maps->GetIndirectMap() == NULL)
+    return;
+
   mp_irradiance_map.reset((KDTree<IrradiancePhoton>*)NULL);
 
   const std::vector<Photon> &direct_photons = mp_photon_maps->GetDirectMap()->GetAllPoints();

@@ -79,6 +79,7 @@ ractive.on('openFile', function() {
     // Reset any previously read scene and camera.
     ractive.set('scene', null);
     ractive.set('camera', null);
+    stopPrerender();
 
     nodeAPI.createScene(files[0].path, function(error, data) {
       if (error) {
@@ -90,6 +91,11 @@ ractive.on('openFile', function() {
       }
 
       ractive.set('readingScene', false);
+
+      var sceneObjects = data.scene.getSceneObjects();
+      var cameraProps = data.cameras[0].getCameraProperties();
+
+      startPrerender(sceneObjects, cameraProps);
     });
   }
 });
@@ -127,6 +133,7 @@ ractive.on("startRendering", function() {
   }
 
   ractive.set('imageData', "");
+  stopPrerender();
 
   if (renderer) {
     renderer.stop();

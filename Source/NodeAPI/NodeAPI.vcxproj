@@ -183,7 +183,6 @@ copy  "..\..\ThirdParty\FreeImage\3.16\Dist\FreeImage.dll" "$(OutDir)"
     <ClInclude Include="Source\Renderers\AsyncUpdateCallback.h" />
     <ClInclude Include="Source\Renderers\PhotonMapRenderer.h" />
     <ClInclude Include="Source\Renderers\FilmConverters.h" />
-    <ClInclude Include="Source\Wrappers\BaseWrapper.h" />
     <ClInclude Include="Source\Wrappers\CameraWrapper.h" />
     <ClInclude Include="Source\Wrappers\SceneWrapper.h" />
   </ItemGroup>

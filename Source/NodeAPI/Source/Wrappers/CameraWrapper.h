@@ -15,9 +15,33 @@
 #ifndef CAMERA_WRAPPER_H
 #define CAMERA_WRAPPER_H
 
-#include "BaseWrapper.h"
+#include <nan.h>
+#include <Common/Common.h>
 #include <Raytracer/Core/Camera.h>
 
-typedef BaseWrapper<const Camera> CameraWrapper;
+/**
+* Wraps Camera as a JS object.
+* The class exports GetCameraProperties method that returns camera information in JSON.
+*/
+class CameraWrapper : public Nan::ObjectWrap
+  {
+  public:
+    static NAN_MODULE_INIT(Init);
+
+    static v8::Local<v8::Object> Instantiate(intrusive_ptr<const Camera> ip_camera);
+
+    intrusive_ptr<const Camera> GetCamera() const;
+
+  protected:
+    intrusive_ptr<const Camera> mp_camera;
+
+  private:
+    explicit CameraWrapper(intrusive_ptr<const Camera> ip_camera);
+    static NAN_METHOD(New);
+
+    static NAN_METHOD(GetCameraProperties);
+
+    static Nan::Persistent<v8::Function> m_constructor;
+  };
 
 #endif // CAMERA_WRAPPER_H

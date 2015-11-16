@@ -21,7 +21,7 @@
 #include <Raytracer/LTEIntegrators/PhotonLTEIntegrator.h>
 
 /**
-* Wraps the SamplerBasedRenderer with PhotonLTEIntegrator as a JS class.
+* Wraps the SamplerBasedRenderer with PhotonLTEIntegrator as a JS object.
 * The class exports two methods to JS: render() and stop().
 * The class supports asynchronous logging and displaying partial result as it renders the image.
 */

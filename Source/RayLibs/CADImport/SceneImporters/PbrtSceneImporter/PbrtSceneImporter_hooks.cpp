@@ -141,7 +141,11 @@ void PbrtSceneImporter::_pbrtCamera(PbrtImport::SubString i_name, const PbrtImpo
   mp_renderOptions->CameraParams = i_params;
 
   // Need to reflect the camera against the X axis to account for the fact that pbrt is based on the left-handed coordinate system, while our system is right-handed
-  mp_renderOptions->CameraToWorld = (MakeScale(-1, 1, 1)*m_current_transform*MakeScale(1, 1, 1)).Inverted();
+  if (m_current_transform.InvertsOrientation())
+    mp_renderOptions->CameraToWorld = (MakeScale(-1, 1, 1)*m_current_transform).Inverted();
+  else
+    mp_renderOptions->CameraToWorld = m_current_transform.Inverted();
+
   m_namedCoordinateSystems["camera"] = mp_renderOptions->CameraToWorld;
   }
 

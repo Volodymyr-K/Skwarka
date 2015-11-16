@@ -15,9 +15,33 @@
 #ifndef SCENE_WRAPPER_H
 #define SCENE_WRAPPER_H
 
-#include "BaseWrapper.h"
+#include <nan.h>
+#include <Common/Common.h>
 #include <Raytracer/Core/Scene.h>
 
-typedef BaseWrapper<const Scene> SceneWrapper;
+/**
+* Wraps Scene as a JS object.
+* The class exports GetSceneObjects method that returns all scene information in JSON.
+*/
+class SceneWrapper : public Nan::ObjectWrap
+  {
+  public:
+    static NAN_MODULE_INIT(Init);
+
+    static v8::Local<v8::Object> Instantiate(intrusive_ptr<const Scene> ip_scene);
+
+    intrusive_ptr<const Scene> GetScene() const;
+
+  protected:
+    intrusive_ptr<const Scene> mp_scene;
+
+  private:
+    explicit SceneWrapper(intrusive_ptr<const Scene> ip_scene);
+    static NAN_METHOD(New);
+
+    static NAN_METHOD(GetSceneObjects);
+
+    static Nan::Persistent<v8::Function> m_constructor;
+  };
 
 #endif // SCENE_WRAPPER_H
