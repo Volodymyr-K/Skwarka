@@ -90,7 +90,7 @@ function startPrerender(sceneObjects, cameraProps) {
 
     prerenderRunning = true;
     render();
-g
+    
     function render() {
         if (prerenderRunning) {
             stats.update();
