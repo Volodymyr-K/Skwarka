@@ -598,8 +598,10 @@ THREE.TrackballControls = function ( object, domElement ) {
 	this.domElement.addEventListener( 'touchend', touchend, false );
 	this.domElement.addEventListener( 'touchmove', touchmove, false );
 
-	window.addEventListener( 'keydown', keydown, false );
-	window.addEventListener( 'keyup', keyup, false );
+	// Disabling these for now because they make the trackball control immune to GC,
+	// which leads to "not enough memory" error on big scenes.
+	//window.addEventListener( 'keydown', keydown, false );
+	//window.addEventListener( 'keyup', keyup, false );
 
 	this.handleResize();
 

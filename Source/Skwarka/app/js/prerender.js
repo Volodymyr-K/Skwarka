@@ -29,15 +29,14 @@ function startPrerender(sceneObjects, cameraParams) {
 
     // create a render and set the size
     var renderer = new THREE.WebGLRenderer();
-
-    // add the output of the renderer to the html element
-    document.getElementById("WebGL-output").appendChild(renderer.domElement);
-
     renderer.setClearColor(new THREE.Color(0xEEEEEE, 1.0));
     renderer.setSize(cameraParams.width, cameraParams.height);
     renderer.shadowMap.enabled = true;
 
-    var trackballControls = new THREE.TrackballControls(camera, document.getElementById("WebGL-output"));
+    // add the output of the renderer to the html element
+    document.getElementById("WebGL-output").appendChild(renderer.domElement);
+
+    var trackballControls = new THREE.TrackballControls(camera, renderer.domElement);
     trackballControls.dynamicDampingFactor=0.45;
 
     trackballControls.position0.set(cameraParams.origin[0], cameraParams.origin[1], cameraParams.origin[2]);
