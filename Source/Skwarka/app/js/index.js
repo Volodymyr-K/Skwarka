@@ -41,9 +41,15 @@ var ractive = new Ractive({
     allRenderers: nodeAPI.allRenderers,
     renderer: nodeAPI.allRenderers[0],
     rendererParams: initParamsFromSchema(nodeAPI.rendererParamsSchema[nodeAPI.allRenderers[0]]),
+    cameraParams: {
+      width: 640,
+      height: 480,
+      fov: 60,
+      lensRadius: 0,
+      focalDistance: 0
+    },
 
     scene: null,
-    camera: null,
 
     readingScene: false,
     rendering: false
@@ -65,6 +71,8 @@ var logMessage = function(level, message) {
 
 nodeAPI.setLog(logMessage);
 
+var prerenderCamera;
+
 ractive.on('openFile', function() {
   if (ractive.get('readingScene')) {
     logMessage("Error", "The scene reading is already in progress.");
@@ -78,24 +86,26 @@ ractive.on('openFile', function() {
 
     // Reset any previously read scene and camera.
     ractive.set('scene', null);
-    ractive.set('camera', null);
     stopPrerender();
 
     nodeAPI.createScene(files[0].path, function(error, data) {
       if (error) {
         logMessage("Error", error);
       } else if (data) {
+        // Clear previously renderer image (if any).
+        ractive.set('imageData', "");
+
         logMessage("Info", "The scene file has been opened successfully.");
         ractive.set('scene', data.scene);
-        ractive.set('camera', data.cameras[0]);
+
+        var cameraParams = data.cameras[0].getCameraParams();
+        ractive.set('cameraParams', cameraParams);
+
+        var sceneObjects = data.scene.getSceneObjects();
+        prerenderCamera = startPrerender(sceneObjects, cameraParams);
       }
 
       ractive.set('readingScene', false);
-
-      var sceneObjects = data.scene.getSceneObjects();
-      var cameraProps = data.cameras[0].getCameraProperties();
-
-      startPrerender(sceneObjects, cameraProps);
     });
   }
 });
@@ -122,7 +132,7 @@ var purifyParams = function(params) {
 };
 
 ractive.on("startRendering", function() {
-  if (!ractive.get('scene') || !ractive.get('camera')) {
+  if (!ractive.get('scene')) {
     logMessage("Error", "Nothing to render. Select a scene file first.");
     return;
   }
@@ -132,9 +142,10 @@ ractive.on("startRendering", function() {
     return;
   }
 
-  ractive.set('imageData', "");
+  var cameraPosition = prerenderCamera();
   stopPrerender();
 
+  ractive.set('imageData', "");
   if (renderer) {
     renderer.stop();
   }
@@ -161,7 +172,14 @@ ractive.on("startRendering", function() {
   };
 
   ractive.set('rendering', true);
-  renderer.render(ractive.get('scene'), ractive.get('camera'), doneCallback, imageUpdateCallback);
+
+  var cameraParams = ractive.get('cameraParams');
+  cameraParams.position = cameraPosition.position;
+  cameraParams.lookAt = cameraPosition.lookAt;
+  cameraParams.up = cameraPosition.up;
+  var camera = nodeAPI.createCamera(cameraParams);
+
+  renderer.render(ractive.get('scene'), camera, doneCallback, imageUpdateCallback);
 });
 
 ractive.on("stopRendering", function() {

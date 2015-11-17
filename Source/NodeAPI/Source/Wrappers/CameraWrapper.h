@@ -21,7 +21,6 @@
 
 /**
 * Wraps Camera as a JS object.
-* The class exports GetCameraProperties method that returns camera information in JSON.
 */
 class CameraWrapper : public Nan::ObjectWrap
   {
@@ -29,6 +28,7 @@ class CameraWrapper : public Nan::ObjectWrap
     static NAN_MODULE_INIT(Init);
 
     static v8::Local<v8::Object> Instantiate(intrusive_ptr<const Camera> ip_camera);
+    static v8::Local<v8::Object> Instantiate(v8::Local<v8::Object> i_params);
 
     intrusive_ptr<const Camera> GetCamera() const;
 
@@ -39,7 +39,7 @@ class CameraWrapper : public Nan::ObjectWrap
     explicit CameraWrapper(intrusive_ptr<const Camera> ip_camera);
     static NAN_METHOD(New);
 
-    static NAN_METHOD(GetCameraProperties);
+    static NAN_METHOD(GetCameraParams);
 
     static Nan::Persistent<v8::Function> m_constructor;
   };

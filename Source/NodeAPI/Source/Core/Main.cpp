@@ -39,6 +39,12 @@ NAN_METHOD(CreateRenderer)
   info.GetReturnValue().Set(handle);
   }
 
+NAN_METHOD(CreateCamera)
+  {
+  v8::Local<v8::Object> handle = CameraWrapper::Instantiate(info[0]->ToObject());
+  info.GetReturnValue().Set(handle);
+  }
+
 NAN_METHOD(SetLog)
   {
   global_log_callback.Reset(info[0].As<v8::Function>());
@@ -55,6 +61,9 @@ NAN_MODULE_INIT(InitAll)
 
   Nan::Set(target, Nan::New("createRenderer").ToLocalChecked(),
     Nan::GetFunction(Nan::New<v8::FunctionTemplate>(CreateRenderer)).ToLocalChecked());
+
+  Nan::Set(target, Nan::New("createCamera").ToLocalChecked(),
+    Nan::GetFunction(Nan::New<v8::FunctionTemplate>(CreateCamera)).ToLocalChecked());
 
   Nan::Set(target, Nan::New("setLog").ToLocalChecked(),
     Nan::GetFunction(Nan::New<v8::FunctionTemplate>(SetLog)).ToLocalChecked());

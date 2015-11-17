@@ -3,7 +3,7 @@
     <span>Open file</span>
     <input type="file" title="Open file" value="{{file}}" on-change="openFile" disabled="{{readingScene}}" >
   </span>
-  <button type="button" class="btn btn-primary" on-click="startRendering" disabled="{{!scene || !camera || rendering}}">Start</button>
+  <button type="button" class="btn btn-primary" on-click="startRendering" disabled="{{!scene || || rendering}}">Start</button>
   <button type="button" class="btn btn-danger" on-click="stopRendering" disabled="{{!rendering}}">Stop</button>
 </div>
 

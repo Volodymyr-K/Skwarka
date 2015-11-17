@@ -57,6 +57,23 @@ namespace NodeAPI
       return maybeValue.FromJust();
       }
 
+    template<typename Type3D>
+    Type3D FromArray3(v8::Local<v8::Object> i_array)
+      {
+      double x = Nan::To<double>(Nan::Get(i_array, 0).ToLocalChecked()).FromJust();
+      double y = Nan::To<double>(Nan::Get(i_array, 1).ToLocalChecked()).FromJust();
+      double z = Nan::To<double>(Nan::Get(i_array, 2).ToLocalChecked()).FromJust();
+      return Type3D(x, y, z);
+      }
+
+    template<typename Type3D>
+    v8::Local<v8::Array> ToArray3(Type3D i_3d_value)
+      {
+      v8::Local<v8::Array> array = Nan::New<v8::Array>(3);
+      for (unsigned char i = 0; i < 3; ++i)
+        Nan::Set(array, i, Nan::New(i_3d_value[i]));
+      return array;
+      }
     }
   }
 
