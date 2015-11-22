@@ -41,6 +41,8 @@ class SceneWrapper : public Nan::ObjectWrap
 
     static NAN_METHOD(GetSceneObjects);
 
+    static void _ExportPrimitives(intrusive_ptr<const Scene> ip_scene, v8::Local<v8::Object> &o_export);
+
     static Nan::Persistent<v8::Function> m_constructor;
   };
 

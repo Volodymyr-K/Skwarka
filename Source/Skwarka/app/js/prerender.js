@@ -31,22 +31,9 @@ function startPrerender(sceneObjects, cameraParams) {
     var renderer = new THREE.WebGLRenderer();
     renderer.setClearColor(new THREE.Color(0xEEEEEE, 1.0));
     renderer.setSize(cameraParams.width, cameraParams.height);
-    renderer.shadowMap.enabled = true;
 
     // add the output of the renderer to the html element
     document.getElementById("WebGL-output").appendChild(renderer.domElement);
-
-    var trackballControls = new THREE.TrackballControls(camera, renderer.domElement);
-    trackballControls.dynamicDampingFactor=0.45;
-
-    trackballControls.position0.set(cameraParams.origin[0], cameraParams.origin[1], cameraParams.origin[2]);
-    trackballControls.up0.set(cameraParams.up[0], cameraParams.up[1], cameraParams.up[2]);
-    trackballControls.target0.set(cameraParams.lookAt[0], cameraParams.lookAt[1], cameraParams.lookAt[2]);
-    trackballControls.reset();
-
-    var hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 0.6);
-    hemiLight.position.set(0, 0, 1);
-    scene.add(hemiLight);
 
     var geometries = [];
     _.each(sceneObjects.triangleMeshes, function(triangleMesh) {
@@ -66,12 +53,10 @@ function startPrerender(sceneObjects, cameraParams) {
     });
 
     _.each(sceneObjects.primitives, function(primitive) {
-        var material = new THREE.MeshLambertMaterial({color: 0xaaaaaa});
+        var material = new THREE.MeshNormalMaterial();
         material.side = THREE.DoubleSide;
 
         var mesh = new THREE.Mesh(geometries[primitive.meshIndex], material);
-        mesh.castShadow = true;
-        mesh.receiveShadow = true;
 
         var matrix = new THREE.Matrix4();
         matrix.set.apply(matrix, primitive.transformationMatrix);
@@ -80,6 +65,15 @@ function startPrerender(sceneObjects, cameraParams) {
 
         scene.add(mesh);
     });
+
+    var trackballControls = new THREE.TrackballControls(camera, renderer.domElement);
+    trackballControls.dynamicDampingFactor=0.45;
+    trackballControls.panSpeed = 0.3;
+
+    trackballControls.position0.set(cameraParams.origin[0], cameraParams.origin[1], cameraParams.origin[2]);
+    trackballControls.up0.set(cameraParams.up[0], cameraParams.up[1], cameraParams.up[2]);
+    trackballControls.target0.set(cameraParams.lookAt[0], cameraParams.lookAt[1], cameraParams.lookAt[2]);
+    trackballControls.reset();
 
     var stats = initStats();
     var clock = new THREE.Clock();

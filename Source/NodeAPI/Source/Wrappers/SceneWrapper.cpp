@@ -13,6 +13,8 @@
 */
 
 #include "SceneWrapper.h"
+#include <Core/Util.h>
+
 #include <map>
 
 Nan::Persistent<v8::Function> SceneWrapper::m_constructor;
@@ -61,10 +63,20 @@ NAN_METHOD(SceneWrapper::New)
 NAN_METHOD(SceneWrapper::GetSceneObjects)
   {
   SceneWrapper *p_this = Nan::ObjectWrap::Unwrap<SceneWrapper>(info.This());
+
+  v8::Local<v8::Object> ret = Nan::New<v8::Object>();
+  intrusive_ptr<const Scene> p_scene = p_this->GetScene();
+  _ExportPrimitives(p_scene, ret);
+
+  info.GetReturnValue().Set(ret);
+  }
+
+void SceneWrapper::_ExportPrimitives(intrusive_ptr<const Scene> ip_scene, v8::Local<v8::Object> &o_export)
+  {
   std::map<const TriangleMesh*, std::vector<intrusive_ptr<const Primitive>>> primitives_by_meshes;
 
   // First step: partition all primitives by meshes (one mesh can be used by multiple instances).
-  const std::vector<intrusive_ptr<const Primitive>> &primitives = p_this->mp_scene->GetPrimitives();
+  const std::vector<intrusive_ptr<const Primitive>> &primitives = ip_scene->GetPrimitives();
   for (auto p_primitive : primitives)
     {
     intrusive_ptr<const TriangleMesh> p_mesh = p_primitive->GetTriangleMesh();
@@ -84,10 +96,7 @@ NAN_METHOD(SceneWrapper::GetSceneObjects)
     for (size_t j = 0; j < p_mesh->GetNumberOfVertices(); ++j)
       {
       Point3D_f vertex = p_mesh->GetVertex(j);
-      v8::Local<v8::Array> vertex_array = Nan::New<v8::Array>(3);
-      for (unsigned char k = 0; k < 3; ++k) Nan::Set(vertex_array, k, Nan::New(vertex[k]));
-
-      Nan::Set(vertices, (uint32_t)j, vertex_array);
+      Nan::Set(vertices, (uint32_t)j, NodeAPI::Utils::ToArray3(vertex));
       }
 
     // Export all mesh triangles.
@@ -125,8 +134,6 @@ NAN_METHOD(SceneWrapper::GetSceneObjects)
     ++mesh_counter;
     }
 
-  v8::Local<v8::Object> ret = Nan::New<v8::Object>();
-  Nan::Set(ret, Nan::New("triangleMeshes").ToLocalChecked(), meshes_array);
-  Nan::Set(ret, Nan::New("primitives").ToLocalChecked(), primitives_array);
-  info.GetReturnValue().Set(ret);
+  Nan::Set(o_export, Nan::New("triangleMeshes").ToLocalChecked(), meshes_array);
+  Nan::Set(o_export, Nan::New("primitives").ToLocalChecked(), primitives_array);
   }
